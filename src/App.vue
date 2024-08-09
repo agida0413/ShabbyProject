@@ -16,11 +16,45 @@
       >
 
         <v-container >
-          <Header v-if="!isLoginPage && !isJoinPage" ></Header>
+          <v-row>
+               <v-col cols="2">
+                <v-card>
+    <v-layout>
+      <v-navigation-drawer
+        location="right"
+        permanent
+      >
+        <template v-slot:prepend>
+          <v-list-item
+            lines="two"
+            prepend-avatar="https://randomuser.me/api/portraits/women/81.jpg"
+            subtitle="Logged in"
+            title="Jane Smith"
+          ></v-list-item>
+        </template>
+
+        <v-divider></v-divider>
+
+        <v-list density="compact" nav>
+          <v-list-item prepend-icon="mdi-home-city" title="Home" value="home"></v-list-item>
+          <v-list-item prepend-icon="mdi-account" title="My Account" value="account"></v-list-item>
+          <v-list-item prepend-icon="mdi-account-group-outline" title="Users" value="users"></v-list-item>
+        </v-list>
+      </v-navigation-drawer>
+      <v-main style="height: 820px"></v-main>
+    </v-layout>
+  </v-card>
+                            
+</v-col>
+                                  <v-col cols="10">
+                                  <Header v-if="!isLoginPage && !isJoinPage" ></Header>
+                                  </v-col>
+          </v-row>
+       
         <!-- Header와 Footer는 로그인 페이지와 가입 페이지가 아닌 경우에만 표시 -->
           <router-view />
 
-          <Footer v-if="!isLoginPage && !isJoinPage" ></Footer>
+           <Footer v-if="!isLoginPage && !isJoinPage" ></Footer> 
         </v-container>
       </v-card>
 
@@ -34,13 +68,20 @@
 
 <script>
 import Header from './components/common/Header.vue';
-import Footer from './components/common/Footer.vue';
+ import Footer from './components/common/Footer.vue';
 
 export default {
   name: 'App',
+  data(){
+    return{
+   
+    }
+  },methods:{
+    
+  },
   components: {
     Header, // 전역컴포넌트 헤더 ,푸터 
-    Footer
+     Footer
   },
   computed: {
     isLoginPage() {
