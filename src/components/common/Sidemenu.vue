@@ -5,8 +5,8 @@
   <v-card >
    
       <v-navigation-drawer
-     style="background-color:ghostwhite"
-       
+     class="to-blackMode"
+       style="border-right:floralwhite 1px solid"
       >
         <template v-slot:prepend >
           <v-list-item

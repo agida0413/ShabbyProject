@@ -1,12 +1,13 @@
 <template >
     <div>
       <div>
-      <v-img
-        class="mx-auto my-6"
-        max-width="150"
-        src="@/assets/logo2.png"
-      ></v-img> 
-    </div>
+        <v-img
+          class="mx-auto my-6"
+          max-width="150"
+          src="@/assets/logo2.png"
+        ></v-img> 
+     </div>
+
       <v-card
         class="mx-auto pa-12 pb-8"
         elevation="8"
@@ -25,7 +26,7 @@
         ></v-text-field>
   
         <div class="text-subtitle-1 text-medium-emphasis d-flex align-center justify-space-between">
-비밀번호
+      비밀번호
   
         
         </div>
@@ -55,6 +56,7 @@
         
       <v-card-text class="text-center">
 
+        <!--아이디 찾기 모달 true 버튼-->
         <button
             class="text-caption text-decoration-none text-blue"
     
@@ -64,7 +66,10 @@
            
           >
             아이디를 잊으셨나요?</button>
+
             &nbsp;&nbsp;&nbsp;/ &nbsp;&nbsp;&nbsp;
+
+            <!--비밀번호 찾기 모달 true 버튼-->
             <button
             class="text-caption text-decoration-none text-blue"
     
@@ -76,18 +81,22 @@
           비밀번호를 잊으셨나요?</button>
 
       </v-card-text>
+
         <v-card-text class="text-center">
             
+          <!--회원가입으로 라우터 이동-->
             <router-link to="/join">
-          <button
-            class="text-blue text-decoration-none"
-            
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            회원가입<v-icon icon="mdi-chevron-right"></v-icon>
+                <button
+                  class="text-blue text-decoration-none"
+                  
+                  rel="noopener noreferrer"
+                  target="_blank"
+                >
+                  회원가입<v-icon icon="mdi-chevron-right"></v-icon>
         </button>
-      </router-link>
+          </router-link>
+
+
         </v-card-text>
       </v-card>
 
@@ -108,35 +117,35 @@
     export default {
       data: () => ({
         visible: false,
-        email:'',
+        email:'', 
         emailRules: [
-          v => !!v || '이메일을 입력해 주세요.'
+          v => !!v || '이메일을 입력해 주세요.' //이메일 검증
         
         ],
         password:'',
         passwordRules: [
-          v => !!v || '비밀번호를 입력해주세요.'
+          v => !!v || '비밀번호를 입력해주세요.' //비밀번호 입력검증
         
         ],
-        findIdDialog:false,
-        findPwdDialog:false
+        findIdDialog:false, //아이디 찾기 모달 값 초기 false
+        findPwdDialog:false//비밀번호 찾기 모달 값 초기 false
         
       }),
       components:{
-        FindIdComponent,
-        FindPwdComponent
+        FindIdComponent, // 아이디 찾기 모달 컴포넌트 등록
+        FindPwdComponent// 비밀번호 찾기 모달 컴포넌트 등록
       },
       methods:{
-       closeFindIdDiolog(){
+       closeFindIdDiolog(){  //아이디 찾기모달값 false
         this.findIdDialog=false;
        },
-       openFindIdDialog(){
+       openFindIdDialog(){//아이디 찾기모달값 true
         this.findIdDialog=true
        },
-       closeFindPwdDiolog(){
+       closeFindPwdDiolog(){ //비밀번호 찾기 모달값 false
         this.findPwdDialog=false;
        },
-       openFindPwdDialog(){
+       openFindPwdDialog(){//비밀번호 찾기 모달값 true
         this.findPwdDialog=true
        }
       }

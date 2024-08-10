@@ -1,6 +1,6 @@
 <template>
     <v-dialog v-model="localDialog"  max-width="500" >
-
+<!--찾은 아이디 목록-->
         <v-card 
         prepend-icon="mdi-account"
         title="아이디 찾기"
