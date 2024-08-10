@@ -3,20 +3,25 @@
 
         
     <v-card
-      class=""
+      class="pt-0"
       color="surface-light"
-      max-width="1300"
+    height="70px"
+    
     >
-      <v-card-text>
+   
+      <v-card-text
+      
+      >
         <v-text-field
           :loading="loading"
           append-inner-icon="mdi-magnify"
           density="compact"
-          label="Search templates"
+          label="검색어를 입력하세요"
           variant="solo"
           hide-details
           single-line
           @click:append-inner="onClick"
+          
         ></v-text-field>
       </v-card-text>
     </v-card>

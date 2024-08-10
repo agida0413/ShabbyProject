@@ -1,125 +1,120 @@
 <template>
-  <v-app class="background">
+  <v-app class="background no-cursor ">
     <v-main :class="!isLoginPage && !isJoinPage ? 'main-container' : ''">
-      
-      
-     
+      <v-container v-if="!isLoginPage && !isJoinPage" class="main-content ">
+        <v-row no-gutters>
+          <!-- 사이드 메뉴 -->
+          <v-col cols="2" class="side-menu-col ">
+            <SideMenu />
+          </v-col>
 
-      <!-- 로그인 페이지와 가입 페이지가 아닌 경우에만 v-card와 v-container 표시 -->
-     
-     
-      <v-card
-        v-if="!isLoginPage && !isJoinPage"
-        class="mx-auto fixed-background islogged "
-        width="1400"
-        height="850"
-      >
+          <!-- 헤더와 콘텐츠 영역 -->
+          <v-col cols="10" class="content-col" >
+            <Header v-if="!isLoginPage && !isJoinPage" class="fixed-header "  />
 
-        <v-container >
-          <v-row>
-               <v-col cols="2">
-                <v-card>
-    <v-layout>
-      <v-navigation-drawer
-        location="right"
-        permanent
-      >
-        <template v-slot:prepend>
-          <v-list-item
-            lines="two"
-            prepend-avatar="https://randomuser.me/api/portraits/women/81.jpg"
-            subtitle="Logged in"
-            title="Jane Smith"
-          ></v-list-item>
-        </template>
-
-        <v-divider></v-divider>
-
-        <v-list density="compact" nav>
-          <v-list-item prepend-icon="mdi-home-city" title="Home" value="home"></v-list-item>
-          <v-list-item prepend-icon="mdi-account" title="My Account" value="account"></v-list-item>
-          <v-list-item prepend-icon="mdi-account-group-outline" title="Users" value="users"></v-list-item>
-        </v-list>
-      </v-navigation-drawer>
-      <v-main style="height: 820px"></v-main>
-    </v-layout>
-  </v-card>
-                            
-</v-col>
-                                  <v-col cols="10">
-                                  <Header v-if="!isLoginPage && !isJoinPage" ></Header>
-                                  </v-col>
-          </v-row>
-       
-        <!-- Header와 Footer는 로그인 페이지와 가입 페이지가 아닌 경우에만 표시 -->
-          <router-view />
-
-           <Footer v-if="!isLoginPage && !isJoinPage" ></Footer> 
-        </v-container>
-      </v-card>
+            <!-- 콘텐츠 영역 -->
+            <router-view />
+            <Footer v-if="!isLoginPage && !isJoinPage" />
+          </v-col>
+        </v-row>
+      </v-container>
 
       <!-- 로그인 페이지와 가입 페이지인 경우에 표시할 router-view -->
-     
-      <router-view v-else />
+      <router-view v-else style="background-color: ghostwhite;"/>
     </v-main>
-    
   </v-app>
 </template>
-
 <script>
 import Header from './components/common/Header.vue';
- import Footer from './components/common/Footer.vue';
+import Footer from './components/common/Footer.vue';
+import SideMenu from './components/common/Sidemenu.vue';
 
 export default {
   name: 'App',
-  data(){
-    return{
-   
-    }
-  },methods:{
-    
-  },
   components: {
-    Header, // 전역컴포넌트 헤더 ,푸터 
-     Footer
+    Header,
+    Footer,
+    SideMenu
   },
   computed: {
     isLoginPage() {
-      return this.$route.path === '/login'; // 로그인 페이지 라우터이냐 returen boolean
+      return this.$route.path === '/login';
     },
     isJoinPage() {
-      return this.$route.path === '/join'; // 회원가입 페이지 라우터이냐 returen boolean
+      return this.$route.path === '/join';
     }
   }
 }
 </script>
-
 <style>
 .background {
   height: 100vh;
   overflow: hidden;
   margin: 0;
-  background-image: url("@/assets/background.jpg");
+  background-image: url("@/assets/background2.jpg");
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
 }
-
-.fixed-background {
+.card-with-bg {
+  background-image: url('@/assets/background2.jpg');
   background-size: cover;
-  background-attachment: fixed;
   background-position: center;
   background-repeat: no-repeat;
 }
 
-.fixed-background .v-container {
-  overflow-y: auto;
-  max-height: 100%;
+.textcard-with-bg {
+  background-image: url('@/assets/background3.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
+.fixed-header {
+  position: fixed;
+  top: 0;
+  left: 255px; /* 사이드 메뉴 너비만큼 왼쪽으로 위치 조정 */
+  width: calc(100% - 255px); /* 전체 너비에서 사이드 메뉴 너비를 제외한 나머지 */
+  background-color: transparent;
+  z-index: 1000;
+  padding: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.side-menu-col {
+  padding: 0; /* 사이드 메뉴의 기본 패딩을 제거합니다 */
+}
+
+.content-col {
+  padding-left: 0; /* 헤더가 고정되어 있으므로 패딩을 제거합니다 */
+  margin-top: 60px; /* 헤더 높이만큼 여백 추가 */
+}
+
 .main-container {
   display: flex;
-  justify-content: center; /* 수평 중앙 배치 */
-  align-items: center; /* 수직 중앙 배치 */
-  height: 100vh; /* 화면 전체 높이 */
+  height: 100vh;
+}
+
+.main-content {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+
+.no-cursor {
+  caret-color: transparent;
+}
+
+.v-text-field input, .v-text-field textarea {
+  caret-color: auto;
+}
+
+
+/* Vuetify의 기본 텍스트 색상을 하얀색으로 설정 */
+.v-typography {
+  color: white !important;
+}
+
+.white-text {
+  color: white;
 }
 </style>
