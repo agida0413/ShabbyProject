@@ -4,18 +4,19 @@
       <v-container v-if="!isLoginPage && !isJoinPage" class="main-content ">
         <v-row no-gutters>
           <!-- 사이드 메뉴 -->
-          <v-col cols="2" class="side-menu-col ">
+         
             <SideMenu />
-          </v-col>
+        
 
           <!-- 헤더와 콘텐츠 영역 -->
-          <v-col cols="10" class="content-col" >
-            <Header v-if="!isLoginPage && !isJoinPage" class="fixed-header "  />
+        
+            <Header v-if="!isLoginPage && !isJoinPage" class="fixed-header "  ></Header>
 
             <!-- 콘텐츠 영역 -->
-            <router-view />
-            <Footer v-if="!isLoginPage && !isJoinPage" />
-          </v-col>
+             <v-container style="background-color: aqua; margin-top: 60px;"  class="scrollable-row "> <router-view /></v-container>
+           
+            <Footer v-if="!isLoginPage && !isJoinPage" ></Footer>
+        
         </v-row>
       </v-container>
 
@@ -116,5 +117,9 @@ export default {
 
 .white-text {
   color: white;
+} 
+.scrollable-row {
+  overflow-y: auto; /* 수직 스크롤 생성 */
+  max-height: 100vh; /* 최대 높이 설정, 화면의 50%로 설정 */
 }
 </style>
