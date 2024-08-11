@@ -1,6 +1,6 @@
 <template>
    
-    <!-- 아이디 찾기 모달-->
+    <!-- 팔로우/팔로워 목록-->
     
     <v-dialog v-model="localDialog"   >
         <v-card

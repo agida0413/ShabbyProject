@@ -1,8 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Login from "@/components/member/Login.vue"
-import HelloWorld from '@/components/HelloWorld.vue'
 import Join from '@/components/member/Join.vue'
-import UserFeed from '@/components/feed/UserFeed.vue'
+import UserFeed from '@/components/feed/userfeeds/UserFeed.vue'
+import globalfeed from '@/components/feed/otherfeeds/globalfeed.vue'
+import Mainfeed from '@/components/feed/otherfeeds/mainfeed.vue'
 const routes = [
   {
     path: '/login',
@@ -21,11 +22,15 @@ const routes = [
   },
   {
     path: '/',
-    name: 'HelloWorld',
-    component:HelloWorld
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
+    name: 'mainfeed',
+    component:Mainfeed
+   
+  }
+  ,
+  {
+    path: '/globalfeed',
+    name: 'globalfeed',
+    component:globalfeed
    
   }
 ]

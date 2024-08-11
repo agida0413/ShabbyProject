@@ -32,13 +32,13 @@
       }),
   watch: {
     '$route.path'(newPath) {
-      // This will be called whenever the route path changes
-      this.sheet = newPath === '/userfeed';
+      
+      this.sheet = newPath === '/';
     }
   },
-  // Optionally, initialize `sheet` based on the current route when the component is created
+
   created() {
-    this.sheet = this.$route.path === '/userfeed';
+    this.sheet = this.$route.path === '/';
   }
     }
   </script>
