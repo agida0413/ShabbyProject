@@ -23,38 +23,55 @@
   
             <v-toolbar-title>Settings</v-toolbar-title>
   
-            <v-spacer></v-spacer>
+          
   
-            <v-toolbar-items>
-              <v-btn
-                text="Save"
-                variant="text"
-                @click="dialog = false"
-              ></v-btn>
-            </v-toolbar-items>
+         
           </v-toolbar>
   
           <v-list
             lines="two"
             subheader
           >
-            <v-list-subheader>User Controls</v-list-subheader>
-  
+            <v-list-subheader>정보변경</v-list-subheader>
             <v-list-item
-              subtitle="Set the content filtering level to restrict apps that can be downloaded"
-              title="Content filtering"
+              subtitle="change nickname"
+              title="닉네임변경"
               link
+              @click="openChangeNickname"
             ></v-list-item>
   
             <v-list-item
-              subtitle="Require password for purchase or use password to restrict purchase"
-              title="Password"
+              subtitle="change password"
+              title="비밀번호 변경"
               link
+              @click="openEmailSend"
             ></v-list-item>
   
+            <v-list-item
+              subtitle="change phone number"
+              title="휴대폰 번호 변경"
+              link
+              @click="openPhoneChange"
+            ></v-list-item>
             <v-divider></v-divider>
+            <v-list-subheader>계정관리</v-list-subheader>
+            <v-list-item
+              subtitle="transfer "
+              title="비공개모드로 전환"
+              link
+            ></v-list-item>
   
-            <v-list-subheader>General</v-list-subheader>
+            <v-list-item
+              subtitle="change password"
+              title="회원탈퇴"
+              class="red-text"
+              link
+            ></v-list-item>
+            <v-divider></v-divider>
+
+
+          <!--기타 설정-->
+            <v-list-subheader>임시</v-list-subheader>
   
             <v-list-item
               subtitle="Notify me about updates to apps or games that I downloaded"
@@ -95,9 +112,19 @@
         </v-card>
       </v-dialog>
     </div>
+    <EmailSend v-model:value="emailSendToChangePwd" @emailSendClose="closeEmailSend"></EmailSend>
+    <EmailVerify v-model:value="emailSendVerify" @emailVerifyClose="closeEmailVerify"></EmailVerify>
+    <ChangePwd v-model:value="changePwdDialog" @changePwdClose="closeChangePwd"></ChangePwd>
+    <ChangePhone v-model:value="phoneChangeDialog" @changePhone="closePhoneChange"></ChangePhone>
+    <ChangeNickname v-model:value="nicknameChangeDialog" @changeNickname="closeChangeNickname"></ChangeNickname>
   </template>
 
 <script>
+import EmailSend from "./email/EmailSend.vue"
+import EmailVerify from "./email/EmailVerify.vue"
+import ChangePwd from "./setting/ChangePwd.vue"
+import ChangePhone from "./setting/ChangePhone.vue"
+import ChangeNickname from "./setting/ChangeNickName.vue"
 export default {
     name:'SettingComponent',
     props: {
@@ -107,10 +134,15 @@ export default {
        }},
   data () {
     return {
-    
-      notifications: false,
+     
+      notifications: false, 
       sound: true,
       widgets: false,
+      emailSendVerify:false, //이메일 전송 물음 모달
+      changePwdDialog:false, //비밀번호 변경 모달
+      emailSendToChangePwd:false, // 비밀번호 변경시 이메일 전송 물음 다이얼로그 값
+      phoneChangeDialog:false, // 핸드폰 번호 변경 모달
+      nicknameChangeDialog:false //닉네임 변경모달
     }
   },computed:{
      localDialog:{
@@ -122,9 +154,52 @@ export default {
      methods: {
        closeDialog() {
          this.$emit('settingClose');// 로그인 컴포넌트로 닫는 이벤트 전송
+       },
+       openEmailSend(){//이메일 전송 물음 컴포넌트 오픈
+        this.emailSendToChangePwd=true;
+       },
+       closeEmailSend(isOpenEmailVerify){ //이메일 전송 물음 컴포넌트 닫고 인증번호 입력 컴포넌트 호출
+        this.emailSendVerify=isOpenEmailVerify
+        this.emailSendToChangePwd=false;
+        console.log(this.emailSendVerify)
+       },
+       openEmailVerify(){//이메일 전송 물음 컴포넌트 오픈
+        this.emailSendVerify=true;
+       },
+       closeEmailVerify(isOpenChangePwdDialog){ //이메일 전송 물음 컴포넌트 닫고 인증번호 입력 컴포넌트 호출
+        this.changePwdDialog=isOpenChangePwdDialog
+        this.emailSendVerify=false;
+        console.log(this.changePwdDialog)
+       },
+       closeChangePwd(){
+        this.changePwdDialog=false // 비밀번호 최종변경 완료
+       },
+       openPhoneChange(){
+        this.phoneChangeDialog=true //핸든폰 번호 변경모달 열림
+       },
+       closePhoneChange(){
+        this.phoneChangeDialog=false//핸든폰 번호 변경모달 닫힘
+       },
+       openChangeNickname(){ // 닉네임 변경 모달열림
+          this.nicknameChangeDialog=true
+       },
+       closeChangeNickname(){ //닉네임 변경 모달 닫힘
+          this.nicknameChangeDialog=false
        }
+     },
+     components:{
+      EmailSend ,// 이메일 전송물음 컴포넌트,
+      EmailVerify ,//인증번호 확인 컴포넌트
+      ChangePwd ,//비밀번호 변경 모달
+      ChangePhone, //핸드폰 번호 변경
+      ChangeNickname // 닉네임 변경
      }
   
 
 }
 </script>
+<style>
+.red-text{
+  color:#ff6f6f ;
+}
+</style>
