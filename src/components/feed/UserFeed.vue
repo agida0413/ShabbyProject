@@ -29,7 +29,7 @@
                                         <!--프로필 편집-->
                                         <v-row class="mt-2"> 
                                              <v-col>
-                                                  <v-btn elevation="16" width="300" color="success">프로필 편집</v-btn>
+                                                  <v-btn elevation="16" width="300" color="success" @click="feedEditDialogOpen">프로필 편집</v-btn>
                                              </v-col>        
                                         </v-row>
                                              <!--게시물, 팔로워 ,팔로잉 노출-->
@@ -161,10 +161,11 @@
      v-bind:flwType="this.flwType"
    @flwListClose="flwListDialogClose()"></FlwListComponent>
          
-
+         <FeedEditComponent v-model:value="feedEditDialog" @feedEditClose="feedEditDialogClose"></FeedEditComponent>
   </template>
   <script>
-  import FlwListComponent from "./flwlist.vue"
+  import FlwListComponent from "./Flwlist.vue"
+  import FeedEditComponent from "./FeedEdit.vue"
   export default {
     data: () => ({
     
@@ -180,11 +181,13 @@
         'Creative Writing',
       ],
       flwListDialog:false,
-      flwType:''
+      flwType:'',
+      feedEditDialog:false
      
     }),
     components:{
-     FlwListComponent
+     FlwListComponent,
+     FeedEditComponent
     },
     methods:{
      flwListDialogOpen(str){
@@ -194,6 +197,12 @@
      },
      flwListDialogClose(){
           this.flwListDialog=false;
+     },
+     feedEditDialogOpen(){
+          this.feedEditDialog=true
+     },
+     feedEditDialogClose(){
+          this.feedEditDialog=false
      }
 
     }

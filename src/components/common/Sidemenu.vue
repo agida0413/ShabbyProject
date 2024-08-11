@@ -28,7 +28,7 @@
           <v-list-item prepend-icon="mdi-account" title="새 게시물" value="account"></v-list-item>
           <v-list-item prepend-icon="mdi-account-group-outline" title="글로벌" value="users"></v-list-item>
           <v-list-item prepend-icon="mdi-account-group-outline" title="활동" value="users"></v-list-item>
-          <v-list-item prepend-icon="mdi-home-city" title="설정" value="home"></v-list-item>
+          <v-list-item prepend-icon="mdi-wrench" title="설정" value="home" @click="settingDialogOpen()"></v-list-item>
           <v-list-item prepend-icon="mdi-home-city" title="내 피드" value="home"></v-list-item>
           <v-list-item prepend-icon="mdi-account-group-outline" title="로그아웃" value="users"></v-list-item>
         </v-list>
@@ -36,4 +36,29 @@
     
     
   </v-card>
+  <SettingComponent v-model:value="settingDialog" @settingClose="ifSettingClose"></SettingComponent>
 </template>
+
+<script>
+  import SettingComponent from "./Setting.vue"
+export default{
+
+  data(){
+    return{
+      settingDialog:false
+    }
+  },
+  components:{
+    SettingComponent
+  },
+  methods:{
+    ifSettingClose(){
+      this.settingDialog=false
+    },
+    settingDialogOpen(){
+      this.settingDialog=true
+    }
+  }
+}
+
+</script>
