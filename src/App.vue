@@ -130,4 +130,8 @@ export default {
   background-color: #2C2C2C;
   color: aliceblue;
 }
+
+
+
+
 </style>

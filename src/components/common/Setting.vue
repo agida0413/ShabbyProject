@@ -15,6 +15,7 @@
         </template>
   
         <v-card>
+          <!--closeDialog = > 부모에게 이벤트 전송-->
           <v-toolbar>
             <v-btn
               icon="mdi-close"
@@ -33,6 +34,7 @@
             subheader
           >
             <v-list-subheader>정보변경</v-list-subheader>
+            <!-- 각 버튼 클릭시 해당되는 메소드실행 후 변수값 true로 변경-->
             <v-list-item
               subtitle="change nickname"
               title="닉네임변경"
@@ -75,7 +77,7 @@
   
             <v-list-item
               subtitle="Notify me about updates to apps or games that I downloaded"
-              title="Notifications"
+              title=""
               @click="notifications = !notifications"
             >
               <template v-slot:prepend>

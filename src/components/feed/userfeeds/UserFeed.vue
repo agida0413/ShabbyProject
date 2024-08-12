@@ -127,35 +127,42 @@
           
           <!-- 피드 게시글 -->
          <v-row class="mt-7"  > 
-               <v-row>
-                    <v-col
-                         v-for="n in 9"
-                         :key="n"
-                         class="d-flex child-flex"
-                         cols="4"
-                    >
-                              <v-img
-                              :lazy-src="`https://picsum.photos/10/6?image=${n * 5 + 10}`"
-                              :src="`https://picsum.photos/500/300?image=${n * 5 + 10}`"
-                              aspect-ratio="1"
-                              class="bg-grey-lighten-2"
-                              cover
-                              >
-                                   <template v-slot:placeholder>
-                                        <v-row
-                                        align="center"
-                                        class="fill-height ma-0"
-                                        justify="center"
-                                        >
-                                                  <v-progress-circular
-                                                  color="grey-lighten-5"
-                                                  indeterminate
-                                                  ></v-progress-circular>
-                                        </v-row>
-                                   </template>
-                         </v-img>
-                    </v-col>
-               </v-row>
+          <v-row>
+    <v-col
+      v-for="n in 9"
+      :key="n"
+      class="d-flex child-flex"
+      cols="4"
+    >
+      <v-img
+        :lazy-src="`https://picsum.photos/10/6?image=${n * 5 + 10}`"
+        :src="`https://picsum.photos/500/300?image=${n * 5 + 10}`"
+        aspect-ratio="1"
+        class="image-container"
+        cover
+      >
+        <template v-slot:placeholder>
+          <v-row
+            align="center"
+            class="fill-height ma-0"
+            justify="center"
+          >
+            <v-progress-circular
+              color="grey-lighten-5"
+              indeterminate
+            ></v-progress-circular>
+          </v-row>
+        </template>
+        <div class="overlay">
+          <v-icon class="overlay-icon">mdi-heart</v-icon>
+          123
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <v-icon class="overlay-icon">mdi-comment</v-icon>
+          123
+        </div>
+      </v-img>
+    </v-col>
+  </v-row>
          </v-row>
    <FlwListComponent v-model:value="flwListDialog"
      v-bind:flwType="this.flwType"
@@ -180,9 +187,9 @@
         'Tech',
         'Creative Writing',
       ],
-      flwListDialog:false,
-      flwType:'',
-      feedEditDialog:false
+      flwListDialog:false, //팔로우/팔로잉 목록 모달 제어값
+      flwType:'', //팔로우 ? 팔로잉? 
+      feedEditDialog:false //프로필 편집 모달 제어값 
      
     }),
     components:{
@@ -190,14 +197,16 @@
      FeedEditComponent
     },
     methods:{
-     flwListDialogOpen(str){
-          this.flwType=str
-          console.log(this.flwType)
-          this.flwListDialog=true;
+
+     flwListDialogOpen(str){  //팔로워, 팔로잉 각각 버튼클릭시 str로 매개변수 받아와 flwType을 초기화 
+                              //= > flwList 컴포넌트 하나로 운영 (str 전달- > 팔로잉 목록 or 팔로우 목록)
+          this.flwType=str   
+          this.flwListDialog=true; //모달 열음 
      },
-     flwListDialogClose(){
+     flwListDialogClose(){   //팔로우,팔로잉 목록닫음
           this.flwListDialog=false;
      },
+     //프로필 편집 모달 제어
      feedEditDialogOpen(){
           this.feedEditDialog=true
      },
@@ -236,4 +245,40 @@ bottom: 10px;
 .isHover{
      cursor: pointer; /* 커서를 손 모양으로 변경 */
 }
+.image-container {
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s ease;
+}
+
+.image-container:hover {
+  transform: scale(1.05);
+  cursor: pointer; /* 사진 호버 시 포인터 커서 */
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5); /* 사진 어두워지기 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.image-container:hover .overlay {
+  opacity: 1;
+}
+
+.overlay-icon {
+  font-size: 48px; /* 아이콘 크기 조정 */
+  color: white; /* 아이콘 색상 */
+  margin: 0 10px;
+  cursor: default; /* 아이콘에 기본 커서 적용 */
+}
+
   </style>
