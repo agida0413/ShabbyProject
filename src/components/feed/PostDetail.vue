@@ -62,7 +62,7 @@
                   &nbsp;<span style="width: 80%;">1212명이 좋아합니다.</span>
 
                   <span>
-                    <v-btn class="ms-5" icon="mdi-pencil" size="30" color="black"></v-btn><!--수정 버튼-->
+                    <v-btn class="ms-5" icon="mdi-pencil" size="30" color="black" @click="postEditOpen"></v-btn><!--수정 버튼-->
                   </span>
                   
                   <span style="margin-left: 8px;">
@@ -91,11 +91,13 @@
       </v-container>
     </v-card>
   </v-dialog>
+  <PostEdit v-model:value="postEditDialog" @postEditClose="postEditClose"></PostEdit>
 </template>
 
 <script>
 import ReplyMore from "./ReplyMore.vue";
 import ReplyComponent from "./Reply.vue"
+import PostEdit from "./PostEdit.vue"
 export default {
   name: 'PostDetail',
 
@@ -107,7 +109,8 @@ export default {
   },
   data() {
     return {
-      moreReply: false //댓글 더보기 클릭시 true
+      moreReply: false, //댓글 더보기 클릭시 true
+      postEditDialog:false //게시물 수정
     }
   },
   computed: {
@@ -127,11 +130,19 @@ export default {
     },
     moerReplyClose() {
       this.moreReply = false;
+    },
+    postEditOpen(){
+      this.postEditDialog=true;
+    },
+    postEditClose(){
+      this.postEditDialog=false;
+      
     }
   },
   components: {
     ReplyComponent, //댓글 정보 컴포넌트
-    ReplyMore //댓글 더보기 컴포넌트
+    ReplyMore, //댓글 더보기 컴포넌트
+    PostEdit
   }
 }
 </script>

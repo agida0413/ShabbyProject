@@ -78,14 +78,13 @@
                       
                     ></v-textarea>
                   
-                    
                     <v-checkbox label="댓글기능 해제"></v-checkbox>
                     <v-checkbox label="나만보기"></v-checkbox>
+                    
                   </v-col>
                   <v-divider></v-divider>
                 
                   <span style="margin-left: 425px;">
-                    
                     <v-btn  icon="mdi-pencil" size="50" color="black"></v-btn><!--수정 버튼-->
                   </span>
                 </v-row>
@@ -100,7 +99,7 @@
   
   <script>
    export default {
-    name: 'PostInsert',
+    name: 'PostEdit',
   
     props: {
       value: {//부모로 부터받음 모달열림,닫음 제어 변수
@@ -122,7 +121,7 @@
     },
     methods: {
       closeDialog() {
-        this.$emit('postInsertClose', false); //상세보기 닫음 
+        this.$emit('postEditClose', false); //게시물 수정 닫음 
         this.moreReply = false;
       },
       moreReplyOpen() {
