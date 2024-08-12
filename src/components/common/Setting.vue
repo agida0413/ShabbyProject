@@ -1,9 +1,10 @@
 <template>
-    <div class="text-center pa-4">
+    <div class="text-center pa-4 ">
       <v-dialog
         v-model="localDialog"
         transition="dialog-bottom-transition"
         fullscreen
+       
       >
         <template v-slot:activator="{ props: activatorProps }">
           <v-btn
@@ -11,18 +12,19 @@
             size="small"
             text="Settings"
             v-bind="activatorProps"
+             class="to-blackMode"
           ></v-btn>
         </template>
   
-        <v-card>
+        <v-card  class="to-blackMode">
           <!--closeDialog = > 부모에게 이벤트 전송-->
-          <v-toolbar>
+          <v-toolbar  style="background-color: gray; color: aliceblue;">
             <v-btn
               icon="mdi-close"
               @click="closeDialog()"
             ></v-btn>
   
-            <v-toolbar-title>Settings</v-toolbar-title>
+            <v-toolbar-title >Settings</v-toolbar-title>
   
           
   
@@ -32,8 +34,9 @@
           <v-list
             lines="two"
             subheader
+             class="to-blackMode"
           >
-            <v-list-subheader>정보변경</v-list-subheader>
+            <v-list-subheader  class="to-blackMode">정보변경</v-list-subheader>
             <!-- 각 버튼 클릭시 해당되는 메소드실행 후 변수값 true로 변경-->
             <v-list-item
               subtitle="change nickname"
@@ -56,7 +59,7 @@
               @click="openPhoneChange"
             ></v-list-item>
             <v-divider></v-divider>
-            <v-list-subheader>계정관리</v-list-subheader>
+            <v-list-subheader  class="to-blackMode">계정관리</v-list-subheader>
             <v-list-item
               subtitle="transfer "
               title="비공개모드로 전환"
@@ -73,7 +76,7 @@
 
 
           <!--기타 설정-->
-            <v-list-subheader>임시</v-list-subheader>
+            <v-list-subheader  class="to-blackMode">임시</v-list-subheader>
   
             <v-list-item
               subtitle="Notify me about updates to apps or games that I downloaded"

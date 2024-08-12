@@ -1,7 +1,7 @@
 <template>
     <!--게시물 상세 모달-->
     <v-dialog v-model="localDialog" max-width="1100" class="modal">
-      <v-card class="to-blackMode">
+      <v-card class="to-doubleBlack">
         
         
         
@@ -30,7 +30,7 @@
             </v-col>
   
             <!-- 게시물 상세 오른쪽 정보(내용,댓글 등 ) -->
-            <v-col cols="6" class="content-section " >
+            <v-col cols="6" class="content-section to-blackMode" >
               <v-icon
                 class="close-icon"
                 @click="closeDialog"

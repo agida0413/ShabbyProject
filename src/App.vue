@@ -130,7 +130,28 @@ export default {
   background-color: #2C2C2C;
   color: aliceblue;
 }
+.button-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 4px; 
+  }
+  
+  .load-more-btn {
+    display: flex;
+    align-items: center;
+    font-size: 12px;
+    font-weight: bold;
+  }
+  
+  .load-more-btn .v-btn__content {
+    margin-left: 8px; 
+  }
 
+  .to-doubleBlack{
+  background-color: #2C2C2C;
+}
+  
 
 
 

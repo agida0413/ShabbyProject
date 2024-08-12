@@ -1,11 +1,11 @@
 <template>
   <!--게시물 상세 모달-->
   <v-dialog v-model="localDialog" max-width="1100" class="modal">
-    <v-card class="to-blackMode">
+    <v-card class="to-doubleBlack">
       
       
       
-      <v-container fluid>
+      <v-container fluid >
         <v-row no-gutters >
       
           <v-col cols="6" class="image-section">
@@ -21,7 +21,7 @@
                 </v-chip>
       </div>
       <!-- 사진 목록-->
-      <v-carousel show-arrows="hover">
+      <v-carousel show-arrows="hover" >
     <v-carousel-item
       src="https://cdn.vuetifyjs.com/images/cards/docks.jpg"
       cover
@@ -37,7 +37,7 @@
       cover
     ></v-carousel-item>
   </v-carousel>
-          </v-col>
+          </v-col >
 
           <!-- 게시물 상세 오른쪽 정보(내용,댓글 등 ) -->
           <v-col cols="6" class="content-section " >
@@ -57,7 +57,7 @@
                 <v-col cols="12" class="post-content-col">
                   <span class="hobby-text">관심사</span>
                 </v-col>
-                <v-col cols="12" class="like-icon-col mt-4">
+                <v-col cols="12" class="like-icon-col mt-4 to-blackMode">
                   <v-icon>mdi-heart</v-icon>
                   &nbsp;<span style="width: 80%;">1212명이 좋아합니다.</span>
 
@@ -71,7 +71,7 @@
                 </v-col>
                 <v-divider></v-divider>
               
-                <v-col cols="12"  class="comment-icon-col">
+                <v-col cols="12"  class="comment-icon-col to-blackMode">
                   
                   <v-icon>mdi-comment</v-icon>
                   
