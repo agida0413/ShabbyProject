@@ -6,15 +6,7 @@
         fullscreen
        
       >
-        <template v-slot:activator="{ props: activatorProps }">
-          <v-btn
-            prepend-icon="mdi-cog"
-            size="small"
-            text="Settings"
-            v-bind="activatorProps"
-             class="to-blackMode"
-          ></v-btn>
-        </template>
+      
   
         <v-card  class="to-blackMode">
           <!--closeDialog = > 부모에게 이벤트 전송-->

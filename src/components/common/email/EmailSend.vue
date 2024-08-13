@@ -7,7 +7,7 @@
       >
         <v-card
           max-width="400"
-         
+         class="to-blackMode"
           text="회원가입 시 등록된 이메일로 인증번호가 전송됩니다.
            전송하시겠습니까?"
           

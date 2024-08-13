@@ -3,24 +3,18 @@
       <v-dialog
         v-model="localDialog"
         max-width="600"
+        
       >
-        <template v-slot:activator="{ props: activatorProps }">
-          <v-btn
-            class="text-none font-weight-regular"
-            prepend-icon="mdi-account"
-            text="Edit Profile"
-            variant="tonal"
-            v-bind="activatorProps"
-          ></v-btn>
-        </template>
+        
   
         <v-card
           prepend-icon="mdi-account"
           title="닉네임 변경"
+          class="to-blackMode"
         >
-          <v-card-text>
-            <div class="text-subtitle-1 text-medium-emphasis d-flex align-center justify-space-between">
-        새  닉네임
+          <v-card-text >
+            <div class="text-subtitle-1 text-medium-emphasis d-flex align-center justify-space-between " >
+        <span class="to-blackMode">새  닉네임</span>
         </div>
             <v-row>
           <!--닉네임-->
@@ -51,7 +45,7 @@
 
     </v-row>  
             <div class="text-subtitle-1 text-medium-emphasis d-flex align-center justify-space-between">
-        현재 비밀번호
+              <span class="to-blackMode">현재 비밀번호</span>
         </div>
         <!--비밀번호-->
         <v-row>

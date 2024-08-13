@@ -4,24 +4,18 @@
         v-model="localDialog"
         max-width="600"
       >
-        <template v-slot:activator="{ props: activatorProps }">
-          <v-btn
-            class="text-none font-weight-regular"
-            prepend-icon="mdi-account"
-            text="Edit Profile"
-            variant="tonal"
-            v-bind="activatorProps"
-          ></v-btn>
-        </template>
+       
   
         <v-card
           prepend-icon="mdi-account"
           title="핸드폰 번호 변경"
+          class="to-blackMode"
         >
+        <v-divider></v-divider>
           <v-card-text>
 
             <div class="text-subtitle-1 text-medium-emphasis d-flex align-center justify-space-between">
-          전화번호
+          <span style="color: aliceblue;">전화번호</span>
         </div>
 
         <v-row>
@@ -74,7 +68,7 @@
     </v-row>
 
             <div class="text-subtitle-1 text-medium-emphasis d-flex align-center justify-space-between">
-        현재 비밀번호
+              <span style="color: aliceblue;">현재 비밀번호</span>
         </div>
         <!--비밀번호-->
         <v-row>

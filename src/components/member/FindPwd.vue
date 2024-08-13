@@ -6,6 +6,7 @@
         title="비밀번호 초기화"
         class="pa-3"
       >
+      <v-divider></v-divider>
     <v-card-text class="mt-6">
 
       <v-row>

@@ -8,10 +8,12 @@
         prepend-icon="mdi-account"
         title="아이디 찾기"
         class="pa-3"
+        
       >
+      <v-divider></v-divider>
            <v-card-text class="mt-6">
 
-              <div class="text-subtitle-1 text-medium-emphasis">Email
+              <div class="text-subtitle-1 text-medium-emphasis">닉네임
                 
               </div>
 
@@ -21,8 +23,8 @@
 
                             <v-text-field 
                               density="compact"
-                              placeholder="Email"
-                              prepend-inner-icon="mdi-email-outline"
+                              placeholder="닉네임"
+                               prepend-inner-icon="mdi-account"
                               variant="outlined"
                               v-model="email"
                               :rules="emailRules"
@@ -114,7 +116,7 @@
             text="Close"
             variant="plain"
             @click=closeDialog()> 
-          ></v-btn>
+          </v-btn>
 
           <v-btn
             color="primary"

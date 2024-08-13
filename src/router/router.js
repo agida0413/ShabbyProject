@@ -2,8 +2,9 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Login from "@/components/member/Login.vue"
 import Join from '@/components/member/Join.vue'
 import UserFeed from '@/components/feed/userfeeds/UserFeed.vue'
-import globalfeed from '@/components/feed/otherfeeds/globalfeed.vue'
-import Mainfeed from '@/components/feed/otherfeeds/mainfeed.vue'
+import globalfeed from '@/components/feed/otherfeeds/Globalfeed.vue'
+import Mainfeed from '@/components/feed/otherfeeds/Mainfeed.vue'
+import Searchmain from '@/components/feed/searchfeeds/Searchmain.vue'
 const routes = [
   {
     path: '/login',
@@ -31,6 +32,13 @@ const routes = [
     path: '/globalfeed',
     name: 'globalfeed',
     component:globalfeed
+   
+  }
+  ,
+  {
+    path: '/searchfeed',
+    name: 'searchfeed',
+    component:Searchmain
    
   }
 ]

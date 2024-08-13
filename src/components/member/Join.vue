@@ -235,13 +235,17 @@
 
    
 
-    <div class="text-subtitle-1 text-medium-emphasis d-flex align-center justify-space-between">
-          자기소개
-        </div>
-
+   
         <v-row>
 
-          <v-textarea></v-textarea>
+          <v-textarea
+          label="본인을 알릴 자기소개를 입력하세요."
+          row-height="30"
+          rows="4"
+          variant="filled"
+          auto-grow
+          shaped
+        ></v-textarea>
         </v-row>
     <!--회원가입 버튼-->
         <v-btn

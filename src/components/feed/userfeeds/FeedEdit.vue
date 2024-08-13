@@ -2,10 +2,10 @@
 
 <v-dialog activator="parent" v-model="localDialog" max-width="500">
           <template v-slot:default="{ isActive }">
-            <v-card rounded="lg">
+            <v-card rounded="lg" class="to-blackMode">
               <v-card-title class="d-flex justify-space-between align-center">
                 <div class="text-h5 text-medium-emphasis ps-2">
-               프로필 편집
+               <span style="color: white;"> 프로필 편집</span>
                 </div>
 
                 <v-btn
@@ -19,14 +19,15 @@
 
               <v-card-text>
                 <v-file-input
-    label="프로필 사진 변경"
-    prepend-icon="mdi-camera"
-    variant="filled"
-  ></v-file-input>
+                  label="프로필 사진 변경"
+                  prepend-icon="mdi-camera"
+                  variant="filled"
+                ></v-file-input>
 
                 <div class="mb-2">자기소개 수정</div>
 
                 <v-textarea
+
                   :counter="300"
                   class="mb-2"
                   rows="2"

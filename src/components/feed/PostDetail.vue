@@ -44,6 +44,7 @@
             <v-icon
               class="close-icon"
               @click="closeDialog"
+              color="white"
             >mdi-close</v-icon><!-- x아이콘 - > 모달 닫음-->
 
             <ReplyMore v-show="moreReply"></ReplyMore><!-- moreReply값이 true이면 댓글만 보여짐 -->
@@ -77,13 +78,18 @@
                   
                   &nbsp;<span> comments</span>
 
-                  <span style="margin-left: 250px;" > <v-btn color="#757575">
+                  <span style="margin-left: 100px;" > <v-btn color="#757575">
                   댓글 비활성화 하기 <!-- 댓글 기능을 비활성화 함 --> 
+                </v-btn></span>
+
+                <span style="margin-left: 20px;"> <v-btn color="primary" @click="moreReplyOpen">
+                  댓글 더 보기 <!-- 댓글 더보기 버튼 --> 
+                  
                 </v-btn></span>
                 </v-col>
               </v-row>
               <v-row style="height: 180px;">
-                <ReplyComponent @wantMoreReply="moreReplyOpen"></ReplyComponent> <!--하단 부를 댓글 컴포넌트로 따로 빼놓음 -->
+                <ReplyComponent ></ReplyComponent> <!--하단 부를 댓글 컴포넌트로 따로 빼놓음 -->
               </v-row>
             </v-card-text>
           </v-col>

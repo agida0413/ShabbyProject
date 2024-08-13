@@ -4,15 +4,15 @@
     
     <v-dialog v-model="localDialog"   >
         <v-card
-    class="mx-auto"
+    class="mx-auto to-blackMode"
     max-width="450"
   >
  
   <v-btn
-  style="margin-left: 405px; background-color: burlywood;"
+  style="margin-left: 400px; background-color: gray;"
   icon
   class="close-btn"
-  size="40"
+  size="30"
   @click="closeDialog()"
 >
   <v-icon>mdi-close</v-icon>
@@ -26,7 +26,7 @@
       
     </v-col>
 
-    <v-list lines="three">
+    <v-list lines="three" class="to-blackMode"> 
     <v-list-item>
                                 
       <v-list-item-content>
@@ -44,7 +44,7 @@
           </v-col>
 
           <v-col cols="6">
-            <span class="text-primary large-font">agida0413</span>
+            <span class="large-font">agida0413</span>
           </v-col>
           <v-col cols="4">
             <v-btn color="primary">FOLLOW</v-btn>
@@ -66,7 +66,7 @@
           </v-col>
 
           <v-col cols="6">
-            <span class="text-primary large-font">agida0413</span>
+            <span class="large-font">agida0413</span>
           </v-col>
           <v-col cols="4">
             <v-btn color="primary">FOLLOW</v-btn>
