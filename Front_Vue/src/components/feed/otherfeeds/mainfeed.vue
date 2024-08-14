@@ -50,6 +50,7 @@ export default {
       postDetailDialog:false
 
     };
+    
   },
   components:{
     PostDetail
