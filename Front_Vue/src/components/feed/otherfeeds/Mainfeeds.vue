@@ -42,6 +42,7 @@
   <PostDetail v-model:value="postDetailDialog" @postDetailClose="closePostDetailDialog"></PostDetail>
 </template>
 
+
 <script>
 import PostDetail from '../PostDetail.vue';
 export default {
