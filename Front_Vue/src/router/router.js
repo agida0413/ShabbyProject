@@ -2,8 +2,8 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Login from "@/components/member/Login.vue"
 import Join from '@/components/member/Join.vue'
 import UserFeed from '@/components/feed/userfeeds/UserFeed.vue'
-import globalfeed from '@/components/feed/otherfeeds/Globalfeed.vue'
-import Mainfeed from '@/components/feed/otherfeeds/Mainfeed.vue'
+import globalfeed from '@/components/feed/otherfeeds/Globalfeeds.vue'
+import Mainfeed from '@/components/feed/otherfeeds/Mainfeeds.vue'
 import Searchmain from '@/components/feed/searchfeeds/Searchmain.vue'
 const routes = [
   {
