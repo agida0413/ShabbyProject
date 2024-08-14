@@ -6,13 +6,15 @@
       :key="n"
       class="d-flex child-flex"
       cols="4"
+     
     >
-      <v-img
+      <v-img 
         :lazy-src="`https://picsum.photos/10/6?image=${n * 5 + 10}`"
         :src="`https://picsum.photos/500/300?image=${n * 5 + 10}`"
         aspect-ratio="1"
         class="image-container"
         cover
+         @click="openPostDetailDialog"
       >
         <template v-slot:placeholder>
           <v-row
@@ -35,15 +37,31 @@
         </div>
       </v-img>
     </v-col>
-
     <!--순회 종료-->
   </v-row>
+  <PostDetail v-model:value="postDetailDialog" @postDetailClose="closePostDetailDialog"></PostDetail>
 </template>
 
 <script>
+import PostDetail from '../PostDetail.vue';
 export default {
   data() {
-    return {};
+    return {
+      postDetailDialog:false
+
+    };
+    
+  },
+  components:{
+    PostDetail
+  },
+  methods:{
+    openPostDetailDialog(){
+      this.postDetailDialog=true;
+    },
+    closePostDetailDialog(){
+      this.postDetailDialog=false;
+    }
   }
 }
 </script>
