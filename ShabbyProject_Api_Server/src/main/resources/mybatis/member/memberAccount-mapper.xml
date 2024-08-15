@@ -8,20 +8,24 @@
  <mapper namespace="com.sist.mapper.member.memberAccountMapper">
  
 	<select id="findByUserEmail" parameterType="String" resultType="MemberVO">
+	 
 	Select * from member where email=#{email}
 	</select>
 	
 	
 	
 	<select id="findByUserNickname" parameterType="String" resultType="MemberVO">
+	 
 	Select * from member where nickname=#{nickname}
 	</select>
 	
 	<select id="findByUserPhone" parameterType="String" resultType="MemberVO">
+
 	Select * from member where phone=#{phone}
 	</select>
 	
 	<insert id="join" parameterType="MemberVO">
+	
 	Insert into member (email,password,nickname,name,phone,profile,introduce,role)
 	values(#{email},#{password},#{nickname},#{name},#{phone},#{profile},#{introduce},#{role})
 	</insert>

@@ -48,7 +48,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     	
       String email=obtainUsername(request); //프론트에서 username으로 줘야함
       String password=obtainPassword(request);
-        System.out.println(email);    
+    
 
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(email, password, null);
 
@@ -57,13 +57,13 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) {
-
+    	
     	CustomUserDetails userDetails= (CustomUserDetails)authentication.getPrincipal();
-    	int id_num =userDetails.getIdNum();
+    	int idNum =userDetails.getIdNum();
     	
     	//다중토큰발급 시작
     	String email = authentication.getName();
-    	
+    
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
         Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
         GrantedAuthority auth = iterator.next();
@@ -76,7 +76,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
         
         //refresh토큰 저장
-        refreshService.addRefreshEntity(id_num, refresh, 86400000L);
+        refreshService.addRefreshEntity(idNum, refresh, 86400000L);
         
         //응답 설정
         response.setHeader("access", access);

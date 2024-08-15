@@ -13,15 +13,15 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CustomUserDetailService implements UserDetailsService{
 private final memberAccountRepository repository;
-private final BCryptPasswordEncoder bCryptPasswordEncoder;
+
 
 	@Override
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 		// TODO Auto-generated method stub
-//		String password="1234";
-//		System.out.println(bCryptPasswordEncoder.encode(password));
-		MemberVO vo=repository.findByUserEmail(email);
 		
+		MemberVO vo=repository.findByUserEmail(email);
+		System.out.println(vo.getIdNum());
+		System.out.println(vo.getEmail());
 		if(vo!=null) {
 
 			

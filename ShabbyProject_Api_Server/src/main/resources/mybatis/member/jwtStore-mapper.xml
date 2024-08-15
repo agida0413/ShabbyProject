@@ -21,7 +21,7 @@
 	
 	<insert id="save" parameterType="TokenStoreVO">
 	Insert into token_store (id_num,refresh,expiration)
-	values(#{id_num},#{refresh},#{expiration})
+	values(#{idNum},#{refresh},#{expiration})
 	</insert>
 	
 	

@@ -3,6 +3,7 @@ package com.sist.vo;
 import java.sql.Date;
 
 import lombok.Data;
+
 @Data
 public class MemberVO {
 private int idNum;
