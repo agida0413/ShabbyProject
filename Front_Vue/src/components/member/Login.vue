@@ -50,6 +50,7 @@
           size="large"
           variant="tonal"
           block
+          @click="login"
         >
           Log In
         </v-btn>
@@ -113,7 +114,7 @@
   <script>
     import FindIdComponent from "@/components/member/FindId.vue"
  import FindPwdComponent from "./FindPwd.vue";
-
+import axios from"axios"
     export default {
       data: () => ({
         visible: false,
@@ -147,7 +148,35 @@
        },
        openFindPwdDialog(){//비밀번호 찾기 모달값 true
         this.findPwdDialog=true
-       }
+       },
+       login(){
+        
+            const formdata = new FormData()
+
+            formdata.append('username',this.email)
+            formdata.append('password',this.password)
+              axios.post('/api/login',formdata).then((res)=>{
+               
+                const accessToken = res.headers['access'];
+                localStorage.setItem('access',accessToken)
+
+                const reqUrl=localStorage.getItem('requestUrl')
+                if(reqUrl===undefined || reqUrl==='' || reqUrl===null){
+                  this.$router.push('/');
+                }else{
+                  this.$router.push(reqUrl);
+                }
+             
+                
+              }).catch((err)=>{
+                console.log(err)
+                alert('로그인 실패')
+            })
+          
+            
+        
+    }
+
       }
     }
   </script>

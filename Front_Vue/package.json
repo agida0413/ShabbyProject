@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@mdi/font": "5.9.55",
+    "axios": "^1.7.4",
     "core-js": "^3.8.3",
     "roboto-fontface": "*",
     "vue": "^3.2.13",
@@ -41,7 +42,7 @@
       "parser": "@babel/eslint-parser"
     },
     "rules": {
-      "vue/multi-word-component-names" : 0
+      "vue/multi-word-component-names": 0
     }
   },
   "browserslist": [
