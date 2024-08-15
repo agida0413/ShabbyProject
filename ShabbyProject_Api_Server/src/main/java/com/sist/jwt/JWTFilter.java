@@ -33,7 +33,7 @@ public class JWTFilter extends OncePerRequestFilter{
     	
     	 String requestURI = request.getRequestURI();
     	
-    	  return requestURI.equals("/api/reissue");
+    	  return requestURI.equals("/api/reissue"); //재발급시에는 필터를 수행하지않음
 	}
 
 
@@ -56,11 +56,11 @@ public class JWTFilter extends OncePerRequestFilter{
     	    jwtUtil.isExpired(accessToken);
     	} catch (ExpiredJwtException e) {
     	
-    	    //response body
+    	  
     	    PrintWriter writer = response.getWriter();
     	    writer.print("access token expired");
     	 
-    	    //response status code
+    
 	  
   	    
 
@@ -73,7 +73,7 @@ public class JWTFilter extends OncePerRequestFilter{
 
     	if (!category.equals("access")) {
 
-    	    //response body
+    	
     	    PrintWriter writer = response.getWriter();
     	    writer.print("invalid access token");
 

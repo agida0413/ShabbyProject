@@ -14,7 +14,7 @@ import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
+//로그아웃 필터 
 public class CustomLogoutFilter extends GenericFilterBean {
 
     private final JWTUtil jwtUtil;
@@ -34,21 +34,24 @@ public class CustomLogoutFilter extends GenericFilterBean {
 
     private void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
 
-        //path and method verify
-        String requestUri = request.getRequestURI();
-        if (!requestUri.matches("^\\/logout$")) {
+        
+        String requestUri = request.getRequestURI();//요청의 request url 
+        
+        	//api 요청이 /api/logout 이 아닐경우 다음필터로 넘김 
+        if (!requestUri.matches("^\\/api/logout$")) {
 
             filterChain.doFilter(request, response);
             return;
         }
-        String requestMethod = request.getMethod();
+        String requestMethod = request.getMethod(); //post? get? put? 
+        
         if (!requestMethod.equals("POST")) {
-
+        		//만약 post 요청이 아닐경우 다음 필터로 넘김 
             filterChain.doFilter(request, response);
             return;
         }
 
-        //get refresh token
+        //쿠키에서 refresh토큰을 가져옴 
         String refresh = null;
         Cookie[] cookies = request.getCookies();
         for (Cookie cookie : cookies) {
@@ -59,19 +62,19 @@ public class CustomLogoutFilter extends GenericFilterBean {
             }
         }
 
-        //refresh null check
-        if (refresh == null) {
-
+        //만약 refresh토큰이 없을 경우 
+        if (refresh == null) { 
+        	//이미 로그아웃 상태거나 , 비정상 접근 400
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return;
         }
 
-        //expired check
+        //유효기간 검증 
         try {
             jwtUtil.isExpired(refresh);
         } catch (ExpiredJwtException e) {
-
-            //response status code
+        	
+            //만료됬을 경우 
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return;
         }
@@ -80,7 +83,7 @@ public class CustomLogoutFilter extends GenericFilterBean {
         String category = jwtUtil.getCategory(refresh);
         if (!category.equals("refresh")) {
 
-            //response status code
+           
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return;
         }
@@ -89,7 +92,7 @@ public class CustomLogoutFilter extends GenericFilterBean {
         Boolean isExist = refreshService.isExist(refresh);
         if (!isExist) {
 
-            //response status code
+           
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return;
         }

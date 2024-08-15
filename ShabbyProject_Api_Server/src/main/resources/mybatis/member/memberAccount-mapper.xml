@@ -6,26 +6,26 @@
  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
  
  <mapper namespace="com.sist.mapper.member.memberAccountMapper">
- 
+ <!-- 이메일을 통한 회원 검증 -->
 	<select id="findByUserEmail" parameterType="String" resultType="MemberVO">
 	 
 	Select * from member where email=#{email}
 	</select>
 	
 	
-	
+	<!--닉네임을 통한 회원검증(중복 닉네임)-->
 	<select id="findByUserNickname" parameterType="String" resultType="MemberVO">
 	 
 	Select * from member where nickname=#{nickname}
 	</select>
 	
+	<!--핸드폰 번호 중복검증-->
 	<select id="findByUserPhone" parameterType="String" resultType="MemberVO">
-
 	Select * from member where phone=#{phone}
 	</select>
 	
+	<!-- 회원가입-->
 	<insert id="join" parameterType="MemberVO">
-	
 	Insert into member (email,password,nickname,name,phone,profile,introduce,role)
 	values(#{email},#{password},#{nickname},#{name},#{phone},#{profile},#{introduce},#{role})
 	</insert>

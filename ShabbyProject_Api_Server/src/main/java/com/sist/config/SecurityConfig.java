@@ -78,32 +78,36 @@ public class SecurityConfig {
         })));
     	
     	http
-        .csrf((auth) -> auth.disable());
+        .csrf((auth) -> auth.disable()); //jwt 사용으로 인한 disable 
 
-http
-        .formLogin((auth) -> auth.disable());
-
-http
-        .httpBasic((auth) -> auth.disable());
-
-http
-        .authorizeHttpRequests((auth) -> auth
-                .requestMatchers("/api/login", "/", "/api/join","/api/reissue").permitAll()
-                .requestMatchers("/api/test").hasRole("ADMIN")
-                .anyRequest().authenticated());
+		http
+		        .formLogin((auth) -> auth.disable()); //jwt사용으로 인한 기본로그인폼  x
 		
-		//JWTFilter 등록
-http
-        .addFilterBefore(new JWTFilter(jwtUtil), LoginFilter.class);
+		http
+		        .httpBasic((auth) -> auth.disable());
+		
+		http
+		        .authorizeHttpRequests((auth) -> auth
+		                .requestMatchers("/api/login", "/", "/api/join","/api/reissue").permitAll() //로그인 ,회원가입 , 토큰 재발급 api는 권한 필요없음 
+		                .anyRequest().authenticated());
+				
+				
+		http
+		        .addFilterBefore(new JWTFilter(jwtUtil), LoginFilter.class);//JWTFilter 등록 = > 로그인 필터 전에 수행 
+		
+		
+		//  로그인필터를  UsernamePasswordAuthenticationFilter 위치에 
+		http
+		.addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil,refreshService), UsernamePasswordAuthenticationFilter.class);
+		
+		//커스텀한 로그아웃 필터를 등록 =>기존 필터위치에 
+		http
+		.addFilterBefore(new CustomLogoutFilter(jwtUtil, refreshService), LogoutFilter.class);
+		
+		http
+        .sessionManagement((session) -> session // 세션방식 미사용
+		.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
-
-http
-.addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil,refreshService), UsernamePasswordAuthenticationFilter.class);
-http.addFilterBefore(new CustomLogoutFilter(jwtUtil, refreshService), LogoutFilter.class);
-http
-        .sessionManagement((session) -> session
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-
-return http.build();
+			return http.build();
 }
 }

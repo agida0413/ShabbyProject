@@ -19,9 +19,8 @@ private final memberAccountRepository repository;
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 		// TODO Auto-generated method stub
 		
-		MemberVO vo=repository.findByUserEmail(email);
-		System.out.println(vo.getIdNum());
-		System.out.println(vo.getEmail());
+		MemberVO vo=repository.findByUserEmail(email);//이메일을 통한 회원 검증
+	
 		if(vo!=null) {
 
 			

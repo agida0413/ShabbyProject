@@ -22,7 +22,7 @@ public class CustomUserDetails implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
 
-        Collection<GrantedAuthority> collection = new ArrayList<>();
+        Collection<GrantedAuthority> collection = new ArrayList<>(); 
 
         collection.add(new GrantedAuthority() {
 
@@ -44,12 +44,12 @@ public class CustomUserDetails implements UserDetails {
     
     public int getIdNum()
     {
-    	return vo.getIdNum();
+    	return vo.getIdNum();//고유번호 리턴
     }
     @Override
     public String getUsername() {
-    	System.out.println(vo.getEmail());
-        return vo.getEmail();
+    
+        return vo.getEmail(); //이메일을 사용하니 이메일 리턴
     }
 
     @Override
