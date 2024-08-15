@@ -59,7 +59,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) {
 
     	CustomUserDetails userDetails= (CustomUserDetails)authentication.getPrincipal();
-    	int id_num =userDetails.getId_num();
+    	int id_num =userDetails.getIdNum();
     	
     	//다중토큰발급 시작
     	String email = authentication.getName();

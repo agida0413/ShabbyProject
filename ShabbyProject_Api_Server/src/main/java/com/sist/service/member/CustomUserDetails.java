@@ -42,9 +42,9 @@ public class CustomUserDetails implements UserDetails {
         return vo.getPassword();
     }
     
-    public int getId_num()
+    public int getIdNum()
     {
-    	return vo.getId_num();
+    	return vo.getIdNum();
     }
     @Override
     public String getUsername() {

@@ -5,7 +5,7 @@ import java.sql.Date;
 import lombok.Data;
 @Data
 public class MemberVO {
-private int id_num;
+private int idNum;
 private String email;
 private String nickname;
 private String password;
@@ -14,7 +14,7 @@ private String phone;
 private String profile;
 private String introduce;
 private String role;
-private Date create_date;
-private Date edit_date;
+private Date createDate;
+private Date editDate;
 private String  locked;
 }

@@ -5,11 +5,11 @@ import java.sql.Date;
 import lombok.Data;
 @Data
 public class PostVO {
-private int post_num;
-private int id_num;
+private int postNum;
+private int idNum;
 private String content;
-private Date create_date;
-private Date edit_date;
+private Date createDate;
+private Date editDate;
 private String canReply;
 private String onlyMe;
 

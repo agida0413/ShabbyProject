@@ -4,8 +4,8 @@ import lombok.Data;
 
 @Data
 public class TokenStoreVO {
-private int to_num;
-private int id_num;
+private int toNum;
+private int idNum;
 private String refresh;
 private String expiration;
 
