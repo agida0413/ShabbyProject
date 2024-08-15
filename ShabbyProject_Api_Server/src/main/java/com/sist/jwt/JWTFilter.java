@@ -62,9 +62,9 @@ public class JWTFilter extends OncePerRequestFilter{
     	 
     	    //response status code
 	  
-  	    response.setStatus(HttpServletResponse.SC_TEMPORARY_REDIRECT);
+  	    
 
-//    	    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+   	    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
     	    return;
     	}
 
