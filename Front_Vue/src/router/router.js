@@ -85,9 +85,9 @@ router.beforeEach((to, from, next) => {
     if (token) {
       next();
     } else {
-      // 토큰이 없으면 로그인 페이지로 리다이렉트
-      localStorage.setItem('requestUrl', to.fullPath);
-      next({ name: 'login' });
+      
+      localStorage.setItem('requestUrl', to.fullPath);// 이전요청을 localstorage에 저장함 - > 로그인성공시 해당요청으로 이동하기 위함
+      next({ name: 'login' });// 토큰이 없으면 로그인 페이지로 리다이렉트
     }
   } else {
     next();

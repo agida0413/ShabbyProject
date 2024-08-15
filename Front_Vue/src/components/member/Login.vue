@@ -155,16 +155,19 @@ import axios from"axios"
 
             formdata.append('username',this.email)
             formdata.append('password',this.password)
-              axios.post('/api/login',formdata).then((res)=>{
-               
-                const accessToken = res.headers['access'];
-                localStorage.setItem('access',accessToken)
+              axios.post('/api/login',formdata)
+              .then((res)=>{
+                     //로그인 성공시 
+                const accessToken = res.headers['access'];//  엑세스토큰을 읽어옴
+                localStorage.setItem('access',accessToken) //엑세스 토큰을 로컬에 저장
 
-                const reqUrl=localStorage.getItem('requestUrl')
-                if(reqUrl===undefined || reqUrl==='' || reqUrl===null){
+                const reqUrl=localStorage.getItem('requestUrl')//로그인 전 저장했던 이전요청 url을 가져옴
+
+                if(reqUrl===undefined || reqUrl==='' || reqUrl===null){ 
+                  //이전요청이 없다면 메인피드로 이동
                   this.$router.push('/');
                 }else{
-                  this.$router.push(reqUrl);
+                  this.$router.push(reqUrl); //이전요청이 있으면 이전요청으로 이동 
                 }
              
                 
