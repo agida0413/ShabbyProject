@@ -32,7 +32,7 @@
               <router-link to="/userfeed" class="router-link"><v-list-item prepend-icon="mdi-home" title="내 피드" value="home"></v-list-item></router-link>
               <v-list-item prepend-icon="mdi-heart-outline" title="활동" value="users"></v-list-item>
                 <v-list-item prepend-icon="mdi-wrench" title="설정" value="home" @click="settingDialogOpen()"></v-list-item>
-                <v-list-item prepend-icon="mdi-lock" title="로그아웃" value="users"></v-list-item>
+                <v-list-item prepend-icon="mdi-lock" title="로그아웃" value="users" @click="logout()"></v-list-item>
         </v-list>
       </v-navigation-drawer>
     
@@ -45,6 +45,7 @@
 <script>
   import PostInsert from "../feed/PostInsert.vue";
 import SettingComponent from "./Setting.vue"
+import axios from "axios"
 export default{
 
   data(){
@@ -70,6 +71,17 @@ export default{
     },
     postInsertDialogClose(){
       this.postInsertDialog=false
+    },
+    logout(){//로그아웃 진행 
+      axios.post('/api/logout')
+      
+      .then(()=>{
+          localStorage.removeItem('access')//엑세스 토큰 지움 
+          this.$router.push('/login');//로그인 페이지로 이동
+        })
+      .catch(()=>{
+        alert('잘못된 접근입니다.')
+      })
     }
   }
 }
