@@ -8,6 +8,7 @@ public class ShabbyProjectApiServerApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(ShabbyProjectApiServerApplication.class, args);
+		
 	}
 
 }

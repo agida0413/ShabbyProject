@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- 회원 로그인 / 회원가입 관리 매퍼-->
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+ <mapper namespace="com.sist.mapper.member.jwtStoreMapper">
+    
+	<select id="findRefresh" parameterType="String" resultType="int">
+	Select count(*) from token_store where refresh=#{refresh}
+	
+	</select>
+		
+	<select id="findId_num" parameterType="String" resultType="int">
+	SELECT id_num from member where email=#{email}
+	</select>	
+	<delete id="deleteRefresh" parameterType="String">
+	delete from token_store where refresh=#{refresh}
+	</delete>
+	
+	<insert id="save" parameterType="TokenStoreVO">
+	Insert into token_store (id_num,refresh,expiration)
+	values(#{id_num},#{refresh},#{expiration})
+	</insert>
+	
+	
+	
+ </mapper>
