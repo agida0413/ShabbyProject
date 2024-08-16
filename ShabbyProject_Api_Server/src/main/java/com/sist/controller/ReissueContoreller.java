@@ -15,7 +15,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
-public class TestContoreller {
+public class ReissueContoreller {
 
 	private final RefreshService service;
 	

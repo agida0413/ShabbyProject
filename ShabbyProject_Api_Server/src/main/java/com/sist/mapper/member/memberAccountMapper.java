@@ -2,6 +2,7 @@ package com.sist.mapper.member;
 
 import org.apache.ibatis.annotations.Mapper;
 
+import com.sist.vo.EmailAuthVO;
 import com.sist.vo.MemberVO;
 
 @Mapper
@@ -11,5 +12,7 @@ public interface memberAccountMapper {
 	public MemberVO findByUserNickname(String nickname);
 	public MemberVO findByUserPhone(String phone);
 	public void join (MemberVO vo);
-	
+	public void emailAuthSave(EmailAuthVO vo);
+	public EmailAuthVO emailAuthGetValidation(EmailAuthVO vo);
+	public void emailAuthClear(int emailAuthNum);
 }

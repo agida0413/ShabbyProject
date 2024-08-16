@@ -18,6 +18,7 @@ import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
+import com.sist.common.SimpleCodeGet;
 import com.sist.jwt.CustomLogoutFilter;
 import com.sist.jwt.JWTFilter;
 import com.sist.jwt.JWTUtil;
@@ -35,11 +36,13 @@ public class SecurityConfig {
 		private final JWTUtil jwtUtil;
 		
 		private RefreshService refreshService;
-    public SecurityConfig(AuthenticationConfiguration authenticationConfiguration, JWTUtil jwtUtil,RefreshService refreshService) {
+		private final SimpleCodeGet simpleCodeGet;
+    public SecurityConfig(AuthenticationConfiguration authenticationConfiguration, JWTUtil jwtUtil,RefreshService refreshService,SimpleCodeGet simpleCodeGet) {
 
         this.authenticationConfiguration = authenticationConfiguration;
 				this.jwtUtil = jwtUtil;
 				this.refreshService=refreshService;
+				this.simpleCodeGet=simpleCodeGet;
     }
    
 		@Bean
@@ -88,7 +91,7 @@ public class SecurityConfig {
 		
 		http
 		        .authorizeHttpRequests((auth) -> auth
-		                .requestMatchers("/api/login", "/", "/api/join","/api/reissue").permitAll() //로그인 ,회원가입 , 토큰 재발급 api는 권한 필요없음 
+		                .requestMatchers("/api/login", "/api/join","/api/reissue","/api/members/emailAuth","/api/members/emailValidation").permitAll() //로그인 ,회원가입 , 토큰 재발급,이메일인증 api는 권한 필요없음 
 		                .anyRequest().authenticated());
 				
 				
@@ -98,7 +101,7 @@ public class SecurityConfig {
 		
 		//  로그인필터를  UsernamePasswordAuthenticationFilter 위치에 
 		http
-		.addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil,refreshService), UsernamePasswordAuthenticationFilter.class);
+		.addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil,refreshService,simpleCodeGet), UsernamePasswordAuthenticationFilter.class);
 		
 		//커스텀한 로그아웃 필터를 등록 =>기존 필터위치에 
 		http

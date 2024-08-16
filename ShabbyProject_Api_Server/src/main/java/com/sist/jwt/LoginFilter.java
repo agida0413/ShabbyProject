@@ -15,6 +15,7 @@ import org.springframework.security.core.context.SecurityContextHolder;import or
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.util.StreamUtils;
 
+import com.sist.common.SimpleCodeGet;
 import com.sist.repository.member.memberAccountRepository;
 import com.sist.service.member.CustomUserDetails;
 import com.sist.service.member.RefreshService;
@@ -30,13 +31,14 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     private final AuthenticationManager authenticationManager;
     private final JWTUtil jwtUtil;
     private final RefreshService refreshService;
+    private final SimpleCodeGet simpleCodeGet;
     
-    
-    public LoginFilter(AuthenticationManager authenticationManager, JWTUtil jwtUtil,RefreshService refreshService) {
+    public LoginFilter(AuthenticationManager authenticationManager, JWTUtil jwtUtil,RefreshService refreshService,SimpleCodeGet simpleCodeGet) {
 
         this.authenticationManager = authenticationManager;
         this.jwtUtil = jwtUtil;
         this.refreshService=refreshService;
+        this.simpleCodeGet=simpleCodeGet;
     
         setFilterProcessesUrl("/api/login");//로그인 api url
     }
@@ -78,8 +80,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
         
         //refresh토큰 저장
-        CustomUserDetails userDetails= (CustomUserDetails)authentication.getPrincipal();
-    	int idNum =userDetails.getIdNum();
+        int idNum=simpleCodeGet.getIdNum(authentication);
         refreshService.addRefreshEntity(idNum, refresh, 86400000L);
         
         //응답 설정

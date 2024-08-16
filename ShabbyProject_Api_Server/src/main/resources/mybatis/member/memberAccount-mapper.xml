@@ -30,6 +30,30 @@
 	values(#{email},#{password},#{nickname},#{name},#{phone},#{profile},#{introduce},#{role})
 	</insert>
 	
+	<!-- 이메일 인증이력 저장 -->
+	<insert id="emailAuthSave" parameterType="EmailAuthVO">
+	Insert Into email_auth (email,code,expiration,isauth)
+	values(#{email},#{code},#{expiration},isauth)
+	</insert>
 	
+	<!--이메일 인증시 코드검증 셀렉트 여러 정보가 있을 수 있으니 가장최신것을 가져옴 -->
+	<select id="emailAuthGetValidation" parameterType="EmailAuthVO" resultType="EmailAuthVO">
+		SELECT * 
+		FROM EMAIL_AUTH
+		WHERE EMAIL = #{email}
+		AND EMAILAUTH_NUM = (
+	    SELECT MAX(EMAILAUTH_NUM)
+		FROM EMAIL_AUTH
+		WHERE EMAIL = #{email}
+		 )
+		AND CODE = #{code};
+	</select>
+	<!--이메일 인증 성공시 해당 로우 인증완료로 상태 업데이트-->
+	<update id="emailAuthClear" parameterType="int">
+		update email_auth set
+		isauth='Y'
+		WHERE emailauth_num=#{emailauthNum}
+		
+	</update>
 	
  </mapper>
