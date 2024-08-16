@@ -14,7 +14,7 @@
       max-width="448"
       rounded="lg"
     >
-      <v-form ref="formD" @submit.prevent="login">
+      
         <div class="text-subtitle-1 text-medium-emphasis">Email</div>
 
         <v-text-field
@@ -56,7 +56,7 @@
         >
           Log In
         </v-btn>
-      </v-form>
+ 
 
       <v-card-text class="text-center">
         <!--아이디 찾기 모달 true 버튼-->
