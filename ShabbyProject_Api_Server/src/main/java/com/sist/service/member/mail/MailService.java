@@ -27,7 +27,7 @@ public class MailService {
 	private static final int CODE_LENGTH = 6;
 	private final JavaMailSender javaMailSender;
 	private final memberAccountRepository memberAccountRepository;
-	private final BCryptPasswordEncoder byBCryptPasswordEncoder;
+	private final BCryptPasswordEncoder bCryptPasswordEncoder;
 	
 	//이메일 중복검증 및 발송
 	@Transactional
@@ -41,25 +41,25 @@ public class MailService {
 		
 		try {
 			
-			MimeMessage message= javaMailSender.createMimeMessage(); //메일링 객체 생성 
-			MimeMessageHelper mimeMessageHelper= new MimeMessageHelper(message,true);
+				MimeMessage message= javaMailSender.createMimeMessage(); //메일링 객체 생성 
+				MimeMessageHelper mimeMessageHelper= new MimeMessageHelper(message,true);
+				
+				String certificationNumber=generateRandomCode(); //랜덤 인증번호 생성 
 			
-			String certificationNumber=generateRandomCode(); //랜덤 인증번호 생성 
-			
-			   EmailAuthVO authVo = new EmailAuthVO(); //이메일 정보 엔티티 
+			    EmailAuthVO authVo = new EmailAuthVO(); //이메일 정보 엔티티 
 		        authVo.setEmail(email);// 매개변수로 받은 이메일 세팅
 		    
-		        authVo.setCode(certificationNumber);// 생성된 인증번호 
+		        authVo.setCode(bCryptPasswordEncoder.encode(certificationNumber));// 생성된 인증번호 
 		        authVo.setExpiration(LocalDateTime.now().plusMinutes(3)); // 인증시간 3분 
 		        
 		        memberAccountRepository.emailAuthSave(authVo); //데이터베이스에 인증코드와 정보 저장 
 		        
-			String htmlContent= getCertificationMessage(certificationNumber); // 이메일로 보낼 html 
-			
-			mimeMessageHelper.setTo(email);//보낼 상대 
-			mimeMessageHelper.setSubject("[Shabby] 회원가입 인증코드입니다."); //제목 
-			mimeMessageHelper.setText(htmlContent,true);
-			javaMailSender.send(message);//전송 
+				String htmlContent= getCertificationMessage(certificationNumber); // 이메일로 보낼 html 
+				
+				mimeMessageHelper.setTo(email);//보낼 상대 
+				mimeMessageHelper.setSubject("[Shabby] 회원가입 인증코드입니다."); //제목 
+				mimeMessageHelper.setText(htmlContent,true);
+				javaMailSender.send(message);//전송 
 			
 		} catch (MessagingException e) {
 				// TODO Auto-generated catch block
@@ -76,29 +76,31 @@ public class MailService {
 	@Transactional
 	public ResponseEntity<?> emailAuthValidation(String email, String code){
 		
-	EmailAuthVO vo = new EmailAuthVO();
-	vo.setEmail(email);
+	
 
-	vo.setCode(code);
 	
-	EmailAuthVO valiVO=memberAccountRepository.emailAuthGetValidation(vo);// 전달받은 이메일과, 인증코드를 바탕으로 데이터베이스의 최신row를 찾음 
+	EmailAuthVO validationVO=memberAccountRepository.emailAuthGetValidation(email);// 전달받은 이메일을 바탕으로 데이터베이스의 최신row를 찾음 
 	
-	if(valiVO==null) {
-		//정보가없을 시 
+	
+	if(!bCryptPasswordEncoder.matches(code, validationVO.getCode())) {
+		//인증코드가 틀린경우
 		return new ResponseEntity<>("not auth",HttpStatus.BAD_REQUEST);//400 응답코드 
 	}
 	
+	
 	 LocalDateTime now = LocalDateTime.now();//현재시간 
 	 
-	 if(now.isAfter(valiVO.getExpiration())) {
+	 
+	 if(now.isAfter(validationVO.getExpiration())) {
 		 //인증시간이 만료되었을 경우 
 		 return new ResponseEntity<>("expiration done",HttpStatus.UNPROCESSABLE_ENTITY);//422 응답코드
 	 }
 	 
-	 memberAccountRepository.emailAuthClear(valiVO.getEmailAuthNum());// 데이터베이스 row에 인증이 완료되었음을 update함 
+	 memberAccountRepository.emailAuthClear(validationVO.getEmailAuthNum());// 데이터베이스 row에 인증이 완료되었음을 update함 
 		
 	 
 	 return new ResponseEntity<>("OK",HttpStatus.OK);
+	 
 	}
 	
 	//인증코드를 받아 html을 생성함 

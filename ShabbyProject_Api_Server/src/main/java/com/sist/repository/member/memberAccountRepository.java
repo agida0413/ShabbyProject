@@ -40,9 +40,9 @@ private final memberAccountMapper mapper;
 		mapper.emailAuthSave(vo);
 	}
 	//저장된 인정코드 검증 
-	public EmailAuthVO emailAuthGetValidation(EmailAuthVO vo) {
+	public EmailAuthVO emailAuthGetValidation(String email) {
 		
-		return mapper.emailAuthGetValidation(vo);
+		return mapper.emailAuthGetValidation(email);
 	}
 	
 	//인증상태 y 로 업데이트

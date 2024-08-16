@@ -13,6 +13,6 @@ public interface memberAccountMapper {
 	public MemberVO findByUserPhone(String phone);
 	public void join (MemberVO vo);
 	public void emailAuthSave(EmailAuthVO vo);
-	public EmailAuthVO emailAuthGetValidation(EmailAuthVO vo);
+	public EmailAuthVO emailAuthGetValidation(String email);
 	public void emailAuthClear(int emailAuthNum);
 }
