@@ -96,7 +96,7 @@
 <script>
 import FindIdComponent from "@/components/member/FindId.vue"
 import FindPwdComponent from "./FindPwd.vue";
-import axios from "axios";
+import api from "@/api"
 
 export default {
   data: () => ({
@@ -115,8 +115,8 @@ export default {
     ],
     emailErrors: [],
     passwordErrors: [],
-    findIdDialog: false,
-    findPwdDialog: false
+    findIdDialog: false, // 아이디 찾기 모달 
+    findPwdDialog: false// 비밀번호 찾기 모달 
   }),
   components: {
     FindIdComponent,
@@ -129,20 +129,20 @@ export default {
         .map(rule => rule(value))
         .filter(error => typeof error === 'string');
     },
-    closeFindIdDialog() {
+    closeFindIdDialog() { // 아이디 찾기 모달 닫음
       this.findIdDialog = false;
     },
-    openFindIdDialog() {
+    openFindIdDialog() {// 아이디 찾기 모달 열음
       this.findIdDialog = true;
     },
-    closeFindPwdDialog() {
+    closeFindPwdDialog() {// 비밀번호  찾기 모달 닫음
       this.findPwdDialog = false;
     },
-    openFindPwdDialog() {
+    openFindPwdDialog() { // 비밀번호 찾기 모달 열음 
       this.findPwdDialog = true;
-    },
-    login() {
-      // Validate email and password
+    }, 
+    login() { //로그인 시도
+      
       this.emailErrors = this.validateField(this.email, this.emailRules); //이메일 검증 에러메시지 배열
       this.passwordErrors = this.validateField(this.password, this.passwordRules);//비밀번호 검증 에러메시지 배열
  
@@ -157,22 +157,34 @@ export default {
       formdata.append('username', this.email);
       formdata.append('password', this.password);
 
-      axios.post('/api/login', formdata)
-        .then((res) => {
-          const accessToken = res.headers['access'];//헤더에 엑세스토큰 저장 
-          localStorage.setItem('access', accessToken); 
+      api.post('/login', formdata)
+        .then((res) => { 
+          
+          //성공했을시 
+          if(res.status===200){
+                const accessToken = res.headers['access'];//헤더에 엑세스토큰 저장 
+                localStorage.setItem('access', accessToken); 
 
-          const reqUrl = localStorage.getItem('requestUrl'); //로컬스토리지에 있는 이전요청 url 가져옴 
+                const reqUrl = localStorage.getItem('requestUrl'); //로컬스토리지에 있는 이전요청 url 가져옴 
 
-          if (!reqUrl) {//만약 이전요청이 없다면 /로 푸시
-            this.$router.push('/');
-          } else {
-            this.$router.push(reqUrl);//있다면 이전요청으로 이동 
-          }
+                if (!reqUrl) {//만약 이전요청이 없다면 /로 푸시
+                  this.$router.push('/');
+                } else {
+                this.$router.push(reqUrl);//있다면 이전요청으로 이동 
+              }
+          }else{
+            throw new Error("something err");
+            
+          }          
         })
         .catch((err) => {
-          console.log(err);
-          alert('입력정보를 확인해 주세요.'); //로그인 일치정보가 없을시 
+
+          if(err.response.status===400){
+            alert('입력정보를 확인해 주세요.'); //로그인 일치정보가 없을시 
+          }else{
+            alert('예기치 못한 오류가 발생했습니다. 잠시 뒤에 이용해주세요.')
+          }
+        
         });
     }
   }

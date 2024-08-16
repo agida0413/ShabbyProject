@@ -127,6 +127,7 @@
         <!--중복 검증버튼-->
         <v-col cols="4">
                     <v-btn
+                    v-show="!isNickNameClear"
                       height="40"
                       min-width="50"
                       color="blue"
@@ -221,7 +222,7 @@
               
               
                 required
-                maxlength="4" 
+              
                 ></v-select>
             </v-col>
 
@@ -233,10 +234,11 @@
                 density="compact"
                 variant="outlined"
                 v-model="middlePhoneNum"
-                :rules="phoneRules"
+              
                 required
-                :error-messages="phoneErrors"
+        
                 maxlength="4" 
+             
           ></v-text-field>
 
     </v-col>
@@ -248,10 +250,10 @@
           density="compact"
           variant="outlined"
           v-model="lastPhoneNum"
-          :rules="phoneRules"
-          required
-          :error-messages="phoneErrors"
          
+          required
+         
+          maxlength="4" 
    
         ></v-text-field>
 
@@ -268,6 +270,7 @@
           variant="filled"
           auto-grow
           shaped
+          v-model="introduce"
         ></v-textarea>
         </v-row>
     <!--회원가입 버튼-->
@@ -277,6 +280,7 @@
           size="large"
           variant="tonal"
           block
+          @click="submitJoin()"
         >
          회원가입
         </v-btn>
@@ -295,7 +299,7 @@
 
 
   <script>
-   import axios from 'axios';
+   import api from "@/api"
 
     export default {
     data(){
@@ -312,6 +316,7 @@
               code:'',//인증코드에 관한 변수 
               nickName:'',//사용할 닉네임 
               name:'',//실명 
+              introduce:'',//자기소개
 
               showAuthCode:false, // 이메일 인증코드 전송시 인증코드입력 필드 노출에 관한 변수 
               isEmailReadonly:false, //이메일 전송이 완료되었으면 이메일 정보를 수정할 수 없게함 
@@ -363,28 +368,41 @@
               v => v.trim().length > 0 || '이름은 공백을 포함할 수 없습니다.', // 공백이 포함된 경우
               v => !/\s/.test(v) || '공백을 사용할 수 없습니다.', // 공백 불가
               ],
-              phoneRules:[
-              v => !!v || '핸드폰 번호를 입력해주세요.', // 핸드폰 번호를 입력하지 않았을때 
-              v => v.trim().length > 0 || '핸드폰번호는 공백을 포함할 수 없습니다.', // 공백이 포함된 경우
-              v => !/\s/.test(v) || '공백을 사용할 수 없습니다.', // 공백 불가
-              v => v.length === 4 || '잘못된 전화번호 형식입니다.', // 각 핸드폰 번호 길이가  4자 길이인지 확인
-              ],
 
+              // 에러 모음 배열들  = >검증할때마다 저장해서 배열의 길이를 확인할 것이다.
               nameErrors:[],
               nickNameErrors:[],
               codeErrors:[],
               emailErrors: [],
               passwordErrors: [],
               PasswordValidationErrors:[],
-              phoneErrors:[]
+              
                 }
          
+      },
+      computed:{
+        fullPhoneNumber() {
+      // 핸드폰 번호를 통합하여 검증할 수 있도록 문자열을 형성
+      return `${this.firstPhoneNum}-${this.middlePhoneNum}-${this.lastPhoneNum}`;
+    }
       },
       methods:{
         validateField(value, rules) { //rules 에러를 저장 
           return rules
             .map(rule => rule(value))
             .filter(error => typeof error === 'string');
+        },
+        
+        showAlert(message) { //회원가입 메시지를 띄우기 위해서 비동기처리를 위한 메시지 메소드
+          return new Promise((resolve) => {
+            alert(message);
+            resolve();
+          });
+        },
+      
+        validatePhoneNumber() {
+          // 통합된 핸드폰 번호를 검증
+          this.phoneErrors = this.validateField(this.fullPhoneNumber, this.phoneRules);
         },
         AuthCodeOpen(){ //인증코드 필드 노출 
           this.showAuthCode=true
@@ -403,7 +421,7 @@
           let formData = new FormData();
           formData.append('email',this.email)
 
-          axios.post('/api/members/emailAuth',formData)
+          api.post('/members/emailAuth',formData)
           .then(()=>{
             this.AuthCodeOpen()//인증코드 필드 노출 
             this.isEmailReadonly=true//이메일 정보 수정 불가 
@@ -414,9 +432,12 @@
             if(err.response.status===400){//400일시 중복이메일 
               alert('이미 사용중인 이메일입니다.')
             }
-            if(err.response.status===404){//404일시 기타오류 
+            else if(err.response.status===404){//404일시 기타오류 
               alert('잘못된 이메일 형식이거나 , 잘못된 입력입니다.')
             }
+            else{
+                    alert('예기치 못한 오류가 발생했습니다. 잠시 뒤 이용해주세요.')
+                  }
           })
         },
         //이메일 인증코드 검증 
@@ -432,7 +453,7 @@
           formData.append('email',this.email)
           formData.append('code',this.code)//이메일 정보수정을 못하게 하였으므로 현재 email값을 가져올 수 있음 
 
-          axios.post('/api/members/emailValidation',formData)
+          api.post('/members/emailValidate',formData)
           .then(()=>{
             this.AuthCodeClose();// 인증코드 필드 닫음
             this.isEmailAuthClear=true; //이메일 검증완료
@@ -449,15 +470,108 @@
         },
         nickNameValidation(){
           this.nickNameErrors = this.validateField(this.nickName, this.nickNameRules); //닉네임 검증 에러메시지 배열
-          if (this.codeErrors.length > 0 ) { //만약 닉네임 검증에러가 있을 시   return
+          
+          if (this.nickNameErrors.length > 0 ) { //만약 닉네임 검증에러가 있을 시   return
+          
+            return;//불필요한 axios 요청 방지 
+         
+                }
+                let formData = new FormData();
+                formData.append('nickName',this.nickName)
+                api.post('/members/nickValidate',formData)
+                .then((res)=>{
+                  if(res.status===200){
+                    alert('사용가능한 닉네임입니다.')
+                    this.isNickNameClear =true; //닉네임 중복검증 완료 
+                    this.isNickNameReadonly=true;//검증이 완료 되면 닉네임 수정불가
+                  }else{
+                    throw new Error("something");
+                    
+                  }
+                })
+                .catch((err)=>{
+                  if(err.response.status===400){
+                    alert('이미존재하는 닉네임입니다.')
+                  }
+                  else{
+                    alert('예기치 못한 오류가 발생했습니다. 잠시 뒤 이용해주세요.')
+                  }
+                })
+
             
+        },
+        submitJoin(){
+          if(!this.isEmailAuthClear){ //이메일 인증을 아직진행하지않았을때 리턴 
+            alert('이메일 인증을 진행해주세요.')
+            return
+          }
+          if(!this.isNickNameClear){ //닉네임 중복검사를 진행하지않았을때 
+            alert('닉네임 중복확인을 진행해주세요.')
+            return
+          }
+
+          this.nameErrors = this.validateField(this.name, this.nameRules); //이름검증
+          this.passwordErrors=this.validateField(this.password,this.passwordRules);//패스워드가 사용가능한지 
+          this.PasswordValidationErrors=this.validateField(this.PasswordValidation,this.PasswordValidationRules);//비밀번호 확인검증 
+          if (this.nameErrors.length > 0 || this.passwordErrors.length>0 ||this.PasswordValidationErrors.length>0 ) { //이중 하나라도 충족하지않으면 리턴 
+        
             return;//불필요한 axios 요청 방지  
                 }
 
+                //핸드폰번호 입력과 관련된 검증
+               const fullPhone=(this.firstPhoneNum+this.middlePhoneNum+this.lastPhoneNum); 
+               if (fullPhone.length !== 11) {
+                  alert('핸드폰 번호는 11자리여야 합니다.');
+                  return;
+                }
 
+                // 한글 포함 여부 검증
+                if (/[가-힣]/.test(fullPhone)) {
+                  alert('핸드폰 번호에 한글이 포함될 수 없습니다.');
+                  return;
+                }
 
-              this.isNickNameClear =true; //닉네임 중복검증 완료 
-              this.isNickNameReadonly=true;//검증이 완료 되면 닉네임 수정불가
+                // 공백 포함 여부 검증
+                if (/\s/.test(fullPhone)) {
+                  alert('핸드폰 번호에 공백이 포함될 수 없습니다.');
+                  return;
+                }
+
+                // 숫자 이외의 문자 포함 여부 검증
+                if (!/^\d+$/.test(fullPhone)) {
+                  alert('핸드폰 번호는 숫자만 포함해야 합니다.');
+                  return;
+                }
+
+               //회원가입에 필요한 정보
+                const formdata=new FormData();
+                formdata.append('email',this.email)
+                formdata.append('password',this.password)
+                formdata.append('nickname',this.nickName)
+                formdata.append('name',this.name)
+                formdata.append('phone',this.fullPhone)
+                formdata.append('introduce',this.introduce)
+
+                api.post("/members", formdata) //api 호출 
+                .then(async (res) => {//async / await 활용 
+                  if (res.status === 200) { 
+                    // showAlert 메서드로 alert을 먼저 띄우고 라우터로 푸시하도록 
+                    await this.showAlert('회원가입이 완료되었습니다. 환영합니다!!!');
+                    // alert이 닫힌 후 router.push 호출
+                    this.$router.push('/login');
+                  } else {
+                    throw new Error("something err");
+                  }
+                })
+                .catch((err) => {
+                  if (err.response && err.response.status === 500) {
+                    alert('서버 내부 오류입니다. 잠시 뒤 이용해 주세요.');
+                  } else {
+                    alert('예기치 못한 오류가 발생했습니다. 잠시 뒤 이용해주세요.');
+                  }
+                });
+
+                
         }
       }
     }

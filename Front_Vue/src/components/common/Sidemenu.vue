@@ -45,7 +45,7 @@
 <script>
   import PostInsert from "../feed/PostInsert.vue";
 import SettingComponent from "./Setting.vue"
-import axios from "axios"
+import api from "@/api"
 export default{
 
   data(){
@@ -73,7 +73,7 @@ export default{
       this.postInsertDialog=false
     },
     logout(){//로그아웃 진행 
-      axios.post('/api/logout')
+      api.post('/logout')
       
       .then(()=>{
           localStorage.removeItem('access')//엑세스 토큰 지움 
