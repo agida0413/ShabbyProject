@@ -64,7 +64,7 @@
           class="text-caption text-decoration-none text-blue"
           @click="openFindIdDialog"
         >
-          아이디를 잊으셨나요?
+          이메일을 잊으셨나요?
         </button>
 
         &nbsp;&nbsp;&nbsp;/ &nbsp;&nbsp;&nbsp;
