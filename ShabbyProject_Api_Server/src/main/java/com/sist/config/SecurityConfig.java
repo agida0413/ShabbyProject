@@ -23,7 +23,7 @@ import com.sist.jwt.CustomLogoutFilter;
 import com.sist.jwt.JWTFilter;
 import com.sist.jwt.JWTUtil;
 import com.sist.jwt.LoginFilter;
-import com.sist.service.member.RefreshService;
+import com.sist.service.member.security.RefreshService;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -93,7 +93,8 @@ public class SecurityConfig {
 		        .authorizeHttpRequests((auth) -> auth
 		                .requestMatchers("/api/login", "/api/join","/api/reissue",
 		                		"/api/members/emailAuth","/api/members/emailValidate"
-		                		,"api/members/nickValidate","/api/members").permitAll() //로그인 ,회원가입 , 토큰 재발급,이메일인증 api는 권한 필요없음 
+		                		,"api/members/nickValidate","/api/members","/api/members/findEmail"
+		                		,"/api/members/findPassword").permitAll() //로그인 ,회원가입 , 토큰 재발급,이메일인증 api는 권한 필요없음 
 		                .anyRequest().authenticated());
 				
 				

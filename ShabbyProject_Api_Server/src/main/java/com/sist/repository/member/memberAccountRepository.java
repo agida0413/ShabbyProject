@@ -49,4 +49,15 @@ private final memberAccountMapper mapper;
 	public void emailAuthClear(int emailAuthNum) {
 		mapper.emailAuthClear(emailAuthNum);
 	}
+	
+	//아이디 찾기 
+	public MemberVO findEmail(MemberVO vo) {
+	return	mapper.findEmail(vo);
+	}
+	
+	
+	//임시패스워드발급 = > 데이터베이스 저장 
+	public void tempPasswordUpdate(MemberVO vo) {
+		mapper.tempPasswordUpdate(vo);
+	}
 }

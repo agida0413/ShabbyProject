@@ -3,7 +3,7 @@ package com.sist.common;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
-import com.sist.service.member.CustomUserDetails;
+import com.sist.service.member.security.CustomUserDetails;
 
 import lombok.RequiredArgsConstructor;
 

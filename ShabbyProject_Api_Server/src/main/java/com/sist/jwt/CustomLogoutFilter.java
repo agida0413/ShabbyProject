@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import org.springframework.web.filter.GenericFilterBean;
 
-import com.sist.service.member.RefreshService;
+import com.sist.service.member.security.RefreshService;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
