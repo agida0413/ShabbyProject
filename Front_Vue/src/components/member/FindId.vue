@@ -4,14 +4,29 @@
    
    <v-dialog v-model="localDialog"  max-width="500" >
 
-    <v-card 
+    <v-card  
         prepend-icon="mdi-account"
-        title="아이디 찾기"
+        title="이메일 찾기"
         class="pa-3"
         
       >
       <v-divider></v-divider>
-           <v-card-text class="mt-6">
+    <v-card-text class="mt-6" v-show="isAuth" >
+      <table width="400px" style="border:1px #D3D3D3 solid;">
+        <tr >
+          <th style="border-bottom: 1px #D3D3D3 solid;">이메일</th>
+          <th style="border-bottom: 1px #D3D3D3 solid;">생성일 </th>
+        </tr>
+        
+        <tr class="text-center" >
+          <td><span style="font-weight: bold; "> {{ findEmail }} </span></td>
+          <td><span style=" opacity: 0.7; ">{{ findCreateDate }}</span></td>
+        </tr>
+      </table>
+
+ 
+    </v-card-text>
+           <v-card-text class="mt-6" v-show="!isAuth">
 
               <div class="text-subtitle-1 text-medium-emphasis">닉네임
                 
@@ -26,9 +41,11 @@
                               placeholder="닉네임"
                                prepend-inner-icon="mdi-account"
                               variant="outlined"
-                              v-model="email"
-                              :rules="emailRules"
-                              
+                              v-model="nickname"
+                         
+                              :rules="nickNameRules"
+                              required
+                              :error-messages="nickNameErrors"
                             ></v-text-field>
 
                       </v-col>
@@ -43,14 +60,16 @@
             <v-col cols="7">
                   <v-text-field
             
-                  
+                  :rules="nameRules"
+                   required
+                  :error-messages="nameErrors"
                     density="compact"
                     placeholder="이름"
                     prepend-inner-icon="mdi-account"
                     variant="outlined"
                 
-                    v-model="password"
-                    :rules="passwordRules"
+                    v-model="name"
+                   
                   ></v-text-field>
              </v-col>
          </v-row>
@@ -69,7 +88,7 @@
                 
                   variant="outlined"
                   v-model="firstPhoneNum"
-                :items="items"
+                  :items="items"
               
               
                 required
@@ -83,8 +102,8 @@
                 
                   type="text"
                   density="compact"
-                
-              
+                  maxlength="4" 
+                  v-model="middlePhoneNum"
                   variant="outlined"
                   
                 
@@ -95,10 +114,11 @@
 
               <v-col cols="4">
                   <v-text-field
+                  maxlength="4" 
                     type="text"
                     density="compact"
                      variant="outlined"
-                  
+                      v-model="lastPhoneNum"
                   ></v-text-field>
 
               </v-col>
@@ -119,10 +139,11 @@
           </v-btn>
 
           <v-btn
+          v-show="!isAuth"
             color="primary"
             text="Submit"
             variant="tonal"
-            @click=closeDialog()
+            @click=sumbmitFindId()
           ></v-btn>
         </v-card-actions>
       </v-card>
@@ -130,6 +151,7 @@
   </template>
   
   <script>
+  import api from '@/api';
   export default {
     name: 'FindIdComponent',
   
@@ -143,8 +165,38 @@
 },data(){
     return{
         items:['010','011','016','017','019'],// 우리나라 앞번호 종류 리스트 
-        firstPhoneNum:'010' // 초기값 010 
-    }
+        firstPhoneNum:'010', // 초기값 010 
+        middlePhoneNum:'',//두번째 핸드폰 번호값
+        lastPhoneNum:'',//마지막 핸드폰 번호값
+        name:'',//이름
+        nickname:'',//닉네임
+        findEmail:'',//찾은 이메일
+        findCreateDate:'',
+        isAuth: false, //정보를 입력한값이 true이면 찾은아이디 목록을 보여주기 위해 아이디 찾기 정보 입력폼을 숨기고
+                       // 아이디를 보여주기 위함이다.
+
+
+        //룰
+         nickNameRules:[
+         v => !!v || '닉네임을 입력해 주세요.', // 닉네임이 입력되지 않았을 경우
+         v => v.trim().length > 0 || '닉네임은 공백을 포함할 수 없습니다.', // 공백이 포함된 경우
+         v => !/\s/.test(v) || '공백을 사용할 수 없습니다.', // 공백 불가
+        //  v => !/[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/.test(v) || '닉네임에는 한글을 사용할 수 없습니다.', // 한글 사용 금지 = > 아이디 찾기에서는 비활성화
+        //  v => /^[a-zA-Z0-9_ ]+$/.test(v) || '닉네임에는 _를 제외한 특수문자를 사용할 수 없습니다.', // 특수문자 검증 아이디 찾기에서는 비활성화 
+        //  v => v.length <= 15 || '닉네임은 최대 15자까지 입력할 수 있습니다.', // 최대 길이 검증  아이디 찾기에서는 비활성화 
+            
+                       ],
+        nameRules:[
+        v => !!v || '이름을 입력해 주세요.', // 닉네임이 입력되지 않았을 경우
+        v => v.trim().length > 0 || '이름은 공백을 포함할 수 없습니다.', // 공백이 포함된 경우
+        v => !/\s/.test(v) || '공백을 사용할 수 없습니다.', // 공백 불가
+                  ],  
+
+
+                //에러모음
+                  nameErrors:[],
+                  nickNameErrors:[],
+      }
 }
  ,computed:{
     localDialog:{
@@ -155,8 +207,82 @@
  }   
     ,
     methods: {
+      validateField(value, rules) { //rules 에러를 저장 
+          return rules
+            .map(rule => rule(value))
+            .filter(error => typeof error === 'string');
+        },
       closeDialog() {
+        this.isAuth=false;//다시 로그인찾기를 해도 처음부터 입력할수 있도록  초기값 설정 
+        this.nickname='';
+        this.name='';
+        this.firstPhoneNum='010'
+        this.middlePhoneNum=''
+        this.lastPhoneNum=''
         this.$emit('findIdClose');// 로그인 컴포넌트로 닫는 이벤트 전송
+      
+      },
+      sumbmitFindId(){
+        this.nameErrors = this.validateField(this.name, this.nameRules); //이름검증
+        this.nickNameErrorsnameErrors = this.validateField(this.nickname, this.nickNameRules); //닉네임검증
+
+        if (this.nameErrors.length > 0 || this.nickNameErrors.length>0  ) { //이중 하나라도 충족하지않으면 리턴 
+        
+            return;//불필요한 axios 요청 방지  
+                }
+        const fullPhoneNum= (this.firstPhoneNum+this.middlePhoneNum+this.lastPhoneNum); //전체 핸드폰번호 
+        if (fullPhoneNum.length !== 11) {
+                  alert('핸드폰 번호는 11자리여야 합니다.');
+                  return;
+                }
+
+                // 한글 포함 여부 검증
+                if (/[가-힣]/.test(fullPhoneNum)) {
+                  alert('핸드폰 번호에 한글이 포함될 수 없습니다.');
+                  return;
+                }
+
+                // 공백 포함 여부 검증
+                if (/\s/.test(fullPhoneNum)) {
+                  alert('핸드폰 번호에 공백이 포함될 수 없습니다.');
+                  return;
+                }
+
+                // 숫자 이외의 문자 포함 여부 검증
+                if (!/^\d+$/.test(fullPhoneNum)) {
+                  alert('핸드폰 번호는 숫자만 포함해야 합니다.');
+                  return;
+                }
+
+        api.post('/members/findEmail',{
+          name:this.name,
+          nickname:this.nickname,
+          phone:fullPhoneNum
+        })
+        .then((res)=>{
+          if(res.status===200){
+           
+            this.findEmail=res.data.email;
+            this.findCreateDate=res.data.vueCreateDate
+            this.isAuth=true; // 아이디를 보여줌
+
+          }else{
+           throw new Error("else exception");
+            
+          }
+        
+        })
+        .catch((err)=>{
+         if(err.response.status===404){
+          alert('가입된 정보가 없습니다.')
+
+         }
+         if(err.response.status===400){
+          alert('정보가 일치하지않습니다.')
+         }
+        })
+        
+       
       }
     }
   }

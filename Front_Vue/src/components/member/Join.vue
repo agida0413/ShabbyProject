@@ -418,10 +418,11 @@
             
             return;//불필요한 axios 요청 방지  
                 }
-          let formData = new FormData();
-          formData.append('email',this.email)
+          
 
-          api.post('/members/emailAuth',formData)
+          api.post('/members/emailAuth',{
+            email:this.email
+          })
           .then(()=>{
             this.AuthCodeOpen()//인증코드 필드 노출 
             this.isEmailReadonly=true//이메일 정보 수정 불가 
@@ -449,11 +450,11 @@
             return;//불필요한 axios 요청 방지  
                 }
 
-          let formData=new FormData();
-          formData.append('email',this.email)
-          formData.append('code',this.code)//이메일 정보수정을 못하게 하였으므로 현재 email값을 가져올 수 있음 
-
-          api.post('/members/emailValidate',formData)
+         
+          api.post('/members/emailValidate',{
+            'email':this.email,
+            'code':this.code
+          })
           .then(()=>{
             this.AuthCodeClose();// 인증코드 필드 닫음
             this.isEmailAuthClear=true; //이메일 검증완료
@@ -476,9 +477,10 @@
             return;//불필요한 axios 요청 방지 
          
                 }
-                let formData = new FormData();
-                formData.append('nickName',this.nickName)
-                api.post('/members/nickValidate',formData)
+                
+                api.post('/members/nickValidate',{
+                  nickname:this.nickName
+                })
                 .then((res)=>{
                   if(res.status===200){
                     alert('사용가능한 닉네임입니다.')
@@ -520,6 +522,7 @@
 
                 //핸드폰번호 입력과 관련된 검증
                const fullPhone=(this.firstPhoneNum+this.middlePhoneNum+this.lastPhoneNum); 
+               
                if (fullPhone.length !== 11) {
                   alert('핸드폰 번호는 11자리여야 합니다.');
                   return;
@@ -549,7 +552,7 @@
                 formdata.append('password',this.password)
                 formdata.append('nickname',this.nickName)
                 formdata.append('name',this.name)
-                formdata.append('phone',this.fullPhone)
+                formdata.append('phone',fullPhone)
                 formdata.append('introduce',this.introduce)
 
                 api.post("/members", formdata) //api 호출 
