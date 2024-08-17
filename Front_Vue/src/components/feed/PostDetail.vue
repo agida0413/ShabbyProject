@@ -8,6 +8,7 @@
       <v-container fluid >
         <v-row no-gutters >
       
+          
           <v-col cols="6" class="image-section">
             <div class="overlay-text " >
               <!--사람 태그 목록 , 사진에 zindex로 올림 / 사진 넓이 초과시 줄 바꿈-->
