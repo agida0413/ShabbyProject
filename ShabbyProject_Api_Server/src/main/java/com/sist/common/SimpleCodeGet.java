@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 public class SimpleCodeGet {
 //공통으로 자주사용하는 함수들
 	
+	
 
 	public int getIdNum(Authentication authentication) {
 		   CustomUserDetails userDetails= (CustomUserDetails)authentication.getPrincipal();
