@@ -39,7 +39,9 @@ private final MailService mailService;
 		
 		
 	}
-
+	
+	
+	//임시비밀번호 메일로 발급 및 초기화
 	@Override
 	public ResponseEntity<?> passwordFind(MemberVO vo) {
 		// TODO Auto-generated method stub
