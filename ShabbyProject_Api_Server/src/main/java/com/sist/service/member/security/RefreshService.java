@@ -1,4 +1,4 @@
-package com.sist.service.member;
+package com.sist.service.member.security;
 
 import java.sql.Date;
 

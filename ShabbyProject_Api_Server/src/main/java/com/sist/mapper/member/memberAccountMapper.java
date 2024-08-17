@@ -15,4 +15,6 @@ public interface memberAccountMapper {
 	public void emailAuthSave(EmailAuthVO vo);
 	public EmailAuthVO emailAuthGetValidation(String email);
 	public void emailAuthClear(int emailAuthNum);
+	public MemberVO findEmail(MemberVO vo);
+	public void tempPasswordUpdate(MemberVO vo);
 }

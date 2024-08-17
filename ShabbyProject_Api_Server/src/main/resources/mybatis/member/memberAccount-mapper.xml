@@ -57,4 +57,19 @@
 		
 	</update>
 	
+	
+	<!--이메일 찾기 닉네임, 이름  일치여부 -->
+	<select id="findEmail" parameterType="MemberVO" resultType="MemberVO">
+		SELECT * FROM MEMBER 
+		WHERE nickname=#{nickname}
+		AND name=#{name}
+	
+	</select>
+	
+	<!--임시패스워드 발급 후 저장-->
+	<update id="tempPasswordUpdate" parameterType="MemberVO">
+		update member set 
+		password=#{password}
+		where email=#{email}
+	</update>
  </mapper>

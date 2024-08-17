@@ -1,4 +1,4 @@
-package com.sist.service.member;
+package com.sist.service.member.security;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
