@@ -3,7 +3,7 @@ package com.sist.service.member.mail;
 import java.security.SecureRandom;
 
 import org.springframework.stereotype.Component;
-
+//임시패스워드 생성기 
 @Component
 public class PasswordGenerator {
 		private static final String LOWERCASE = "abcdefghijklmnopqrstuvwxyz";//소문자모음

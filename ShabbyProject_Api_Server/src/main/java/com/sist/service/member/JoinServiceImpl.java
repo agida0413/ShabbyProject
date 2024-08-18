@@ -5,8 +5,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-
-import com.sist.repository.member.memberAccountRepository;
+import com.sist.repository.member.MemberAccountRepository;
+import com.sist.repository.member.MybatisMemberAccountRepository;
 import com.sist.service.member.mail.MailService;
 import com.sist.vo.EmailAuthVO;
 import com.sist.vo.MemberVO;
@@ -18,7 +18,7 @@ import lombok.RequiredArgsConstructor;
 public class JoinServiceImpl implements JoinService{
 
 	
-private final memberAccountRepository memberAccountRepository;
+private final MemberAccountRepository memberAccountRepository;
 private final MailService mailService; //이메일 인증관련 
 private final BCryptPasswordEncoder bCryptPasswordEncoder;
 

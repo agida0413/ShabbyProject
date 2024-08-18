@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import org.springframework.web.filter.GenericFilterBean;
 
-import com.sist.service.member.security.RefreshService;
+import com.sist.service.member.security.MybatisRefreshService;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
@@ -18,9 +18,9 @@ import jakarta.servlet.http.HttpServletResponse;
 public class CustomLogoutFilter extends GenericFilterBean {
 
     private final JWTUtil jwtUtil;
-    private final RefreshService refreshService;
+    private final MybatisRefreshService refreshService;
 
-    public CustomLogoutFilter(JWTUtil jwtUtil, RefreshService refreshService) {
+    public CustomLogoutFilter(JWTUtil jwtUtil, MybatisRefreshService refreshService) {
 
         this.jwtUtil = jwtUtil;
         this.refreshService = refreshService;

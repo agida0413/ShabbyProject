@@ -23,7 +23,7 @@ import com.sist.jwt.CustomLogoutFilter;
 import com.sist.jwt.JWTFilter;
 import com.sist.jwt.JWTUtil;
 import com.sist.jwt.LoginFilter;
-import com.sist.service.member.security.RefreshService;
+import com.sist.service.member.security.MybatisRefreshService;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -35,9 +35,9 @@ public class SecurityConfig {
 		//JWTUtil 주입
 		private final JWTUtil jwtUtil;
 		
-		private RefreshService refreshService;
+		private MybatisRefreshService refreshService;
 		private final SimpleCodeGet simpleCodeGet;
-    public SecurityConfig(AuthenticationConfiguration authenticationConfiguration, JWTUtil jwtUtil,RefreshService refreshService,SimpleCodeGet simpleCodeGet) {
+    public SecurityConfig(AuthenticationConfiguration authenticationConfiguration, JWTUtil jwtUtil,MybatisRefreshService refreshService,SimpleCodeGet simpleCodeGet) {
 
         this.authenticationConfiguration = authenticationConfiguration;
 				this.jwtUtil = jwtUtil;

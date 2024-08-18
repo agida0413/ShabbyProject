@@ -10,7 +10,7 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Repository
-public class memberAccountRepository {
+public class MybatisMemberAccountRepository implements MemberAccountRepository {
 private final memberAccountMapper mapper;
 	
 	// 이메일 기반 회원정보 찾기

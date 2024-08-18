@@ -5,14 +5,16 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import com.sist.repository.member.memberAccountRepository;
+
+import com.sist.repository.member.MemberAccountRepository;
+import com.sist.repository.member.MybatisMemberAccountRepository;
 import com.sist.vo.MemberVO;
 
 import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class CustomUserDetailService implements UserDetailsService{
-private final memberAccountRepository repository;
+private final MemberAccountRepository repository;
 
 
 	@Override

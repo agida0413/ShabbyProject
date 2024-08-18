@@ -13,7 +13,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.sist.common.SimpleCodeGet;
-import com.sist.repository.member.memberAccountRepository;
+import com.sist.repository.member.MemberAccountRepository;
+import com.sist.repository.member.MybatisMemberAccountRepository;
 import com.sist.vo.EmailAuthVO;
 import com.sist.vo.MemberVO;
 
@@ -26,7 +27,7 @@ import lombok.RequiredArgsConstructor;
 public class MailServiceImpl implements MailService{
 	private static final int CODE_LENGTH = 6;
 	private final JavaMailSender javaMailSender;
-	private final memberAccountRepository memberAccountRepository;//멤버관련 레파지토리
+	private final MemberAccountRepository memberAccountRepository;//멤버관련 레파지토리
 	private final BCryptPasswordEncoder bCryptPasswordEncoder;
 	private final PasswordGenerator passwordGenerator;// 임시패스워드 생성 
 	//이메일 중복검증 및 발송
