@@ -139,17 +139,23 @@ import ChangePwd from "./setting/ChangePwd.vue"
 import ChangePhone from "./setting/ChangePhone.vue"
 import ChangeNickname from "./setting/ChangeNickName.vue"
 import Alert from "./utill/Alert.vue"
-import api from "@/api"
+
 export default {
     name:'SettingComponent',
     props: {
        value: {//사이드메뉴로부터  받은 모달 불리안값 
          type: Boolean,
          required: true
-       }},
+       },
+       memberData :{
+        type:{},
+        required:true
+       }
+      
+      },
   data () {
     return {
-      memberData:{},
+     
       notifications: false, 
       sound: true,
       widgets: false,
@@ -164,30 +170,13 @@ export default {
   computed:{
      localDialog:{
          get(){
+       
              return this.value // 현재 사이드 컴포넌트에서의 다이얼로그 (true/false) 리턴 , props로 value를받아 메소드를 통해 리턴해야한다.
          }
      }
   },
-  mounted(){
-   this.getInitInfo()
-   
-  },
      methods: {
-      getInitInfo(){
-        api.get('/setting')
-        .then((res)=>{
-          this.memberData=res.data
-          console.log(this.memberData)
-        })
-        .catch((err)=>{
-          if(err.response.status===401){
-            alert('잘못된 접근입니다.')
-          }
-          else{
-            alert('서버 내부오류입니다. 잠시 뒤 이용해주세요.')
-          }
-        })
-      },
+      
        closeDialog() {
          this.$emit('settingClose');// 부모 컴포넌트로 닫는 이벤트 전송
        },
