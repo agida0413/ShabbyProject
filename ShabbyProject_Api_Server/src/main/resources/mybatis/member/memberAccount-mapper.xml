@@ -6,7 +6,7 @@
  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
  
  
- <mapper namespace="com.sist.mapper.member.memberAccountMapper">
+ <mapper namespace="com.sist.mapper.member.MemberAccountMapper">
  <!-- 이메일을 통한 회원 검증 -->
 	<select id="findByUserEmail" parameterType="String" resultType="MemberVO">
 	 

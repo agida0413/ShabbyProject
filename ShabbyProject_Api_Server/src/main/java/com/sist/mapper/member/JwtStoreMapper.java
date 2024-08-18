@@ -6,7 +6,7 @@ import com.sist.vo.MemberVO;
 import com.sist.vo.TokenStoreVO;
 
 @Mapper
-public interface jwtStoreMapper {
+public interface JwtStoreMapper {
 
 	public int	findRefresh(String refresh);
 	
