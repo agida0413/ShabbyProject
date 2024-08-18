@@ -1,17 +1,39 @@
 <template >
     <div >
-     
+      
 
       <v-card
       
         class="mx-auto pa-16 pb-8 card-scroll mt-13" 
-        elevation="8"
+        elevation="15"
         max-width="600"
         rounded="lg"
         max-height="1000"
         
       >
-   <router-link to="/login">   <v-btn icon="mdi-arrow-left" size="32"  class="btn-back"></v-btn></router-link>
+
+      <v-row
+      align="center"
+      justify="center"
+      >
+        <v-col
+          cols="auto"
+          class="text-center"
+        >
+                <!-- 로딩 스피너 -->
+                <v-progress-circular
+                  v-if="loading"
+                  indeterminate
+                  color="primary"
+                  size="64"
+                ></v-progress-circular>
+        </v-col>
+
+    </v-row>
+     
+    <!--뒤로가기-->
+   <router-link to="/login"> <v-btn icon="mdi-arrow-left" size="32"  class="btn-back"></v-btn></router-link>
+
         <!--이메일-->
         
             <div class="text-subtitle-1 text-medium-emphasis">Email</div>
@@ -33,6 +55,8 @@
               </v-col>
 
                 <v-col cols="5">
+                
+
                   <v-btn 
                   v-show="!resend"
                       :key="`subscribe-${isSubscriber}`"
@@ -84,7 +108,7 @@
           ></v-text-field>
        </v-col>
 
-    <v-col cols="5">
+    <v-col cols="2">
                     <v-btn
                       height="40"
                       min-width="50"
@@ -95,7 +119,7 @@
                     </v-btn>
 
      </v-col>
-        <v-col cols="3" class="mt-4"><small class="text-caption text-medium-emphasis">남은시간 59</small></v-col>
+        <v-col cols="6" class="mt-4"><small class="text-caption text-medium-emphasis"><Timer ref="emailTimer"></Timer></small></v-col>
       
     
        </v-row>
@@ -300,7 +324,7 @@
 
   <script>
    import api from "@/api"
-
+   import Timer from "@/components/common/utill/Timer.vue"
     export default {
     data(){
         return{
@@ -317,6 +341,7 @@
               nickName:'',//사용할 닉네임 
               name:'',//실명 
               introduce:'',//자기소개
+              loading: false, // 로딩 상태 = > 이메일 인증시 사용자에게 로딩상태 알려줄려고 함 .
 
               showAuthCode:false, // 이메일 인증코드 전송시 인증코드입력 필드 노출에 관한 변수 
               isEmailReadonly:false, //이메일 전송이 완료되었으면 이메일 정보를 수정할 수 없게함 
@@ -386,6 +411,9 @@
       return `${this.firstPhoneNum}-${this.middlePhoneNum}-${this.lastPhoneNum}`;
     }
       },
+      components:{
+        Timer
+      },
       methods:{
         validateField(value, rules) { //rules 에러를 저장 
           return rules
@@ -418,18 +446,26 @@
             
             return;//불필요한 axios 요청 방지  
                 }
-          
+
+          this.loading = true; // 로딩 시작 = > 사용자에게 알려줄려고
 
           api.post('/members/emailAuth',{
+            
             email:this.email
           })
           .then(()=>{
+            
+            this.loading = false; // 로딩 끝
             this.AuthCodeOpen()//인증코드 필드 노출 
             this.isEmailReadonly=true//이메일 정보 수정 불가 
             this.resend=true//다시보내기 버튼 활성화
+            
+            this.$refs.emailTimer.resetTimer();
+           
             alert('이메일 전송이 완료되었습니다.')
             
           }).catch((err)=>{
+            this.loading = false; // 로딩 끝
             if(err.response.status===400){//400일시 중복이메일 
               alert('이미 사용중인 이메일입니다.')
             }
@@ -437,6 +473,7 @@
               alert('잘못된 이메일 형식이거나 , 잘못된 입력입니다.')
             }
             else{
+              
                     alert('예기치 못한 오류가 발생했습니다. 잠시 뒤 이용해주세요.')
                   }
           })
@@ -456,6 +493,8 @@
             'code':this.code
           })
           .then(()=>{
+
+       
             this.AuthCodeClose();// 인증코드 필드 닫음
             this.isEmailAuthClear=true; //이메일 검증완료
             alert('검증되었습니다.')

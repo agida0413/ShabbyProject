@@ -7,6 +7,27 @@
         class="pa-3"
       >
       <v-divider></v-divider>
+        <!--로딩 스피너-->
+        <v-row
+        align="center"
+        justify="center"
+        class="mt-5"
+        v-if="loading"
+        >
+            <v-col
+              cols="auto"
+              class="text-center"
+            >
+              
+                    <v-progress-circular
+                      
+                      indeterminate
+                      color="primary"
+                      size="64"
+                    ></v-progress-circular>
+            </v-col>
+
+    </v-row>
     <v-card-text class="mt-6">
 <!--이메일 입력-->
 <v-row>
@@ -140,6 +161,7 @@
         lastPhoneNum:'',//마지막 핸드폰 번호값
         name:'',//이름
         email:'', //이메일 변수 
+        loading:false,//로딩스피너 변수 
 
         
         emailRules: [
@@ -220,12 +242,14 @@
                   return;
                 }
 
+                this.loading=true; //로딩 스피너 시작 
                 api.post('/members/findPassword',{
                   name:this.name,
                   phone:fullPhoneNum,
                   email:this.email
                 })
                 .then((res)=>{
+                  this.loading=false;//로딩 스피너 끝
                   if(res.status===200){//인증 성공시 
                     alert('입력하신 이메일로 임시비밀번호를 보냈습니다.')
                     //변수  초기화 
@@ -236,12 +260,14 @@
                     this.email=''
                     this.closeDialog()
                   }else{
+                   
                     throw new Error("err");
                     
                   }
 
                 })
                 .catch((err)=>{
+                  this.loading=false;//로딩 스피너 끝
                   if(err.response.status===404){
                     alert('가입된 정보가 없습니다.') //이메일이 데이터에 없을때 
                   }
