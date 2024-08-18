@@ -5,7 +5,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.sist.repository.member.memberAccountRepository;
+import com.sist.repository.member.MemberAccountRepository;
+import com.sist.repository.member.MybatisMemberAccountRepository;
 import com.sist.service.member.mail.MailService;
 import com.sist.vo.MemberVO;
 
@@ -13,7 +14,7 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class MemberFindServiceImpl implements MemberFindService{
-private final memberAccountRepository memberAccountRepository;
+private final MemberAccountRepository memberAccountRepository;
 private final BCryptPasswordEncoder bCryptPasswordEncoder;	
 private final MailService mailService;
 

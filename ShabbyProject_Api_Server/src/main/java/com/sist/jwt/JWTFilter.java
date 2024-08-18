@@ -64,7 +64,7 @@ public class JWTFilter extends OncePerRequestFilter{
 	  
   	    
 
-   	    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+   	    response.setStatus(HttpServletResponse.SC_GONE);//410
     	    return;
     	}
 

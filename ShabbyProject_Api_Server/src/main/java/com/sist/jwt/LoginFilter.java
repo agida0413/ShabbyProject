@@ -16,9 +16,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.util.StreamUtils;
 
 import com.sist.common.SimpleCodeGet;
-import com.sist.repository.member.memberAccountRepository;
+import com.sist.repository.member.MybatisMemberAccountRepository;
 import com.sist.service.member.security.CustomUserDetails;
-import com.sist.service.member.security.RefreshService;
+import com.sist.service.member.security.MybatisRefreshService;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletInputStream;
@@ -30,10 +30,10 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
     private final AuthenticationManager authenticationManager;
     private final JWTUtil jwtUtil;
-    private final RefreshService refreshService;
+    private final MybatisRefreshService refreshService;
     private final SimpleCodeGet simpleCodeGet;
     
-    public LoginFilter(AuthenticationManager authenticationManager, JWTUtil jwtUtil,RefreshService refreshService,SimpleCodeGet simpleCodeGet) {
+    public LoginFilter(AuthenticationManager authenticationManager, JWTUtil jwtUtil,MybatisRefreshService refreshService,SimpleCodeGet simpleCodeGet) {
 
         this.authenticationManager = authenticationManager;
         this.jwtUtil = jwtUtil;

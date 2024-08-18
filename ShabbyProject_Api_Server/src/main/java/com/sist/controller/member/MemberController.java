@@ -1,4 +1,4 @@
-package com.sist.controller;
+package com.sist.controller.member;
 
 import java.net.http.HttpRequest;
 
@@ -53,6 +53,7 @@ private final MemberFindService memberFindService;// 회원정보 찾기 서비�
 		System.out.println(vo);
 		return memberFindService.findEmail(vo);
 	}
+	
 	//패스워드 찾기/초기화 = > 이메일 서비스 
 	@PostMapping("/findPassword")
 	public ResponseEntity<?> findPassword(@RequestBody MemberVO vo){
