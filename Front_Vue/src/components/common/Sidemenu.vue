@@ -67,7 +67,7 @@ export default{
         api.get('/setting')
         .then((res)=>{
           this.memberData=res.data
-         
+          
         })
         .catch((err)=>{
           if(err.response&&err.response.status===401){
