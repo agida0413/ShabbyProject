@@ -67,7 +67,7 @@
               color="primary"
               text="Save"
               variant="tonal"
-              @click="dialog = false"
+              @click="verifyPrePwd"
             ></v-btn>
           </v-card-actions>
         </v-card>

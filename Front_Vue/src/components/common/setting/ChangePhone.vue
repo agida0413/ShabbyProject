@@ -15,7 +15,56 @@
           <v-card-text>
 
             <div class="text-subtitle-1 text-medium-emphasis d-flex align-center justify-space-between">
-          <span style="color: aliceblue;">전화번호</span>
+          <span style="color: aliceblue;">현재 전화번호</span>
+        </div>
+
+        <v-row>
+
+            <v-col cols="3">
+                <v-select
+                  density="compact"
+                
+                  variant="outlined"
+                  v-model="firstPhoneNum"
+                :items="items"
+              
+              
+                required
+              
+                ></v-select>
+            </v-col>
+
+
+            <v-col cols="3">
+                  <v-text-field
+                    type="text"
+                    density="compact"
+                    variant="outlined"
+                  ></v-text-field>
+
+            </v-col>
+
+            <v-col cols="3">
+                <v-text-field
+                
+                  type="text"
+                  density="compact"
+                
+              
+                  variant="outlined"
+                  
+                
+          
+                ></v-text-field>
+
+            </v-col>
+
+          </v-row>
+
+
+
+            <div class="text-subtitle-1 text-medium-emphasis d-flex align-center justify-space-between">
+          <span style="color: aliceblue;">새로운 전화번호</span>
         </div>
 
         <v-row>
@@ -68,7 +117,7 @@
     </v-row>
 
             <div class="text-subtitle-1 text-medium-emphasis d-flex align-center justify-space-between">
-              <span style="color: aliceblue;">현재 비밀번호</span>
+              <span style="color: aliceblue;">비밀번호</span>
         </div>
         <!--비밀번호-->
         <v-row>
@@ -130,7 +179,8 @@ export default {
         passwordRules: [
           v => !!v || '비밀번호를 입력해주세요.' //비밀번호 입력검증
         
-        ],visible:false,
+        ],
+        visible:false,
         items:['010','011','016','017','019'], //대한민국 앞자리번호 리스트
         firstPhoneNum:'010' //디폴트값
     }
