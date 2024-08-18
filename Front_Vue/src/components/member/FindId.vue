@@ -260,24 +260,23 @@
           phone:fullPhoneNum
         })
         .then((res)=>{
-          if(res.status===200){
+         
            
             this.findEmail=res.data.email;
             this.findCreateDate=res.data.vueCreateDate
             this.isAuth=true; // 아이디를 보여줌
 
-          }else{
-           throw new Error("else exception");
-            
-          }
+       
         
         })
         .catch((err)=>{
-         if(err.response.status===404){
+         if(err.response&&err.response.status===404){
+        
           alert('가입된 정보가 없습니다.')
 
          }
-         if(err.response.status===400){
+         if(err.response&&err.response.status===400){
+         
           alert('정보가 일치하지않습니다.')
          }
         })

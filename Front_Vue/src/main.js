@@ -6,58 +6,17 @@ import { loadFonts } from './plugins/webfontloader'
 import Footer from './components/common/Footer.vue'
 import Header from './components/common/Header.vue'
 import Sidemenu from './components/common/Sidemenu.vue'
-import api from '@/api'
+
+/*
+문제 해결 기록 
+1. axios 를 이용해서 api를 호출하고 서버에서는 요청을 받아서 처리하고 있는데 , 해당 컴포넌트를 닫아서 unmount 된 상태이므로 , catch 블록에서 err.response 가 undefined여서 에러구문이 뜸
+ ====>  catch 블록에서 err.response가 존재하면 이라는 구문을 추가해서 에러 출력을 막음 
+ 
+ 2. 중복호출 방지 (일명 따닥 ) = > 1차적으로 프론트단에서 전송중일때는 버튼을 비활성화 해서막고 2차적으로 서버단에서 인터셉터를 통해서 맵에 요청고유값을 담고 요청이 완료되면 맵에서 지우고 
+ 요청이 들어왔을때 해당요청이 존재하면 409를 반환하는 방식으로 막음 
+*/
 
 
-
-// axios 요청 전 인터셉터 설정
-api.interceptors.request.use(config => {
-  const token = localStorage.getItem('access'); // 로컬 스토리지에서 토큰 가져오기
-  if (token) {
-    config.headers.access = token; //  헤더에 access토큰 추가
-  }
-  return config;
-}, error => {
-  return Promise.reject(error);
-});
-
-// axios 응답 인터셉터 설정
-api.interceptors.response.use(response => {
-  return response;
-}, error => {
-  const originalRequest = error.config;
-  console.log(error.response.status)
-  // `410 Unauthorized` 응답을 받은 경우
-  if (error.response && error.response.status === 410 && !originalRequest._retry) {
-    originalRequest._retry = true;
-
-    // access 토큰 재발급 요청 
-    
-    return api.post('/reissue')
-    .then(response => {
-      // 새 액세스 토큰 저장
-      const newToken = response.headers['access'];
-      localStorage.setItem('access', newToken);
-    
-      // 새 액세스 토큰을 포함한 원래 요청 재시도
-      // originalRequest.headers.access = newToken; // 재시도 요청에 새로운 토큰 포함 (axios요청 전 인터셉터로 헤더에 담고있으니 일단 주석처리) 
-      return api(originalRequest);
-    })
-    .catch(err => {
-    
-      console.error('Token refresh failed', err);
-      
-      
-      // 토큰 갱신 실패 로그인 페이지로 리다이렉트
-      router.push({ name: 'login' });
-
-     
-    });
-  }
-
-  // 다른 오류 처리
-  return Promise.reject(error);
-});
 
 loadFonts();
 
@@ -68,3 +27,4 @@ createApp(App)
 .use(router)
 .use(vuetify)
 .mount('#app');
+

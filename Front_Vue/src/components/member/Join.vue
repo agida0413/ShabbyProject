@@ -466,17 +466,18 @@
             
           }).catch((err)=>{
             this.loading = false; // 로딩 끝
-            if(err.response.status===400){//400일시 중복이메일 
+            if(err.response&&err.response.status===400){//400일시 중복이메일 
+              
               alert('이미 사용중인 이메일입니다.')
             }
-            else if(err.response.status===404){//404일시 기타오류 
+            else if(err.response&&err.response.status===404){//404일시 기타오류 
+            
               alert('잘못된 이메일 형식이거나 , 잘못된 입력입니다.')
             }
-            else{
-              
-                    alert('예기치 못한 오류가 발생했습니다. 잠시 뒤 이용해주세요.')
-                  }
+          
+           
           })
+         
         },
         //이메일 인증코드 검증 
         emailValidation(){
@@ -500,10 +501,12 @@
             alert('검증되었습니다.')
           })
           .catch((err)=>{
-            if(err.response.status===400){//400일시 인증코드 불일치 
+            if(err.response&&err.response.status===400){//400일시 인증코드 불일치 
+          
               alert('인증코드가 맞지않습니다.')
             }
-            if(err.response.status===422){//422 일시 만료된 인증 
+            if(err.response&&err.response.status===422){//422 일시 만료된 인증 
+            
               alert('만료된 인증입니다.')
             }
           })
@@ -520,23 +523,19 @@
                 api.post('/members/nickValidate',{
                   nickname:this.nickName
                 })
-                .then((res)=>{
-                  if(res.status===200){
+                .then(()=>{
+                  
                     alert('사용가능한 닉네임입니다.')
                     this.isNickNameClear =true; //닉네임 중복검증 완료 
                     this.isNickNameReadonly=true;//검증이 완료 되면 닉네임 수정불가
-                  }else{
-                    throw new Error("something");
-                    
-                  }
+                  
                 })
                 .catch((err)=>{
-                  if(err.response.status===400){
+                  if(err.response&&err.response.status===400){
+                 
                     alert('이미존재하는 닉네임입니다.')
                   }
-                  else{
-                    alert('예기치 못한 오류가 발생했습니다. 잠시 뒤 이용해주세요.')
-                  }
+                 
                 })
 
             
@@ -595,24 +594,15 @@
                 formdata.append('introduce',this.introduce)
 
                 api.post("/members", formdata) //api 호출 
-                .then(async (res) => {//async / await 활용 
-                  if (res.status === 200) { 
+                .then(async () => {//async / await 활용 
+                 
                     // showAlert 메서드로 alert을 먼저 띄우고 라우터로 푸시하도록 
                     await this.showAlert('회원가입이 완료되었습니다. 환영합니다!!!');
                     // alert이 닫힌 후 router.push 호출
                     this.$router.push('/login');
-                  } else {
-                    throw new Error("something err");
-                  }
+                  
                 })
-                .catch((err) => {
-                  if (err.response && err.response.status === 500) {
-                    alert('서버 내부 오류입니다. 잠시 뒤 이용해 주세요.');
-                  } else {
-                    alert('예기치 못한 오류가 발생했습니다. 잠시 뒤 이용해주세요.');
-                  }
-                });
-
+               
                 
         }
       }

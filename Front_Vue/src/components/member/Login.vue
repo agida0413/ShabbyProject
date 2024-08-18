@@ -161,7 +161,7 @@ export default {
         .then((res) => { 
           
           //성공했을시 
-          if(res.status===200){
+         
                 const accessToken = res.headers['access'];//헤더에 엑세스토큰 저장 
                 localStorage.setItem('access', accessToken); 
 
@@ -172,17 +172,15 @@ export default {
                 } else {
                 this.$router.push(reqUrl);//있다면 이전요청으로 이동 
               }
-          }else{
-            throw new Error("something err");
-            
-          }          
+             
         })
         .catch((err) => {
 
-          if(err.response.status===400){
+          if(err.response&&err.response.status===400){
+          
             alert('입력정보를 확인해 주세요.'); //로그인 일치정보가 없을시 
-          }else{
-            alert('예기치 못한 오류가 발생했습니다. 잠시 뒤에 이용해주세요.')
+       
+           
           }
         
         });

@@ -38,7 +38,9 @@
     
     
   </v-card>
-  <SettingComponent v-model:value="settingDialog" @settingClose="ifSettingClose"></SettingComponent> <!-- 세팅 모달 컴포넌트 -->
+  <SettingComponent v-model:value="settingDialog"
+                    v-model:memberData="memberData"
+   @settingClose="ifSettingClose"></SettingComponent> <!-- 세팅 모달 컴포넌트 -->
   <PostInsert v-model:value="postInsertDialog" @postInsertClose="postInsertDialogClose"></PostInsert><!--새 게시물 작성 모달 컴포넌트-->
 </template>
 
@@ -51,7 +53,8 @@ export default{
   data(){
     return{
       settingDialog:false, //세팅 모달 제어값
-      postInsertDialog:false //새 게시물 작성 제어값 
+      postInsertDialog:false, //새 게시물 작성 제어값 
+      memberData:{} //회원정보 
     }
   },
   components:{
@@ -59,11 +62,27 @@ export default{
     PostInsert
   },
   methods:{
+
+    getInitInfo(){ // 회원정보를 가져옴
+        api.get('/setting')
+        .then((res)=>{
+          this.memberData=res.data
+         
+        })
+        .catch((err)=>{
+          if(err.response&&err.response.status===401){
+         
+            alert('잘못된 접근입니다.')
+          }
+          
+        })
+      },
     //모달 열고,닫음 이벤트 제어 메소드
     ifSettingClose(){
       this.settingDialog=false 
     },
     settingDialogOpen(){
+      this.getInitInfo()
       this.settingDialog=true
     },
     postInsertDialogOpen(){
@@ -79,9 +98,7 @@ export default{
           localStorage.removeItem('access')//엑세스 토큰 지움 
           this.$router.push('/login');//로그인 페이지로 이동
         })
-      .catch(()=>{
-        alert('잘못된 접근입니다.')
-      })
+    
     }
   }
 }
