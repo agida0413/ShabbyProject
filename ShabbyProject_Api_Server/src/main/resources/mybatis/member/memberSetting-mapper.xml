@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- 로그인 후 세팅 (닉네임 변경 , 비밀번호 변경 , 휴대폰 번호 변경 , 공개/비공개 모드 전환 , 탈퇴 등 )-->
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+ 
+ <mapper namespace="com.sist.mapper.member.MemberSettingMapper">
+ 	<!-- 닉네임 변경 (검증 후 업데이트 sql)-->
+	<update  id="updateNickName" parameterType="MemberVO">
+	UPDATE MEMBER SET 
+	nickname=#{nickname},
+	edit_date=current_TIMESTAMP
+	where id_num=#{idNum}
+	</update>
+	
+	
+ </mapper>

@@ -4,7 +4,7 @@ import java.sql.Date;
 
 import org.springframework.stereotype.Repository;
 
-import com.sist.mapper.member.jwtStoreMapper;
+import com.sist.mapper.member.JwtStoreMapper;
 import com.sist.vo.MemberVO;
 import com.sist.vo.TokenStoreVO;
 
@@ -12,7 +12,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Repository
 public class MybatisJwtStoreRepository implements JwtStoreRepository {
-	private final jwtStoreMapper mapper;
+	private final JwtStoreMapper mapper;
 	
 	//현재 전달받은 토큰을 데이터베이스에서 찾아서 있으면 반환해줌
 	public int	findRefresh(String refresh) {

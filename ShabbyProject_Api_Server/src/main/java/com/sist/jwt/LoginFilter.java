@@ -11,14 +11,18 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;import org.springframework.security.task.DelegatingSecurityContextAsyncTaskExecutor;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.task.DelegatingSecurityContextAsyncTaskExecutor;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.util.StreamUtils;
 
 import com.sist.common.SimpleCodeGet;
+import com.sist.repository.member.MemberAccountRepository;
 import com.sist.repository.member.MybatisMemberAccountRepository;
 import com.sist.service.member.security.CustomUserDetails;
 import com.sist.service.member.security.MybatisRefreshService;
+import com.sist.vo.MemberVO;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletInputStream;
@@ -32,6 +36,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     private final JWTUtil jwtUtil;
     private final MybatisRefreshService refreshService;
     private final SimpleCodeGet simpleCodeGet;
+   
     
     public LoginFilter(AuthenticationManager authenticationManager, JWTUtil jwtUtil,MybatisRefreshService refreshService,SimpleCodeGet simpleCodeGet) {
 
@@ -39,6 +44,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         this.jwtUtil = jwtUtil;
         this.refreshService=refreshService;
         this.simpleCodeGet=simpleCodeGet;
+       
     
         setFilterProcessesUrl("/api/login");//로그인 api url
     }
@@ -77,10 +83,10 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         String access = jwtUtil.createJwt("access", email, role, 1L);//엑세스 토큰 
         String refresh = jwtUtil.createJwt("refresh", email, role, 86400000L); //리프레시 토큰 
 
-
-        
+  
         //refresh토큰 저장
         int idNum=simpleCodeGet.getIdNum(authentication);
+      
         refreshService.addRefreshEntity(idNum, refresh, 86400000L);
         
         //응답 설정

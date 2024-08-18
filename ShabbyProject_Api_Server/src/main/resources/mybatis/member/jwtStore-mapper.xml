@@ -5,7 +5,7 @@
  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
  
- <mapper namespace="com.sist.mapper.member.jwtStoreMapper">
+ <mapper namespace="com.sist.mapper.member.JwtStoreMapper">
     <!--클라이언트로 받은 refresh 토큰이 진짜 인지 검증하기 위해  -->
 	<select id="findRefresh" parameterType="String" resultType="int">
 	Select count(*) from token_store where refresh=#{refresh}

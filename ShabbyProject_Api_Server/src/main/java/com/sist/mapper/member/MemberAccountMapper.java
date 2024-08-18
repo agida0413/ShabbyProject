@@ -6,7 +6,7 @@ import com.sist.vo.EmailAuthVO;
 import com.sist.vo.MemberVO;
 
 @Mapper
-public interface memberAccountMapper {
+public interface MemberAccountMapper {
 
 	public MemberVO findByUserEmail(String email);
 	public MemberVO findByUserNickname(String nickname);

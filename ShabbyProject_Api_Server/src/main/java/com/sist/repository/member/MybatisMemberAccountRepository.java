@@ -2,16 +2,16 @@ package com.sist.repository.member;
 
 import org.springframework.stereotype.Repository;
 
-import com.sist.mapper.member.memberAccountMapper;
+import com.sist.mapper.member.MemberAccountMapper;
 import com.sist.vo.EmailAuthVO;
 import com.sist.vo.MemberVO;
 
 import lombok.RequiredArgsConstructor;
-
+//회원가입 , 로그인 , 회원정보가져오기 , 비밀번호찾기 , 아이디찾기 등 회원정보관련 
 @RequiredArgsConstructor
 @Repository
 public class MybatisMemberAccountRepository implements MemberAccountRepository {
-private final memberAccountMapper mapper;
+private final MemberAccountMapper mapper;
 	
 	// 이메일 기반 회원정보 찾기
 	public MemberVO findByUserEmail(String email) {
