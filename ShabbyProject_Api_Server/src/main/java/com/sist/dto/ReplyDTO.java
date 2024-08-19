@@ -1,11 +1,11 @@
-package com.sist.vo;
+package com.sist.dto;
 
 import java.sql.Date;
 
 import lombok.Data;
 import lombok.Getter;
-@Getter
-public class ReplyVO {
+@Data
+public class ReplyDTO {
 private int replyNum;
 private int postNum;
 private int root;

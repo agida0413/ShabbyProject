@@ -8,37 +8,43 @@
  
  <mapper namespace="com.sist.mapper.member.MemberAccountMapper">
  <!-- 이메일을 통한 회원 검증 -->
-	<select id="findByUserEmail" parameterType="String" resultType="MemberVO">
+	<select id="findByUserEmail" parameterType="String" resultType="MemberDTO">
 	 
 	Select * from member where email=#{email}
 	</select>
 	
+	<!--회원 고유번호를 통한 회원 셀렉트 -->
+	<select id="findByUserIdNum" parameterType="int" resultType="MemberDTO">
+	 
+	Select * from member where id_num=#{idNum}
+	</select>
+	
 	
 	<!--닉네임을 통한 회원검증(중복 닉네임)-->
-	<select id="findByUserNickname" parameterType="String" resultType="MemberVO">
+	<select id="findByUserNickname" parameterType="String" resultType="MemberDTO">
 	 
 	Select * from member where nickname=#{nickname}
 	</select>
 	
 	<!--핸드폰 번호 중복검증-->
-	<select id="findByUserPhone" parameterType="String" resultType="MemberVO">
+	<select id="findByUserPhone" parameterType="String" resultType="MemberDTO">
 	Select * from member where phone=#{phone}
 	</select>
 	
 	<!-- 회원가입-->
-	<insert id="join" parameterType="MemberVO">
+	<insert id="join" parameterType="MemberDTO">
 	Insert into member (email,password,nickname,name,phone,introduce,role)
 	values(#{email},#{password},#{nickname},#{name},#{phone},#{introduce},#{role})
 	</insert>
 	
 	<!-- 이메일 인증이력 저장 -->
-	<insert id="emailAuthSave" parameterType="EmailAuthVO">
+	<insert id="emailAuthSave" parameterType="EmailAuthDTO">
 	Insert Into email_auth (email,code,expiration,isauth)
 	values(#{email},#{code},#{expiration},isauth)
 	</insert>
 	
 	<!--이메일 인증시 코드검증 셀렉트 여러 정보가 있을 수 있으니 가장최신것을 가져옴 -->
-	<select id="emailAuthGetValidation" parameterType="String" resultType="EmailAuthVO">
+	<select id="emailAuthGetValidation" parameterType="String" resultType="EmailAuthDTO">
 		SELECT * 
 		FROM EMAIL_AUTH
 		WHERE EMAIL = #{email}
@@ -59,7 +65,7 @@
 	
 	
 	<!--이메일 찾기 닉네임, 이름  일치여부 -->
-	<select id="findEmail" parameterType="MemberVO" resultType="MemberVO">
+	<select id="findEmail" parameterType="MemberDTO" resultType="MemberDTO">
 		SELECT * FROM MEMBER 
 		WHERE nickname=#{nickname}
 		AND name=#{name}
@@ -67,7 +73,7 @@
 	</select>
 	
 	<!--임시패스워드 발급 후 저장-->
-	<update id="tempPasswordUpdate" parameterType="MemberVO">
+	<update id="tempPasswordUpdate" parameterType="MemberDTO">
 		update member set 
 		password=#{password}
 		where email=#{email}

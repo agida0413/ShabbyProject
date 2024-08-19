@@ -2,6 +2,7 @@ package com.sist.mapper.member;
 
 import org.apache.ibatis.annotations.Mapper;
 
+import com.sist.dto.TokenStoreDTO;
 import com.sist.vo.MemberVO;
 import com.sist.vo.TokenStoreVO;
 
@@ -12,7 +13,7 @@ public interface JwtStoreMapper {
 	
 	public	void deleteRefresh(String refresh);
 		
-	public	void save(TokenStoreVO vo);
+	public	void save(TokenStoreDTO dto);
 	
 	public int findId_num(String email);
 }

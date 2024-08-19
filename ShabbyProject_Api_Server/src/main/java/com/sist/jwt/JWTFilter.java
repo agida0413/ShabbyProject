@@ -7,6 +7,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.sist.dto.MemberDTO;
 import com.sist.service.member.security.CustomUserDetails;
 import com.sist.vo.MemberVO;
 
@@ -85,11 +86,13 @@ public class JWTFilter extends OncePerRequestFilter{
     	// username, role 값을 획득
     	String username = jwtUtil.getUsername(accessToken);
     	String role = jwtUtil.getRole(accessToken);
-
-    	MemberVO vo = new MemberVO();
-    	vo.setEmail(username);
-    	vo.setRole(role);
-    	CustomUserDetails customUserDetails = new CustomUserDetails(vo);
+    	int idNum = jwtUtil.getIdNum(accessToken);//고유번호
+    	
+    	MemberDTO dto = new MemberDTO();
+    	dto.setEmail(username);
+    	dto.setRole(role);
+    	dto.setIdNum(idNum);
+    	CustomUserDetails customUserDetails = new CustomUserDetails(dto);
 
     	Authentication authToken = new UsernamePasswordAuthenticationToken(customUserDetails, null, customUserDetails.getAuthorities());
     	SecurityContextHolder.getContext().setAuthentication(authToken);

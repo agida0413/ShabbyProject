@@ -1,4 +1,4 @@
-package com.sist.vo;
+package com.sist.dto;
 
 import java.sql.Date;
 import java.text.SimpleDateFormat;
@@ -8,8 +8,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
 import lombok.Getter;
 
-@Getter
-public class MemberVO {
+@Data
+public class MemberDTO {
 private int idNum;
 private String email;
 private String nickname;

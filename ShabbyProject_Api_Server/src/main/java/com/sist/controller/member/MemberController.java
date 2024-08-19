@@ -8,6 +8,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.sist.dto.EmailAuthDTO;
+import com.sist.dto.MemberDTO;
 import com.sist.service.member.JoinService;
 import com.sist.service.member.MemberFindService;
 import com.sist.service.member.mail.MailServiceImpl;
@@ -25,40 +28,40 @@ private final MemberFindService memberFindService;// 회원정보 찾기 서비�
 	
 	//회원가입 
 	@PostMapping
-	public ResponseEntity<?> join(MemberVO vo){
+	public ResponseEntity<?> join(MemberDTO dto){
 		
-		return joinService.join(vo);
+		return joinService.join(dto);
 	}
 	//닉네임 중복검증 
 	@PostMapping("/nickValidate")
-	public ResponseEntity<?> nickNameValidation(@RequestBody MemberVO vo){
-		return joinService.nickNameValidation(vo.getNickname());
+	public ResponseEntity<?> nickNameValidation(@RequestBody MemberDTO dto){
+		return joinService.nickNameValidation(dto.getNickname());
 	}
 
 	//회원가입시 이메일 인증코드 받는 api
 	@PostMapping("/emailAuth")
-	public ResponseEntity<?> emailAuth(@RequestBody MemberVO vo){
+	public ResponseEntity<?> emailAuth(@RequestBody MemberDTO dto){
 			
-		return joinService.emailAuth(vo);
+		return joinService.emailAuth(dto);
 		
 	}
 	// 회원가입시 인증번호 검증하는 api
 	@PostMapping("/emailValidate")
-	public ResponseEntity<?> emailValidation(@RequestBody EmailAuthVO vo){
-		return joinService.emailValidation(vo);
+	public ResponseEntity<?> emailValidation(@RequestBody EmailAuthDTO dto){
+		return joinService.emailValidation(dto);
 	}
 	//아이디 찾기 
 	@PostMapping("/findEmail")
-	public ResponseEntity<?> findId(@RequestBody MemberVO vo){
-		System.out.println(vo);
-		return memberFindService.findEmail(vo);
+	public ResponseEntity<?> findId(@RequestBody MemberDTO dto){
+		
+		return memberFindService.findEmail(dto);
 	}
 	
 	//패스워드 찾기/초기화 = > 이메일 서비스 
 	@PostMapping("/findPassword")
-	public ResponseEntity<?> findPassword(@RequestBody MemberVO vo){
+	public ResponseEntity<?> findPassword(@RequestBody MemberDTO dto){
 		
-		return memberFindService.passwordFind(vo);
+		return memberFindService.passwordFind(dto);
 	}
 	
 	

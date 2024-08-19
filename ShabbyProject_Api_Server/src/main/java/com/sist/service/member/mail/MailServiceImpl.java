@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.sist.common.SimpleCodeGet;
+import com.sist.dto.EmailAuthDTO;
+import com.sist.dto.MemberDTO;
 import com.sist.repository.member.MemberAccountRepository;
 import com.sist.repository.member.MybatisMemberAccountRepository;
 import com.sist.vo.EmailAuthVO;
@@ -34,8 +36,8 @@ public class MailServiceImpl implements MailService{
 	@Transactional
 	public ResponseEntity<?> emailSend(String email ){
 		
-		MemberVO vo= memberAccountRepository.findByUserEmail(email);// 이메일 중복검증 
-		if(vo!=null) {
+		MemberDTO dto= memberAccountRepository.findByUserEmail(email);// 이메일 중복검증 
+		if(dto!=null) {
 			//중복이메일 일때 
 			 return new ResponseEntity<>("already user", HttpStatus.BAD_REQUEST); //400응답코드 
 		}
@@ -47,11 +49,11 @@ public class MailServiceImpl implements MailService{
 				
 				String certificationNumber=generateRandomCode(); //랜덤 인증번호 생성 
 			
-			    EmailAuthVO authVo = new EmailAuthVO(); //이메일 정보 엔티티 
-		        authVo.setEmail(email);// 매개변수로 받은 이메일 세팅
+			    EmailAuthDTO emailDto = new EmailAuthDTO();//이메일 정보 엔티티 
+		        emailDto.setEmail(email);// 매개변수로 받은 이메일 세팅
 		    
-		        authVo.setCode(bCryptPasswordEncoder.encode(certificationNumber));// 생성된 인증번호 
-		        authVo.setExpiration(LocalDateTime.now().plusMinutes(3)); // 인증시간 3분 
+		        emailDto.setCode(bCryptPasswordEncoder.encode(certificationNumber));// 생성된 인증번호 
+		        emailDto.setExpiration(LocalDateTime.now().plusMinutes(3)); // 인증시간 3분 
 		        
 		   
 		        
@@ -61,7 +63,7 @@ public class MailServiceImpl implements MailService{
 				mimeMessageHelper.setSubject("[Shabby] 회원가입 인증코드입니다."); //제목 
 				mimeMessageHelper.setText(htmlContent,true);
 				javaMailSender.send(message);//전송 
-			     memberAccountRepository.emailAuthSave(authVo); //데이터베이스에 인증코드와 정보 저장 
+			     memberAccountRepository.emailAuthSave(emailDto); //데이터베이스에 인증코드와 정보 저장 
 		} catch (MessagingException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -80,10 +82,10 @@ public class MailServiceImpl implements MailService{
 	
 
 	
-	EmailAuthVO validationVO=memberAccountRepository.emailAuthGetValidation(email);// 전달받은 이메일을 바탕으로 데이터베이스의 최신row를 찾음 
+	EmailAuthDTO dto=memberAccountRepository.emailAuthGetValidation(email);// 전달받은 이메일을 바탕으로 데이터베이스의 최신row를 찾음 
 	
 	
-	if(!bCryptPasswordEncoder.matches(code, validationVO.getCode())) {
+	if(!bCryptPasswordEncoder.matches(code, dto.getCode())) {
 		//인증코드가 틀린경우
 		return new ResponseEntity<>("not auth",HttpStatus.BAD_REQUEST);//400 응답코드 
 	}
@@ -92,12 +94,12 @@ public class MailServiceImpl implements MailService{
 	 LocalDateTime now = LocalDateTime.now();//현재시간 
 	 
 	 
-	 if(now.isAfter(validationVO.getExpiration())) {
+	 if(now.isAfter(dto.getExpiration())) {
 		 //인증시간이 만료되었을 경우 
 		 return new ResponseEntity<>("expiration done",HttpStatus.UNPROCESSABLE_ENTITY);//422 응답코드
 	 }
 	 
-	 memberAccountRepository.emailAuthClear(validationVO.getEmailAuthNum());// 데이터베이스 row에 인증이 완료되었음을 update함 
+	 memberAccountRepository.emailAuthClear(dto.getEmailAuthNum());// 데이터베이스 row에 인증이 완료되었음을 update함 
 		
 	 
 	 return new ResponseEntity<>("OK",HttpStatus.OK);
@@ -135,18 +137,18 @@ public class MailServiceImpl implements MailService{
     //임시 패스워드 발급 및 패스워드 초기화
 	@Override
 	@Transactional
-	public ResponseEntity<?> emailPasswordReset(MemberVO vo) {
+	public ResponseEntity<?> emailPasswordReset(MemberDTO dto) {
 		
 		// TODO Auto-generated method stub
-		String email=vo.getEmail();
-		MemberVO findVo = memberAccountRepository.findByUserEmail(email);
-		if(findVo==null) {//해당이메일이 존재하지않을 시 
+		String email=dto.getEmail();
+		MemberDTO findDto = memberAccountRepository.findByUserEmail(email);
+		if(findDto==null) {//해당이메일이 존재하지않을 시 
 			return new ResponseEntity<>("no-Data",HttpStatus.NOT_FOUND);//404에러
 		}
-		if(!vo.getName().equals(findVo.getName())) {//이메일은 존재하나 입력한 이름이 다를경우 
+		if(!dto.getName().equals(findDto.getName())) {//이메일은 존재하나 입력한 이름이 다를경우 
 			return new ResponseEntity<>("unAuth",HttpStatus.BAD_REQUEST);//400에러
 		}
-		if(!bCryptPasswordEncoder.matches(vo.getPhone(), findVo.getPhone())) {//이메일은 존재하나 입력한 닉네임이 다를경우 
+		if(!bCryptPasswordEncoder.matches(dto.getPhone(), findDto.getPhone())) {//이메일은 존재하나 입력한 닉네임이 다를경우 
 			return new ResponseEntity<>("unAuth",HttpStatus.BAD_REQUEST);//400에러
 		}
 		
@@ -167,8 +169,8 @@ public class MailServiceImpl implements MailService{
 			javaMailSender.send(message);//전송 
 			
 			String securedPassword= bCryptPasswordEncoder.encode(password);//데이터베이스에 암호화 해서 저장할 패스워드 
-			vo.setPassword(securedPassword);//vo에 새로운 임시비밀번호 저장 
-			memberAccountRepository.tempPasswordUpdate(vo);
+			dto.setPassword(securedPassword);//vo에 새로운 임시비밀번호 저장 
+			memberAccountRepository.tempPasswordUpdate(dto);
 			
 		} catch (Exception e) {
 			// TODO: handle exception

@@ -1,11 +1,11 @@
-package com.sist.vo;
+package com.sist.dto;
 
 import java.sql.Date;
 
 import lombok.Data;
 import lombok.Getter;
-@Getter
-public class PostVO {
+@Data
+public class PostDTO {
 private int postNum;
 private int idNum;
 private String content;

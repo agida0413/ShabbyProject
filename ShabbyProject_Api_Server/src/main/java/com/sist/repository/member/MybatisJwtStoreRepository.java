@@ -4,6 +4,7 @@ import java.sql.Date;
 
 import org.springframework.stereotype.Repository;
 
+import com.sist.dto.TokenStoreDTO;
 import com.sist.mapper.member.JwtStoreMapper;
 import com.sist.vo.MemberVO;
 import com.sist.vo.TokenStoreVO;
@@ -23,8 +24,8 @@ public class MybatisJwtStoreRepository implements JwtStoreRepository {
 		mapper.deleteRefresh(refresh);
 	}
 		// 리프레시 토근정보를 저장함
-	public	void save(TokenStoreVO vo) {
-		mapper.save(vo);
+	public	void save(TokenStoreDTO dto) {
+		mapper.save(dto);
 	}
 	
 	//회원 고유아이디 번호 리턴

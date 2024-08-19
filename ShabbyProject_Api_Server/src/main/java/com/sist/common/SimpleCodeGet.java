@@ -20,6 +20,7 @@ public class SimpleCodeGet {
 		  Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		   CustomUserDetails userDetails= (CustomUserDetails)authentication.getPrincipal();
 	    	int idNum =userDetails.getIdNum();
+
 	    		return idNum;
 	}
 	

@@ -6,16 +6,16 @@ import java.util.Collection;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-
+import com.sist.dto.MemberDTO;
 import com.sist.vo.MemberVO;
 
 public class CustomUserDetails implements UserDetails {
 
-    private final MemberVO vo;
+    private final MemberDTO dto;
 
-    public CustomUserDetails(MemberVO vo) {
+    public CustomUserDetails(MemberDTO dto) {
 
-        this.vo = vo;
+        this.dto = dto;
     }
 
 
@@ -29,7 +29,7 @@ public class CustomUserDetails implements UserDetails {
             @Override
             public String getAuthority() {
 
-                return vo.getRole();
+                return dto.getRole();
             }
         });
 
@@ -39,17 +39,17 @@ public class CustomUserDetails implements UserDetails {
     @Override
     public String getPassword() {
 
-        return vo.getPassword();
+        return dto.getPassword();
     }
     
     public int getIdNum()
     {
-    	return vo.getIdNum();//고유번호 리턴
+    	return dto.getIdNum();//고유번호 리턴
     }
     @Override
     public String getUsername() {
     
-        return vo.getEmail(); //이메일을 사용하니 이메일 리턴
+        return dto.getEmail(); //이메일을 사용하니 이메일 리턴
     }
 
     @Override

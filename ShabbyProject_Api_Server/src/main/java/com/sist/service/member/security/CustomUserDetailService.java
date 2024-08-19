@@ -6,6 +6,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.sist.dto.MemberDTO;
 import com.sist.repository.member.MemberAccountRepository;
 import com.sist.repository.member.MybatisMemberAccountRepository;
 import com.sist.vo.MemberVO;
@@ -21,12 +22,12 @@ private final MemberAccountRepository repository;
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 		// TODO Auto-generated method stub
 		
-		MemberVO vo=repository.findByUserEmail(email);//이메일을 통한 회원 검증
-	
-		if(vo!=null) {
+		MemberDTO dto=repository.findByUserEmail(email);//이메일을 통한 회원 검증
+		
+		if(dto!=null) {
 
 			
-			return new CustomUserDetails(vo);
+			return new CustomUserDetails(dto);
 		}
 
 		return null;

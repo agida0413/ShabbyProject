@@ -78,15 +78,17 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
         GrantedAuthority auth = iterator.next();
         String role = auth.getAuthority();
-        
+        int idNum=simpleCodeGet.getIdNum(authentication);
+        String strIdNuM=String.valueOf(idNum);
+     
         //토큰 생성
-        String access = jwtUtil.createJwt("access", email, role, 1L);//엑세스 토큰 
-        String refresh = jwtUtil.createJwt("refresh", email, role, 86400000L); //리프레시 토큰 
-
+        String access = jwtUtil.createJwt("access", email, role,strIdNuM, 1L);//엑세스 토큰 
+        String refresh = jwtUtil.createJwt("refresh", email, role,strIdNuM, 86400000L); //리프레시 토큰 
+        
   
         //refresh토큰 저장
-        int idNum=simpleCodeGet.getIdNum(authentication);
-      
+       
+        
         refreshService.addRefreshEntity(idNum, refresh, 86400000L);
         
         //응답 설정

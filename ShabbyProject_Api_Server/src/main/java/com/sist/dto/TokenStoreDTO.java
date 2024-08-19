@@ -1,10 +1,10 @@
-package com.sist.vo;
+package com.sist.dto;
 
 import lombok.Data;
 import lombok.Getter;
 
-@Getter
-public class TokenStoreVO {
+@Data
+public class TokenStoreDTO {
 private int toNum;
 private int idNum;
 private String refresh;

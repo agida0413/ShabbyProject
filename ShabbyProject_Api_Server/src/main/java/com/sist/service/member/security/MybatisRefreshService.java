@@ -9,6 +9,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import com.sist.dto.TokenStoreDTO;
 import com.sist.jwt.JWTUtil;
 import com.sist.repository.member.JwtStoreRepository;
 import com.sist.repository.member.MybatisJwtStoreRepository;
@@ -39,13 +40,13 @@ private final JWTUtil jwtUtil;
 				
 		    Date date = new Date(System.currentTimeMillis() + expiredMs); //현재시간 + 매개변수로 받은 유효기간 
 	
-		 TokenStoreVO vo= new TokenStoreVO();
+		TokenStoreDTO dto= new TokenStoreDTO();
 		 
-		    vo.setIdNum(idNum); //매개변수로 받은 아이디고유번호
-		    vo.setRefresh(refresh); // 매개변수로 받은 토큰 
-		    vo.setExpiration(date.toString()); // 유효기간
+		    dto.setIdNum(idNum); //매개변수로 받은 아이디고유번호
+		    dto.setRefresh(refresh); // 매개변수로 받은 토큰 
+		    dto.setExpiration(date.toString()); // 유효기간
 	
-		    repository.save(vo);//데이터에 저장
+		    repository.save(dto);//데이터에 저장
 		}
 	
 	public Boolean	isExist(String refresh) { //리프레시 토큰이 데이터베이스에 실존하는지 검증
@@ -107,19 +108,20 @@ private final JWTUtil jwtUtil;
 
 	        String username = jwtUtil.getUsername(refresh); //토큰에서 이메일을 읽어옴
 	        String role = jwtUtil.getRole(refresh);// 권한을 읽어옴 
-
-	
+	        int idNum=jwtUtil.getIdNum(refresh); //고유번호를 읽어옴
+	        String strIdNum=String.valueOf(idNum);//고유번호 문자열로변환
+			
 	      
 	        //새로운 jwt 토큰 발급 
-	        String newAccess = jwtUtil.createJwt("access", username, role, 60000000L);
-	        String newRefresh = jwtUtil.createJwt("refresh", username, role, 86400000L);
+	        String newAccess = jwtUtil.createJwt("access", username, role,strIdNum, 60000000L);
+	        String newRefresh = jwtUtil.createJwt("refresh", username, role,strIdNum, 86400000L);
 
 	        
 	     
 	        
 			deleteRefresh(refresh); //Refresh 토큰 저장 DB에 기존의 Refresh 토큰 삭제 후 새 Refresh 토큰 저장
 			
-			 int idNum=repository.findId_num(username);// 리프레시 테이블에 회원고유번호를 저장하기 위해 
+			 
 			addRefreshEntity(idNum, newRefresh, 86400000L);//새 토큰 데이터에 저장
 	        
 	        response.setHeader("access", newAccess); //새로운 토큰을 헤더에 추가 
