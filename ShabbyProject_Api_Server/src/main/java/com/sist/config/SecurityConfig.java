@@ -18,7 +18,7 @@ import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
-import com.sist.common.SimpleCodeGet;
+import com.sist.common.utill.SimpleCodeGet;
 import com.sist.jwt.CustomLogoutFilter;
 import com.sist.jwt.JWTFilter;
 import com.sist.jwt.JWTUtil;

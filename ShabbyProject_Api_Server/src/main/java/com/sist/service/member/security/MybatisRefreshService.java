@@ -9,6 +9,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import com.sist.common.exception.BadRequestException;
 import com.sist.dto.TokenStoreDTO;
 import com.sist.jwt.JWTUtil;
 import com.sist.repository.member.JwtStoreRepository;
@@ -76,7 +77,7 @@ private final JWTUtil jwtUtil;
 	        if (refresh == null) {//만약 refresh가 없다면 
 
 	           
-	            return new ResponseEntity<>("refresh token null", HttpStatus.BAD_REQUEST);// 메시지와 400 응답코드 리턴 
+	         throw new BadRequestException("비정상적인 접근입니다.");//사용자 정의 익셉션 발생
 	        }
 
 	        //expired check
@@ -85,7 +86,7 @@ private final JWTUtil jwtUtil;
 	        } catch (ExpiredJwtException e) {
 
 	            //response status code
-	            return new ResponseEntity<>("refresh token expired", HttpStatus.BAD_REQUEST);//유효기간이 지났다면 400응답코드 리턴 
+	        	  throw new BadRequestException("비정상적인 접근입니다.");//사용자 정의 익셉션 발생
 	        }
 
 	      
@@ -94,7 +95,7 @@ private final JWTUtil jwtUtil;
 	        if (!category.equals("refresh")) {//refresh 토큰이 아니면 
 
 	         
-	            return new ResponseEntity<>("invalid refresh token", HttpStatus.BAD_REQUEST); //400응답코드 
+	        	  throw new BadRequestException("비정상적인 접근입니다.");//사용자 정의 익셉션 발생
 	        }
 	        
 	       
@@ -102,7 +103,7 @@ private final JWTUtil jwtUtil;
 			if (!isExist) {//없다면 
 			
 			  
-			    return new ResponseEntity<>("invalid refresh token", HttpStatus.BAD_REQUEST);//400응답코드 
+				  throw new BadRequestException("비정상적인 접근입니다.");//사용자 정의 익셉션 발생
 			}
 	        
 
@@ -113,7 +114,7 @@ private final JWTUtil jwtUtil;
 			
 	      
 	        //새로운 jwt 토큰 발급 
-	        String newAccess = jwtUtil.createJwt("access", username, role,strIdNum, 60000000L);
+	        String newAccess = jwtUtil.createJwt("access", username, role,strIdNum, 1000L);
 	        String newRefresh = jwtUtil.createJwt("refresh", username, role,strIdNum, 86400000L);
 
 	        

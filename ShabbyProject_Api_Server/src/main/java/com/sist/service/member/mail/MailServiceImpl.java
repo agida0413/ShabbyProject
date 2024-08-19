@@ -12,7 +12,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.sist.common.SimpleCodeGet;
+import com.sist.common.exception.BadRequestException;
+import com.sist.common.exception.NotFoundException;
+import com.sist.common.utill.SimpleCodeGet;
 import com.sist.dto.EmailAuthDTO;
 import com.sist.dto.MemberDTO;
 import com.sist.repository.member.MemberAccountRepository;
@@ -38,8 +40,8 @@ public class MailServiceImpl implements MailService{
 		
 		MemberDTO dto= memberAccountRepository.findByUserEmail(email);// 이메일 중복검증 
 		if(dto!=null) {
-			//중복이메일 일때 
-			 return new ResponseEntity<>("already user", HttpStatus.BAD_REQUEST); //400응답코드 
+			
+			throw new BadRequestException("이미 사용중인 이메일 입니다.");//사용자 정의 400에러 발생
 		}
 		
 		try {
@@ -68,7 +70,7 @@ public class MailServiceImpl implements MailService{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 				//기타 에러 
-			 return new ResponseEntity<>("something err", HttpStatus.NOT_FOUND); //404응답코드 
+				throw new BadRequestException("에러가 발생했습니다. 다시 시도해주세요.");//사용자 정의 400에러 발생
 		}
 		
 		return new ResponseEntity<>(HttpStatus.OK);
@@ -87,7 +89,7 @@ public class MailServiceImpl implements MailService{
 	
 	if(!bCryptPasswordEncoder.matches(code, dto.getCode())) {
 		//인증코드가 틀린경우
-		return new ResponseEntity<>("not auth",HttpStatus.BAD_REQUEST);//400 응답코드 
+		throw new BadRequestException("인증코드가 틀렸습니다.");//사용자 정의 400에러 발생
 	}
 	
 	
@@ -96,7 +98,7 @@ public class MailServiceImpl implements MailService{
 	 
 	 if(now.isAfter(dto.getExpiration())) {
 		 //인증시간이 만료되었을 경우 
-		 return new ResponseEntity<>("expiration done",HttpStatus.UNPROCESSABLE_ENTITY);//422 응답코드
+		 throw new BadRequestException("인증시간이 만료되었습니다.");//사용자 정의 400에러 발생
 	 }
 	 
 	 memberAccountRepository.emailAuthClear(dto.getEmailAuthNum());// 데이터베이스 row에 인증이 완료되었음을 update함 
@@ -143,13 +145,13 @@ public class MailServiceImpl implements MailService{
 		String email=dto.getEmail();
 		MemberDTO findDto = memberAccountRepository.findByUserEmail(email);
 		if(findDto==null) {//해당이메일이 존재하지않을 시 
-			return new ResponseEntity<>("no-Data",HttpStatus.NOT_FOUND);//404에러
+			throw new NotFoundException("등록된 정보가 없습니다.");
 		}
 		if(!dto.getName().equals(findDto.getName())) {//이메일은 존재하나 입력한 이름이 다를경우 
-			return new ResponseEntity<>("unAuth",HttpStatus.BAD_REQUEST);//400에러
+			throw new BadRequestException("입력한 정보가 일치하지 않습니다.");//사용자 정의 400에러 발생
 		}
 		if(!bCryptPasswordEncoder.matches(dto.getPhone(), findDto.getPhone())) {//이메일은 존재하나 입력한 닉네임이 다를경우 
-			return new ResponseEntity<>("unAuth",HttpStatus.BAD_REQUEST);//400에러
+			throw new BadRequestException("입력한 정보가 일치하지 않습니다.");//사용자 정의 400에러 발생
 		}
 		
 				
@@ -175,7 +177,7 @@ public class MailServiceImpl implements MailService{
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
-			return new ResponseEntity<>("server-err",HttpStatus.INTERNAL_SERVER_ERROR);//500에러 서버오류
+			// 익셉션 발생 = > 글로벌 핸들러에서잡음
 		}		
 		
 		

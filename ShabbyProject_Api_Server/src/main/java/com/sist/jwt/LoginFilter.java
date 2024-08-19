@@ -17,7 +17,7 @@ import org.springframework.security.task.DelegatingSecurityContextAsyncTaskExecu
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.util.StreamUtils;
 
-import com.sist.common.SimpleCodeGet;
+import com.sist.common.utill.SimpleCodeGet;
 import com.sist.repository.member.MemberAccountRepository;
 import com.sist.repository.member.MybatisMemberAccountRepository;
 import com.sist.service.member.security.CustomUserDetails;
@@ -82,7 +82,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         String strIdNuM=String.valueOf(idNum);
      
         //토큰 생성
-        String access = jwtUtil.createJwt("access", email, role,strIdNuM, 1L);//엑세스 토큰 
+        String access = jwtUtil.createJwt("access", email, role,strIdNuM, 1000L);//엑세스 토큰 
         String refresh = jwtUtil.createJwt("refresh", email, role,strIdNuM, 86400000L); //리프레시 토큰 
         
   
@@ -102,7 +102,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) {
     
-        response.setStatus(400); //로그인 실패시 400
+        response.setStatus(405); //로그인 실패시 405
     }
     
     private Cookie createCookie(String key, String value) {

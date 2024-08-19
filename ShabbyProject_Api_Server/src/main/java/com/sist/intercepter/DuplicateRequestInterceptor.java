@@ -3,7 +3,8 @@ package com.sist.intercepter;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
-import com.sist.common.SimpleCodeGet;
+import com.sist.common.exception.ConflictException;
+import com.sist.common.utill.SimpleCodeGet;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -25,9 +26,9 @@ public class DuplicateRequestInterceptor implements HandlerInterceptor {
 
         // 요청이 이미 처리 중이라면 중복 요청으로 간주하고 처리 중단
         if (requestMap.containsKey(requestKey)) {
-            response.setStatus(HttpServletResponse.SC_CONFLICT);//409 에러 
-            response.getWriter().write("이미 처리중인 요청");
-            return false;
+        	
+           throw new ConflictException("이미 처리중인 요청입니다."); //사용자 정의 중복처리 예외 던짐 
+          
         }
 
         // 요청을 Map에 추가하여 중복 요청 차단

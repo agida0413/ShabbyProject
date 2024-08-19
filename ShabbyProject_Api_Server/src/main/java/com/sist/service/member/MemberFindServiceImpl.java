@@ -5,6 +5,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.sist.common.exception.BadRequestException;
+import com.sist.common.exception.NotFoundException;
 import com.sist.dto.MemberDTO;
 import com.sist.repository.member.MemberAccountRepository;
 import com.sist.repository.member.MybatisMemberAccountRepository;
@@ -25,13 +27,13 @@ private final MailService mailService;
 			
 		MemberDTO findDto= memberAccountRepository.findEmail(dto);//해당 하는 정보 찾음 
 		if(findDto==null) {
-			return new ResponseEntity<>("no data",HttpStatus.NOT_FOUND);//404 에러 가입정보가 없음 
+			 throw new NotFoundException("등록된 회원정보가 없습니다.");
 		}
 			System.out.println(findDto.getPhone());
 		//만약 핸드폰 번호가 일치하지 않다면 
 		if(!bCryptPasswordEncoder.matches(dto.getPhone(), findDto.getPhone())) {
 			//정보가 일치하지않음 
-			return new ResponseEntity<>("incorrect data",HttpStatus.BAD_REQUEST);//400 에러 
+			throw new BadRequestException("입력한 정보가 일치하지 않습니다.");//사용자 정의400에러 발생
 		}
 		
 		

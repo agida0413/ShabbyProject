@@ -65,8 +65,9 @@ public class CustomLogoutFilter extends GenericFilterBean {
 
         //만약 refresh토큰이 없을 경우 
         if (refresh == null) { 
-        	//이미 로그아웃 상태거나 , 비정상 접근 400
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        	//이미 로그아웃 상태거나 , 비정상 접근 401
+        
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);//401
             return;
         }
 
@@ -76,7 +77,7 @@ public class CustomLogoutFilter extends GenericFilterBean {
         } catch (ExpiredJwtException e) {
         	
             //만료됬을 경우 
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        	 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);//401
             return;
         }
 
@@ -85,7 +86,7 @@ public class CustomLogoutFilter extends GenericFilterBean {
         if (!category.equals("refresh")) {
 
            
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        	 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);//401
             return;
         }
 
@@ -93,8 +94,8 @@ public class CustomLogoutFilter extends GenericFilterBean {
         Boolean isExist = refreshService.isExist(refresh);
         if (!isExist) {
 
-           
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        	
+        	 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);//401
             return;
         }
 
@@ -103,7 +104,7 @@ public class CustomLogoutFilter extends GenericFilterBean {
       
         	 refreshService.deleteRefresh(refresh);
 	
-
+        	 
         //Refresh 토큰 Cookie 값 0
         Cookie cookie = new Cookie("refresh", null);
         cookie.setMaxAge(0);
