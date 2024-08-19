@@ -70,13 +70,7 @@ export default{
           this.memberData.locked=res.data//공개여부 정보 저장 
           
         })
-        .catch((err)=>{
-          if(err.response&&err.response.status===401){
-         
-            alert('잘못된 접근입니다.')
-          }
-          
-        })
+       
       },
     //모달 열고,닫음 이벤트 제어 메소드
     ifSettingClose(){
@@ -98,14 +92,11 @@ export default{
           localStorage.removeItem('access')//엑세스 토큰 지움 
           this.$router.push('/login');//로그인 페이지로 이동
         })
-        .catch((err)=>{
-          if(err.response.status&&err.response.status===400){
-              alert('잘못된 접근입니다.')
-              this.$router.push('/login');
-            
-            }
+        .catch(()=>{
+          localStorage.removeItem('access')//엑세스 토큰 지움 
+          this.$router.push('/login');//에러 발생시 로그인 페이지로이동
         })
-    
+         
     }
   }
 }

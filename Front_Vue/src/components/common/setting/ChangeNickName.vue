@@ -164,12 +164,11 @@ export default {
                   
                 })
                 .catch((err)=>{
-                  if(err.response&&err.response.status===400){
-                 
-                    alert('이미존재하는 닉네임입니다.')
-                  }
-                 
+       
+                  alert(err.response&&err.response.data.message)
+                  
                 })
+                
 
             
         },
@@ -204,9 +203,9 @@ export default {
           this.closeDialog()
         })
         .catch((err)=>{
-          if(err.response.status&&err.response.status===400){
-            alert("비밀번호가 일치하지 않습니다.")
-          }
+       
+          alert(err.response&&err.response.data.message)
+          
         })
        
       },

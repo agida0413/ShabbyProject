@@ -174,16 +174,14 @@ export default {
               }
              
         })
-        .catch((err) => {
-
-          if(err.response&&err.response.status===400){
-          
-            alert('입력정보를 확인해 주세요.'); //로그인 일치정보가 없을시 
+        .catch((err)=>{
        
-           
+          if (err.response&&err.response.status===405) {
+            alert('입력정보가 틀립니다.')
           }
-        
-        });
+       
+     })
+       
     }
   }
 }

@@ -132,6 +132,8 @@ export default {
             .filter(error => typeof error === 'string');
         },
       closeDialog() {
+     
+
         this.$emit('changePwdClose');// 비밀번호 변경 컴포넌트로 닫는 이벤트 전송
       },
       submitPasswordChange(){
@@ -146,6 +148,7 @@ export default {
                   const formdata= new FormData();
                 formdata.append('password',this.password)
                 formdata.append('newPassword',this.newPassword)
+
         api.put("/setting/pwdChange",formdata) // 두개의 서로다른 객체에 매핑 되어야 하므로 formdata  @requestbody로받을 수 없음 
         .then(()=>{
           alert("비밀번호 변경에 성공하였습니다. 다시 로그인 해주세요.")
@@ -157,18 +160,18 @@ export default {
                           this.$router.push('/login');//로그인 페이지로 이동
                         })
                         .catch((err)=>{
-                          if(err.response.status&&err.response.status===400){
-                              alert('잘못된 접근입니다.')
-                              this.$router.push('/login');
-                            
-                            }
-                        })
+       
+                          alert(err.response&&err.response.data.message)
+                        
+                      })
+                       
               })
-        .catch((err)=>{
-          if(err.response.status&&err.response.status===400){
-            alert('현재 비밀번호가 일치하지 않습니다.')
-          }
-        })        
+              .catch((err)=>{
+       
+                  alert(err.response&&err.response.data.message)
+                
+              })
+     
 
         //이전비밀번호 검증 후 맞다면 
 

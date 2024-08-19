@@ -208,18 +208,12 @@ export default {
                 alert('휴대폰 번호 변경에 성공 하였습니다.')
                 this.closeDialog()
             })
-             .catch((err)=>{
-              if(err.response.status&&err.response.status===400){
-                alert('비밀번호가 일치하지 않습니다.')
-              }
-              if(err.response.status&&err.response.status===412){
-                alert('동일한 휴대폰 번호로 변경할 수 없습니다.')
-              }
-            if(err.response.status&&err.response.status===409){
-                alert('이미 사용중인 휴대폰 번호입니다.')
-              }
-             })  
-
+            .catch((err)=>{
+       
+              alert(err.response&&err.response.data.message)
+              
+            })
+            
       }
 
     }

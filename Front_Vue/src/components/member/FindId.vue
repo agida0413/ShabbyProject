@@ -270,16 +270,11 @@
         
         })
         .catch((err)=>{
-         if(err.response&&err.response.status===404){
-        
-          alert('가입된 정보가 없습니다.')
-
-         }
-         if(err.response&&err.response.status===400){
-         
-          alert('정보가 일치하지않습니다.')
-         }
-        })
+       
+       alert(err.response&&err.response.data.message)
+       
+     })
+     
         
        
       }

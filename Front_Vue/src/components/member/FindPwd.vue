@@ -202,8 +202,14 @@
     methods: {
       closeDialog() {
         if(this.loading===true){ //서버로 전송중일때 모달 못닫게함 . 
+          
           return;
         }
+        this.firstPhoneNum='010', 
+                   this.middlePhoneNum=''
+                   this.lastPhoneNum=''
+                    this.name=''
+                    this.email=''
 
         this.$emit('findPwdClose'); // 패스워드 찾기 컴포넌트로 모달을 닫는 이벤트 전송
       }, 
@@ -261,27 +267,17 @@
                 
                     alert('입력하신 이메일로 임시비밀번호를 보냈습니다.')
                     //변수  초기화 
-                   this.firstPhoneNum='010', 
-                   this.middlePhoneNum=''
-                   this.lastPhoneNum=''
-                    this.name=''
-                    this.email=''
+             
                     this.closeDialog()
                   
 
                 })
                 .catch((err)=>{
                   this.loading=false;//로딩 스피너 끝
-                  if(err.response&&err.response.status===404){
-                   
-                    alert('가입된 정보가 없습니다.') //이메일이 데이터에 없을때 
-                  }
-                  if(err.response&&err.response.status===400){
-             
-                    alert('정보가 일치하지 않습니다.') //입력정보 불일치
-                  }
+                alert(err.response&&err.response.data.message)
                 
-                })
+              })
+               
         }
         
     }

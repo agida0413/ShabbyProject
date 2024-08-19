@@ -61,21 +61,17 @@ api.interceptors.response.use(response => {
      
     });
   }
-    else if(error.response && error.response.status === 500){ //공통 처리 500에러시 
-      alert('서버 내부 오류입니다. 잠시 뒤 이용해 주세요')
-    }
-    else if(error.response && error.response.status === 403){ //공통 처리 403에러시 
-      alert('권한이 없습니다.')
-    
-    }
-    else if(error.response && error.response.status === 409){ //공통 처리 409에러시 
-      alert('이미 처리중인 요청입니다.')
-    }
-    
-    
+   else if(error.response && error.response.status === 403){//시큐리티 관련 에러(글로벌 익셉션이 안먹으므로)
+  alert('권한이 없습니다.')
+  }
+  else if(error.response && error.response.status === 401){
+    alert('잘못된 접근입니다.')
+  }
+  
+  
 
-  // 다른 오류 처리
-  return Promise.reject(error);
+
+return Promise.reject(error);
 });
 
 

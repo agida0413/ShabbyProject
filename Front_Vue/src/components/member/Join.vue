@@ -464,19 +464,12 @@
            
             alert('이메일 전송이 완료되었습니다.')
             
-          }).catch((err)=>{
-            this.loading = false; // 로딩 끝
-            if(err.response&&err.response.status===400){//400일시 중복이메일 
-              
-              alert('이미 사용중인 이메일입니다.')
-            }
-            else if(err.response&&err.response.status===404){//404일시 기타오류 
-            
-              alert('잘못된 이메일 형식이거나 , 잘못된 입력입니다.')
-            }
-          
-           
           })
+          .catch((err)=>{
+            this.loading=false
+       alert(err.response&&err.response.data.message)
+       
+     })
          
         },
         //이메일 인증코드 검증 
@@ -501,15 +494,11 @@
             alert('검증되었습니다.')
           })
           .catch((err)=>{
-            if(err.response&&err.response.status===400){//400일시 인증코드 불일치 
-          
-              alert('인증코드가 맞지않습니다.')
-            }
-            if(err.response&&err.response.status===422){//422 일시 만료된 인증 
             
-              alert('만료된 인증입니다.')
-            }
-          })
+       alert(err.response&&err.response.data.message)
+       
+     })
+         
         },
         nickNameValidation(){
           this.nickNameErrors = this.validateField(this.nickName, this.nickNameRules); //닉네임 검증 에러메시지 배열
@@ -531,13 +520,11 @@
                   
                 })
                 .catch((err)=>{
-                  if(err.response&&err.response.status===400){
-                 
-                    alert('이미존재하는 닉네임입니다.')
-                  }
-                 
-                })
-
+       
+                    alert(err.response&&err.response.data.message)
+                    
+                  })
+              
             
         },
         submitJoin(){
@@ -600,6 +587,11 @@
                     await this.showAlert('회원가입이 완료되었습니다. 환영합니다!!!');
                     // alert이 닫힌 후 router.push 호출
                     this.$router.push('/login');
+                  
+                })
+                .catch((err)=>{
+                   
+                  alert(err.response&&err.response.data.message)
                   
                 })
                
