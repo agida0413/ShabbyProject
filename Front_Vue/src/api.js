@@ -66,6 +66,7 @@ api.interceptors.response.use(response => {
     }
     else if(error.response && error.response.status === 403){ //공통 처리 403에러시 
       alert('권한이 없습니다.')
+    
     }
     else if(error.response && error.response.status === 409){ //공통 처리 409에러시 
       alert('이미 처리중인 요청입니다.')

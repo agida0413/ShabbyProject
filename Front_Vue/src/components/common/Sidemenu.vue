@@ -63,10 +63,11 @@ export default{
   },
   methods:{
 
-    getInitInfo(){ // 회원정보를 가져옴
+    getInitInfo(){ // 회원정보를 가져옴 1. 공개여부 
         api.get('/setting')
         .then((res)=>{
-          this.memberData=res.data
+        
+          this.memberData.locked=res.data//공개여부 정보 저장 
           
         })
         .catch((err)=>{
@@ -93,10 +94,16 @@ export default{
     },
     logout(){//로그아웃 진행 
       api.post('/logout')
-      
       .then(()=>{
           localStorage.removeItem('access')//엑세스 토큰 지움 
           this.$router.push('/login');//로그인 페이지로 이동
+        })
+        .catch((err)=>{
+          if(err.response.status&&err.response.status===400){
+              alert('잘못된 접근입니다.')
+              this.$router.push('/login');
+            
+            }
         })
     
     }

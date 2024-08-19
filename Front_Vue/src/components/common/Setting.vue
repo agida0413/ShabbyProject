@@ -129,7 +129,8 @@
   </Alert>
     <ChangePwd v-model:value="changePwdDialog" @changePwdClose="closeChangePwd"></ChangePwd>
     <ChangePhone v-model:value="phoneChangeDialog" @changePhone="closePhoneChange"></ChangePhone>
-    <ChangeNickname v-model:value="nicknameChangeDialog" @changeNickname="closeChangeNickname"></ChangeNickname>
+    <ChangeNickname v-model:value="nicknameChangeDialog" 
+    @changeNickname="closeChangeNickname"></ChangeNickname>
   </template>
 
 <script>
@@ -147,7 +148,7 @@ export default {
          type: Boolean,
          required: true
        },
-       memberData :{
+       memberData :{//회원데이터
         type:{},
         required:true
        }

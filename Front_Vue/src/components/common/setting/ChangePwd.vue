@@ -27,6 +27,8 @@
                 @click:append-inner="visible = !visible"
                 v-model="password"
                 :rules="passwordRules"
+                  required
+                :error-messages="passwordErrors"
               ></v-text-field>
             </v-col>
         </v-row>
@@ -45,8 +47,10 @@
                 prepend-inner-icon="mdi-lock-outline"
                 variant="outlined"
                 @click:append-inner="visible = !visible"
-                v-model="password"
-                :rules="passwordRules"
+                v-model="newPassword"
+                :rules="newPasswordRules"
+                  required
+                :error-messages="newPaasswordErrors"
               ></v-text-field>
              </v-col>
     </v-row>
@@ -60,14 +64,14 @@
             <v-btn
               text="Close"
               variant="plain"
-              @click="dialog = false"
+              @click="closeDialog()"
             ></v-btn>
   
             <v-btn
               color="primary"
               text="Save"
               variant="tonal"
-              @click="verifyPrePwd"
+              @click="submitPasswordChange()"
             ></v-btn>
           </v-card-actions>
         </v-card>
@@ -76,6 +80,7 @@
   </template>
 
   <script>
+  import api from '@/api';
 export default {
     name: 'ChangerPwd',
   
@@ -89,10 +94,27 @@ export default {
 },data(){
     return{
         password:'',
+        newPassword:'',
         passwordRules: [
-          v => !!v || '비밀번호를 입력해주세요.' //비밀번호 입력검증
+                v => !!v || '비밀번호를 입력 해주세요.', // 비밀번호가 입력되지않았을 경우
+                v => v.trim().length > 0 || '잘못된 형식입니다.', // 공백입력시 
+                v => !/\s/.test(v) || '공백을 사용할 수 없습니다.', // 공백 불가
+
+              ],
         
-        ],visible:false
+        newPasswordRules: [
+                v => !!v || '비밀번호를 입력 해주세요.', // 비밀번호가 입력되지않았을 경우
+                v => v.trim().length > 0 || '잘못된 형식입니다.', // 공백입력시 
+                v => !/\s/.test(v) || '공백을 사용할 수 없습니다.', // 공백 불가
+                v => (v && v.length >= 8) || '비밀번호는 최소 8자 이상이어야 합니다.', // 최소 8자
+                v => (v && v.length <= 20) || '비밀번호는 최대 20자까지 입력할 수 있습니다.', // 최대 20자
+                v => /[a-zA-Z]/.test(v) || '비밀번호에는 최소 하나의 문자(알파벳)가 포함되어야 합니다.', // 문자 포함
+                v => /\d/.test(v) || '비밀번호에는 최소 하나의 숫자가 포함되어야 합니다.', // 숫자 포함
+                v => /[!@#$%^&*(),.?":{}|<>]/.test(v) || '비밀번호에는 최소 하나의 특수문자가 포함되어야 합니다.', // 특수문자 포함
+              ],
+        newPaasswordErrors:[],
+        passwordErrors:[],
+        visible:false
     }
 }
  ,computed:{
@@ -104,13 +126,53 @@ export default {
  }   
     ,
     methods: {
+      validateField(value, rules) { //rules 에러를 저장 
+          return rules
+            .map(rule => rule(value))
+            .filter(error => typeof error === 'string');
+        },
       closeDialog() {
         this.$emit('changePwdClose');// 비밀번호 변경 컴포넌트로 닫는 이벤트 전송
       },
-      verifyPrePwd(){
+      submitPasswordChange(){
+
+        this.passwordErrors = this.validateField(this.password, this.passwordRules); //비밀번호 검증 에러메시지 배열
+        this.newPaasswordErrors = this.validateField(this.newPassword, this.newPasswordRules); //비밀번호 검증 에러메시지 배열
+          if (this.passwordErrors.length > 0 ||this.newPaasswordErrors.length>0) { //만약 비밀번호 검증에러가 있을 시   return
+          
+            return;//불필요한 axios 요청 방지 
+         
+                }
+                  const formdata= new FormData();
+                formdata.append('password',this.password)
+                formdata.append('newPassword',this.newPassword)
+        api.put("/setting/pwdChange",formdata) // 두개의 서로다른 객체에 매핑 되어야 하므로 formdata  @requestbody로받을 수 없음 
+        .then(()=>{
+          alert("비밀번호 변경에 성공하였습니다. 다시 로그인 해주세요.")
+          this.closeDialog()
+
+                    api.post('/logout')//로그아웃
+                      .then(()=>{
+                          localStorage.removeItem('access')//엑세스 토큰 지움 
+                          this.$router.push('/login');//로그인 페이지로 이동
+                        })
+                        .catch((err)=>{
+                          if(err.response.status&&err.response.status===400){
+                              alert('잘못된 접근입니다.')
+                              this.$router.push('/login');
+                            
+                            }
+                        })
+              })
+        .catch((err)=>{
+          if(err.response.status&&err.response.status===400){
+            alert('현재 비밀번호가 일치하지 않습니다.')
+          }
+        })        
+
         //이전비밀번호 검증 후 맞다면 
 
-        this.closeDialog()
+       
       }
 
     }
