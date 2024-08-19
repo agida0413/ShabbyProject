@@ -10,7 +10,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.sist.common.SimpleCodeGet;
+import com.sist.common.exception.BadRequestException;
+import com.sist.common.utill.SimpleCodeGet;
 import com.sist.dto.MemberDTO;
 import com.sist.repository.member.MemberAccountRepository;
 import com.sist.repository.member.MemberSettingRepository;
@@ -35,10 +36,10 @@ public class ChangeInfoServiceImpl implements ChangeInfoService{
 		int idNum=simpleCodeGet.getIdNum();
 		
 			MemberDTO dto =	memberAccountRepository.findByIdNum(idNum);
-		
+	
 		
 		if(dto==null) {
-			return new ResponseEntity<>("no-access",HttpStatus.UNAUTHORIZED);//401
+		throw new BadRequestException("비정상적인 접근입니다.");//사용자 정의400에러 발생
 		}
 		
 		String locked= dto.getLocked();
@@ -58,7 +59,7 @@ public class ChangeInfoServiceImpl implements ChangeInfoService{
 		if(!bCryptPasswordEncoder.matches(dto.getPassword(), findDto.getPassword())) {
 			//비밀번호가 일치하지않을시 
 			
-			return new ResponseEntity<>("NOT CORRECT PASSWORD",HttpStatus.BAD_REQUEST);//400에러 
+			throw new BadRequestException("비밀번호가 일치 하지않습니다.");//사용자 정의400에러 발생
 		}
 		
 
@@ -86,11 +87,11 @@ public class ChangeInfoServiceImpl implements ChangeInfoService{
 		
 		//입력받은 패스워드와 일치하지않다면 , 
 		if(!bCryptPasswordEncoder.matches(password, findDto.getPassword())) {
-			return new ResponseEntity<>("NOT CORRECT",HttpStatus.BAD_REQUEST);//400 에러 
+			throw new BadRequestException("비밀번호가 일치 하지않습니다.");//사용자 정의400에러 발생
 		}
 		
 		if(bCryptPasswordEncoder.matches(newPassword,findDto.getPassword())) {//바꾸려는 패스워드와 기존패스워드가 일치할경우 
-			return new ResponseEntity<>("same as previous",HttpStatus.CONFLICT);//409에러 
+			throw new BadRequestException("기존 비밀번호와 동일한 비밀번호는 사용할 수 없습니다.");//사용자 정의400에러 발생 
 		}
 		newPassword= bCryptPasswordEncoder.encode(newPassword);// 새로운 패스워드 암호화 
 		
@@ -118,19 +119,20 @@ public class ChangeInfoServiceImpl implements ChangeInfoService{
 		
 		if(!bCryptPasswordEncoder.matches(dto.getPassword(), findDto.getPassword())) {//입력받은 비밀번호와 ,데이터베이스 패스워드가 다를시 
 			
-			return new ResponseEntity<>("not correct password",HttpStatus.BAD_REQUEST);//400 에러 
+			throw new BadRequestException("비밀번호가 일치 하지않습니다.");//사용자 정의400에러 발생
 		}
 		MemberDTO findSamePhoeUser= memberAccountRepository.findByUserPhone(dto.getPhone());
 		if (!(findSamePhoeUser==null)) {
 			//입력한 핸드폰 번호와 전체회원의 핸드폰 번호중 동일한 핸드폰있는 회원목록을 갖고옴 
 		
 			//그 회원이 존재한다면 
-			return new ResponseEntity<>("same as previous",HttpStatus.CONFLICT);//409에러 
+			throw new BadRequestException("이미 존재하는 번호입니다.");//사용자 정의400에러 발생
 		}
 		
 		
 		if(bCryptPasswordEncoder.matches(dto.getPhone(), findDto.getPhone())) {//입력받은 핸드폰 번호와 현재 핸드폰 번호가 같을 시 
-				return new ResponseEntity<>("same previous",HttpStatus.PRECONDITION_FAILED);//412 에러 
+			
+			throw new BadRequestException("기존 휴대폰번호와 동일한 번호로 수정할 수 없습니다.");//사용자 정의400에러 발생
 		}
 		
 		

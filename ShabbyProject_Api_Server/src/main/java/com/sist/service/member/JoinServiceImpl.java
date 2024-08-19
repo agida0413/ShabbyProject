@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.sist.common.exception.BadRequestException;
 import com.sist.dto.EmailAuthDTO;
 import com.sist.dto.MemberDTO;
 import com.sist.repository.member.MemberAccountRepository;
@@ -53,7 +54,7 @@ private final BCryptPasswordEncoder bCryptPasswordEncoder;
 			MemberDTO dto = memberAccountRepository.findByUserNickname(nickName);
 			
 			if(dto!=null) {
-				return new ResponseEntity<>("already nickName",HttpStatus.BAD_REQUEST);//중복닉네임은 400응답코드 
+				throw new BadRequestException("중복된 닉네임 입니다.");//사용자 정의400에러 발생
 			}
 		
 			return new ResponseEntity<>("OK",HttpStatus.OK);//검증완료
