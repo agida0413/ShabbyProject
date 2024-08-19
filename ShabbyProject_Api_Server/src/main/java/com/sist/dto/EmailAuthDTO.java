@@ -1,14 +1,13 @@
-package com.sist.vo;
+package com.sist.dto;
 
 import java.sql.Date;
 import java.time.LocalDateTime;
 
 import lombok.Data;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
-@Getter
-public class EmailAuthVO {
+@Data
+public class EmailAuthDTO {
 private int emailAuthNum;
 private String email;
 private String code;

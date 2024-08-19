@@ -2,19 +2,22 @@ package com.sist.mapper.member;
 
 import org.apache.ibatis.annotations.Mapper;
 
+import com.sist.dto.EmailAuthDTO;
+import com.sist.dto.MemberDTO;
 import com.sist.vo.EmailAuthVO;
 import com.sist.vo.MemberVO;
 
 @Mapper
 public interface MemberAccountMapper {
 
-	public MemberVO findByUserEmail(String email);
-	public MemberVO findByUserNickname(String nickname);
-	public MemberVO findByUserPhone(String phone);
-	public void join (MemberVO vo);
-	public void emailAuthSave(EmailAuthVO vo);
-	public EmailAuthVO emailAuthGetValidation(String email);
+	public MemberDTO findByUserEmail(String email);
+	public MemberDTO findByUserIdNum(int idNum);
+	public MemberDTO findByUserNickname(String nickname);
+	public MemberDTO findByUserPhone(String phone);
+	public void join (MemberDTO dto);
+	public void emailAuthSave(EmailAuthDTO dto);
+	public EmailAuthDTO emailAuthGetValidation(String email);
 	public void emailAuthClear(int emailAuthNum);
-	public MemberVO findEmail(MemberVO vo);
-	public void tempPasswordUpdate(MemberVO vo);
+	public MemberDTO findEmail(MemberDTO dto);
+	public void tempPasswordUpdate(MemberDTO dto);
 }

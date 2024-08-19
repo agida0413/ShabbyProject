@@ -1,10 +1,10 @@
-package com.sist.vo;
+package com.sist.dto;
 
 import lombok.Data;
 import lombok.Getter;
 
-@Getter
-public class PostImgVO {
+@Data
+public class PostImgDTO {
 private int postImgNum;
 private int postNum;
 private String postImgUrl;

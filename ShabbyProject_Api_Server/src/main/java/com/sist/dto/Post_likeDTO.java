@@ -1,10 +1,10 @@
-package com.sist.vo;
+package com.sist.dto;
 
 import lombok.Data;
 import lombok.Getter;
 
-@Getter
-public class Post_likeVO {
+@Data
+public class Post_likeDTO {
 private int like_num_po;
 private int id_num;
 private int post_num;

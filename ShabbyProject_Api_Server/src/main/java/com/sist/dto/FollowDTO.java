@@ -1,11 +1,11 @@
-package com.sist.vo;
+package com.sist.dto;
 
 import java.sql.Date;
 
 import lombok.Data;
 import lombok.Getter;
-@Getter
-public class FollowVO {
+@Data
+public class FollowDTO {
 private int followNum;
 private int idNum;
 private int followingId;

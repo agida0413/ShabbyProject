@@ -8,7 +8,7 @@
  
  <mapper namespace="com.sist.mapper.member.MemberSettingMapper">
  	<!-- 닉네임 변경 (검증 후 업데이트 sql)-->
-	<update  id="updateNickName" parameterType="MemberVO">
+	<update  id="updateNickName" parameterType="MemberDTO">
 	UPDATE MEMBER SET 
 	nickname=#{nickname},
 	edit_date=current_TIMESTAMP
@@ -16,4 +16,21 @@
 	</update>
 	
 	
+	<!--패스워드 변경 (검증후)-->
+	
+	<update id="updatePassword" parameterType="MemberDTO">
+	UPDATE MEMBER SET 
+	password=#{password},
+	edit_date=current_TIMESTAMP
+	where id_num=#{idNum}	
+	</update>
+	
+	
+	
+	<update id="updatePhone" parameterType="MemberDTO">
+	UPDATE MEMBER SET 
+	phone=#{phone},
+	edit_date=current_TIMESTAMP
+	where id_num=#{idNum}	
+	</update>
  </mapper>

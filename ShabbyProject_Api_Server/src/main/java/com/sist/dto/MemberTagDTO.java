@@ -1,10 +1,10 @@
-package com.sist.vo;
+package com.sist.dto;
 
 import lombok.Data;
 import lombok.Getter;
 
-@Getter
-public class MemberTagVO {
+@Data
+public class MemberTagDTO {
 private int tagNum;
 private int postNum;
 private int idNum;

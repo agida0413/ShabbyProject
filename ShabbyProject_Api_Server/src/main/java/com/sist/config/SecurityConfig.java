@@ -96,6 +96,7 @@ public class SecurityConfig {
 		                		"/api/members/emailAuth","/api/members/emailValidate"
 		                		,"api/members/nickValidate","/api/members","/api/members/findEmail"
 		                		,"/api/members/findPassword").permitAll() //로그인 ,회원가입 , 토큰 재발급,이메일인증 api는 권한 필요없음 
+		       
 		                .anyRequest().authenticated());
 				
 				

@@ -5,6 +5,7 @@ import java.io.IOException;
 import org.springframework.web.filter.GenericFilterBean;
 
 import com.sist.service.member.security.MybatisRefreshService;
+import com.sist.service.member.security.RefreshService;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
@@ -18,9 +19,9 @@ import jakarta.servlet.http.HttpServletResponse;
 public class CustomLogoutFilter extends GenericFilterBean {
 
     private final JWTUtil jwtUtil;
-    private final MybatisRefreshService refreshService;
+    private final RefreshService refreshService;
 
-    public CustomLogoutFilter(JWTUtil jwtUtil, MybatisRefreshService refreshService) {
+    public CustomLogoutFilter(JWTUtil jwtUtil, RefreshService refreshService) {
 
         this.jwtUtil = jwtUtil;
         this.refreshService = refreshService;
@@ -99,7 +100,9 @@ public class CustomLogoutFilter extends GenericFilterBean {
 
         //로그아웃 진행
         //Refresh 토큰 DB에서 제거
-        refreshService.deleteRefresh(refresh);
+      
+        	 refreshService.deleteRefresh(refresh);
+	
 
         //Refresh 토큰 Cookie 값 0
         Cookie cookie = new Cookie("refresh", null);
