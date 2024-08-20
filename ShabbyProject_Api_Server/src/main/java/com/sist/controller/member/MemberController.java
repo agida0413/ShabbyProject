@@ -9,13 +9,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.sist.dto.EmailAuthDTO;
-import com.sist.dto.MemberDTO;
-import com.sist.service.member.JoinService;
-import com.sist.service.member.MemberFindService;
-import com.sist.service.member.mail.MailServiceImpl;
-import com.sist.vo.EmailAuthVO;
-import com.sist.vo.MemberVO;
+import com.sist.dto.member.EmailAuthDTO;
+import com.sist.dto.member.MemberDTO;
+import com.sist.service.member.mail.impl.MailServiceImpl;
+import com.sist.service.member.manage.JoinService;
+import com.sist.service.member.manage.MemberFindService;
 
 import lombok.RequiredArgsConstructor;
 

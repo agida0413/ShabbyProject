@@ -13,38 +13,38 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import com.sist.common.utill.SimpleCodeGet;
-import com.sist.jwt.CustomLogoutFilter;
-import com.sist.jwt.JWTFilter;
 import com.sist.jwt.JWTUtil;
-import com.sist.jwt.LoginFilter;
+import com.sist.jwt.filter.CustomLogoutFilter;
+import com.sist.jwt.filter.JWTFilter;
+import com.sist.jwt.filter.LoginFilter;
 import com.sist.repository.member.MemberAccountRepository;
-import com.sist.service.member.security.MybatisRefreshService;
+import com.sist.service.member.security.RefreshService;
+import com.sist.service.member.security.impl.MybatisRefreshService;
 
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
 
 		private final AuthenticationConfiguration authenticationConfiguration;
 		//JWTUtil 주입
 		private final JWTUtil jwtUtil;
-		
-		private MybatisRefreshService refreshService;
+		private final RefreshService refreshService;
 		private final SimpleCodeGet simpleCodeGet;
-    public SecurityConfig(AuthenticationConfiguration authenticationConfiguration, JWTUtil jwtUtil,MybatisRefreshService refreshService,SimpleCodeGet simpleCodeGet) {
-
-        this.authenticationConfiguration = authenticationConfiguration;
-				this.jwtUtil = jwtUtil;
-				this.refreshService=refreshService;
-				this.simpleCodeGet=simpleCodeGet;
-    }
+		private final ObjectMapper objectMapper;
+  
    
 		@Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
@@ -53,14 +53,16 @@ public class SecurityConfig {
     }
 
     @Bean
-    public BCryptPasswordEncoder bCryptPasswordEncoder() {
+    public BCryptPasswordEncoder bCryptPasswordEncoder() { //암호화
 
         return new BCryptPasswordEncoder();
     }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-    		
+    
+    	
+    	//cors 관련 설정 
     	http
         .cors((corsCustomizer -> corsCustomizer.configurationSource(new CorsConfigurationSource() {
 
@@ -83,6 +85,8 @@ public class SecurityConfig {
     	
     	http
         .csrf((auth) -> auth.disable()); //jwt 사용으로 인한 disable 
+    	
+
 
 		http
 		        .formLogin((auth) -> auth.disable()); //jwt사용으로 인한 기본로그인폼  x
@@ -101,16 +105,16 @@ public class SecurityConfig {
 				
 				
 		http
-		        .addFilterBefore(new JWTFilter(jwtUtil), LoginFilter.class);//JWTFilter 등록 = > 로그인 필터 전에 수행 
+		        .addFilterBefore(new JWTFilter(jwtUtil,objectMapper), LoginFilter.class);//JWTFilter 등록 = > 로그인 필터 전에 수행 
 		
 		
 		//  로그인필터를  UsernamePasswordAuthenticationFilter 위치에 
 		http
-		.addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil,refreshService,simpleCodeGet), UsernamePasswordAuthenticationFilter.class);
+		.addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil,refreshService,simpleCodeGet,objectMapper), UsernamePasswordAuthenticationFilter.class);
 		
 		//커스텀한 로그아웃 필터를 등록 =>기존 필터위치에 
 		http
-		.addFilterBefore(new CustomLogoutFilter(jwtUtil, refreshService), LogoutFilter.class);
+		.addFilterBefore(new CustomLogoutFilter(jwtUtil, refreshService,objectMapper), LogoutFilter.class);
 		
 		http
         .sessionManagement((session) -> session // 세션방식 미사용

@@ -1,7 +1,7 @@
 package com.sist.repository.member;
 
-import com.sist.dto.EmailAuthDTO;
-import com.sist.dto.MemberDTO;
+import com.sist.dto.member.EmailAuthDTO;
+import com.sist.dto.member.MemberDTO;
 
 
 

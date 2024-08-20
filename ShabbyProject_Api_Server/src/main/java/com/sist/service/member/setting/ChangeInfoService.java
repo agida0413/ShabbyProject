@@ -4,8 +4,7 @@ import org.apache.catalina.authenticator.SpnegoAuthenticator.AuthenticateAction;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 
-import com.sist.dto.MemberDTO;
-import com.sist.vo.MemberVO;
+import com.sist.dto.member.MemberDTO;
 
 public interface ChangeInfoService {
 	public ResponseEntity<?> getLockedInfo();//회원정보 

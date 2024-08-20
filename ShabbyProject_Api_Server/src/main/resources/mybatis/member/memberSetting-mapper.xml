@@ -26,7 +26,7 @@
 	</update>
 	
 	
-	
+	<!--핸드폰 번호 변경-->
 	<update id="updatePhone" parameterType="MemberDTO">
 	UPDATE MEMBER SET 
 	phone=#{phone},

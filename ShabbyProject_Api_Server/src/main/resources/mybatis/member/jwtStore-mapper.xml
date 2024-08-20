@@ -10,10 +10,7 @@
 	<select id="findRefresh" parameterType="String" resultType="int">
 	Select count(*) from token_store where refresh=#{refresh}
 	</select>
-	<!-- id_num 고유번호를 이메일을 통해 갖고옴-->	
-	<select id="findId_num" parameterType="String" resultType="int">
-	SELECT id_num from member where email=#{email}
-	</select>	
+	
 	<!--로그아웃을 위해(강제 로그아웃 도 포함) 데이터베이스에 리프레시 토큰을 지움
 		/ 또한 새롭게 발급되는 리프레시 토큰을 삭제하고 다시 삽입해야하기때문에 
 	-->
