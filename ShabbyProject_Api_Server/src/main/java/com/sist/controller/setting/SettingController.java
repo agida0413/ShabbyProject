@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.sist.dto.api.ResponseDTO;
 import com.sist.dto.member.MemberDTO;
 import com.sist.service.setting.ChangeInfoService;
 
@@ -26,20 +27,20 @@ public class SettingController {
 	
 	//회원정보(공개/비공개 여부 )를 가져오는 api
 	@GetMapping
-	public ResponseEntity<?> getInfo(){
+	public ResponseEntity<ResponseDTO<String>> getInfo(){
 		
 		return changeInfoService.getLockedInfo();
 	}
 	
 	//닉네임 변경하는 api
 	@PutMapping("/nickChange")
-	public  ResponseEntity<?> nicknameChange(@RequestBody MemberDTO dto){
+	public  ResponseEntity<ResponseDTO<Void>> nicknameChange(@RequestBody MemberDTO dto){
 		return changeInfoService.nickNameUpdate(dto);
 	}
 	
 	//비밀번호 변경 api
 	@PutMapping("/pwdChange")
-	public  ResponseEntity<?> pwdChange( String password,String newPassword){ // formdata 
+	public  ResponseEntity<ResponseDTO<Void>> pwdChange( String password,String newPassword){ // formdata 
 	
 	
 		return changeInfoService.passwordUpdate(password,newPassword);
@@ -47,9 +48,16 @@ public class SettingController {
 	
 	//핸드폰 번호 변경 api
 	@PutMapping("/phoneChange")
-	public ResponseEntity<?> phoneChange(@RequestBody MemberDTO dto){
+	public ResponseEntity<ResponseDTO<Void>> phoneChange(@RequestBody MemberDTO dto){
 		
 		return changeInfoService.phoneChange(dto);
+		
+	}
+	
+	@PutMapping("/lockStateChange")
+	public ResponseEntity<ResponseDTO<Void>> lockStateChange(@RequestBody MemberDTO dto){
+		
+		return changeInfoService.updateLockedState(dto);
 		
 	}
 }

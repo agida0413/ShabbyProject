@@ -33,4 +33,15 @@
 	edit_date=current_TIMESTAMP
 	where id_num=#{idNum}	
 	</update>
+	
+	
+	<!-- 공개 혹은 비공개 모드 전환 -->
+	<update id="updateLockedState" parameterType="MemberDTO">
+	UPDATE MEMBER SET
+	LOCKED =#{locked}
+	WHERE id_num=#{idNum}
+	</update>
+	
+	
+	
  </mapper>

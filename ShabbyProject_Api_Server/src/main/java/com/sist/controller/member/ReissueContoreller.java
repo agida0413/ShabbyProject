@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.sist.dto.api.ResponseDTO;
 import com.sist.service.security.RefreshService;
 import com.sist.service.security.impl.MybatisRefreshService;
 
@@ -24,7 +25,7 @@ public class ReissueContoreller {
 	
 	//refresh토큰 재발행 api
 	@PostMapping("/reissue")
-	public ResponseEntity<?> reisue(HttpServletRequest request, HttpServletResponse response){
+	public ResponseEntity<ResponseDTO<Void>> reisue(HttpServletRequest request, HttpServletResponse response){
 		
 		return service.reissue(request,response);
 	}

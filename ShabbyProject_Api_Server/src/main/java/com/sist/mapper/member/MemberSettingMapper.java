@@ -12,4 +12,6 @@ public interface MemberSettingMapper {
 	public void updatePassword(MemberDTO dto);
 	//<!--핸드폰 번호 변경-->
 	public void updatePhone(MemberDTO dto);
+	// 비공개/공개모드 변경
+	public void updateLockedState(MemberDTO dto);
 }

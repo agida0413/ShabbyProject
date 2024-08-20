@@ -10,4 +10,6 @@ public interface MemberSettingRepository {
 	public void updatePassword(MemberDTO dto);
 	//<!--핸드폰 번호 변경-->
 	public void updatePhone(MemberDTO dto);
+	//공개/비공개 모드 변경
+	public void updateLockedState(MemberDTO dto);
 }
