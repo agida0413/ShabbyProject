@@ -201,10 +201,7 @@
     ,
     methods: {
       closeDialog() {
-        if(this.loading===true){ //서버로 전송중일때 모달 못닫게함 . 
-          
-          return;
-        }
+        
         this.firstPhoneNum='010', 
                    this.middlePhoneNum=''
                    this.lastPhoneNum=''

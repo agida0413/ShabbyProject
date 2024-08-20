@@ -66,8 +66,8 @@ export default{
     getInitInfo(){ // 회원정보를 가져옴 1. 공개여부 
         api.get('/setting')
         .then((res)=>{
-       
-          this.memberData.locked=res.data//공개여부 정보 저장 
+  
+          this.memberData.locked=res.data.reqData//공개여부 정보 저장 
        
           
         })
