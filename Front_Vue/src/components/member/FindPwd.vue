@@ -263,7 +263,7 @@
                   email:this.email
                 })
                 .then(()=>{
-                  this.loading=false;//로딩 스피너 끝
+                 
                 
                     alert('입력하신 이메일로 임시비밀번호를 보냈습니다.')
                     //변수  초기화 
@@ -273,9 +273,12 @@
 
                 })
                 .catch((err)=>{
-                  this.loading=false;//로딩 스피너 끝
+                 
                 alert(err.response&&err.response.data.message)
                 
+              })
+              .finally(()=>{
+                this.loading=false //로딩 끝
               })
                
         }

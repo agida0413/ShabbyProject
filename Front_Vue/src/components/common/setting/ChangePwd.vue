@@ -114,7 +114,8 @@ export default {
               ],
         newPaasswordErrors:[],
         passwordErrors:[],
-        visible:false
+        visible:false,
+        isLoading:false
     }
 }
  ,computed:{
@@ -132,12 +133,19 @@ export default {
             .filter(error => typeof error === 'string');
         },
       closeDialog() {
-     
+        this.password='',
+        this.newPassword='',
+        this.isLoading=false,
+        this.passwordErrors=[],
+        this.newPaasswordErrors=[]
+
 
         this.$emit('changePwdClose');// 비밀번호 변경 컴포넌트로 닫는 이벤트 전송
       },
       submitPasswordChange(){
-
+        if(this.isLoading===true){
+            return
+          }
         this.passwordErrors = this.validateField(this.password, this.passwordRules); //비밀번호 검증 에러메시지 배열
         this.newPaasswordErrors = this.validateField(this.newPassword, this.newPasswordRules); //비밀번호 검증 에러메시지 배열
           if (this.passwordErrors.length > 0 ||this.newPaasswordErrors.length>0) { //만약 비밀번호 검증에러가 있을 시   return
@@ -149,28 +157,36 @@ export default {
                 formdata.append('password',this.password)
                 formdata.append('newPassword',this.newPassword)
 
-        api.put("/setting/pwdChange",formdata) // 두개의 서로다른 객체에 매핑 되어야 하므로 formdata  @requestbody로받을 수 없음 
-        .then(()=>{
-          alert("비밀번호 변경에 성공하였습니다. 다시 로그인 해주세요.")
-          this.closeDialog()
+                this.isLoading=true;//전송중인 상태 버튼 비활성화 
+                  api.put("/setting/pwdChange",formdata) // 두개의 서로다른 객체에 매핑 되어야 하므로 formdata  @requestbody로받을 수 없음 
+                  .then(()=>{
+                    alert("비밀번호 변경에 성공하였습니다. 다시 로그인 해주세요.")
+                    this.closeDialog()
 
-                    api.post('/logout')//로그아웃
-                      .then(()=>{
-                          localStorage.removeItem('access')//엑세스 토큰 지움 
-                          this.$router.push('/login');//로그인 페이지로 이동
-                        })
-                        .catch((err)=>{
-       
-                          alert(err.response&&err.response.data.message)
-                        
-                      })
+                        api.post('/logout')//로그아웃
+                          .then(()=>{
+                              localStorage.removeItem('access')//엑세스 토큰 지움 
+                              this.$router.push('/login');//로그인 페이지로 이동
+                            })
+                            .catch((err)=>{
+          
+                              alert(err.response&&err.response.data.message)
+                            
+                          })
+                          .finally(()=>{
+                            this.isLoading=false;
+                          })
                        
-              })
-              .catch((err)=>{
-       
-                  alert(err.response&&err.response.data.message)
-                
-              })
+                          })
+                          .catch((err)=>{
+                  
+                              alert(err.response&&err.response.data.message)
+                            
+                          })
+                          .finally(()=>{
+                            this.isLoading=false;
+                          })
+                       
      
 
         //이전비밀번호 검증 후 맞다면 

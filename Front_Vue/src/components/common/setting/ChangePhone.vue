@@ -146,6 +146,7 @@ export default {
         firstPhoneNum:'010', //디폴트값 - > 맨앞 번호
         middlePhoneNum:'',//두번째 번호
         lastPhoneNum:'', //세번째 번호 
+        isLoading:false
     }
 }
  ,computed:{
@@ -163,9 +164,17 @@ export default {
             .filter(error => typeof error === 'string');
         },
       closeDialog() {
+        this.password='',
+        this.middlePhoneNum='',
+        this.lastPhoneNum='',
+        this.passwordErrors=[]
         this.$emit('changePhone');// 세팅 컴포넌트로 닫는 이벤트 전송
       },
       submitChangePhone(){
+
+        if(this.isLoading===true){
+            return
+          }
         this.passwordErrors = this.validateField(this.password, this.passwordRules); //비밀번호 검증 에러메시지 배열
           
           if (this.passwordErrors.length > 0 ) { //만약 비밀번호 검증에러가 있을 시   return
@@ -200,18 +209,23 @@ export default {
                 }
 
 
+                this.isLoading=true; //현재전송중인 상태 버튼비활성화 
+                //휴대폰 번호 변경 api 전송
              api.put('/setting/phoneChange',{
-                phone:fullPhone,
-                password:this.password
+                phone:fullPhone, //전체 전화번호 
+                password:this.password //현재 패스워드 
              })
-             .then(()=>{
+             .then(()=>{//성공시 
                 alert('휴대폰 번호 변경에 성공 하였습니다.')
-                this.closeDialog()
+                this.closeDialog()//현재 모달닫기 
             })
-            .catch((err)=>{
+            .catch((err)=>{ //에러발생시 서버로부터 받은 메시지 출력
        
               alert(err.response&&err.response.data.message)
               
+            })
+            .finally(()=>{
+              this.isLoading=false; //버튼 활성화
             })
             
       }

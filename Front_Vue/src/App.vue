@@ -27,9 +27,9 @@
   </v-app>
 </template>
 <script>
-import Header from './components/common/Header.vue';
-import Footer from './components/common/Footer.vue';
-import SideMenu from './components/common/Sidemenu.vue';
+import Header from './components/common/layout/Header.vue';
+import Footer from './components/common/layout/Footer.vue';
+import SideMenu from './components/common/layout/Sidemenu.vue';
 
 export default {
   name: 'App',

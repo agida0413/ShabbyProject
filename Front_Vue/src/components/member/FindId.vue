@@ -174,7 +174,7 @@
         findCreateDate:'',
         isAuth: false, //정보를 입력한값이 true이면 찾은아이디 목록을 보여주기 위해 아이디 찾기 정보 입력폼을 숨기고
                        // 아이디를 보여주기 위함이다.
-
+        isLoading:false,//로딩상태
 
         //룰
          nickNameRules:[
@@ -223,6 +223,9 @@
       
       },
       sumbmitFindId(){
+        if(this.isLoading===true){
+            return
+          }
         this.nameErrors = this.validateField(this.name, this.nameRules); //이름검증
         this.nickNameErrorsnameErrors = this.validateField(this.nickname, this.nickNameRules); //닉네임검증
 
@@ -253,6 +256,7 @@
                   alert('핸드폰 번호는 숫자만 포함해야 합니다.');
                   return;
                 }
+        this.isLoading=true;    //현재 로딩상태 참 
 
         api.post('/members/findEmail',{
           name:this.name,
@@ -273,6 +277,9 @@
        
        alert(err.response&&err.response.data.message)
        
+     })
+     .finally(()=>{
+      this.isLoading=false; //현재 로딩상태 false
      })
      
         

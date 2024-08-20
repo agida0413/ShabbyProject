@@ -116,7 +116,8 @@ export default {
     emailErrors: [],
     passwordErrors: [],
     findIdDialog: false, // 아이디 찾기 모달 
-    findPwdDialog: false// 비밀번호 찾기 모달 
+    findPwdDialog: false,// 비밀번호 찾기 모달 
+    isLoading:false//로딩
   }),
   components: {
     FindIdComponent,
@@ -142,7 +143,9 @@ export default {
       this.findPwdDialog = true;
     }, 
     login() { //로그인 시도
-      
+      if(this.isLoading===true){
+            return
+          }
       this.emailErrors = this.validateField(this.email, this.emailRules); //이메일 검증 에러메시지 배열
       this.passwordErrors = this.validateField(this.password, this.passwordRules);//비밀번호 검증 에러메시지 배열
  
@@ -157,6 +160,7 @@ export default {
       formdata.append('username', this.email);
       formdata.append('password', this.password);
 
+      this.isLoading=true
       api.post('/login', formdata)
         .then((res) => { 
           
@@ -176,11 +180,12 @@ export default {
         })
         .catch((err)=>{
        
-          if (err.response&&err.response.status===405) {
-            alert('입력정보가 틀립니다.')
-          }
+        alert(err.response.data.message)
        
-     })
+        })
+        .finally(()=>{
+          this.isLoading=false
+        })
        
     }
   }
