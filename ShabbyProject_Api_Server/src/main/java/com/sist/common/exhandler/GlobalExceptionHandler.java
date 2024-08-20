@@ -5,10 +5,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import com.sist.common.ResponseApi;
 import com.sist.common.exception.BadRequestException;
 import com.sist.common.exception.ConflictException;
 import com.sist.common.exception.NotFoundException;
+import com.sist.dto.api.ResponseDTO;
 
 
 //스프링 시큐리티 외 예외 => 전역 예외처리 
@@ -17,9 +17,9 @@ public class GlobalExceptionHandler {
 	
 		//400관련 예외 
 	 @ExceptionHandler(BadRequestException.class)
-	    public ResponseEntity<ResponseApi<Void>> handleBadRequestException(BadRequestException ex) {
+	    public ResponseEntity<ResponseDTO<Void>> handleBadRequestException(BadRequestException ex) {
 
-	        ResponseApi<Void> responseApi = new ResponseApi<Void>(
+	        ResponseDTO<Void> responseApi = new ResponseDTO<Void>(
 	         
 	            HttpStatus.BAD_REQUEST.value(),
 	            ex.getMessage()
@@ -32,9 +32,9 @@ public class GlobalExceptionHandler {
 	
 	 //404관련 예외
 	 @ExceptionHandler(NotFoundException.class)
-	    public ResponseEntity<ResponseApi<Void>> handleNotfoundException(NotFoundException ex) {
+	    public ResponseEntity<ResponseDTO<Void>> handleNotfoundException(NotFoundException ex) {
 
-	        ResponseApi<Void> responseApi = new ResponseApi<Void>(
+	        ResponseDTO<Void> responseApi = new ResponseDTO<Void>(
 	          
 	            HttpStatus.NOT_FOUND.value(),
 	            ex.getMessage()
@@ -45,9 +45,9 @@ public class GlobalExceptionHandler {
 	    }
 	 //409관련 예외
 	 @ExceptionHandler(ConflictException.class)
-	    public ResponseEntity<ResponseApi<Void>> handleConflictException(ConflictException ex) {
+	    public ResponseEntity<ResponseDTO<Void>> handleConflictException(ConflictException ex) {
 
-	        ResponseApi<Void> responseApi = new ResponseApi<Void>(
+	        ResponseDTO<Void> responseApi = new ResponseDTO<Void>(
 	         
 	            HttpStatus.CONFLICT.value(),
 	            ex.getMessage()
@@ -60,8 +60,8 @@ public class GlobalExceptionHandler {
 	
 	 //그외 예기치 못한 예외 === 서버오류로 정의
 	 @ExceptionHandler(Exception.class)
-	    public ResponseEntity<ResponseApi<Void>> handleGenericException(Exception ex) {
-	        ResponseApi<Void> response = new ResponseApi<>(
+	    public ResponseEntity<ResponseDTO<Void>> handleGenericException(Exception ex) {
+	        ResponseDTO<Void> response = new ResponseDTO<>(
 	           
 	            HttpStatus.INTERNAL_SERVER_ERROR.value(),
 	            "서버 내부오류입니다. 잠시 뒤 이용해주세요."//메시지

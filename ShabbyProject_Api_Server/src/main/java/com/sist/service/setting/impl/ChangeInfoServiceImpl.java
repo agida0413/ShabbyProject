@@ -1,4 +1,4 @@
-package com.sist.service.member.setting.impl;
+package com.sist.service.setting.impl;
 
 
 
@@ -12,10 +12,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.sist.common.exception.BadRequestException;
 import com.sist.common.utill.SimpleCodeGet;
+import com.sist.dto.api.ResponseDTO;
 import com.sist.dto.member.MemberDTO;
 import com.sist.repository.member.MemberAccountRepository;
 import com.sist.repository.member.MemberSettingRepository;
-import com.sist.service.member.setting.ChangeInfoService;
+import com.sist.service.setting.ChangeInfoService;
 
 import lombok.RequiredArgsConstructor;
 @Service
@@ -30,7 +31,7 @@ public class ChangeInfoServiceImpl implements ChangeInfoService{
 	//회원 정보 리턴
 	//2024.08.19 수정 = > 회원정보 전체를 넘기면 위험할 수 있음 ., 필요한 정보만 넘기게
 	@Override
-	public ResponseEntity<?> getLockedInfo() {//회원 공개여부 데이터
+	public ResponseEntity<ResponseDTO<String>> getLockedInfo() {//회원 공개여부 데이터
 		// TODO Auto-generated method stub
 		
 		int idNum=simpleCodeGet.getIdNum();
@@ -44,13 +45,15 @@ public class ChangeInfoServiceImpl implements ChangeInfoService{
 		}
 		
 		String locked= dto.getLocked();
-		return new ResponseEntity<>(locked,HttpStatus.OK);//401;
+		
+		  return new ResponseEntity<ResponseDTO<String>>
+			(new ResponseDTO<String>(locked),HttpStatus.OK); //성공 
 	}
 
 	//선행조건 : 닉네임중복검사 통과 = >비밀번호 검증=>닉네임변경
 	@Transactional
 	@Override
-	public ResponseEntity<?> nickNameUpdate(MemberDTO dto) {
+	public ResponseEntity<ResponseDTO<Void>> nickNameUpdate(MemberDTO dto) {
 		// TODO Auto-generated method stub
 		int idNum = simpleCodeGet.getIdNum();//고유 아이디넘버 갖고오기 
 		
@@ -71,7 +74,8 @@ public class ChangeInfoServiceImpl implements ChangeInfoService{
 	
 	
 		
-		return new ResponseEntity<>("OK",HttpStatus.OK);//성공 리턴
+		 return new ResponseEntity<ResponseDTO<Void>>
+			(new ResponseDTO<Void>(),HttpStatus.OK); //성공 
 	}
 
 	
@@ -79,7 +83,7 @@ public class ChangeInfoServiceImpl implements ChangeInfoService{
 	
 	//패스워드 변경 
 	@Override
-	public ResponseEntity<?> passwordUpdate(String password,String newPassword) {
+	public ResponseEntity<ResponseDTO<Void>>  passwordUpdate(String password,String newPassword) {
 		// TODO Auto-generated method stub
 		int idNum=simpleCodeGet.getIdNum();//고유번호를 가져옴 
 	
@@ -104,14 +108,15 @@ public class ChangeInfoServiceImpl implements ChangeInfoService{
 		
 		
 		
-		return new ResponseEntity<>("OK",HttpStatus.OK);
+		 return new ResponseEntity<ResponseDTO<Void>>
+			(new ResponseDTO<Void>(),HttpStatus.OK); //성공 
 	}
 
 	
 	//핸드폰 번호 변경 ( 비밀번호 검증= > 동일한 휴대폰번호인지 검증 = > 이미 있는 핸드폰번호 인지 검증 )
 	@Transactional
 	@Override
-	public ResponseEntity<?> phoneChange(MemberDTO dto) {
+	public ResponseEntity<ResponseDTO<Void>>  phoneChange(MemberDTO dto) {
 		// TODO Auto-generated method stub
 		
 		int idNum=simpleCodeGet.getIdNum(); //회원 고유번호
@@ -122,8 +127,9 @@ public class ChangeInfoServiceImpl implements ChangeInfoService{
 			
 			throw new BadRequestException("비밀번호가 일치 하지않습니다.");//사용자 정의400에러 발생
 		}
-		MemberDTO findSamePhoeUser= memberAccountRepository.findByUserPhone(dto.getPhone());
-		if (!(findSamePhoeUser==null)) {
+		
+		MemberDTO findSamePhoneUser= memberAccountRepository.findByUserPhone(dto.getPhone());
+		if (!(findSamePhoneUser==null)) {
 			//입력한 핸드폰 번호와 전체회원의 핸드폰 번호중 동일한 핸드폰있는 회원목록을 갖고옴 
 		
 			//그 회원이 존재한다면 
@@ -142,7 +148,8 @@ public class ChangeInfoServiceImpl implements ChangeInfoService{
 		dto.setPhone(phone); //dto에 세팅한다음 
 		memberSettingRepository.updatePhone(dto); // 데이터베이스에 휴대폰 번호 업데이트 
 		
-		 return new ResponseEntity<>("OK",HttpStatus.OK);
+		 return new ResponseEntity<ResponseDTO<Void>>
+			(new ResponseDTO<Void>(),HttpStatus.OK); //성공 
 	}
 	
 	

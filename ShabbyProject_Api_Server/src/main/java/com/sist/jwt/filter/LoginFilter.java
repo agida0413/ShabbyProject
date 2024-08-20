@@ -19,11 +19,10 @@ import org.springframework.util.StreamUtils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sist.common.ResponseApi;
 import com.sist.common.utill.SimpleCodeGet;
+import com.sist.dto.api.ResponseDTO;
 import com.sist.jwt.JWTUtil;
-import com.sist.service.member.security.RefreshService;
-
+import com.sist.service.security.RefreshService;
 
 import jakarta.servlet.FilterChain;
 
@@ -104,7 +103,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws JsonProcessingException, IOException {
     	
-    	ResponseApi<Void> responseApi = new ResponseApi<Void>(
+    	ResponseDTO<Void> responseApi = new ResponseDTO<Void>(
     			 HttpStatus.METHOD_NOT_ALLOWED.value(),
                  "입력정보가 일치하지 않습니다."
              );

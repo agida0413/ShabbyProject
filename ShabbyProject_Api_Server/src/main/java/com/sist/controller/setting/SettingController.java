@@ -12,8 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.sist.dto.member.MemberDTO;
-import com.sist.service.member.setting.ChangeInfoService;
-
+import com.sist.service.setting.ChangeInfoService;
 
 import lombok.RequiredArgsConstructor;
 

@@ -9,10 +9,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sist.common.ResponseApi;
+import com.sist.dto.api.ResponseDTO;
 import com.sist.dto.member.MemberDTO;
 import com.sist.jwt.JWTUtil;
-import com.sist.service.member.security.impl.CustomUserDetails;
+import com.sist.service.security.impl.CustomUserDetails;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.io.IOException;
@@ -63,7 +63,7 @@ public class JWTFilter extends OncePerRequestFilter{
     	    writer.print("access token expired");
     	 
     
-    		ResponseApi<Void> responseApi = new ResponseApi<Void>(
+    		ResponseDTO<Void> responseApi = new ResponseDTO<Void>(
          			 HttpStatus.GONE.value(),
                       "만료된 인증입니다."
                   );
@@ -80,7 +80,7 @@ public class JWTFilter extends OncePerRequestFilter{
     	    PrintWriter writer = response.getWriter();
     	    writer.print("invalid access token");
 
-    		ResponseApi<Void> responseApi = new ResponseApi<Void>(
+    		ResponseDTO<Void> responseApi = new ResponseDTO<Void>(
          			 HttpStatus.UNAUTHORIZED.value(),
                       "비정상적인 접근입니다"
                   );
