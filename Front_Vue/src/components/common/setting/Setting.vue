@@ -54,6 +54,7 @@
             <v-list-subheader  class="to-blackMode">계정관리</v-list-subheader>
             <v-list-item
             v-if="memberData.locked==='PUBLICID'"
+              :key="updateKey"
               subtitle="transfer "
               title="비공개모드로 전환"
               link
@@ -124,7 +125,7 @@
       v-model:value="isAlertOpen"
       v-model:altype="alertType"
       v-model:message="alertMessage"
-      @closeAlertDialog="closeAlert(isOk,type)"
+      @closeAlertDialog="closeAlert"
     >
   </Alert>
     <ChangePwd v-model:value="changePwdDialog" @changePwdClose="closeChangePwd"></ChangePwd>
@@ -140,7 +141,7 @@ import ChangePwd from "./ChangePwd.vue"
 import ChangePhone from "./ChangePhone.vue"
 import ChangeNickname from "./ChangeNickName.vue"
 import Alert from "../utill/Alert.vue"
-
+import api from "@/api"
 export default {
     name:'SettingComponent',
     props: {
@@ -165,7 +166,9 @@ export default {
       nicknameChangeDialog:false, //닉네임 변경모달
       alertType:'', // 알림창을 띄울때 어떤 타입인지(비공개 모드 전환? 회원탈퇴?)
       isAlertOpen:false,//알림창모달의 띄움 여부 
-      alertMessage:'' //알림창모달에 전달할 메시지 
+      alertMessage:'' ,//알림창모달에 전달할 메시지 
+    
+   
     }
   },
   computed:{
@@ -174,6 +177,12 @@ export default {
        
              return this.value // 현재 사이드 컴포넌트에서의 다이얼로그 (true/false) 리턴 , props로 value를받아 메소드를 통해 리턴해야한다.
          }
+     },
+     currentLockState:{
+      get(){ //부모로 부터 받은 공개/비공개 여부 값 
+        return this.memberData.locked
+      }
+      
      }
   },
      methods: {
@@ -202,24 +211,37 @@ export default {
        openAlert(){
         this.isAlertOpen=true
        },
-       closeAlert(isOk,type){
-        console.log(isOk)
-        console.log(type)
+       closeAlert(isOk,stype){
+     
+        if (isOk===true&&stype==='ChangeLokedState') {
+          const curstate= this.currentLockState
+          api.put('/setting/lockStateChange',{
+            locked:curstate 
+          })
+          .then(()=>{
+            alert('전환되었습니다.')
+            
+            this.$emit("updateSideMenuInfo",)// locked 정보다시가져와서 리랜더링 해야하므로 부모컴포넌트로 이벤트 전송
+          })
+          .catch((err)=>{
+            alert(err.response && err.response.data.message)
+          })
+        }
         this.isAlertOpen=false
        },
        clickPrivateMode(){
-        this.alertMessage="비공개모드로 전환시 회원님의 팔로워 외에는 회원님을 찾을 수 없습니다. 그래도 진행하시겠습니까?"
-        this.type="toPrivateMode"
+        this.alertMessage="계정을 공개 계정으로 전환 하시겠습니까"
+        this.alertType="ChangeLokedState"
         this.openAlert()
        },
        clickPublicMode(){
-        this.alertMessage="계정을 공개 계정으로 전환 하시겠습니까?"
-        this.type="toPublicMode"
+        this.alertMessage="비공개모드로 전환시 회원님의 팔로워 외에는 회원님을 찾을 수 없습니다. 그래도 진행하시겠습니까?"
+        this.alertType="ChangeLokedState"
         this.openAlert()
        },
        memberDelete(){
         this.alertMessage="회원 탈퇴 시 작성한 게시글,댓글 등 모든 정보가 삭제됩니다. 진행하시겠습니까?"
-        this.type="memberDelete"
+        this.alertType="memberDelete"
         this.openAlert()
       }
      },

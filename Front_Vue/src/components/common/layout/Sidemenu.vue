@@ -40,6 +40,7 @@
   </v-card>
   <SettingComponent v-model:value="settingDialog"
                     v-model:memberData="memberData"
+                    @updateSideMenuInfo="reGetInfo"
    @settingClose="ifSettingClose"></SettingComponent> <!-- 세팅 모달 컴포넌트 -->
   <PostInsert v-model:value="postInsertDialog" @postInsertClose="postInsertDialogClose"></PostInsert><!--새 게시물 작성 모달 컴포넌트-->
 </template>
@@ -62,7 +63,9 @@ export default{
     PostInsert
   },
   methods:{
-
+    reGetInfo(){
+      this.getInitInfo() // 사이드메뉴에서 회원 정보를 리랜더링 (비공개 공개 설정시 )
+    },
     getInitInfo(){ // 회원정보를 가져옴 1. 공개여부 
         api.get('/setting')
         .then((res)=>{
