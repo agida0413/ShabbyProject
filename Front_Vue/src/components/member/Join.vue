@@ -440,6 +440,9 @@
         },
         //이메일 중복검사 및 인증코드전송 
         emailAuth(){
+          if(this.loading===true){
+            return
+          }
 
           this.emailErrors = this.validateField(this.email, this.emailRules); //이메일 검증 에러메시지 배열
           if (this.emailErrors.length > 0 ) { //만약 이메일 검증에러가 있을 시   return
@@ -447,33 +450,41 @@
             return;//불필요한 axios 요청 방지  
                 }
 
-          this.loading = true; // 로딩 시작 = > 사용자에게 알려줄려고
-
-          api.post('/members/emailAuth',{
+         
             
-            email:this.email
-          })
-          .then(()=>{
+                  this.loading = true; // 로딩 시작 = > 사용자에게 알려줄려고
+                  api.post('/members/emailAuth',{
             
-            this.loading = false; // 로딩 끝
-            this.AuthCodeOpen()//인증코드 필드 노출 
-            this.isEmailReadonly=true//이메일 정보 수정 불가 
-            this.resend=true//다시보내기 버튼 활성화
-            
-            this.$refs.emailTimer.resetTimer();
-           
-            alert('이메일 전송이 완료되었습니다.')
-            
-          })
-          .catch((err)=>{
-            this.loading=false
-       alert(err.response&&err.response.data.message)
-       
-     })
+                      email:this.email
+                    })
+                    .then(()=>{
+                      
+                     
+                      this.AuthCodeOpen()//인증코드 필드 노출 
+                      this.isEmailReadonly=true//이메일 정보 수정 불가 
+                      this.resend=true//다시보내기 버튼 활성화
+                      
+                      this.$refs.emailTimer.resetTimer();
+                    
+                      alert('이메일 전송이 완료되었습니다.')
+                      
+                    })
+                    .catch(err => {
+                      alert(err.response && err.response.data.message);
+                    })
+                    .finally(() => {
+                      this.loading = false; // 로딩 종료
+                    });
+              
+                
+               
          
         },
         //이메일 인증코드 검증 
         emailValidation(){
+          if(this.isLoading===true){
+            return
+          }
 
           this.codeErrors = this.validateField(this.code, this.codeRules); //인증코드 검증 에러메시지 배열
           if (this.codeErrors.length > 0 ) { //만약 인증코드 검증에러가 있을 시   return
@@ -481,7 +492,7 @@
             return;//불필요한 axios 요청 방지  
                 }
 
-         
+         this.isLoading=true
           api.post('/members/emailValidate',{
             'email':this.email,
             'code':this.code
@@ -497,10 +508,16 @@
             
        alert(err.response&&err.response.data.message)
        
-     })
+         })
+         .finally(()=>{
+          this.isLoading=false
+         })
          
         },
         nickNameValidation(){
+          if(this.isLoading===true){
+            return
+          }
           this.nickNameErrors = this.validateField(this.nickName, this.nickNameRules); //닉네임 검증 에러메시지 배열
           
           if (this.nickNameErrors.length > 0 ) { //만약 닉네임 검증에러가 있을 시   return
@@ -508,7 +525,7 @@
             return;//불필요한 axios 요청 방지 
          
                 }
-                
+                this.isLoading=true
                 api.post('/members/nickValidate',{
                   nickname:this.nickName
                 })
@@ -524,10 +541,16 @@
                     alert(err.response&&err.response.data.message)
                     
                   })
+                .finally(()=>{
+                  this.isLoading=false
+                })
               
             
         },
         submitJoin(){
+          if(this.isLoading===true){
+            return
+          }
           if(!this.isEmailAuthClear){ //이메일 인증을 아직진행하지않았을때 리턴 
             alert('이메일 인증을 진행해주세요.')
             return
@@ -580,6 +603,7 @@
                 formdata.append('phone',fullPhone)
                 formdata.append('introduce',this.introduce)
 
+                this.isLoading=true
                 api.post("/members", formdata) //api 호출 
                 .then(async () => {//async / await 활용 
                  
@@ -593,6 +617,9 @@
                    
                   alert(err.response&&err.response.data.message)
                   
+                })
+                .finally(()=>{
+                  this.isLoading=false
                 })
                
                 

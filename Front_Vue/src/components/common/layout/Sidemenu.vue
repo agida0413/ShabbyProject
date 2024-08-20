@@ -45,8 +45,8 @@
 </template>
 
 <script>
-  import PostInsert from "../feed/PostInsert.vue";
-import SettingComponent from "./Setting.vue"
+  import PostInsert from "@/components/feed/post/PostInsert.vue";
+import SettingComponent from "../setting/Setting.vue"
 import api from "@/api"
 export default{
 
@@ -66,10 +66,16 @@ export default{
     getInitInfo(){ // 회원정보를 가져옴 1. 공개여부 
         api.get('/setting')
         .then((res)=>{
-        
+       
           this.memberData.locked=res.data//공개여부 정보 저장 
+       
           
         })
+        .catch((err)=>{
+        
+          alert(err.response&&err.response.data.message)//에러 리스폰스 
+        })
+      
        
       },
     //모달 열고,닫음 이벤트 제어 메소드
@@ -77,7 +83,7 @@ export default{
       this.settingDialog=false 
     },
     settingDialogOpen(){
-      this.getInitInfo()
+     this.getInitInfo()
       this.settingDialog=true
     },
     postInsertDialogOpen(){
@@ -92,7 +98,9 @@ export default{
           localStorage.removeItem('access')//엑세스 토큰 지움 
           this.$router.push('/login');//로그인 페이지로 이동
         })
-        .catch(()=>{
+        .catch((err)=>{
+          console.log(err.data)
+          alert(err.response&&err.response.data.message)
           localStorage.removeItem('access')//엑세스 토큰 지움 
           this.$router.push('/login');//에러 발생시 로그인 페이지로이동
         })

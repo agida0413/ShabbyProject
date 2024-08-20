@@ -136,10 +136,10 @@
 <script>
 
 
-import ChangePwd from "./setting/ChangePwd.vue"
-import ChangePhone from "./setting/ChangePhone.vue"
-import ChangeNickname from "./setting/ChangeNickName.vue"
-import Alert from "./utill/Alert.vue"
+import ChangePwd from "./ChangePwd.vue"
+import ChangePhone from "./ChangePhone.vue"
+import ChangeNickname from "./ChangeNickName.vue"
+import Alert from "../utill/Alert.vue"
 
 export default {
     name:'SettingComponent',

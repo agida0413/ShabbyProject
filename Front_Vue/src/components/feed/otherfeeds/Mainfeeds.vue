@@ -44,7 +44,7 @@
 
 
 <script>
-import PostDetail from '../PostDetail.vue';
+import PostDetail from '../post/PostDetail.vue';
 export default {
   data() {
     return {

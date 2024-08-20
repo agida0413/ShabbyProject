@@ -126,7 +126,8 @@ export default {
        nickNameErrors:[],//닉네임에러를 저장 
        passwordErrors:[],//패스워드에러를 저장 
        isNickNameClear:false,
-       isNickNameReadonly:false 
+       isNickNameReadonly:false ,
+       isLoading:false
                     
     }
 }
@@ -145,6 +146,9 @@ export default {
             .filter(error => typeof error === 'string');
         }, 
         nickNameValidation(){
+          if(this.isLoading===true){
+            return;
+          }
           this.nickNameErrors = this.validateField(this.nickname, this.nickNameRules); //닉네임 검증 에러메시지 배열
           
           if (this.nickNameErrors.length > 0 ) { //만약 닉네임 검증에러가 있을 시   return
@@ -152,8 +156,10 @@ export default {
             return;//불필요한 axios 요청 방지 
          
                 }
-                
-                api.post('/members/nickValidate',{
+
+                this.isLoading=true;
+          
+                  api.post('/members/nickValidate',{
                   nickname:this.nickname
                 })
                 .then(()=>{
@@ -164,10 +170,15 @@ export default {
                   
                 })
                 .catch((err)=>{
-       
+                    console.log(err)
                   alert(err.response&&err.response.data.message)
                   
                 })
+                .finally(()=>{
+                  this.isLoading=false;
+                })
+               
+               
                 
 
             
