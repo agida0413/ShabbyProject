@@ -2,8 +2,8 @@ package com.sist.service.member.mail;
 
 import org.springframework.http.ResponseEntity;
 
-import com.sist.dto.MemberDTO;
-import com.sist.vo.MemberVO;
+import com.sist.dto.member.MemberDTO;
+
 
 public interface MailService {
 	public ResponseEntity<?> emailSend(String email );
