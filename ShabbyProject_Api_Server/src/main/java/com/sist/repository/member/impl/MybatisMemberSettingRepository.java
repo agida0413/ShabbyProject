@@ -33,6 +33,12 @@ public class MybatisMemberSettingRepository implements MemberSettingRepository{
 		memberSettingMapper.updatePhone(dto);
 		
 	}
+	//공개/ 비공개 모드 변경 
+	@Override
+	public void updateLockedState(MemberDTO dto) {
+		// TODO Auto-generated method stub
+		memberSettingMapper.updateLockedState(dto);
+	}
 	
 	
 

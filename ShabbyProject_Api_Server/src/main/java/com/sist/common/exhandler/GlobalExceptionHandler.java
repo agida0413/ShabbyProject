@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.sist.common.exception.BadRequestException;
 import com.sist.common.exception.ConflictException;
+import com.sist.common.exception.InternerException;
 import com.sist.common.exception.NotFoundException;
 import com.sist.dto.api.ResponseDTO;
 
@@ -57,6 +58,19 @@ public class GlobalExceptionHandler {
 	        return new ResponseEntity<>(responseApi, HttpStatus.CONFLICT);
 	    }
 	 
+	 //서버내부오류 
+	 @ExceptionHandler(InternerException.class)
+	    public ResponseEntity<ResponseDTO<Void>> handleInternerException(InternerException ex) {
+
+	        ResponseDTO<Void> responseApi = new ResponseDTO<Void>(
+	         
+	            HttpStatus.INTERNAL_SERVER_ERROR.value(),
+	            ex.getMessage()
+	         
+	        );
+	        
+	        return new ResponseEntity<>(responseApi, HttpStatus.CONFLICT);
+	    }
 	
 	 //그외 예기치 못한 예외 === 서버오류로 정의
 	 @ExceptionHandler(Exception.class)

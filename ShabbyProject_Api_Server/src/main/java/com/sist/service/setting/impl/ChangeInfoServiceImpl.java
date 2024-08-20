@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.sist.common.exception.BadRequestException;
+import com.sist.common.exception.InternerException;
 import com.sist.common.utill.SimpleCodeGet;
 import com.sist.dto.api.ResponseDTO;
 import com.sist.dto.member.MemberDTO;
@@ -147,6 +148,40 @@ public class ChangeInfoServiceImpl implements ChangeInfoService{
 		String phone =bCryptPasswordEncoder.encode(dto.getPhone());//입력받은 휴대폰번호를 암호화 하여 스트링에 담고 
 		dto.setPhone(phone); //dto에 세팅한다음 
 		memberSettingRepository.updatePhone(dto); // 데이터베이스에 휴대폰 번호 업데이트 
+		
+		 return new ResponseEntity<ResponseDTO<Void>>
+			(new ResponseDTO<Void>(),HttpStatus.OK); //성공 
+	}
+
+	
+	//공개/ 비공개 모드 변경
+	@Override
+	public ResponseEntity<ResponseDTO<Void>> updateLockedState(MemberDTO dto) 
+	{
+		// TODO Auto-generated method stub
+		String currentState=dto.getLocked();//현재 상태값 
+		String changeState=""; //변경할 공개/비공개 모드 상태값 초기화
+		
+		if(currentState.equals("PUBLICID")) {// 만약 현재 상태값이 공개모드이면 
+			changeState="LOCKED"; //공개모드 상태에서의 요청이라면 비공개모드로 
+		}
+		else if(currentState.equals("LOCKED")) {//만약 현재 상태값이 비공개모드이면
+			changeState="PUBLICID";//비공개모드 상태에서의 요청이라면 공개모드로 
+		}
+		else {//나머지는 정의된 값이 없으므로 예외 
+			
+			throw new InternerException("서버 내부오류입니다. 잠시 뒤 이용해주세요."); // 서버 내부오류 500 발생 
+			
+		}
+		
+		int idNum=simpleCodeGet.getIdNum();//회원 고유 아이디갖고오기 
+		
+	
+		dto.setIdNum(idNum);//고유번호 세팅
+		dto.setLocked(changeState); // 변한 상태값 세팅 
+		
+		memberSettingRepository.updateLockedState(dto); // 데이터 베이스 업데이트 
+		
 		
 		 return new ResponseEntity<ResponseDTO<Void>>
 			(new ResponseDTO<Void>(),HttpStatus.OK); //성공 
