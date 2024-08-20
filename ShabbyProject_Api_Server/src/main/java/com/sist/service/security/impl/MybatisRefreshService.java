@@ -1,4 +1,4 @@
-package com.sist.service.member.security.impl;
+package com.sist.service.security.impl;
 
 import java.sql.Date;
 
@@ -10,11 +10,12 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import com.sist.common.exception.BadRequestException;
+import com.sist.dto.api.ResponseDTO;
 import com.sist.dto.security.TokenStoreDTO;
 import com.sist.jwt.JWTUtil;
 import com.sist.repository.member.JwtStoreRepository;
 import com.sist.repository.member.impl.MybatisJwtStoreRepository;
-import com.sist.service.member.security.RefreshService;
+import com.sist.service.security.RefreshService;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.http.Cookie;
@@ -40,7 +41,7 @@ private final JWTUtil jwtUtil;
 				
 		    Date date = new Date(System.currentTimeMillis() + expiredMs); //현재시간 + 매개변수로 받은 유효기간 
 		   
-		TokenStoreDTO dto= new TokenStoreDTO();
+		    TokenStoreDTO dto= new TokenStoreDTO();
 		 
 		    dto.setIdNum(idNum); //매개변수로 받은 아이디고유번호
 		    dto.setRefresh(refresh); // 매개변수로 받은 토큰 
@@ -53,6 +54,7 @@ private final JWTUtil jwtUtil;
 		
 		int count=repository.findRefresh(refresh); //리프레시 토큰을 기준으로 데이터베이스의 행의개수
 		boolean result=false;//초기값 false
+		
 		if(count>0) {//검색결과가 있을 시
 			result=true; //true로 초기화
 		}
@@ -60,7 +62,7 @@ private final JWTUtil jwtUtil;
 	}
 	
 	//최종 refresh 토큰 발급 서비스
-	 public ResponseEntity<?> reissue(HttpServletRequest request, HttpServletResponse response) { 
+	 public ResponseEntity<ResponseDTO<Void>> reissue(HttpServletRequest request, HttpServletResponse response) { 
 	    
 	     
 	        String refresh = null;
@@ -135,7 +137,8 @@ private final JWTUtil jwtUtil;
 	        response.setHeader("access", newAccess); //새로운 토큰을 헤더에 추가 
 	        response.addCookie(createCookie("refresh", newRefresh)); // 쿠키생성 메서드
 
-	        return new ResponseEntity<>(HttpStatus.OK);
+	        return new ResponseEntity<ResponseDTO<Void>>
+			(new ResponseDTO<Void>(),HttpStatus.OK); //성공 
 	    }
 	
 	public Cookie createCookie(String key, String value) {

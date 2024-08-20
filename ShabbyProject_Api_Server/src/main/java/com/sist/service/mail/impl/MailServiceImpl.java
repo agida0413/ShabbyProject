@@ -14,8 +14,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.sist.common.exception.BadRequestException;
 import com.sist.common.exception.NotFoundException;
+import com.sist.common.utill.MailUtil;
 import com.sist.common.utill.PasswordGenerator;
 import com.sist.common.utill.SimpleCodeGet;
+import com.sist.dto.api.ResponseDTO;
 import com.sist.dto.member.EmailAuthDTO;
 import com.sist.dto.member.MemberDTO;
 import com.sist.repository.member.MemberAccountRepository;
@@ -29,14 +31,14 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class MailServiceImpl implements MailService{
-	private static final int CODE_LENGTH = 6;
+	private final MailUtil mailUtil;
 	private final JavaMailSender javaMailSender;
 	private final MemberAccountRepository memberAccountRepository;//멤버관련 레파지토리
 	private final BCryptPasswordEncoder bCryptPasswordEncoder;
 	private final PasswordGenerator passwordGenerator;// 임시패스워드 생성 
 	//이메일 중복검증 및 발송
 	@Transactional
-	public ResponseEntity<?> emailSend(String email ){
+	public ResponseEntity<ResponseDTO<Void>> emailSend(String email ){
 		
 		MemberDTO dto= memberAccountRepository.findByUserEmail(email);// 이메일 중복검증 
 		if(dto!=null) {
@@ -49,7 +51,7 @@ public class MailServiceImpl implements MailService{
 				MimeMessage message= javaMailSender.createMimeMessage(); //메일링 객체 생성 
 				MimeMessageHelper mimeMessageHelper= new MimeMessageHelper(message,true);
 				
-				String certificationNumber=generateRandomCode(); //랜덤 인증번호 생성 
+				String certificationNumber=mailUtil.generateRandomCode(); //랜덤 인증번호 생성 
 			
 			    EmailAuthDTO emailDto = new EmailAuthDTO();//이메일 정보 엔티티 
 		        emailDto.setEmail(email);// 매개변수로 받은 이메일 세팅
@@ -59,7 +61,7 @@ public class MailServiceImpl implements MailService{
 		        
 		   
 		        
-				String htmlContent= getCertificationMessage(certificationNumber); // 이메일로 보낼 html 
+				String htmlContent=mailUtil.getCertificationMessage(certificationNumber); // 이메일로 보낼 html 
 				
 				mimeMessageHelper.setTo(email);//보낼 상대 
 				mimeMessageHelper.setSubject("[Shabby] 회원가입 인증코드입니다."); //제목 
@@ -73,13 +75,14 @@ public class MailServiceImpl implements MailService{
 				throw new BadRequestException("에러가 발생했습니다. 다시 시도해주세요.");//사용자 정의 400에러 발생
 		}
 		
-		return new ResponseEntity<>(HttpStatus.OK);
+		return new ResponseEntity<ResponseDTO<Void>>
+		(new ResponseDTO<Void>(),HttpStatus.OK); //성공 
 	}
 	
 	
 	//인증코드가 맞는지 검증 
 	@Transactional
-	public ResponseEntity<?> emailAuthValidation(String email, String code){
+	public ResponseEntity<ResponseDTO<Void>> emailAuthValidation(String email, String code){
 		
 	
 
@@ -104,42 +107,19 @@ public class MailServiceImpl implements MailService{
 	 memberAccountRepository.emailAuthClear(dto.getEmailAuthNum());// 데이터베이스 row에 인증이 완료되었음을 update함 
 		
 	 
-	 return new ResponseEntity<>("OK",HttpStatus.OK);
+	 return new ResponseEntity<ResponseDTO<Void>>
+		(new ResponseDTO<Void>(),HttpStatus.OK); //성공 
 	 
 	}
 	
-	//인증코드를 받아 html을 생성함 
-	public String getCertificationMessage(String certificationNumber) {
-		
-		String certificationMessage="";
-		certificationMessage+="<h1 style='text-align:center;'>[ Shabby 회원가입] 인증메일 </h1>";
-		certificationMessage+="<h3 style='text-align:center;'>인증코드:<strong style='font-size:32px; letter-spacing:8px;'> "+certificationNumber
-				+certificationMessage+"</strong></h3>";
-		return certificationMessage;
-	}
-	public String getPasswordResetMessage(String newPassword) {
-		
-		String certificationMessage="";
-		certificationMessage+="<h1 style='text-align:center;'>[ Shabby 임시비밀번호 발급 ] 메일 </h1>";
-		certificationMessage+="<h3 style='text-align:center;'>새비밀번호:<strong style='font-size:32px; letter-spacing:8px;'> "+newPassword
-				+certificationMessage+"</strong></h3>";
-		return certificationMessage;
-	}
 	
-	//난수를 이용하여 랜덤인증번호 생성
-    public String generateRandomCode() {
-        SecureRandom random = new SecureRandom();
-        int code = random.nextInt((int) Math.pow(10, CODE_LENGTH));
-      
-        return String.format("%0" + CODE_LENGTH + "d", code);
-    }
     
    
 
     //임시 패스워드 발급 및 패스워드 초기화
 	@Override
 	@Transactional
-	public ResponseEntity<?> emailPasswordReset(MemberDTO dto) {
+	public ResponseEntity<ResponseDTO<Void>> emailPasswordReset(MemberDTO dto) {
 		
 		// TODO Auto-generated method stub
 		String email=dto.getEmail();
@@ -163,7 +143,7 @@ public class MailServiceImpl implements MailService{
 			String password =passwordGenerator.generateRandomPassword();//임시패스워드 생성
 		
 	  
-			String htmlContent= getPasswordResetMessage(password); // 이메일로 보낼 html 
+			String htmlContent=mailUtil.getPasswordResetMessage(password); // 이메일로 보낼 html 
 			
 			mimeMessageHelper.setTo(email);//보낼 상대 
 			mimeMessageHelper.setSubject("[Shabby] 임시패스워드 발급메일입니다."); //제목 
@@ -182,6 +162,7 @@ public class MailServiceImpl implements MailService{
 		
 		
 		
-		return new ResponseEntity<>("OK",HttpStatus.OK);
+		return new ResponseEntity<ResponseDTO<Void>>
+		(new ResponseDTO<Void>(),HttpStatus.OK); //성공 
 	}
 }

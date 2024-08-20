@@ -6,10 +6,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.filter.GenericFilterBean;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sist.common.ResponseApi;
+import com.sist.dto.api.ResponseDTO;
 import com.sist.jwt.JWTUtil;
-import com.sist.service.member.security.RefreshService;
-import com.sist.service.member.security.impl.MybatisRefreshService;
+import com.sist.service.security.RefreshService;
+import com.sist.service.security.impl.MybatisRefreshService;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
@@ -71,7 +71,7 @@ public class CustomLogoutFilter extends GenericFilterBean {
              }
       		} catch (Exception e) {
       			// TODO: handle exception
-      			ResponseApi<Void> responseApi = new ResponseApi<Void>(
+      			ResponseDTO<Void> responseApi = new ResponseDTO<Void>(
       	       			 HttpStatus.UNAUTHORIZED.value(),
       	                    "비정상적인 접근입니다."
       	                );
@@ -84,7 +84,7 @@ public class CustomLogoutFilter extends GenericFilterBean {
         
       
         	
-        	ResponseApi<Void> responseApi = new ResponseApi<Void>(
+        	ResponseDTO<Void> responseApi = new ResponseDTO<Void>(
        			 HttpStatus.UNAUTHORIZED.value(),
                     "비정상적인 접근입니다."
                 );
@@ -98,7 +98,7 @@ public class CustomLogoutFilter extends GenericFilterBean {
         } catch (ExpiredJwtException e) {
         	
             //만료됬을 경우 
-        	ResponseApi<Void> responseApi = new ResponseApi<Void>(
+        	ResponseDTO<Void> responseApi = new ResponseDTO<Void>(
           			 HttpStatus.UNAUTHORIZED.value(),
                        "만료된 인증입니다."
                    );
@@ -111,7 +111,7 @@ public class CustomLogoutFilter extends GenericFilterBean {
         if (!category.equals("refresh")) {
 
            
-        	ResponseApi<Void> responseApi = new ResponseApi<Void>(
+        	ResponseDTO<Void> responseApi = new ResponseDTO<Void>(
           			 HttpStatus.UNAUTHORIZED.value(),
                        "비정상적인 접근입니다."
                    );
@@ -124,7 +124,7 @@ public class CustomLogoutFilter extends GenericFilterBean {
         if (!isExist) {
 
         
-        	ResponseApi<Void> responseApi = new ResponseApi<Void>(
+        	ResponseDTO<Void> responseApi = new ResponseDTO<Void>(
           			 HttpStatus.UNAUTHORIZED.value(),
                        "비정상적인 접근입니다"
                    );

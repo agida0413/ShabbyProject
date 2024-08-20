@@ -6,8 +6,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.sist.service.member.security.RefreshService;
-import com.sist.service.member.security.impl.MybatisRefreshService;
+import com.sist.service.security.RefreshService;
+import com.sist.service.security.impl.MybatisRefreshService;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

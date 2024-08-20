@@ -1,4 +1,4 @@
-package com.sist.service.member.security.impl;
+package com.sist.service.security.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;

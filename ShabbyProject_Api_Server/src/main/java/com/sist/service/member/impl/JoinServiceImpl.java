@@ -1,4 +1,4 @@
-package com.sist.service.member.manage.impl;
+package com.sist.service.member.impl;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -6,12 +6,13 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.sist.common.exception.BadRequestException;
+import com.sist.dto.api.ResponseDTO;
 import com.sist.dto.member.EmailAuthDTO;
 import com.sist.dto.member.MemberDTO;
 import com.sist.repository.member.MemberAccountRepository;
 import com.sist.repository.member.impl.MybatisMemberAccountRepository;
 import com.sist.service.mail.MailService;
-import com.sist.service.member.manage.JoinService;
+import com.sist.service.member.JoinService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -25,7 +26,7 @@ private final MailService mailService; //이메일 인증관련
 private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
 	//회원가입 
-	public ResponseEntity<?> join(MemberDTO dto){
+	public ResponseEntity<ResponseDTO<Void>> join(MemberDTO dto){
 			
 		if(dto.getIntroduce().equals("")) {
 			dto.setIntroduce(null); // 만약 자기소개 입력안했을시에는 데이터베이스에 널값으로 저장 =- > 관리하기 편할거같음 
@@ -44,12 +45,14 @@ private final BCryptPasswordEncoder bCryptPasswordEncoder;
 		
 		
 		
-		return new ResponseEntity<>("OK",HttpStatus.OK); //성공 
+		return new ResponseEntity<ResponseDTO<Void>>
+						(new ResponseDTO<Void>(),HttpStatus.OK); //성공 
+		
 		
 	}
 	
 	//닉네임 중복검증완료
-	public ResponseEntity<?> nickNameValidation(String nickName){
+	public ResponseEntity<ResponseDTO<Void>> nickNameValidation(String nickName){
 			MemberDTO dto = memberAccountRepository.findByUserNickname(nickName);
 			
 			if(dto!=null) {
@@ -57,19 +60,20 @@ private final BCryptPasswordEncoder bCryptPasswordEncoder;
 				throw new BadRequestException("중복된 닉네임 입니다.");//사용자 정의400에러 발생
 			}
 		
-			return new ResponseEntity<>("OK",HttpStatus.OK);//검증완료
+			return new ResponseEntity<ResponseDTO<Void>>
+			(new ResponseDTO<Void>(),HttpStatus.OK); //성공 
 			
 					
 	}
 
 	@Override
-	public ResponseEntity<?> emailAuth(MemberDTO dto) {//이메일 인증번호 전송 
+	public ResponseEntity<ResponseDTO<Void>> emailAuth(MemberDTO dto) {//이메일 인증번호 전송 
 		// TODO Auto-generated method stub
 		return mailService.emailSend(dto.getEmail());
 	}
 
 	@Override
-	public ResponseEntity<?> emailValidation(EmailAuthDTO dto) {//이메일 인증번호 검증
+	public ResponseEntity<ResponseDTO<Void>> emailValidation(EmailAuthDTO dto) {//이메일 인증번호 검증
 		// TODO Auto-generated method stub
 		return mailService.emailAuthValidation(dto.getEmail(), dto.getCode());
 	}
