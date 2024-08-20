@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.sist.dto.member.EmailAuthDTO;
 import com.sist.dto.member.MemberDTO;
-import com.sist.service.member.mail.impl.MailServiceImpl;
+import com.sist.service.mail.impl.MailServiceImpl;
 import com.sist.service.member.manage.JoinService;
 import com.sist.service.member.manage.MemberFindService;
 

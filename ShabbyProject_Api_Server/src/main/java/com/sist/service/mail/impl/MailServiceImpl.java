@@ -1,4 +1,4 @@
-package com.sist.service.member.mail.impl;
+package com.sist.service.mail.impl;
 
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
@@ -20,7 +20,7 @@ import com.sist.dto.member.EmailAuthDTO;
 import com.sist.dto.member.MemberDTO;
 import com.sist.repository.member.MemberAccountRepository;
 import com.sist.repository.member.impl.MybatisMemberAccountRepository;
-import com.sist.service.member.mail.MailService;
+import com.sist.service.mail.MailService;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;

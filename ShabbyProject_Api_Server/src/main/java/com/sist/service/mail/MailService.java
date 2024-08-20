@@ -1,4 +1,4 @@
-package com.sist.service.member.mail;
+package com.sist.service.mail;
 
 import org.springframework.http.ResponseEntity;
 

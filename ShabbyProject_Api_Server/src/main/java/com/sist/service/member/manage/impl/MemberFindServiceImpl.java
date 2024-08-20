@@ -10,7 +10,7 @@ import com.sist.common.exception.NotFoundException;
 import com.sist.dto.member.MemberDTO;
 import com.sist.repository.member.MemberAccountRepository;
 import com.sist.repository.member.impl.MybatisMemberAccountRepository;
-import com.sist.service.member.mail.MailService;
+import com.sist.service.mail.MailService;
 import com.sist.service.member.manage.MemberFindService;
 
 import lombok.RequiredArgsConstructor;
