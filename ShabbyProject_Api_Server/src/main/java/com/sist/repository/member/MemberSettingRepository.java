@@ -12,4 +12,7 @@ public interface MemberSettingRepository {
 	public void updatePhone(MemberDTO dto);
 	//공개/비공개 모드 변경
 	public void updateLockedState(MemberDTO dto);
+	//회원삭제
+	public void deleteMember(MemberDTO dto);
+
 }

@@ -156,7 +156,8 @@ public class ChangeInfoServiceImpl implements ChangeInfoService{
 	
 	//공개/ 비공개 모드 변경
 	@Override
-	public ResponseEntity<ResponseDTO<Void>> updateLockedState(MemberDTO dto) 
+	@Transactional
+	public ResponseEntity<ResponseDTO<MemberDTO>> updateLockedState(MemberDTO dto) 
 	{
 		// TODO Auto-generated method stub
 		String currentState=dto.getLocked();//현재 상태값 
@@ -176,12 +177,41 @@ public class ChangeInfoServiceImpl implements ChangeInfoService{
 		
 		int idNum=simpleCodeGet.getIdNum();//회원 고유 아이디갖고오기 
 		
-	
+		
 		dto.setIdNum(idNum);//고유번호 세팅
 		dto.setLocked(changeState); // 변한 상태값 세팅 
 		
 		memberSettingRepository.updateLockedState(dto); // 데이터 베이스 업데이트 
 		
+		dto.setIdNum(0);//보안방지 고유번호 초기화
+		 return new ResponseEntity<ResponseDTO<MemberDTO>>
+			(new ResponseDTO<MemberDTO>(dto),HttpStatus.OK); //성공 , 회원정보전송
+	}
+	
+	//회원삭제 회원검증=> 이름, 이메일, 비밀번호 검증 후
+	@Override
+	public ResponseEntity<ResponseDTO<Void>> deleteMember(MemberDTO dto) {
+		// TODO Auto-generated method stub
+		
+		String sessionEmail=simpleCodeGet.getEmail();// 현재 토큰기반 인증된 임시유지세션에서 이메일 갖고옴 
+		int idNum=simpleCodeGet.getIdNum();//토큰기반 인증된 임시유지세션에서 고유번호 갖고옴 
+		
+		if(!dto.getEmail().equals(sessionEmail)) {//만약 현재 세션이메일과 입력받은 이메일이 같지않다면 
+			throw new BadRequestException("입력한 정보가 일치하지 않습니다."); // 익셉션 발생 
+		}
+		
+		MemberDTO findDto= memberAccountRepository.findByUserEmail(dto.getEmail()); // 이메일은 동일한것이 확인 되었으니 이메일기반으로 기타 회원정보 가지고옴 
+			
+		if(!dto.getName().equals(findDto.getName())) {//입력한 이름과 동일하지않으면
+			throw new BadRequestException("입력한 정보가 일치하지 않습니다.");//익셉션 발생 
+		}
+		
+		if(!bCryptPasswordEncoder.matches(dto.getPassword(), findDto.getPassword())) {//입력받은 패스워드와 데이터베이스 패스워드가 일치하지않으면 
+			throw new BadRequestException("입력한 정보가 일치하지 않습니다.");
+		}
+		
+		dto.setIdNum(idNum);//dto에 세션고유번호 담기 
+		memberSettingRepository.deleteMember(dto);//회원 삭제 
 		
 		 return new ResponseEntity<ResponseDTO<Void>>
 			(new ResponseDTO<Void>(),HttpStatus.OK); //성공 
