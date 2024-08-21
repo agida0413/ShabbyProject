@@ -42,11 +42,11 @@ api.interceptors.response.use(response => {
     return response;
 }, error => {
   //만약 응답오류가 있다면 
-
+    const token=localStorage.getItem("access") //토큰이 있다면 
     const originalRequest = error.config;
 
-    // 410 상태 코드 오류가 발생하고, 재발급 시도하지 않았으면
-    if (error.response && error.response.status === 410 && !originalRequest._retry) {
+    // 410 상태 코드 오류가 발생하고, 엑세스 토큰이 있고 ,재발급 시도하지 않았으면
+    if (error.response && error.response.status === 410 && !originalRequest._retry &&token) {
         //만약 재발급 진행중이라면 
         if (isRefreshing) {
           
@@ -87,10 +87,14 @@ api.interceptors.response.use(response => {
                   reject(err); // 오류 반환
                 });
         })
+
+        
         .then(token => {
                // 재발급 완료 후 원래 요청에 새 토큰을 추가하고 재시도
             originalRequest.headers.access = token;
             return api(originalRequest);
+            
+
         })
         .catch(err => {
             return Promise.reject(err);
