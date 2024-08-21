@@ -51,22 +51,22 @@ public class SecurityConfig {
 		private final CookieUtil cookieUtil;
    
 		@Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
-
-        return configuration.getAuthenticationManager();
-    }
-
-    //암호화	
-    @Bean
-    public BCryptPasswordEncoder bCryptPasswordEncoder() {
-
-        return new BCryptPasswordEncoder();
-    }
-    
-    
-    //필터 및 시큐리티 설정 
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+	    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
+	
+	        return configuration.getAuthenticationManager();
+	    }
+	
+	    //암호화	
+	    @Bean
+	    public BCryptPasswordEncoder bCryptPasswordEncoder() {
+	
+	        return new BCryptPasswordEncoder();
+	    }
+	    
+	    
+	    //필터 및 시큐리티 설정 
+	    @Bean
+	    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
     
     	
     	//cors 관련 설정 

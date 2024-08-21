@@ -6,16 +6,16 @@ import org.springframework.stereotype.Component;
 //임시패스워드 생성기 
 @Component
 public class PasswordGenerator {
-		private static final String LOWERCASE = "abcdefghijklmnopqrstuvwxyz";//소문자모음
-	    private static final String UPPERCASE = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";//대문자모음
-	    private static final String DIGITS = "0123456789";//숫자모음 
-	    private static final String SPECIAL_CHARS = "!@#$%^&*()_+-=[]{}|;:',.<>?";//특수문자모음 
-	    
-	    //모든 문자조합 
-	    private static final String ALL_CHARS = LOWERCASE + UPPERCASE + DIGITS + SPECIAL_CHARS;
-
-	    private static final SecureRandom RANDOM = new SecureRandom();//시큐리티의 강력한 난수를 생성하기위해
-	    public String generateRandomPassword() {
+			private static final String LOWERCASE = "abcdefghijklmnopqrstuvwxyz";//소문자모음
+		    private static final String UPPERCASE = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";//대문자모음
+		    private static final String DIGITS = "0123456789";//숫자모음 
+		    private static final String SPECIAL_CHARS = "!@#$%^&*()_+-=[]{}|;:',.<>?";//특수문자모음 
+		    
+		    //모든 문자조합 
+		    private static final String ALL_CHARS = LOWERCASE + UPPERCASE + DIGITS + SPECIAL_CHARS;
+	
+		    private static final SecureRandom RANDOM = new SecureRandom();//시큐리티의 강력한 난수를 생성하기위해
+		    public String generateRandomPassword() {
 	    	
 	    	//최소숫자하나 포함 , 소문자하나포함 ,대문자하나포함 , 특수문자 포함 총 4자리 
 	    	StringBuilder password= new StringBuilder();
@@ -49,6 +49,6 @@ public class PasswordGenerator {
 		        int index = RANDOM.nextInt(source.length()); //시큐리티 난수생성을 통해 위에 정의한 각각모음들의 길이에서 인덱스를 생성함 
 		        return source.charAt(index);//생성된 인덱스의 실제 값 반환
 		    }
-	    }
+		}
 
 

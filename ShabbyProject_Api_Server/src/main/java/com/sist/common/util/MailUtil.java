@@ -18,6 +18,7 @@ public class MailUtil {
 					+certificationMessage+"</strong></h3>";
 			return certificationMessage;
 		}
+		
 		//임시 비밀번호 발송메일 html 생성기 
 		public String getPasswordResetMessage(String newPassword) {//임시비밀번호를 받아온다 . 
 			

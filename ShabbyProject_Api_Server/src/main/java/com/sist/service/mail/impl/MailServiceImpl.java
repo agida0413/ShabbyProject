@@ -91,29 +91,29 @@ public class MailServiceImpl implements MailService{
 	public ResponseEntity<ResponseDTO<Void>> emailAuthValidation(String email, String code){
 		
 
-	// 전달받은 이메일을 바탕으로 데이터베이스의 최신row를 찾음 
-	EmailAuthDTO dto=memberAccountRepository.emailAuthGetValidation(email);
-	
-	//인증코드가 틀린경우
-	if(!bCryptPasswordEncoder.matches(code, dto.getCode())) {
+		// 전달받은 이메일을 바탕으로 데이터베이스의 최신row를 찾음 
+		EmailAuthDTO dto=memberAccountRepository.emailAuthGetValidation(email);
 		
-		throw new BadRequestException("인증코드가 틀렸습니다.");
-	}
-	
-	 //현재시간 
-	 LocalDateTime now = LocalDateTime.now();
-	 
-	 //인증시간이 만료되었을 경우 
-	 if(now.isAfter(dto.getExpiration())) {
+		//인증코드가 틀린경우
+		if(!bCryptPasswordEncoder.matches(code, dto.getCode())) {
+			
+			throw new BadRequestException("인증코드가 틀렸습니다.");
+		}
 		
-		 throw new BadRequestException("인증시간이 만료되었습니다.");//사용자 정의 400에러 발생
-	 }
-	 
-	 memberAccountRepository.emailAuthClear(dto.getEmailAuthNum());// 데이터베이스 row에 인증이 완료되었음을 update함 
-		
-	 
-	 return new ResponseEntity<ResponseDTO<Void>>
-		(new ResponseDTO<Void>(),HttpStatus.OK); //성공 
+		 //현재시간 
+		 LocalDateTime now = LocalDateTime.now();
+		 
+		 //인증시간이 만료되었을 경우 
+		 if(now.isAfter(dto.getExpiration())) {
+			
+			 throw new BadRequestException("인증시간이 만료되었습니다.");//사용자 정의 400에러 발생
+		 }
+		 
+		 memberAccountRepository.emailAuthClear(dto.getEmailAuthNum());// 데이터베이스 row에 인증이 완료되었음을 update함 
+			
+		 
+		 return new ResponseEntity<ResponseDTO<Void>>
+			(new ResponseDTO<Void>(),HttpStatus.OK); //성공 
 	 
 	}
 	
@@ -147,7 +147,7 @@ public class MailServiceImpl implements MailService{
 			throw new BadRequestException("입력한 정보가 일치하지 않습니다.");//사용자 정의 400에러 발생
 		}
 		
-				
+		
 		try {
 			
 			MimeMessage message= javaMailSender.createMimeMessage(); //메일링 객체 생성 

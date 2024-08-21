@@ -23,8 +23,7 @@ public class GlobalExceptionHandler {
 	        ResponseDTO<Void> responseApi = new ResponseDTO<Void>( // 응답 객체 통일 responseApi 
 	          
 	            HttpStatus.BAD_REQUEST.value(), // 상태코드 밸류
-	            ex.getMessage()//매개변수로 받을 오류 메시지 
-	          
+	            ex.getMessage()//매개변수로 받을 오류 메시지 	          
 	        );
 	        
 	        return new ResponseEntity<ResponseDTO<Void>>
@@ -32,55 +31,52 @@ public class GlobalExceptionHandler {
 	    }
 	
 	
-	 //404관련 예외
-	 @ExceptionHandler(NotFoundException.class)
+	    //404관련 예외
+	    @ExceptionHandler(NotFoundException.class)
 	    public ResponseEntity<ResponseDTO<Void>> handleNotfoundException(NotFoundException ex) {
 
 	        ResponseDTO<Void> responseApi = new ResponseDTO<Void>(
 	          
 	            HttpStatus.NOT_FOUND.value(),// 상태코드 밸류
-	            ex.getMessage()//매개변수로 받을 오류 메시지 
-	          
+	            ex.getMessage()//매개변수로 받을 오류 메시지 	          
 	        );
 	        
 	        return new ResponseEntity<>(responseApi, HttpStatus.NOT_FOUND);// 응답객체와 상태코드
 	    }
-	 //409관련 예외
-	 @ExceptionHandler(ConflictException.class)
+	    
+	    //409관련 예외	 
+	    @ExceptionHandler(ConflictException.class)
 	    public ResponseEntity<ResponseDTO<Void>> handleConflictException(ConflictException ex) {
 
 	        ResponseDTO<Void> responseApi = new ResponseDTO<Void>(
 	         
 	            HttpStatus.CONFLICT.value(),// 상태코드 밸류
-	            ex.getMessage()//매개변수로 받을 오류 메시지 
-	         
+	            ex.getMessage()//매개변수로 받을 오류 메시지 	         
 	        );
 	        
 	        return new ResponseEntity<>(responseApi, HttpStatus.CONFLICT); // 응답객체와 상태코드
 	    }
 	 
-	 //서버내부오류 
-	 @ExceptionHandler(InternerException.class)
+	    //서버내부오류 
+	    @ExceptionHandler(InternerException.class)
 	    public ResponseEntity<ResponseDTO<Void>> handleInternerException(InternerException ex) {
 
 	        ResponseDTO<Void> responseApi = new ResponseDTO<Void>(
 	         
 	            HttpStatus.INTERNAL_SERVER_ERROR.value(),// 상태코드 밸류
-	            ex.getMessage()//매개변수로 받을 오류 메시지 
-	         
+	            ex.getMessage()//매개변수로 받을 오류 메시지 	         
 	        );
 	        
 	        return new ResponseEntity<>(responseApi, HttpStatus.CONFLICT);// 응답객체와 상태코드
 	    }
 	
-	 //그외 예기치 못한 예외 === 서버오류로 정의
-	 @ExceptionHandler(Exception.class)
+	    //그외 예기치 못한 예외 === 서버오류로 정의
+	    @ExceptionHandler(Exception.class)
 	    public ResponseEntity<ResponseDTO<Void>> handleGenericException(Exception ex) {
 	        ResponseDTO<Void> response = new ResponseDTO<>(
 	           
 	            HttpStatus.INTERNAL_SERVER_ERROR.value(),// 상태코드 밸류
-	            "서버 내부오류입니다. 잠시 뒤 이용해주세요."//메시지
-	       
+	            "서버 내부오류입니다. 잠시 뒤 이용해주세요."//메시지	       
 	        );
 
 	        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);// 응답객체와 상태코드

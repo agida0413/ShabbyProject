@@ -81,7 +81,7 @@ public class ResponseDTO<T> {
         response.setContentType("application/json");
         response.getWriter().write(objectMapper.writeValueAsString(responseApi));
       
- }
+    }
     
     public void set403esponse(HttpServletResponse response,ResponseDTO<Void> responseApi,ObjectMapper objectMapper) throws JsonProcessingException, IOException {
     	  
@@ -90,7 +90,7 @@ public class ResponseDTO<T> {
          response.setContentType("application/json");
          response.getWriter().write(objectMapper.writeValueAsString(responseApi));
        
-  }
+    }
     
     
     public void set410esponse(HttpServletResponse response,ResponseDTO<Void> responseApi,ObjectMapper objectMapper) throws JsonProcessingException, IOException {

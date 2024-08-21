@@ -20,6 +20,7 @@ public class DuplicateRequestInterceptor implements HandlerInterceptor {
 
     private final Map<String, Boolean> requestMap = new ConcurrentHashMap<>(); //요청 을 저장하는 map = > concurrenthashmap은 멀티스레드에서 안전함 (LOCK) 
     private final SimpleCodeGet simpleCodeGet;
+    
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String requestKey = generateRequestKey(request);
@@ -42,20 +43,26 @@ public class DuplicateRequestInterceptor implements HandlerInterceptor {
         // 요청이 완료되면 맵에서 해당 요청을 제거하여 다음 요청이 가능하도록 함
         requestMap.remove(requestKey);
     }
+    
 
-    private String generateRequestKey(HttpServletRequest request) 
-    {   int idNum;
-    	try {//사용자 인증후 요청에 대해서 
-    		 idNum=simpleCodeGet.getIdNum();
-		} catch (Exception e) {//아직로그인 하지않은 요청에 대해서 
-			// TODO: handle exception
-			idNum=0;
-		}
+    private String generateRequestKey(HttpServletRequest request) { 
     	
-    	
-    	
+    		int idNum;
+       
+	    	try {//사용자 인증후 요청에 대해서 
+	    		 idNum=simpleCodeGet.getIdNum();
+			}
+	    	catch (Exception e) {//아직로그인 하지않은 요청에 대해서 
+				// TODO: handle exception
+				idNum=0;
+	    	}
+	       	
     	
         // 요청의 고유 키를 생성 (HTTP 메소드와 URI , ip , 사용자 고유번호를 조합) 같은 ip여도 다른 브라우저에서 전송할 수도 있으니.. , 회원인증이 안되었을때는 0으로 통일 
         return request.getMethod() + ":" + request.getRequestURI()+":"+request.getLocalAddr()+","+idNum;
+   
     }
+
+
 }
+

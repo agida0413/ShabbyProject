@@ -42,12 +42,14 @@ public class CustomUserDetails implements UserDetails {
 
         return dto.getPassword();
     }
+    
     //고유번호 리턴
     public int getIdNum()
     {
     	return dto.getIdNum();
     }
-  //이메일을 사용하니 이메일 리턴
+    
+    //이메일을 사용하니 이메일 리턴
     @Override
     public String getUsername() {
     

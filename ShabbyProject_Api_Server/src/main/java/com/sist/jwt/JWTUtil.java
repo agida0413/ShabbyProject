@@ -13,9 +13,9 @@ import io.jsonwebtoken.Jwts;
 
 @Component
 public class JWTUtil {
-
+	
     private final SecretKey secretKey;
-
+    
     public JWTUtil(@Value("${spring.jwt.secret}")String secret) {
 
     	//application.properties에 저장된 secretkey 암호 알고리즘 통해 생성사를 통해 secretkey 생성
@@ -27,24 +27,30 @@ public class JWTUtil {
     
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("username", String.class);
     }
+    
 
     public String getRole(String token) {
 
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("role", String.class);
     }
+    
 
     public Boolean isExpired(String token) {
 
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().getExpiration().before(new Date());
     }
+    
 
     public String getCategory(String token) {
     	return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("category",String.class);
     }
+    
+    
     public int getIdNum(String token) {
     	return Integer.parseInt(Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("idNum",String.class)); 
     			
     }
+    
     
     //토큰을 만듬 
     public String createJwt(String category,String username, String role,String idNum, Long expiredMs) {

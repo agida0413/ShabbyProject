@@ -27,18 +27,18 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class MybatisRefreshService implements RefreshService{
-private final JwtStoreRepository repository;
-private final JWTUtil jwtUtil;
-private final CookieUtil cookieUtil;
+	
+	private final JwtStoreRepository repository;
+	private final JWTUtil jwtUtil;
+	private final CookieUtil cookieUtil;
 
-
-	public	void deleteRefresh(String refresh) { // 데이터베이스에서 리프레시 토큰을 지움 매개변수는 토큰 
-			
+	// 데이터베이스에서 리프레시 토큰을 지움 매개변수는 토큰 			
+	public	void deleteRefresh(String refresh) {
 			repository.deleteRefresh(refresh);
 		}
 		
 		
-		public void addRefreshEntity(int idNum, String refresh, Long expiredMs) {// 리프레시토큰을 데이터베이스에 저장
+	public void addRefreshEntity(int idNum, String refresh, Long expiredMs) {// 리프레시토큰을 데이터베이스에 저장
 				
 		    Date date = new Date(System.currentTimeMillis() + expiredMs); //현재시간 + 매개변수로 받은 유효기간 
 		   
@@ -49,7 +49,7 @@ private final CookieUtil cookieUtil;
 		    dto.setExpiration(date.toString()); // 유효기간
 	
 		    repository.save(dto);//데이터에 저장
-		}
+	}
 	
 	public Boolean	isExist(String refresh) { //리프레시 토큰이 데이터베이스에 실존하는지 검증
 		

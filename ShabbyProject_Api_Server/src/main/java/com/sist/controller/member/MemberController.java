@@ -27,8 +27,7 @@ private final MemberFindService memberFindService;// 회원정보 찾기 서비�
 	
 	//회원가입 
 	@PostMapping
-	public ResponseEntity<ResponseDTO<Void>> join(MemberDTO dto){
-		
+	public ResponseEntity<ResponseDTO<Void>> join(MemberDTO dto){	
 		return joinService.join(dto);
 	}
 	//닉네임 중복검증 
