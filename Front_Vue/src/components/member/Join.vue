@@ -506,59 +506,77 @@
           if(this.isLoading===true){
             return
           }
-          this.nickNameErrors = this.validateField(this.nickName, this.nickNameRules); //닉네임 검증 에러메시지 배열
+
+          //닉네임 검증 에러메시지 배열
+          this.nickNameErrors = this.validateField(this.nickName, this.nickNameRules); 
+
+                 //만약 닉네임 검증에러가 있을 시   return
+                if (this.nickNameErrors.length > 0 ) {
           
-          if (this.nickNameErrors.length > 0 ) { //만약 닉네임 검증에러가 있을 시   return
-          
-            return;//불필요한 axios 요청 방지 
+                return;//불필요한 axios 요청 방지 
          
                 }
+                
+                //로딩스피너값 true= 진행되고있는 http요청
                 this.isLoading=true
+                
+                //닉네임 검증 api 호출 
                 api.post('/members/nickValidate',{
-                  nickname:this.nickName
+                  nickname:this.nickName//body에 닉네임값 
                 })
                 .then(()=>{
-                  
+                  //성공시 
                     alert('사용가능한 닉네임입니다.')
                     this.isNickNameClear =true; //닉네임 중복검증 완료 
                     this.isNickNameReadonly=true;//검증이 완료 되면 닉네임 수정불가
                   
                 })
                 .catch((err)=>{
-       
+                    //실패시
                     alert(err.response&&err.response.data.message)
                     
-                  })
+                })
                 .finally(()=>{
+                  //로딩스피너 값 false 
                   this.isLoading=false
                 })
               
             
         },
+        // 최종적인 회원가입 메서드 ( 닉네임검증, 이메일검증 을 진행해야함 )
         submitJoin(){
+          //만약 로딩스피너가 true면 리턴 
           if(this.isLoading===true){
             return
           }
-          if(!this.isEmailAuthClear){ //이메일 인증을 아직진행하지않았을때 리턴 
+          
+          //이메일 인증을 아직진행하지않았을때 리턴 
+          if(!this.isEmailAuthClear){ 
             alert('이메일 인증을 진행해주세요.')
             return
           }
-          if(!this.isNickNameClear){ //닉네임 중복검사를 진행하지않았을때 
+          //닉네임 중복검사를 진행하지않았을때 
+          if(!this.isNickNameClear){ 
             alert('닉네임 중복확인을 진행해주세요.')
             return
           }
+          //이름검증
+          this.nameErrors = this.validateField(this.name, this.nameRules); 
+          //패스워드검증
+          this.passwordErrors=this.validateField(this.password,this.passwordRules);
+          //비밀번호 확인검증
+          this.PasswordValidationErrors=this.validateField(this.PasswordValidation,this.PasswordValidationRules); 
 
-          this.nameErrors = this.validateField(this.name, this.nameRules); //이름검증
-          this.passwordErrors=this.validateField(this.password,this.passwordRules);//패스워드가 사용가능한지 
-          this.PasswordValidationErrors=this.validateField(this.PasswordValidation,this.PasswordValidationRules);//비밀번호 확인검증 
-          if (this.nameErrors.length > 0 || this.passwordErrors.length>0 ||this.PasswordValidationErrors.length>0 ) { //이중 하나라도 충족하지않으면 리턴 
+                //이중 하나라도 충족하지않으면 리턴
+                if (this.nameErrors.length > 0 || this.passwordErrors.length>0 ||this.PasswordValidationErrors.length>0 ) {  
         
-            return;//불필요한 axios 요청 방지  
+                return;//불필요한 axios 요청 방지  
                 }
 
-                //핸드폰번호 입력과 관련된 검증
+                //휴대폰 번호 결합 (010 + 두번째 필드+ 세번쨰 필드)
                const fullPhone=(this.firstPhoneNum+this.middlePhoneNum+this.lastPhoneNum); 
                
+               //아래부터 휴대폰번호 관련 validation
                if (fullPhone.length !== 11) {
                   alert('핸드폰 번호는 11자리여야 합니다.');
                   return;
@@ -584,17 +602,20 @@
 
                //회원가입에 필요한 정보
                 const formdata=new FormData();
-                formdata.append('email',this.email)
-                formdata.append('password',this.password)
-                formdata.append('nickname',this.nickName)
-                formdata.append('name',this.name)
-                formdata.append('phone',fullPhone)
-                formdata.append('introduce',this.introduce)
+                formdata.append('email',this.email)//이메일
+                formdata.append('password',this.password)//패스워드
+                formdata.append('nickname',this.nickName)//닉네임
+                formdata.append('name',this.name)//이름
+                formdata.append('phone',fullPhone)//휴대폰번호
+                formdata.append('introduce',this.introduce)//자기소개(널값 허용)
 
+                //회원가입진행중 상태업데이트
                 this.isLoading=true
-                api.post("/members", formdata) //api 호출 
+
+                //회원가입 api 호출 
+                api.post("/members", formdata) 
                 .then(async () => {//async / await 활용 
-                 
+                 //성공시
                     // showAlert 메서드로 alert을 먼저 띄우고 라우터로 푸시하도록 
                     await this.showAlert('회원가입이 완료되었습니다. 환영합니다!!!');
                     // alert이 닫힌 후 router.push 호출
@@ -602,11 +623,12 @@
                   
                 })
                 .catch((err)=>{
-                   
+                  //실패시
                   alert(err.response&&err.response.data.message)
                   
                 })
                 .finally(()=>{
+                  //로딩스피너 false
                   this.isLoading=false
                 })
                

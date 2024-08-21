@@ -123,7 +123,9 @@ export default {
         required: true
       }
     
-},data(){
+    },
+    data(){
+
     return{
         password:'',
         passwordRules: [
@@ -140,16 +142,16 @@ export default {
         lastPhoneNum:'', //세번째 번호 
         isLoading:false//현재 로딩 상태정보 
     }
-}
- ,computed:{
-   // 현재  컴포넌트에서의 다이얼로그 (true/false) 리턴 , props로 value를받아 메소드를 통해 리턴해야한다.
-    localDialog:{
-        get(){
-            return this.value
-        }
-    }
- }   
-    ,
+  },
+  computed:{
+    // 현재  컴포넌트에서의 다이얼로그 (true/false) 리턴 , props로 value를받아 메소드를 통해 리턴해야한다.
+      localDialog:{
+          get(){
+              return this.value
+          }
+      }
+  },   
+    
     methods: {
       //rules 에러를 저장 
       validateField(value, rules) { 
@@ -157,7 +159,8 @@ export default {
             .map(rule => rule(value))
             .filter(error => typeof error === 'string');
         },
-      //모달을 닫는 메소드 
+
+      //모달을 닫는 메소드
       closeDialog() {
 
         //초기화 
@@ -171,12 +174,12 @@ export default {
       },
       //휴대폰 번호를 변경하는 메소드 
       submitChangePhone(){
-        //만약 로딩중이라면 return 
-        if(this.isLoading===true){
-            return
-          }
-        //비밀번호 검증 에러메시지 배열
-        this.passwordErrors = this.validateField(this.password, this.passwordRules); 
+              //만약 로딩중이라면 return 
+              if(this.isLoading===true){
+                  return
+              }
+              //비밀번호 검증 에러메시지 배열
+              this.passwordErrors = this.validateField(this.password, this.passwordRules); 
 
               //만약 비밀번호 검증에러가 있을 시   return
               if (this.passwordErrors.length > 0 ) { 
