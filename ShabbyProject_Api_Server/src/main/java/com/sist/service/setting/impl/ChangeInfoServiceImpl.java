@@ -23,10 +23,12 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class ChangeInfoServiceImpl implements ChangeInfoService{
-
+	
 	private final MemberAccountRepository memberAccountRepository;
 	private final MemberSettingRepository memberSettingRepository;
+	//공통함수모듈
 	private final SimpleCodeGet simpleCodeGet;
+	//패스워드 암호화
 	private final BCryptPasswordEncoder bCryptPasswordEncoder;
 	
 	//회원 정보 리턴

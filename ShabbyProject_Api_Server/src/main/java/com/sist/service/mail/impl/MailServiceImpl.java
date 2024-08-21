@@ -37,11 +37,15 @@ public class MailServiceImpl implements MailService{
 	private final MemberAccountRepository memberAccountRepository;//멤버관련 레파지토리
 	private final BCryptPasswordEncoder bCryptPasswordEncoder;
 	private final PasswordGenerator passwordGenerator;// 임시패스워드 생성 
+	
 	//이메일 중복검증 및 발송
 	@Transactional
 	public ResponseEntity<ResponseDTO<Void>> emailSend(String email ){
 		
-		MemberDTO dto= memberAccountRepository.findByUserEmail(email);// 이메일 중복검증 
+		//매개변수로 받은 이메일기반 회원찾기
+		MemberDTO dto= memberAccountRepository.findByUserEmail(email); 
+		
+		//이미 해당 이메일을 사용하고 있는 회원이 있으면
 		if(dto!=null) {
 			
 			throw new BadRequestException("이미 사용중인 이메일 입니다.");//사용자 정의 400에러 발생
@@ -69,6 +73,7 @@ public class MailServiceImpl implements MailService{
 				mimeMessageHelper.setText(htmlContent,true);
 				javaMailSender.send(message);//전송 
 			     memberAccountRepository.emailAuthSave(emailDto); //데이터베이스에 인증코드와 정보 저장 
+			     
 		} catch (MessagingException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -86,21 +91,21 @@ public class MailServiceImpl implements MailService{
 	public ResponseEntity<ResponseDTO<Void>> emailAuthValidation(String email, String code){
 		
 
+	// 전달받은 이메일을 바탕으로 데이터베이스의 최신row를 찾음 
+	EmailAuthDTO dto=memberAccountRepository.emailAuthGetValidation(email);
 	
-	EmailAuthDTO dto=memberAccountRepository.emailAuthGetValidation(email);// 전달받은 이메일을 바탕으로 데이터베이스의 최신row를 찾음 
-	
-	
+	//인증코드가 틀린경우
 	if(!bCryptPasswordEncoder.matches(code, dto.getCode())) {
-		//인증코드가 틀린경우
+		
 		throw new BadRequestException("인증코드가 틀렸습니다.");
 	}
 	
-	
-	 LocalDateTime now = LocalDateTime.now();//현재시간 
+	 //현재시간 
+	 LocalDateTime now = LocalDateTime.now();
 	 
-	 
+	 //인증시간이 만료되었을 경우 
 	 if(now.isAfter(dto.getExpiration())) {
-		 //인증시간이 만료되었을 경우 
+		
 		 throw new BadRequestException("인증시간이 만료되었습니다.");//사용자 정의 400에러 발생
 	 }
 	 
@@ -122,15 +127,23 @@ public class MailServiceImpl implements MailService{
 	public ResponseEntity<ResponseDTO<Void>> emailPasswordReset(MemberDTO dto) {
 		
 		// TODO Auto-generated method stub
+		//매개변수로 받은 이메일 
 		String email=dto.getEmail();
+		//매개변수로 받은 이메일 기반 맴버를 찾음 
+		
 		MemberDTO findDto = memberAccountRepository.findByUserEmail(email);
-		if(findDto==null) {//해당이메일이 존재하지않을 시 
+		
+		//해당이메일기반 회원정보가 존재하지않을시 
+		if(findDto==null) {
 			throw new NotFoundException("등록된 정보가 없습니다.");
 		}
-		if(!dto.getName().equals(findDto.getName())) {//이메일은 존재하나 입력한 이름이 다를경우 
+		//해당 이메일을 사용하는 회원은 존재하나 입력한 이름이 다를경우 
+		if(!dto.getName().equals(findDto.getName())) {
+			
 			throw new BadRequestException("입력한 정보가 일치하지 않습니다.");//사용자 정의 400에러 발생
 		}
-		if(!bCryptPasswordEncoder.matches(dto.getPhone(), findDto.getPhone())) {//이메일은 존재하나 입력한 닉네임이 다를경우 
+		//해당 이메일을 사용하는 회원은 존재하나 휴대폰 번호가 다를경우
+		if(!bCryptPasswordEncoder.matches(dto.getPhone(), findDto.getPhone())) {
 			throw new BadRequestException("입력한 정보가 일치하지 않습니다.");//사용자 정의 400에러 발생
 		}
 		

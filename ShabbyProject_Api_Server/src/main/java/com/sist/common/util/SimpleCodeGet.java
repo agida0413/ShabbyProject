@@ -15,8 +15,6 @@ public class SimpleCodeGet {
 	//공통으로 자주사용하는 함수들 
 	
 
-	
-	
 	//회원고유번호를 authentication에서 꺼내옴 
 	public int getIdNum() {
 		  Authentication authentication = SecurityContextHolder.getContext().getAuthentication();//securitycontext에서 authentication 가져옴 

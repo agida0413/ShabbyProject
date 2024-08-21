@@ -29,10 +29,11 @@ private final BCryptPasswordEncoder bCryptPasswordEncoder;
 	public ResponseEntity<ResponseDTO<Void>> join(MemberDTO dto){
 			
 		if(dto.getIntroduce().equals("")) {
-			dto.setIntroduce(null); // 만약 자기소개 입력안했을시에는 데이터베이스에 널값으로 저장 =- > 관리하기 편할거같음 
+			dto.setIntroduce(null); // 만약 자기소개 입력안했을시에는 데이터베이스에 널값으로 저장 =- > 관리용이
 		}
-		
+		//매개변수로 받은 패스워드
 		String password=dto.getPassword();
+		//매개변수로 받은 핸드폰번호 
 		String phone=dto.getPhone();
 		
 		dto.setPassword(bCryptPasswordEncoder.encode(password)); // 패스워드 암호화
@@ -41,7 +42,7 @@ private final BCryptPasswordEncoder bCryptPasswordEncoder;
 		dto.setRole("ROLE_USER"); //일반회원 권한 
 		
 		
-			memberAccountRepository.join(dto);//회원가입 데이터베이스 저장 
+		memberAccountRepository.join(dto);//회원가입 데이터베이스 저장 
 		
 		
 		
@@ -51,10 +52,12 @@ private final BCryptPasswordEncoder bCryptPasswordEncoder;
 		
 	}
 	
-	//닉네임 중복검증완료
+	//닉네임 중복검증
 	public ResponseEntity<ResponseDTO<Void>> nickNameValidation(String nickName){
+			//매개변수로 받은 닉네임 기반 회원찾기 
 			MemberDTO dto = memberAccountRepository.findByUserNickname(nickName);
 			
+			//이미 그 닉네임을 사용하는 회원이 있는경우
 			if(dto!=null) {
 				
 				throw new BadRequestException("중복된 닉네임 입니다.");//사용자 정의400에러 발생

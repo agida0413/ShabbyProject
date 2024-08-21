@@ -119,12 +119,13 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     //실패시 
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws JsonProcessingException, IOException {
-    	
+    		
+    	//실패 응답 포멧전송
     	ResponseDTO<Void> responseApi = new ResponseDTO<Void>(
     			 HttpStatus.METHOD_NOT_ALLOWED.value(),
                  "입력정보가 일치하지 않습니다."
              );
-    	
+    	//405 사용자 정의 메소드
     	responseApi.set405Response(response, responseApi, objectMapper);
     }
     

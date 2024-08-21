@@ -21,14 +21,15 @@ private final MemberAccountRepository repository;
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 		// TODO Auto-generated method stub
 		
-		MemberDTO dto=repository.findByUserEmail(email);//이메일을 통한 회원 검증
-		
+		//시큐리티 진행을 위해 해당이메일을 가진 회원정보를 가져옴 
+		MemberDTO dto=repository.findByUserEmail(email);
+		//이메일 기반 회원이 있다면 
 		if(dto!=null) {
 
 			
 			return new CustomUserDetails(dto);
 		}
-
+		//없을경우 null 리턴
 		return null;
 	}
 
