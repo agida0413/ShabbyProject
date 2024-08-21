@@ -49,7 +49,7 @@ public class JWTFilter extends OncePerRequestFilter{
     	if (accessToken == null) {
     	
     	    filterChain.doFilter(request, response);
-
+    	  
     	    return;
     	}
 
@@ -57,7 +57,7 @@ public class JWTFilter extends OncePerRequestFilter{
     	try {
     	    jwtUtil.isExpired(accessToken);
     	} catch (ExpiredJwtException e) {
-    
+    		
     		// 클라이언트 측에 410 에러전송 ,410 에러는 현재 서버내 유일하고 , 클라이언트 측에서는 응답 인터셉트로 받아 액세스토큰 재발급 진행 
     		
     		ResponseDTO<Void> responseApi = new ResponseDTO<Void>(
