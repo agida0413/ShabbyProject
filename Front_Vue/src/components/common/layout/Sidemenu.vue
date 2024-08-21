@@ -63,8 +63,8 @@ export default{
     PostInsert
   },
   methods:{
-    reGetInfo(){
-      this.getInitInfo() // 사이드메뉴에서 회원 정보를 리랜더링 (비공개 공개 설정시 )
+    reGetInfo(changeState){//자식에서 받은 변한 상태값 
+      this.memberData.locked=changeState // 사이드메뉴에서 변한 상태값 세팅 (리랜더링)
     },
     getInitInfo(){ // 회원정보를 가져옴 1. 공개여부 
         api.get('/setting')
