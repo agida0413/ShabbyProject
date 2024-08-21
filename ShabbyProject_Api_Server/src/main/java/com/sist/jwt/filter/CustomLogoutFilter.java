@@ -117,6 +117,7 @@ public class CustomLogoutFilter extends GenericFilterBean {
                    );
            	responseApi.set401esponse(response, responseApi, objectMapper);
         	return;
+        	
         }
 
         //DB에 저장되어 있는지 확인
