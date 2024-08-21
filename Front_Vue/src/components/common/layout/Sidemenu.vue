@@ -10,14 +10,13 @@
       >
         <template v-slot:prepend >
           <v-list-item
-      
           >
-          <!--로고-->
-          <v-img
-        class="mx-auto"
-        max-width="60"
-        src="@/assets/logo2.png"
-      ></v-img> 
+            <!--로고-->
+            <v-img
+              class="mx-auto"
+              max-width="60"
+              src="@/assets/logo2.png"
+          ></v-img> 
         
         </v-list-item>
         </template>
@@ -34,19 +33,23 @@
                 <v-list-item prepend-icon="mdi-wrench" title="설정" value="home" @click="settingDialogOpen()"></v-list-item>
                 <v-list-item prepend-icon="mdi-lock" title="로그아웃" value="users" @click="logout()"></v-list-item>
         </v-list>
+
       </v-navigation-drawer>
     
     
   </v-card>
+  <!-- 세팅 모달 컴포넌트 -->
   <SettingComponent v-model:value="settingDialog"
                     v-model:memberData="memberData"
                     @updateSideMenuInfo="reGetInfo"
-   @settingClose="ifSettingClose"></SettingComponent> <!-- 세팅 모달 컴포넌트 -->
-  <PostInsert v-model:value="postInsertDialog" @postInsertClose="postInsertDialogClose"></PostInsert><!--새 게시물 작성 모달 컴포넌트-->
+   @settingClose="ifSettingClose"></SettingComponent> 
+
+<!--새 게시물 작성 모달 컴포넌트-->
+  <PostInsert v-model:value="postInsertDialog" @postInsertClose="postInsertDialogClose"></PostInsert>
 </template>
 
 <script>
-  import PostInsert from "@/components/feed/post/PostInsert.vue";
+import PostInsert from "@/components/feed/post/PostInsert.vue";
 import SettingComponent from "../setting/Setting.vue"
 import api from "@/api"
 export default{
@@ -59,24 +62,28 @@ export default{
     }
   },
   components:{
-    SettingComponent,
-    PostInsert
+    SettingComponent,//세팅 컴포넌트
+    PostInsert//게시물 작성 컴포넌트
   },
   methods:{
-    reGetInfo(changeState){//자식에서 받은 변한 상태값 
+    //자식에서 받은 변한 상태값 매개변수로 받음 
+    reGetInfo(changeState){
       this.memberData.locked=changeState // 사이드메뉴에서 변한 상태값 세팅 (리랜더링)
     },
-    getInitInfo(){ // 회원정보를 가져옴 1. 공개여부 
+    //세팅 컴포넌트 클릭시 공개/비공개 여부 가져오는 메소드 ==> 여부에따라 세팅 내 비공개 전환 / 공개전환 여부가 달라지므로 
+    getInitInfo(){ // 회원정보를 가져옴 ( 공개/비공개 여부) 
+
+        //상태정보 가져오는 api 호출 
         api.get('/setting')
         .then((res)=>{
-  
+          //성공시 
           this.memberData.locked=res.data.reqData//공개여부 정보 저장 
        
           
         })
         .catch((err)=>{
         
-          alert(err.response&&err.response.data.message)//에러 리스폰스 
+          alert(err.response&&err.response.data.message)//에러 출력 
         })
       
        
@@ -95,15 +102,19 @@ export default{
     postInsertDialogClose(){
       this.postInsertDialog=false
     },
-    logout(){//로그아웃 진행 
+    //로그아웃 진행 
+    logout(){
+      //로그아웃 api 호출 
       api.post('/logout')
       .then(()=>{
+        //성공시 
           localStorage.removeItem('access')//엑세스 토큰 지움 
           this.$router.push('/login');//로그인 페이지로 이동
         })
         .catch((err)=>{
-          console.log(err.data)
+          //실패시 에러메시지 출력 
           alert(err.response&&err.response.data.message)
+          
           localStorage.removeItem('access')//엑세스 토큰 지움 
           this.$router.push('/login');//에러 발생시 로그인 페이지로이동
         })

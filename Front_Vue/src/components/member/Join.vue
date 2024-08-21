@@ -3,23 +3,21 @@
       
 
       <v-card
-      
         class="mx-auto pa-16 pb-8 card-scroll mt-13" 
         elevation="15"
         max-width="600"
         rounded="lg"
-        max-height="1000"
-        
+        max-height="1000"        
       >
 
       <v-row
       align="center"
       justify="center"
       >
-        <v-col
-          cols="auto"
-          class="text-center"
-        >
+            <v-col
+              cols="auto"
+              class="text-center"
+            >
                 <!-- 로딩 스피너 -->
                 <v-progress-circular
                   v-if="loading"
@@ -27,115 +25,114 @@
                   color="primary"
                   size="64"
                 ></v-progress-circular>
-        </v-col>
 
-    </v-row>
+             </v-col>
+
+      </v-row>
      
     <!--뒤로가기-->
    <router-link to="/login"> <v-btn icon="mdi-arrow-left" size="32"  class="btn-back"></v-btn></router-link>
 
         <!--이메일-->
-        
             <div class="text-subtitle-1 text-medium-emphasis">Email</div>
            
            <v-row>
 
                 <v-col cols="7">
-            <v-text-field 
-             :rules="emailRules"
-              density="compact"
-              placeholder="Email"
-              prepend-inner-icon="mdi-email-outline"
-              variant="outlined"
-              v-model="email"
-              :readonly="isEmailReadonly"
-                 required
-                 :error-messages="emailErrors"
-            ></v-text-field>
+                  <v-text-field 
+                    :rules="emailRules"
+                      density="compact"
+                      placeholder="Email"
+                      prepend-inner-icon="mdi-email-outline"
+                      variant="outlined"
+                      v-model="email"
+                      :readonly="isEmailReadonly"
+                      required
+                      :error-messages="emailErrors"
+                  ></v-text-field>
               </v-col>
 
                 <v-col cols="5">
                 
-
-                  <v-btn 
-                  v-show="!resend"
-                      :key="`subscribe-${isSubscriber}`"
-                      :border="`thin ${isSubscriber ? 'error' : 'success'}`"
-                      :color="isSubscriber ? 'error' : 'success'"
-                      :prepend-icon="isSubscriber ? 'mdi-close' : 'mdi-email'"
-                      :slim="isSubscriber"
-                      :text="isSubscriber ? 'Cancel' : '인증코드 보내기'"
-                      :variant="isSubscriber ? 'plain' : 'tonal'"
-                      class="me-2 text-none"
-                      
-                      flat
-                     @click="emailAuth()"
-                    ></v-btn>
-
                     <v-btn 
-                    v-show="resend"
-                      :key="`subscribe-${isSubscriber}`"
-                      :border="`thin ${isSubscriber ? 'error' : 'success'}`"
-                      :color="isSubscriber ? 'error' : 'success'"
-                      :prepend-icon="isSubscriber ? 'mdi-close' : 'mdi-email'"
-                      :slim="isSubscriber"
-                      :text="isSubscriber ? 'Cancel' : '인증코드 다시 보내기'"
-                      :variant="isSubscriber ? 'plain' : 'tonal'"
-                      class="me-2 text-none"
-                      
-                      flat
-                     @click="emailAuth()"
-                    ></v-btn>
+                        v-show="!resend"
+                        :key="`subscribe-${isSubscriber}`"
+                        :border="`thin ${isSubscriber ? 'error' : 'success'}`"
+                        :color="isSubscriber ? 'error' : 'success'"
+                        :prepend-icon="isSubscriber ? 'mdi-close' : 'mdi-email'"
+                        :slim="isSubscriber"
+                        :text="isSubscriber ? 'Cancel' : '인증코드 보내기'"
+                        :variant="isSubscriber ? 'plain' : 'tonal'"
+                        class="me-2 text-none" 
+                        flat
+                        @click="emailAuth()"
+                      ></v-btn>
+
+                      <v-btn 
+                        v-show="resend"
+                        :key="`subscribe-${isSubscriber}`"
+                        :border="`thin ${isSubscriber ? 'error' : 'success'}`"
+                        :color="isSubscriber ? 'error' : 'success'"
+                        :prepend-icon="isSubscriber ? 'mdi-close' : 'mdi-email'"
+                        :slim="isSubscriber"
+                        :text="isSubscriber ? 'Cancel' : '인증코드 다시 보내기'"
+                        :variant="isSubscriber ? 'plain' : 'tonal'"
+                        class="me-2 text-none"
+                        
+                        flat
+                      @click="emailAuth()"
+                      ></v-btn>
                 </v-col>
 
          </v-row>
   
 
     <div class="text-subtitle-1 text-medium-emphasis" v-show="showAuthCode">인증코드</div>
-    <v-row v-show="showAuthCode">
-      <!--인증코드-->
-        <v-col cols="4">
-          <v-text-field 
-            density="compact"
-            placeholder="인증코드"
-        
-            variant="outlined"
-            v-model="code"
-            :rules="codeRules"
-            required
-            :error-messages="codeErrors"
-            
-          ></v-text-field>
-       </v-col>
+           <v-row v-show="showAuthCode">
+              <!--인증코드-->
+                <v-col cols="4">
+                  <v-text-field 
+                    density="compact"
+                    placeholder="인증코드"
+                    variant="outlined"
+                    v-model="code"
+                    :rules="codeRules"
+                    required
+                    :error-messages="codeErrors"                   
+                  ></v-text-field>
+               </v-col>
 
-    <v-col cols="2">
-                    <v-btn
-                      height="40"
-                      min-width="50"
-                      color="blue"
-                      @click="emailValidation()"
+               <v-col cols="2">
+                  <v-btn
+                        height="40"
+                        min-width="50"
+                        color="blue"
+                        @click="emailValidation()"
                     >
-                      검증
-                    </v-btn>
+                    검증
+                  </v-btn>
+               </v-col>
 
-     </v-col>
-        <v-col cols="6" class="mt-4"><small class="text-caption text-medium-emphasis"><Timer ref="emailTimer"></Timer></small></v-col>
+               <!--타이머-->
+              <v-col cols="6" class="mt-4">
+                <small class="text-caption text-medium-emphasis">
+                  <Timer ref="emailTimer"></Timer>
+                </small>
+              </v-col>
       
     
-       </v-row>
+           </v-row>
 
-       <div class="text-subtitle-1 text-medium-emphasis d-flex align-center ">
+        <div class="text-subtitle-1 text-medium-emphasis d-flex align-center ">
           닉네임 <span class="text-caption ms-2 text-medium-emphasis">
-              (사이트 내 다른 회원들의 식별 수단이 됩니다.)
-            </span>
+                (사이트 내 다른 회원들의 식별 수단이 됩니다.)
+                </span>
         </div>
         
         <v-row>
           <!--닉네임-->
             <v-col cols="7">
-                <v-text-field
-          
-                
+                <v-text-field               
                   density="compact"
                   placeholder="닉네임"
                   prepend-inner-icon="mdi-account"
@@ -146,40 +143,38 @@
                   :error-messages="nickNameErrors"
                   :readonly="isNickNameReadonly"
                 ></v-text-field>
-        </v-col>
+            </v-col>
 
-        <!--중복 검증버튼-->
-        <v-col cols="4">
+         <!--중복 검증버튼-->
+           <v-col cols="4">
                     <v-btn
-                    v-show="!isNickNameClear"
+                      v-show="!isNickNameClear"
                       height="40"
                       min-width="50"
                       color="blue"
                       @click="nickNameValidation()"
                     >
-                      중복확인
+                    중복확인
                     </v-btn>
-                </v-col>
+             </v-col>
 
-    </v-row>  
+      </v-row>  
 
-       <div class="text-subtitle-1 text-medium-emphasis d-flex align-center justify-space-between">
+        <div class="text-subtitle-1 text-medium-emphasis d-flex align-center justify-space-between">
           이름
         </div>
-        <!--이름-->
+          <!--이름-->
         <v-row>
             <v-col cols="7">
                 <v-text-field
                   density="compact"
                   placeholder="이름"
                   prepend-inner-icon="mdi-account"
-                  variant="outlined"
-               
+                  variant="outlined"              
                   required
                   v-model="name"
                   :rules="nameRules"
-                  :error-messages="nameErrors"
-                
+                  :error-messages="nameErrors"               
                 ></v-text-field>
            </v-col>
          </v-row>
@@ -187,29 +182,29 @@
    
        
             <div class="text-subtitle-1 text-medium-emphasis d-flex align-center justify-space-between">
-          비밀번호
-        </div>
-        <!--비밀번호-->
-        <v-row>
-            <v-col cols="7">
-              <v-text-field
-              :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
-                :type="visible ? 'text' : 'password'"
-                density="compact"
-                placeholder="비밀번호"
-                prepend-inner-icon="mdi-lock-outline"
-                variant="outlined"
-                @click:append-inner="visible = !visible"
-                v-model="password"
-                :rules="passwordRules"
-                required
-                :error-messages="passwordErrors"
-              ></v-text-field>
-            </v-col>
-        </v-row>
+            비밀번호
+            </div>
+            <!--비밀번호-->
+              <v-row>
+                  <v-col cols="7">
+                    <v-text-field
+                      :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
+                      :type="visible ? 'text' : 'password'"
+                      density="compact"
+                      placeholder="비밀번호"
+                      prepend-inner-icon="mdi-lock-outline"
+                      variant="outlined"
+                      @click:append-inner="visible = !visible"
+                      v-model="password"
+                      :rules="passwordRules"
+                      required
+                      :error-messages="passwordErrors"
+                    ></v-text-field>
+                  </v-col>
+              </v-row>
    
-    <div class="text-subtitle-1 text-medium-emphasis d-flex align-center justify-space-between">
-       비밀번호 확인
+        <div class="text-subtitle-1 text-medium-emphasis d-flex align-center justify-space-between">
+        비밀번호 확인
         </div>
         <!--비밀번호 확인-->
         <v-row>
@@ -228,75 +223,63 @@
               :error-messages="PasswordValidationErrors"
               ></v-text-field>
              </v-col>
-    </v-row>
+         </v-row>
 
-    <div class="text-subtitle-1 text-medium-emphasis d-flex align-center justify-space-between">
+        <div class="text-subtitle-1 text-medium-emphasis d-flex align-center justify-space-between">
           전화번호
         </div>
 
         <v-row>
-
             <v-col cols="3">
                 <v-select
-                  density="compact"
-                
+                  density="compact"               
                   variant="outlined"
                   v-model="firstPhoneNum"
-                :items="items"
-              
-              
-                required
+                  :items="items"                          
+                  required
               
                 ></v-select>
             </v-col>
 
 
-    <v-col cols="3">
-          <v-text-field
-          
-                type="text"
-                density="compact"
-                variant="outlined"
-                v-model="middlePhoneNum"
-              
-                required
-        
-                maxlength="4" 
-             
-          ></v-text-field>
+            <v-col cols="3">
+                  <v-text-field                 
+                        type="text"
+                        density="compact"
+                        variant="outlined"
+                        v-model="middlePhoneNum"                      
+                        required                
+                        maxlength="4"                    
+                  ></v-text-field>
 
-    </v-col>
+            </v-col>
 
-    <v-col cols="3">
-        <v-text-field
-         
-          type="text"
-          density="compact"
-          variant="outlined"
-          v-model="lastPhoneNum"
-         
-          required
-         
-          maxlength="4" 
-   
-        ></v-text-field>
-
-    </v-col>
+            <v-col cols="3">
+                <v-text-field        
+                  type="text"
+                  density="compact"
+                  variant="outlined"
+                  v-model="lastPhoneNum"         
+                  required        
+                  maxlength="4"   
+                ></v-text-field>
+            </v-col>
 
     </v-row>
 
         <v-row>
 
-          <v-textarea
-          label="본인을 알릴 자기소개를 입력하세요."
-          row-height="30"
-          rows="4"
-          variant="filled"
-          auto-grow
-          shaped
-          v-model="introduce"
-        ></v-textarea>
+              <v-textarea
+              label="본인을 알릴 자기소개를 입력하세요."
+              row-height="30"
+              rows="4"
+              variant="filled"
+              auto-grow
+              shaped
+              v-model="introduce"
+            ></v-textarea>
         </v-row>
+
     <!--회원가입 버튼-->
         <v-btn
           class="mb-8"
@@ -315,8 +298,9 @@
 
      
     </div>
-
+    <!-- 아이디(이메일) 찾기 컴포넌트-->
     <FindIdComponent v-model:value="findIdDialog" @findIdClose=closeFindIdDiolog />
+    <!-- 비밀번호 찾기 컴포넌트 -->
     <FindPwdComponent v-model:value="findPwdDialog" @findPwdClose=closeFindPwdDiolog />
   </template>
 
@@ -328,7 +312,7 @@
     export default {
     data(){
         return{
-               visible: false, //비밀번호 값 보이게 or 안보이게
+              visible: false, //비밀번호 값 보이게 or 안보이게
               items:['010','011','016','017','019'], //대한민국 앞자리번호 리스트
               firstPhoneNum:'010', //디폴트값 - > 맨앞 번호
               middlePhoneNum:'',//두번째 번호
@@ -351,7 +335,7 @@
               isNickNameClear:false, //닉네임 중복 검증여부
               resend:false, //이메일 인증 다시보내기 
               
-              //룰s 
+              //룰
               emailRules: [
                 v => !!v || '이메일을 입력해 주세요.', //이메일이 입력되지 않았을 경우
                 v => v.trim().length > 0 || '이메일은 공백일 수 없습니다.', //이메일에 공백이 들어갔을 경우
@@ -395,21 +379,21 @@
               ],
 
               // 에러 모음 배열들  = >검증할때마다 저장해서 배열의 길이를 확인할 것이다.
-              nameErrors:[],
-              nickNameErrors:[],
-              codeErrors:[],
-              emailErrors: [],
-              passwordErrors: [],
-              PasswordValidationErrors:[],
+              nameErrors:[],//이름 에러 
+              nickNameErrors:[],//닉네임 에러
+              codeErrors:[],//인증코드에러
+              emailErrors: [],//이메일 에러 
+              passwordErrors: [],//비밀번호 에러 
+              PasswordValidationErrors:[],//비밀번호 확인 해러 
               
-                }
+          }
          
       },
       computed:{
         fullPhoneNumber() {
-      // 핸드폰 번호를 통합하여 검증할 수 있도록 문자열을 형성
-      return `${this.firstPhoneNum}-${this.middlePhoneNum}-${this.lastPhoneNum}`;
-    }
+        // 핸드폰 번호를 통합하여 검증할 수 있도록 문자열을 형성
+        return `${this.firstPhoneNum}-${this.middlePhoneNum}-${this.lastPhoneNum}`;
+        }
       },
       components:{
         Timer
@@ -420,8 +404,8 @@
             .map(rule => rule(value))
             .filter(error => typeof error === 'string');
         },
-        
-        showAlert(message) { //회원가입 메시지를 띄우기 위해서 비동기처리를 위한 메시지 메소드
+        //회원가입 메시지를 띄우기 위해서 비동기처리를 위한 메시지 메소드
+        showAlert(message) { 
           return new Promise((resolve) => {
             alert(message);
             resolve();
@@ -445,31 +429,33 @@
           }
 
           this.emailErrors = this.validateField(this.email, this.emailRules); //이메일 검증 에러메시지 배열
+
           if (this.emailErrors.length > 0 ) { //만약 이메일 검증에러가 있을 시   return
             
             return;//불필요한 axios 요청 방지  
-                }
+          }
 
          
             
                   this.loading = true; // 로딩 시작 = > 사용자에게 알려줄려고
-                  api.post('/members/emailAuth',{
+                  //인증코드 이메일 전송 API
+                    api.post('/members/emailAuth',{
             
                       email:this.email
                     })
                     .then(()=>{
-                      
-                     
+                      //성공시              
                       this.AuthCodeOpen()//인증코드 필드 노출 
                       this.isEmailReadonly=true//이메일 정보 수정 불가 
                       this.resend=true//다시보내기 버튼 활성화
                       
-                      this.$refs.emailTimer.resetTimer();
+                      this.$refs.emailTimer.resetTimer();//타이머 작동 
                     
                       alert('이메일 전송이 완료되었습니다.')
                       
                     })
                     .catch(err => {
+                      //실패시 서버로부터 받은 메시지 출력 
                       alert(err.response && err.response.data.message);
                     })
                     .finally(() => {
@@ -490,30 +476,32 @@
           if (this.codeErrors.length > 0 ) { //만약 인증코드 검증에러가 있을 시   return
             
             return;//불필요한 axios 요청 방지  
-                }
+          }
+          //로딩 스피너 FALSE
+          this.isLoading=true
 
-         this.isLoading=true
+          //인증번호 검증 API
           api.post('/members/emailValidate',{
-            'email':this.email,
-            'code':this.code
+            'email':this.email,//이메일 
+            'code':this.code//인증번호 
           })
           .then(()=>{
-
-       
+            //성공시      
             this.AuthCodeClose();// 인증코드 필드 닫음
             this.isEmailAuthClear=true; //이메일 검증완료
             alert('검증되었습니다.')
           })
           .catch((err)=>{
-            
-       alert(err.response&&err.response.data.message)
+            //실패시
+          alert(err.response&&err.response.data.message)
        
          })
          .finally(()=>{
-          this.isLoading=false
+          this.isLoading=false//로딩 변수 FALSE 
          })
          
         },
+        //닉네임 중복검증 메서드 
         nickNameValidation(){
           if(this.isLoading===true){
             return

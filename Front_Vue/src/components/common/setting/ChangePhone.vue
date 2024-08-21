@@ -11,68 +11,60 @@
           title="핸드폰 번호 변경"
           class="to-blackMode"
         >
-        <v-divider></v-divider>
-          <v-card-text>
+          <v-divider></v-divider>
+            <v-card-text>
 
           
 
 
 
             <div class="text-subtitle-1 text-medium-emphasis d-flex align-center justify-space-between">
-          <span style="color: aliceblue;">새로운 전화번호</span>
-        </div>
+              <span style="color: aliceblue;">새로운 전화번호</span>
+            </div>
 
         <v-row>
 
-            <v-col cols="3">
-                <v-select
-                  density="compact"
-                 
-                  variant="outlined"
-                  v-model="firstPhoneNum"
-                :items="items"
-              
-              
-                required
-              
-                ></v-select>
-            </v-col>
+                <v-col cols="3">
+                    <v-select
+                      density="compact"           
+                      variant="outlined"
+                      v-model="firstPhoneNum"
+                      :items="items"            
+                      required
+                    ></v-select>
+                </v-col>
 
 
-    <v-col cols="3">
-          <v-text-field
-          
-            type="text"
-            density="compact"
-            v-model="middlePhoneNum"
-            maxlength="4" 
-            variant="outlined"
-            
-          
-    
-          ></v-text-field>
+                <v-col cols="3">
+                      <v-text-field
+                        type="text"
+                        density="compact"
+                        v-model="middlePhoneNum"
+                        maxlength="4" 
+                        variant="outlined"
+                      ></v-text-field>
 
-    </v-col>
+                </v-col>
 
-    <v-col cols="3">
-        <v-text-field
-         
-          type="text"
-          density="compact"
-          maxlength="4" 
-          variant="outlined"
-          v-model="lastPhoneNum"
-         
-   
-        ></v-text-field>
+                <v-col cols="3">
 
-    </v-col>
+                    <v-text-field
+                      type="text"
+                      density="compact"
+                      maxlength="4" 
+                      variant="outlined"
+                      v-model="lastPhoneNum"
+                    ></v-text-field>
 
-    </v-row>
+                </v-col>
 
-            <div class="text-subtitle-1 text-medium-emphasis d-flex align-center justify-space-between">
+         </v-row>
+
+             <div class="text-subtitle-1 text-medium-emphasis d-flex align-center justify-space-between">
               <span style="color: aliceblue;">비밀번호</span>
-        </div>
+            </div>
+
+
         <!--비밀번호-->
         <v-row>
             <v-col cols="12">
@@ -146,45 +138,57 @@ export default {
         firstPhoneNum:'010', //디폴트값 - > 맨앞 번호
         middlePhoneNum:'',//두번째 번호
         lastPhoneNum:'', //세번째 번호 
-        isLoading:false
+        isLoading:false//현재 로딩 상태정보 
     }
 }
  ,computed:{
+   // 현재  컴포넌트에서의 다이얼로그 (true/false) 리턴 , props로 value를받아 메소드를 통해 리턴해야한다.
     localDialog:{
         get(){
-            return this.value // 현재  컴포넌트에서의 다이얼로그 (true/false) 리턴 , props로 value를받아 메소드를 통해 리턴해야한다.
+            return this.value
         }
     }
  }   
     ,
     methods: {
-      validateField(value, rules) { //rules 에러를 저장 
+      //rules 에러를 저장 
+      validateField(value, rules) { 
           return rules
             .map(rule => rule(value))
             .filter(error => typeof error === 'string');
         },
+      //모달을 닫는 메소드 
       closeDialog() {
-        this.password='',
-        this.middlePhoneNum='',
-        this.lastPhoneNum='',
-        this.passwordErrors=[]
+
+        //초기화 
+        this.password='',//비밀번호
+        this.firstPhoneNum='',//첫번째 휴대폰 번호
+        this.middlePhoneNum='',//중간휴대폰번호
+        this.lastPhoneNum='',//마지막휴대폰번호 
+        this.passwordErrors=[]//패스워드 에러 
+
         this.$emit('changePhone');// 세팅 컴포넌트로 닫는 이벤트 전송
       },
+      //휴대폰 번호를 변경하는 메소드 
       submitChangePhone(){
-
+        //만약 로딩중이라면 return 
         if(this.isLoading===true){
             return
           }
-        this.passwordErrors = this.validateField(this.password, this.passwordRules); //비밀번호 검증 에러메시지 배열
-          
-          if (this.passwordErrors.length > 0 ) { //만약 비밀번호 검증에러가 있을 시   return
-          
-            return;//불필요한 axios 요청 방지 
- 
-                }
+        //비밀번호 검증 에러메시지 배열
+        this.passwordErrors = this.validateField(this.password, this.passwordRules); 
 
-                const fullPhone=(this.firstPhoneNum+this.middlePhoneNum+this.lastPhoneNum); 
-               
+              //만약 비밀번호 검증에러가 있을 시   return
+              if (this.passwordErrors.length > 0 ) { 
+              
+                return;//불필요한 axios 요청 방지 
+    
+              }
+              // 전체 휴대폰번호 조합 
+              const fullPhone=(this.firstPhoneNum+this.middlePhoneNum+this.lastPhoneNum); 
+            
+
+              //전체 휴대폰 번호에 대한 validation
                if (fullPhone.length !== 11) {
                   alert('핸드폰 번호는 11자리여야 합니다.');
                   return;
@@ -208,8 +212,10 @@ export default {
                   return;
                 }
 
+                //현재전송중인 상태 버튼비활성화 
+                this.isLoading=true; 
 
-                this.isLoading=true; //현재전송중인 상태 버튼비활성화 
+
                 //휴대폰 번호 변경 api 전송
              api.put('/setting/phoneChange',{
                 phone:fullPhone, //전체 전화번호 

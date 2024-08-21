@@ -14,8 +14,9 @@
             
             <div class="text-subtitle-1 text-medium-emphasis d-flex align-center justify-space-between "
             >
-            <span style="color: aliceblue;">이름</span>
+               <span style="color: aliceblue;">이름</span>
             </div>
+            
         <!--이름-->
         <v-row>
             <v-col cols="7">
@@ -23,16 +24,14 @@
                   density="compact"
                   placeholder="이름"
                   prepend-inner-icon="mdi-account"
-                  variant="outlined"
-               
+                  variant="outlined"               
                   required
                   v-model="name"
                   :rules="nameRules"
-                  :error-messages="nameErrors"
-                
+                  :error-messages="nameErrors"              
                 ></v-text-field>
            </v-col>
-         </v-row>
+        </v-row>
 
             <div class="text-subtitle-1 text-medium-emphasis">
                 <span style="color: aliceblue;">Email</span>
@@ -54,8 +53,9 @@
 
 
             <div class="text-subtitle-1 text-medium-emphasis d-flex align-center justify-space-between">
-       <span style="color: aliceblue;">비밀번호</span>
-        </div>
+              <span style="color: aliceblue;">비밀번호</span>
+            </div>
+
         <!--비밀번호-->
         <v-row>
             <v-col cols="12">
@@ -69,7 +69,7 @@
                 @click:append-inner="visible = !visible"
                 v-model="password"
                 :rules="passwordRules"
-                  required
+                required
                 :error-messages="passwordErrors"
               ></v-text-field>
             </v-col>
@@ -77,25 +77,22 @@
    
     
     </v-card-text>
-  
           <v-divider></v-divider>
-  
-          <v-card-actions>
-            <v-spacer></v-spacer>
-  
-            <v-btn
-              text="Close"
-              variant="plain"
-              @click="closeDialog()"
-            ></v-btn>
-  
-            <v-btn
-              color="primary"
-              text="Save"
-              variant="tonal"
-              @click="memberDelete()"
-            ></v-btn>
-          </v-card-actions>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+                    <v-btn
+                      text="Close"
+                      variant="plain"
+                      @click="closeDialog()"
+                    ></v-btn>
+          
+                    <v-btn
+                      color="primary"
+                      text="Save"
+                      variant="tonal"
+                      @click="memberDelete()"
+                    ></v-btn>
+            </v-card-actions>
         </v-card>
       </v-dialog>
     </div>
@@ -143,37 +140,40 @@ export default {
         visible:false,
         isLoading:false//로딩 변수
     }
-}
- ,computed:{
-    localDialog:{
-        get(){
-            return this.value // 현재 비밀번호 변경 컴포넌트에서의 다이얼로그 (true/false) 리턴 , props로 value를받아 메소드를 통해 리턴해야한다.
+    },
+    computed:{
+      // 현재 회원검증 컴포넌트에서의 다이얼로그 (true/false) 리턴 , props로 value를받아 메소드를 통해 리턴해야한다.
+        localDialog:{
+            get(){
+                return this.value 
+            }
         }
-    }
- }   
-    ,
+   },      
     methods: {
-      validateField(value, rules) { //rules 에러를 저장 
+      //rules 에러를 저장 
+      validateField(value, rules) { 
              return rules
             .map(rule => rule(value))
             .filter(error => typeof error === 'string');
         },
       closeDialog() {
-        this.password='',
-        this.name='',
-        this.email='',
-        this.passwordErrors=[],
-        this.nameErrors=[],
-        this.emailErrors=[],
-        this.isLoading=false,
+        this.password='',//비밀번호 초기화
+        this.name='',//이름 초기화
+        this.email='', //이메일 초기화 
+        this.passwordErrors=[],//패스워드 에러 배열 초기화
+        this.nameErrors=[],//이름 에러배열 초기화
+        this.emailErrors=[],//이메일 에러배열 초기화 
+        this.isLoading=false,//로딩 false
         
 
         this.$emit('DeleteVerifyClose');// 비밀번호 변경 컴포넌트로 닫는 이벤트 전송
       },
+      //회원 탈퇴 메소드 
       memberDelete(){
+        //로딩시 리턴 
         if(this.isLoading===true){
             return
-          }
+        }
 
         this.passwordErrors = this.validateField(this.password, this.passwordRules); //비밀번호 검증 에러메시지 배열
         this.nameErrors = this.validateField(this.name, this.nameRules); //이름 검증 에러메시지 배열
@@ -184,27 +184,26 @@ export default {
             return;//불필요한 axios 요청 방지 
         
 
-                }
+          }
+          //회원 탈퇴 api 전송 
            api.delete('/setting',{
+            //delete http메서드 = 전송 데이터가 있을시 data :{} 형태로 전달해야 함 
             data:{
-                name:this.name,
-                password:this.password,
-                email:this.email
+                name:this.name, //이름
+                password:this.password,//비밀번호
+                email:this.email//이메일
             }
           
            })
-           .then(()=>{
+           .then(()=>{//회원삭제 성공시 alert
                 alert('그동안 이용해주셔서 감사합니다. 회원님의 정보는 안전하게 삭제하였습니다.')
 
-                localStorage.removeItem("access")
+                localStorage.removeItem('access')//엑세스 토큰 지움 
                 this.$router.push('/login');//로그인 페이지로 이동
-            })
-            .catch((err)=>{
+           })
+          .catch((err)=>{//실패시 서버로 부터받은 메시지 출력
                 alert(err.response&&err.response.data.message)
-            })
-
-
-       
+          })     
       }
 
     }

@@ -1,9 +1,9 @@
 <template>
+
     <div class="pa-4 text-center">
       <v-dialog
         v-model="localDialog"
-        max-width="600"
-        
+        max-width="600"    
       >
         
   
@@ -12,12 +12,16 @@
           title="닉네임 변경"
           class="to-blackMode"
         >
+
           <v-card-text >
+
             <div class="text-subtitle-1 text-medium-emphasis d-flex align-center justify-space-between " >
-        <span class="to-blackMode">새  닉네임</span>
-        </div>
+               <span class="to-blackMode">새  닉네임</span>
+            </div>
+
+           <!--닉네임-->
             <v-row>
-          <!--닉네임-->
+      
             <v-col cols="7">
                 <v-text-field
                   density="compact"
@@ -30,24 +34,26 @@
                   :error-messages="nickNameErrors"
                   :readonly="isNickNameReadonly"
                 ></v-text-field>
-        </v-col>
+            </v-col>
 
         <!--중복 검증버튼-->
-        <v-col cols="4">
-            <v-btn
-              height="40"
-              min-width="50"
-            color="blue"
-            @click="nickNameValidation"
-            >
-              검증
-            </v-btn>
+          <v-col cols="4">
+                <v-btn
+                  height="40"
+                  min-width="50"
+                color="blue"
+                @click="nickNameValidation"
+                >
+                  검증
+                </v-btn>
           </v-col>
 
-    </v-row>  
+         </v-row>  
+
             <div class="text-subtitle-1 text-medium-emphasis d-flex align-center justify-space-between">
               <span class="to-blackMode">현재 비밀번호</span>
-        </div>
+           </div>
+
         <!--비밀번호-->
         <v-row>
             <v-col cols="12">
@@ -67,8 +73,7 @@
               ></v-text-field>
             </v-col>
         </v-row>
-   
-    
+
     </v-card-text>
   
           <v-divider></v-divider>
@@ -91,6 +96,7 @@
           </v-card-actions>
         </v-card>
       </v-dialog>
+
     </div>
   </template>
 
@@ -125,58 +131,65 @@ export default {
               ],
        nickNameErrors:[],//닉네임에러를 저장 
        passwordErrors:[],//패스워드에러를 저장 
-       isNickNameClear:false,
-       isNickNameReadonly:false ,
-       isLoading:false
+       isNickNameClear:false,//닉네임 중복검증 여부를 저장
+       isNickNameReadonly:false,//닉네임 중복검증이 완료되면 readonly상태로 변경 
+       isLoading:false // 로딩상태정보를 저장 = > 버튼 여러번 클릭 방지 
                     
     }
 }
  ,computed:{
+  // 현재 컴포넌트에서의 다이얼로그 (true/false) 리턴 , props로 value를받아 메소드를 통해 리턴해야한다.
     localDialog:{
         get(){
-            return this.value // 현재 컴포넌트에서의 다이얼로그 (true/false) 리턴 , props로 value를받아 메소드를 통해 리턴해야한다.
+            return this.value 
         }
     }
  }   
     ,
     methods: {
-      validateField(value, rules) { //rules 에러를 저장 
+      //rules 에러를 저장
+      validateField(value, rules) {  
           return rules
             .map(rule => rule(value))
             .filter(error => typeof error === 'string');
         }, 
+        //닉네임 중복검증 메소드 
         nickNameValidation(){
+          //로딩상태가 진행중이면 return
           if(this.isLoading===true){
             return;
           }
-          this.nickNameErrors = this.validateField(this.nickname, this.nickNameRules); //닉네임 검증 에러메시지 배열
-          
-          if (this.nickNameErrors.length > 0 ) { //만약 닉네임 검증에러가 있을 시   return
-          
-            return;//불필요한 axios 요청 방지 
-         
-                }
+          //닉네임 검증 에러모음 배열 
+          this.nickNameErrors = this.validateField(this.nickname, this.nickNameRules); 
+           //만약 닉네임 검증에러가 있을 시   return
+              if (this.nickNameErrors.length > 0 ) {
+              
+                return;//불필요한 axios 요청 방지 
+            
+              }
 
-                this.isLoading=true;
-          
-                  api.post('/members/nickValidate',{
-                  nickname:this.nickname
-                })
-                .then(()=>{
+                this.isLoading=true;//에러 배열에 데이터가 없으면 로딩상태를 true로
                   
+                //서버에서 닉네임 중복검증 진행 
+                  api.post('/members/nickValidate',{
+                  nickname:this.nickname//닉네임 
+                  })
+                  .then(()=>{
+                    //성공시 
                     alert('사용가능한 닉네임입니다.')
                     this.isNickNameClear =true; //닉네임 중복검증 완료 
                     this.isNickNameReadonly=true;//검증이 완료 되면 닉네임 수정불가
                   
-                })
-                .catch((err)=>{
-                    console.log(err)
+                   })
+                  .catch((err)=>{
+                    //실패시 서버로부터 받은 에러 출력 
                   alert(err.response&&err.response.data.message)
                   
-                })
-                .finally(()=>{
+                   })
+                 .finally(()=>{
+                  //현재 로딩상태정보를 false로 
                   this.isLoading=false;
-                })
+                   })
                
                
                 

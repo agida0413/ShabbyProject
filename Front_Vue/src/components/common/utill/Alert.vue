@@ -8,23 +8,25 @@
         <v-card
           max-width="400"
          class="to-blackMode"
-        :text="message"
-          
+        :text="message"  
         >
  
-          <template v-slot:actions>
-            <v-btn
-          color="warning"
-          text="NO"
-          @click="closeDialog(false,this.altype)"
-        ></v-btn>
-            <v-btn
-            color="primary"
-              text="Ok"
-              @click="closeDialog(true,this.altype)"
-            ></v-btn>
-          
-          </template>
+            <template v-slot:actions>
+              
+              <v-btn
+                color="warning"
+                text="NO"
+                @click="closeDialog(false,this.altype)"
+              ></v-btn>
+
+              <v-btn
+                color="primary"
+                text="Ok"
+                @click="closeDialog(true,this.altype)"
+              ></v-btn>
+            
+            </template>
+            
         </v-card>
       </v-dialog>
    
