@@ -18,7 +18,7 @@ public class CustomUserDetails implements UserDetails {
         this.dto = dto;
     }
 
-
+    //회원 권한 정보 읽어오기
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
 
@@ -36,20 +36,22 @@ public class CustomUserDetails implements UserDetails {
         return collection;
     }
 
+    //패스워드 
     @Override
     public String getPassword() {
 
         return dto.getPassword();
     }
-    
+    //고유번호 리턴
     public int getIdNum()
     {
-    	return dto.getIdNum();//고유번호 리턴
+    	return dto.getIdNum();
     }
+  //이메일을 사용하니 이메일 리턴
     @Override
     public String getUsername() {
     
-        return dto.getEmail(); //이메일을 사용하니 이메일 리턴
+        return dto.getEmail(); 
     }
 
     @Override

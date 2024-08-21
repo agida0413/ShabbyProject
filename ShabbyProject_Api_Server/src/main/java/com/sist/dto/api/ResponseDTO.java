@@ -103,4 +103,14 @@ public class ResponseDTO<T> {
 		
         
    }
+    public void setOkesponse(HttpServletResponse response,ResponseDTO<Void> responseApi,ObjectMapper objectMapper) throws JsonProcessingException, IOException {
+    	  
+    	
+    	   response.setStatus(HttpServletResponse.SC_OK);//200 응답코드 ==> 리프레시 토큰 재발행시에만 사용예정
+           response.setContentType("application/json");
+    
+ 			response.getWriter().write(objectMapper.writeValueAsString(responseApi));
+ 		
+         
+    }
 }

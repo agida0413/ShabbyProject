@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.sist.common.exception.BadRequestException;
 import com.sist.common.exception.InternerException;
-import com.sist.common.utill.SimpleCodeGet;
+import com.sist.common.util.SimpleCodeGet;
 import com.sist.dto.api.ResponseDTO;
 import com.sist.dto.member.MemberDTO;
 import com.sist.repository.member.MemberAccountRepository;
@@ -35,18 +35,21 @@ public class ChangeInfoServiceImpl implements ChangeInfoService{
 	public ResponseEntity<ResponseDTO<String>> getLockedInfo() {//회원 공개여부 데이터
 		// TODO Auto-generated method stub
 		
+		//회원 고유번호를 가져옴 
 		int idNum=simpleCodeGet.getIdNum();
-		
+			
+			//고유번호에 해당하는 회원정보 가져오기 
 			MemberDTO dto =	memberAccountRepository.findByIdNum(idNum);
 	
-		
+		//만약 회원이 없다면 	
 		if(dto==null) {
+			
 		throw new BadRequestException("비정상적인 접근입니다.");//사용자 정의400에러 발생
 		
 		}
-		
+		//비공개/공개 상태여부를 가져옴 
 		String locked= dto.getLocked();
-		
+			
 		  return new ResponseEntity<ResponseDTO<String>>
 			(new ResponseDTO<String>(locked),HttpStatus.OK); //성공 
 	}
@@ -56,20 +59,23 @@ public class ChangeInfoServiceImpl implements ChangeInfoService{
 	@Override
 	public ResponseEntity<ResponseDTO<Void>> nickNameUpdate(MemberDTO dto) {
 		// TODO Auto-generated method stub
-		int idNum = simpleCodeGet.getIdNum();//고유 아이디넘버 갖고오기 
 		
+		//고유 아이디넘버 갖고오기 
+		int idNum = simpleCodeGet.getIdNum();
 		
-		MemberDTO findDto = memberAccountRepository.findByIdNum(idNum);//회원정보 갖고오기 
+		//회원정보 갖고오기 
+		MemberDTO findDto = memberAccountRepository.findByIdNum(idNum);
 		
+		//비밀번호가 일치하지않을시 
 		if(!bCryptPasswordEncoder.matches(dto.getPassword(), findDto.getPassword())) {
-			//비밀번호가 일치하지않을시 
+			
 			
 			throw new BadRequestException("비밀번호가 일치 하지않습니다.");//사용자 정의400에러 발생
 		}
 		
 
 		
-		dto.setIdNum(idNum);
+		dto.setIdNum(idNum);//dto에 해당 고유번호 세팅 
 	
 		memberSettingRepository.updateNickName(dto);//최종적으로 vo에 닉네임과 ,고유번호 전달하여 데이터베이스 업데이트 
 	
@@ -86,6 +92,7 @@ public class ChangeInfoServiceImpl implements ChangeInfoService{
 	@Override
 	public ResponseEntity<ResponseDTO<Void>>  passwordUpdate(String password,String newPassword) {
 		// TODO Auto-generated method stub
+		
 		int idNum=simpleCodeGet.getIdNum();//고유번호를 가져옴 
 	
 		MemberDTO findDto= memberAccountRepository.findByIdNum(idNum); // 데이터베이스에서 일치하는 회원정보 
@@ -106,7 +113,7 @@ public class ChangeInfoServiceImpl implements ChangeInfoService{
 		dto.setPassword(newPassword);
 		
 		memberSettingRepository.updatePassword(dto); //데이터 베이스 비밀번호 업데이트
-		
+		// 데이터베이스 리프레시토큰 삭제는 프론트영역에서 logout api를 곧바로 호출해주니까 해줄 필요가 없다(logout api에서 리프레시토큰 삭제)
 		
 		
 		 return new ResponseEntity<ResponseDTO<Void>>

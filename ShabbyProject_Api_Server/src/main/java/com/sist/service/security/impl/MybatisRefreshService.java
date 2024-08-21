@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import com.sist.common.exception.BadRequestException;
+import com.sist.common.util.CookieUtil;
 import com.sist.dto.api.ResponseDTO;
 import com.sist.dto.security.TokenStoreDTO;
 import com.sist.jwt.JWTUtil;
@@ -28,7 +29,7 @@ import lombok.RequiredArgsConstructor;
 public class MybatisRefreshService implements RefreshService{
 private final JwtStoreRepository repository;
 private final JWTUtil jwtUtil;
-
+private final CookieUtil cookieUtil;
 
 
 	public	void deleteRefresh(String refresh) { // 데이터베이스에서 리프레시 토큰을 지움 매개변수는 토큰 
@@ -67,14 +68,7 @@ private final JWTUtil jwtUtil;
 	     
 	        String refresh = null;
 	       try {
-	    	   Cookie[] cookies = request.getCookies();  
-		        for (Cookie cookie : cookies) {
-
-		            if (cookie.getName().equals("refresh")) {//쿠키를 읽어서 키값이 refresh 인것을 가져옴
-
-		                refresh = cookie.getValue(); // 그것에 대한 value를 읽음
-		            }
-		        }
+	    	  refresh=(String)cookieUtil.getCookie("refresh", request);
 
 		} catch (Exception e) {
 			// TODO: handle exception
@@ -89,12 +83,12 @@ private final JWTUtil jwtUtil;
 	         throw new BadRequestException("비정상적인 접근입니다.");//사용자 정의 익셉션 발생
 	        }
 
-	        //expired check
+	       
 	        try {
 	            jwtUtil.isExpired(refresh);// 유효기간 검증 
 	        } catch (ExpiredJwtException e) {
-
-	            //response status code
+	        	
+	        	response.addCookie(cookieUtil.deleteRefreshCookie());//refresh 쿠키제거메서드
 	        	  throw new BadRequestException("비정상적인 접근입니다.");//사용자 정의 익셉션 발생
 	        }
 
@@ -111,7 +105,7 @@ private final JWTUtil jwtUtil;
 			Boolean isExist = isExist(refresh); //DB에 저장되어 있는지 확인
 			if (!isExist) {//없다면 
 			
-			  
+				  response.addCookie(cookieUtil.deleteRefreshCookie());//refresh 쿠키제거메서드
 				  throw new BadRequestException("비정상적인 접근입니다.");//사용자 정의 익셉션 발생
 			}
 	        
@@ -127,29 +121,19 @@ private final JWTUtil jwtUtil;
 	        String newRefresh = jwtUtil.createJwt("refresh", username, role,strIdNum, 86400000L);
 
 	        
-	     
-	        
+	     	        
 			deleteRefresh(refresh); //Refresh 토큰 저장 DB에 기존의 Refresh 토큰 삭제 후 새 Refresh 토큰 저장
 			
 			 
 			addRefreshEntity(idNum, newRefresh, 86400000L);//새 토큰 데이터에 저장
 	        
 	        response.setHeader("access", newAccess); //새로운 토큰을 헤더에 추가 
-	        response.addCookie(createCookie("refresh", newRefresh)); // 쿠키생성 메서드
+	        response.addCookie(cookieUtil.createCookie("refresh", newRefresh)); // 쿠키생성 메서드
 
 	        return new ResponseEntity<ResponseDTO<Void>>
 			(new ResponseDTO<Void>(),HttpStatus.OK); //성공 
 	    }
 	
-	public Cookie createCookie(String key, String value) {
-
-        Cookie cookie = new Cookie(key, value);
-        cookie.setMaxAge(24*60*60);
-        //cookie.setSecure(true); https
-        //cookie.setPath("/");
-        cookie.setHttpOnly(true); //xss 공격방지 
-
-        return cookie;
-    }
+	
 
 }

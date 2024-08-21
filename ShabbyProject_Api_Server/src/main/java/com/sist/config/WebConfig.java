@@ -9,7 +9,8 @@ import com.sist.intercepter.DuplicateRequestInterceptor;
 
 @Configuration
 public class WebConfig {
-// 인터셉터 등록 (중복호출 방지)
+	
+	// 인터셉터 등록 (중복호출 방지)
     @Bean
     public WebMvcConfigurer webMvcConfigurer(DuplicateRequestInterceptor duplicateRequestInterceptor) {
         return new WebMvcConfigurer() {

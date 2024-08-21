@@ -33,7 +33,7 @@ public class JWTFilter extends OncePerRequestFilter{
 	protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
 		// TODO Auto-generated method stub
     	
-    	 String requestURI = request.getRequestURI();
+    	 String requestURI = request.getRequestURI();//자원을 가져옴 
     	
     	  return requestURI.equals("/api/reissue"); //재발급시에는 필터를 수행하지않음
 	}
@@ -49,7 +49,7 @@ public class JWTFilter extends OncePerRequestFilter{
     	if (accessToken == null) {
     	
     	    filterChain.doFilter(request, response);
-
+    	  
     	    return;
     	}
 
@@ -57,12 +57,9 @@ public class JWTFilter extends OncePerRequestFilter{
     	try {
     	    jwtUtil.isExpired(accessToken);
     	} catch (ExpiredJwtException e) {
-    	
-    	 
-    	    PrintWriter writer = response.getWriter();
-    	    writer.print("access token expired");
-    	 
-    
+    		
+    		// 클라이언트 측에 410 에러전송 ,410 에러는 현재 서버내 유일하고 , 클라이언트 측에서는 응답 인터셉트로 받아 액세스토큰 재발급 진행 
+    		
     		ResponseDTO<Void> responseApi = new ResponseDTO<Void>(
          			 HttpStatus.GONE.value(),
                       "만료된 인증입니다."
@@ -75,11 +72,7 @@ public class JWTFilter extends OncePerRequestFilter{
     	String category = jwtUtil.getCategory(accessToken);
 
     	if (!category.equals("access")) {
-
-    	
-    	    PrintWriter writer = response.getWriter();
-    	    writer.print("invalid access token");
-
+    		//액세스토큰이 아닐시 
     		ResponseDTO<Void> responseApi = new ResponseDTO<Void>(
          			 HttpStatus.UNAUTHORIZED.value(),
                       "비정상적인 접근입니다"
@@ -88,17 +81,20 @@ public class JWTFilter extends OncePerRequestFilter{
           	return;
     	}
 
-    	// username, role 값을 획득
-    	String username = jwtUtil.getUsername(accessToken);
-    	String role = jwtUtil.getRole(accessToken);
+    	// username, role,idNum 값을 획득
+    	String username = jwtUtil.getUsername(accessToken);//이메일
+    	String role = jwtUtil.getRole(accessToken);//권한
     	int idNum = jwtUtil.getIdNum(accessToken);//고유번호
     	
+    	//맴버dto 생성후 담기 
     	MemberDTO dto = new MemberDTO();
+    	
     	dto.setEmail(username);
     	dto.setRole(role);
     	dto.setIdNum(idNum);
-    	CustomUserDetails customUserDetails = new CustomUserDetails(dto);
-
+    	
+    	CustomUserDetails customUserDetails = new CustomUserDetails(dto);//ueserDetails에 dto객체 전달
+    	//일시적으로 세션에 담기위해 (SecurityContextHolder)
     	Authentication authToken = new UsernamePasswordAuthenticationToken(customUserDetails, null, customUserDetails.getAuthorities());
     	SecurityContextHolder.getContext().setAuthentication(authToken);
 

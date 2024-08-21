@@ -13,10 +13,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.sist.common.exception.BadRequestException;
+import com.sist.common.exception.InternerException;
 import com.sist.common.exception.NotFoundException;
-import com.sist.common.utill.MailUtil;
-import com.sist.common.utill.PasswordGenerator;
-import com.sist.common.utill.SimpleCodeGet;
+import com.sist.common.util.MailUtil;
+import com.sist.common.util.PasswordGenerator;
+import com.sist.common.util.SimpleCodeGet;
 import com.sist.dto.api.ResponseDTO;
 import com.sist.dto.member.EmailAuthDTO;
 import com.sist.dto.member.MemberDTO;
@@ -84,7 +85,6 @@ public class MailServiceImpl implements MailService{
 	@Transactional
 	public ResponseEntity<ResponseDTO<Void>> emailAuthValidation(String email, String code){
 		
-	
 
 	
 	EmailAuthDTO dto=memberAccountRepository.emailAuthGetValidation(email);// 전달받은 이메일을 바탕으로 데이터베이스의 최신row를 찾음 
@@ -92,7 +92,7 @@ public class MailServiceImpl implements MailService{
 	
 	if(!bCryptPasswordEncoder.matches(code, dto.getCode())) {
 		//인증코드가 틀린경우
-		throw new BadRequestException("인증코드가 틀렸습니다.");//사용자 정의 400에러 발생
+		throw new BadRequestException("인증코드가 틀렸습니다.");
 	}
 	
 	
@@ -156,7 +156,7 @@ public class MailServiceImpl implements MailService{
 			
 		} catch (Exception e) {
 			// TODO: handle exception
-			e.printStackTrace();
+			throw new InternerException("서버 내부오류입니다. 잠시 뒤 이용해 주세요. ");//사용자 정의 500에러 발생
 			// 익셉션 발생 = > 글로벌 핸들러에서잡음
 		}		
 		

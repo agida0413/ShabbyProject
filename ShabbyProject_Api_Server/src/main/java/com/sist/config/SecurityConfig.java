@@ -20,8 +20,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import com.sist.common.utill.SimpleCodeGet;
+import com.sist.common.util.CookieUtil;
+import com.sist.common.util.SimpleCodeGet;
 import com.sist.jwt.JWTUtil;
 import com.sist.jwt.filter.CustomLogoutFilter;
 import com.sist.jwt.filter.JWTFilter;
@@ -37,14 +37,18 @@ import lombok.RequiredArgsConstructor;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-
+		
 		private final AuthenticationConfiguration authenticationConfiguration;
 		//JWTUtil 주입
 		private final JWTUtil jwtUtil;
+		//액세스 토큰 재발급 서비스 
 		private final RefreshService refreshService;
+		//공통 모듈함수 
 		private final SimpleCodeGet simpleCodeGet;
+		//jackson objectmapper
 		private final ObjectMapper objectMapper;
-  
+		//쿠키를 보다 쉽게 가져오고 제어하기 위해 정의한 클래스
+		private final CookieUtil cookieUtil;
    
 		@Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
@@ -52,12 +56,15 @@ public class SecurityConfig {
         return configuration.getAuthenticationManager();
     }
 
+    //암호화	
     @Bean
-    public BCryptPasswordEncoder bCryptPasswordEncoder() { //암호화
+    public BCryptPasswordEncoder bCryptPasswordEncoder() {
 
         return new BCryptPasswordEncoder();
     }
-
+    
+    
+    //필터 및 시큐리티 설정 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
     
@@ -71,8 +78,8 @@ public class SecurityConfig {
 
                 CorsConfiguration configuration = new CorsConfiguration();
 
-                configuration.setAllowedOrigins(Collections.singletonList("http://localhost:3000"));
-                configuration.setAllowedMethods(Collections.singletonList("*"));
+                configuration.setAllowedOrigins(Collections.singletonList("http://localhost:3000"));//3000번 포트 허용 
+                configuration.setAllowedMethods(Collections.singletonList("*"));//모든메소드 허용 
                 configuration.setAllowCredentials(true);
                 configuration.setAllowedHeaders(Collections.singletonList("*"));
                 configuration.setMaxAge(3600L);
@@ -101,23 +108,24 @@ public class SecurityConfig {
 		                		,"api/members/nickValidate","/api/members","/api/members/findEmail"
 		                		,"/api/members/findPassword").permitAll() //로그인 ,회원가입 , 토큰 재발급,이메일인증 api는 권한 필요없음 
 		       
-		                .anyRequest().authenticated());
+		                .anyRequest().authenticated());//나머지는 인증이 필요함 
 				
-				
+		//JWTFilter 등록 = > 로그인 필터 전에 수행 		
 		http
-		        .addFilterBefore(new JWTFilter(jwtUtil,objectMapper), LoginFilter.class);//JWTFilter 등록 = > 로그인 필터 전에 수행 
+	    .addFilterBefore(new JWTFilter(jwtUtil,objectMapper), LoginFilter.class);
 		
 		
-		//  로그인필터를  UsernamePasswordAuthenticationFilter 위치에 
+		// 로그인필터를  UsernamePasswordAuthenticationFilter 위치에 
 		http
-		.addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil,refreshService,simpleCodeGet,objectMapper), UsernamePasswordAuthenticationFilter.class);
+		.addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil,refreshService,simpleCodeGet,objectMapper,cookieUtil), UsernamePasswordAuthenticationFilter.class);
 		
 		//커스텀한 로그아웃 필터를 등록 =>기존 필터위치에 
 		http
-		.addFilterBefore(new CustomLogoutFilter(jwtUtil, refreshService,objectMapper), LogoutFilter.class);
+		.addFilterBefore(new CustomLogoutFilter(jwtUtil, refreshService,objectMapper,cookieUtil), LogoutFilter.class);
 		
+		// 세션방식 미사용
 		http
-        .sessionManagement((session) -> session // 세션방식 미사용
+        .sessionManagement((session) -> session 
 		.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
 			return http.build();
