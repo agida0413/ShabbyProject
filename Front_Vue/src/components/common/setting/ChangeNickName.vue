@@ -112,7 +112,9 @@ export default {
         required: true
       }
     
-},data(){
+    },
+    data(){
+
     return{
        nickname:'',//입력한 닉네임 변수
        password:'',//비밀번호 
@@ -136,37 +138,40 @@ export default {
        isLoading:false // 로딩상태정보를 저장 = > 버튼 여러번 클릭 방지 
                     
     }
-}
- ,computed:{
+ },
+ computed:{
   // 현재 컴포넌트에서의 다이얼로그 (true/false) 리턴 , props로 value를받아 메소드를 통해 리턴해야한다.
     localDialog:{
         get(){
             return this.value 
         }
     }
- }   
-    ,
+ },   
+   
     methods: {
-      //rules 에러를 저장
-      validateField(value, rules) {  
-          return rules
-            .map(rule => rule(value))
-            .filter(error => typeof error === 'string');
+        //rules 에러를 저장
+        validateField(value, rules) {  
+            return rules
+              .map(rule => rule(value))
+              .filter(error => typeof error === 'string');
         }, 
+
         //닉네임 중복검증 메소드 
         nickNameValidation(){
-          //로딩상태가 진행중이면 return
-          if(this.isLoading===true){
-            return;
-          }
-          //닉네임 검증 에러모음 배열 
-          this.nickNameErrors = this.validateField(this.nickname, this.nickNameRules); 
-           //만약 닉네임 검증에러가 있을 시   return
-              if (this.nickNameErrors.length > 0 ) {
-              
-                return;//불필요한 axios 요청 방지 
-            
-              }
+                //로딩상태가 진행중이면 return
+                if(this.isLoading===true){
+                  return;
+                }
+
+                //닉네임 검증 에러모음 배열 
+                this.nickNameErrors = this.validateField(this.nickname, this.nickNameRules); 
+
+                //만약 닉네임 검증에러가 있을 시   return
+                if (this.nickNameErrors.length > 0 ) {
+                    
+                     return;//불필요한 axios 요청 방지 
+                  
+                }
 
                 this.isLoading=true;//에러 배열에 데이터가 없으면 로딩상태를 true로
                   
@@ -196,7 +201,9 @@ export default {
 
             
         },
+      //현재 컴포넌트 닫는 메서드 
       closeDialog() {
+        //변수 초기화
         this.nickname=''
         this.nickNameErrors=[]
         this.isNickNameClear=false
@@ -205,29 +212,37 @@ export default {
 
         this.$emit('changeNickname');// 세팅 컴포넌트로 닫는 이벤트 전송
       },
+      //닉네임 변경 메서드
       submitNickChange(){
+        //만약 닉네임 검증이 진행되지않았다면 return
         if(!this.isNickNameClear){
           alert('닉네임 검증을 진행 해주세요.')
           return
         }
-        this.passwordErrors = this.validateField(this.password, this.passwordRules); //비밀번호 검증 에러메시지 배열
-          if (this.passwordErrors.length > 0 ) { //만약 패스워드 검증에러가 있을 시   return
+
+        //비밀번호 검증 에러메시지 배열
+        this.passwordErrors = this.validateField(this.password, this.passwordRules); 
+
+        if (this.passwordErrors.length > 0 ) { //만약 패스워드 검증에러가 있을 시   return
             
             return;//불필요한 axios 요청 방지  
-                }
-        //비밀번호 검증 후 맞다면 
+        }
+
+        //비밀번호 validation이 맞다면 
             
-        
+        //최종적으로 닉네임 변경 api 호출 ==>서버단에서 현재 세션의 정보와 입력 패스워드가 일치한지 검증 
         api.put("/setting/nickChange",{
-          nickname:this.nickname,
-          password:this.password
+          nickname:this.nickname,//닉네임 
+          password:this.password//패스워드
         })
         .then(()=>{
+        //성공시
           alert('성공적으로 변경되었습니다.')
+          //컴포넌트 닫음 
           this.closeDialog()
         })
         .catch((err)=>{
-       
+          //실패시 서버로부터 받은 에러메시지 출력 
           alert(err.response&&err.response.data.message)
           
         })
