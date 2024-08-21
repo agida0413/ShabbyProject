@@ -13,6 +13,6 @@ public interface RefreshService {
 	public void addRefreshEntity(int idNum, String refresh, Long expiredMs);
 	public Boolean	isExist(String refresh);
 	public ResponseEntity<ResponseDTO<Void>> reissue(HttpServletRequest request, HttpServletResponse response);
-	public Cookie createCookie(String key, String value);
+	
 	
 }

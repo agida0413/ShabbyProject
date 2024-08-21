@@ -1,4 +1,4 @@
-package com.sist.common.utill;
+package com.sist.common.util;
 
 import java.security.SecureRandom;
 

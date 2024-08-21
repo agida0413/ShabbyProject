@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.filter.GenericFilterBean;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sist.common.util.CookieUtil;
 import com.sist.dto.api.ResponseDTO;
 import com.sist.jwt.JWTUtil;
 import com.sist.service.security.RefreshService;
@@ -27,6 +28,7 @@ public class CustomLogoutFilter extends GenericFilterBean {
     private final JWTUtil jwtUtil;
     private final RefreshService refreshService;
     private final ObjectMapper objectMapper;
+    private final CookieUtil cookieUtil;
 
    
 
@@ -61,28 +63,23 @@ public class CustomLogoutFilter extends GenericFilterBean {
         String refresh = null;
        
         try {
-        	 Cookie[] cookies = request.getCookies();
-             for (Cookie cookie : cookies) {
+        	//쿠키를 읽어오는 메서드     
+        	refresh=(String)cookieUtil.getCookie("refresh", request);         
 
-                 if (cookie.getName().equals("refresh")) {
-
-                     refresh = cookie.getValue();
-                 }
-             }
       		} catch (Exception e) {
       			// TODO: handle exception
+      			//쿠키 읽는 과정 에러 발생시 
       			ResponseDTO<Void> responseApi = new ResponseDTO<Void>(
-      	       			 HttpStatus.UNAUTHORIZED.value(),
-      	                    "비정상적인 접근입니다."
+      	       			 HttpStatus.INTERNAL_SERVER_ERROR.value(),
+      	                    "서버 내부오류입니다. 잠시 뒤 이용해주세요."
       	                );
       	        	responseApi.set401esponse(response, responseApi, objectMapper);
       	        	return;
       		}
         //만약 refresh토큰이 없을 경우 
-        if (refresh == null) { 
-        	//이미 로그아웃 상태거나 , 비정상 접근 401
         
-      
+        if (refresh == null) { 
+        
         	
         	ResponseDTO<Void> responseApi = new ResponseDTO<Void>(
        			 HttpStatus.UNAUTHORIZED.value(),
@@ -96,6 +93,9 @@ public class CustomLogoutFilter extends GenericFilterBean {
         try {
             jwtUtil.isExpired(refresh);
         } catch (ExpiredJwtException e) {
+        	
+        	//refresh 쿠키제거메서드
+        	response.addCookie(cookieUtil.deleteRefreshCookie());
         	
             //만료됬을 경우 
         	ResponseDTO<Void> responseApi = new ResponseDTO<Void>(
@@ -123,8 +123,9 @@ public class CustomLogoutFilter extends GenericFilterBean {
         //DB에 저장되어 있는지 확인
         Boolean isExist = refreshService.isExist(refresh);
         if (!isExist) {
-
-        
+        	
+        	//refresh 쿠키제거메서드
+        	response.addCookie(cookieUtil.deleteRefreshCookie());
         	ResponseDTO<Void> responseApi = new ResponseDTO<Void>(
           			 HttpStatus.UNAUTHORIZED.value(),
                        "비정상적인 접근입니다"
@@ -133,18 +134,19 @@ public class CustomLogoutFilter extends GenericFilterBean {
            	return;
         }
 
-        //로그아웃 진행
-        //Refresh 토큰 DB에서 제거
+	        //로그아웃 진행
+	        //Refresh 토큰 DB에서 제거
       
         	 refreshService.deleteRefresh(refresh);
 	
         	 
         //Refresh 토큰 Cookie 값 0
-        Cookie cookie = new Cookie("refresh", null);
-        cookie.setMaxAge(0);
-        cookie.setPath("/");
-
-        response.addCookie(cookie);
+        response.addCookie(cookieUtil.deleteRefreshCookie());//refresh 쿠키제거메서드
         response.setStatus(HttpServletResponse.SC_OK);
+        
+        //성공 응답값 
+    	ResponseDTO<Void> succesResponseApi = new ResponseDTO<Void>();
+    	succesResponseApi.setOkesponse(response, succesResponseApi, objectMapper);
+        return;
     }
 }

@@ -4,7 +4,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import com.sist.common.exception.ConflictException;
-import com.sist.common.utill.SimpleCodeGet;
+import com.sist.common.util.SimpleCodeGet;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
