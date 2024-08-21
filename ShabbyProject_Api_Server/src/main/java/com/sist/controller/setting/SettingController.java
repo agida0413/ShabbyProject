@@ -3,6 +3,7 @@ package com.sist.controller.setting;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -32,7 +33,13 @@ public class SettingController {
 		return changeInfoService.getLockedInfo();
 	}
 	
-	//닉네임 변경하는 api
+	//회원탈퇴 api
+	@DeleteMapping
+	public ResponseEntity<ResponseDTO<Void>> memberDelete(@RequestBody MemberDTO dto){
+		return changeInfoService.deleteMember(dto);
+	}
+	
+	//닉네임 변경하는 apis
 	@PutMapping("/nickChange")
 	public  ResponseEntity<ResponseDTO<Void>> nicknameChange(@RequestBody MemberDTO dto){
 		return changeInfoService.nickNameUpdate(dto);
@@ -55,9 +62,11 @@ public class SettingController {
 	}
 	
 	@PutMapping("/lockStateChange")
-	public ResponseEntity<ResponseDTO<Void>> lockStateChange(@RequestBody MemberDTO dto){
+	public ResponseEntity<ResponseDTO<MemberDTO>> lockStateChange(@RequestBody MemberDTO dto){
 		
 		return changeInfoService.updateLockedState(dto);
 		
 	}
+	
+	
 }

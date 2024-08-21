@@ -14,4 +14,6 @@ public interface MemberSettingMapper {
 	public void updatePhone(MemberDTO dto);
 	// 비공개/공개모드 변경
 	public void updateLockedState(MemberDTO dto);
+	//회원삭제
+	public void deleteMember(MemberDTO dto);
 }

@@ -39,6 +39,11 @@ public class MybatisMemberSettingRepository implements MemberSettingRepository{
 		// TODO Auto-generated method stub
 		memberSettingMapper.updateLockedState(dto);
 	}
+	@Override
+	public void deleteMember(MemberDTO dto) {
+		// TODO Auto-generated method stub
+		memberSettingMapper.deleteMember(dto);
+	}
 	
 	
 

@@ -42,6 +42,10 @@
 	WHERE id_num=#{idNum}
 	</update>
 	
-	
+	<!--회원 탈퇴-->
+	<delete id="deleteMember" parameterType="MemberDTO" >
+	DELETE FROM MEMBER
+	WHERE id_num=#{idNum}
+	</delete>
 	
  </mapper>

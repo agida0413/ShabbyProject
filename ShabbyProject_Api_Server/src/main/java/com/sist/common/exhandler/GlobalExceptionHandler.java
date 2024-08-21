@@ -27,7 +27,8 @@ public class GlobalExceptionHandler {
 	          
 	        );
 	        
-	        return new ResponseEntity<>(responseApi, HttpStatus.BAD_REQUEST);
+	        return new ResponseEntity<ResponseDTO<Void>>
+	        (responseApi, HttpStatus.BAD_REQUEST);
 	    }
 	
 	
