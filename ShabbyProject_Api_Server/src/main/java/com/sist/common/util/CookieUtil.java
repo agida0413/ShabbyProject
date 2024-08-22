@@ -46,7 +46,7 @@ public class CookieUtil {
 	public Cookie deleteRefreshCookie() {//리프레시 토큰을 쿠키에서 지우기 위함 
 			Cookie cookie = new Cookie("refresh", null); // 리프레시 토큰의 밸류룰 null
 	        cookie.setMaxAge(0);//유효기간 0 
-	        cookie.setPath("/");
+	        cookie.setPath("/api");//path
 	        
 	        return cookie;
 	}
