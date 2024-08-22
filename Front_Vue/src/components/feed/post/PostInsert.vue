@@ -11,22 +11,18 @@
             <v-col cols="6" class="image-section">
              
         <!-- 사진 목록-->
-        <v-carousel show-arrows="hover">
-      <v-carousel-item
-        src="https://cdn.vuetifyjs.com/images/cards/docks.jpg"
-        cover
-      ></v-carousel-item>
-  
-      <v-carousel-item
-        src="https://cdn.vuetifyjs.com/images/cards/hotel.jpg"
-        cover
-      ></v-carousel-item>
-  
-      <v-carousel-item
-        src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg"
-        cover
-      ></v-carousel-item>
-    </v-carousel>
+        <v-carousel v-model="currentPage" show-arrows="hover">
+          <div v-if="images.length">
+            <v-carousel-item
+              width="550px"
+              height="500px"
+               v-for="(image,index) in images" :key="index"
+              :src="image"
+              cover
+            ></v-carousel-item>
+          </div>
+    
+        </v-carousel>
             </v-col>
   
             <!-- 게시물 상세 오른쪽 정보(내용,댓글 등 ) -->
@@ -40,12 +36,25 @@
               <v-card-text v-show="!moreReply" ><!-- 아닐시 게시물 내용 ,좋아요, 수정,삭제 , 댓글 하나만 보임 -->
                 <!-- Post Information Layout -->
                 <v-row no-gutters >
-                  <!-- Post Content (50%) -->
+                
                   <v-col cols="12" class=" ">
-                    <v-file-input
-                      label="사진을 첨부해 주세요."
-                      multiple
-                    ></v-file-input>
+                    <v-btn
+                      class="ma-2"
+                      color="primary"
+                      @click="triggerFileInput"
+                      rounded
+                    >
+                      <v-icon left>mdi-attachment</v-icon>
+                      사진 첨부
+                      <input
+                        type="file"
+                        ref="fileInput"
+                        multiple
+                        @change="handleFileChange"
+                        style="display: none"
+                        accept="image/*"
+                      />
+                    </v-btn>
                     <v-textarea
                       label="게시물 내용"
                       row-height="30"
@@ -53,6 +62,7 @@
                       variant="filled"
                       auto-grow
                       shaped
+                      v-model="content"
                       
                     ></v-textarea>
                   </v-col>
@@ -79,14 +89,14 @@
                     ></v-textarea>
                   
                     
-                    <v-checkbox label="댓글기능 해제"></v-checkbox>
-                    <v-checkbox label="나만보기"></v-checkbox>
+                    <v-checkbox v-model="canReplyCheck" label="댓글기능 해제"></v-checkbox>
+                    <v-checkbox v-model="onlymeCheck" label="나만보기"></v-checkbox>
                   </v-col>
                   <v-divider></v-divider>
                 
                   <span style="margin-left: 425px;">
                     
-                    <v-btn  icon="mdi-pencil" size="50" color="black"></v-btn><!--수정 버튼-->
+                    <v-btn  icon="mdi-pencil" size="50" color="black" @click="submitPost()"></v-btn><!--수정 버튼-->
                   </span>
                 </v-row>
                
@@ -110,7 +120,13 @@
     },
     data() {
       return {
-       
+        images: [], // 선택한 이미지 파일들의 URL을 저장할 배열
+        content:'',//게시물 내용(글)
+        currentPage:0 ,//사진 첨부후 처음 인덱스로 돌아가게
+        hobbies:[],//관심사 태그 목록
+        peoples:[],//사람 태그 목록
+        canReplyCheck:false,//댓글기능해제 체크박스 
+        onlymeCheck:false//나만보기기능 체크박스
       }
     },
     computed: {
@@ -121,6 +137,50 @@
       }
     },
     methods: {
+      handleFileChange(event) {
+          const files = event.target.files; // 파일 객체 배열을 가져옵니다.
+          const newImages = [];
+
+          // 용량 제한 (예: 5MB)
+          const MAX_SIZE_MB = 1;
+          const MAX_SIZE_BYTES = MAX_SIZE_MB * 1024 * 1024;
+
+          // 파일 배열을 순회하며 검사 및 읽기 처리
+          for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+
+            // 용량 제한 검사
+            if (file.size > MAX_SIZE_BYTES) {
+              alert(`파일 '${file.name}'의 크기가 ${MAX_SIZE_MB}MB를 초과합니다.`);
+              return;
+            }
+
+            const reader = new FileReader();
+            
+            // 파일이 읽히면 결과를 newImages 배열에 추가
+            reader.onload = (e) => {
+                    newImages.push(e.target.result);
+
+                  // 모든 파일이 읽힌 후에만 배열을 업데이트
+                  if (newImages.length === files.length) {
+                    this.images = newImages;
+                    this.currentPage = 0; // 새 파일이 추가되면 페이지를 첫 번째로 설정
+                  }
+            };
+
+          // 파일을 데이터 URL로 읽기 시작
+           reader.readAsDataURL(file);
+           }
+        },
+submitPost(){
+console.log(this.content)
+console.log(this.files)
+console.log(this.canReplyCheck)
+console.log(this.onlymeCheck)
+},
+   triggerFileInput() {
+      this.$refs.fileInput.click();
+    },
       closeDialog() {
         this.$emit('postInsertClose', false); //상세보기 닫음 
         this.moreReply = false;
@@ -225,6 +285,8 @@
   .v-divider {
     margin: 16px 0;
   }
+
+ 
   
   </style>
   

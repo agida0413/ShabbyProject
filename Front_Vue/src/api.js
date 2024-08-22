@@ -25,9 +25,12 @@ const processQueue = (error, token = null) => {
 api.interceptors.request.use(config => {
   //로컬스토리지에 있는 access토큰 가져오기 
     const token = localStorage.getItem('access');
+   console.log('인터'+token)
     //만약 있다면 
     if (token) {
       //헤더에 담아 전송
+      console.log(token)
+      console.log(config)
         config.headers.access = token;
     }
     return config;
@@ -44,10 +47,11 @@ api.interceptors.response.use(response => {
   //만약 응답오류가 있다면 
     const token=localStorage.getItem("access") //토큰이 있다면 
     const originalRequest = error.config;
-
+   
     // 410 상태 코드 오류가 발생하고, 엑세스 토큰이 있고 ,재발급 시도하지 않았으면
     if (error.response && error.response.status === 410 && !originalRequest._retry &&token) {
         //만약 재발급 진행중이라면 
+      
         if (isRefreshing) {
           
           //새로 요청을 큐에 추가, 재발급 완료 후 요청 처리 

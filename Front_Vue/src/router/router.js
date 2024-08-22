@@ -57,12 +57,14 @@ const router = createRouter({
 //서버 인증 전 1차적으로 라우터 가드로 페이지별 검증 = > 인증이 필요한 라우터는  토큰이 필요하다 
 // 토큰 만료, 유효성 여부는 서버에서 검증, 프론트엔드 1차적 조치
 router.beforeEach((to, from, next) => {
+ 
   const token = localStorage.getItem('access');
+
   //로그인 인증이 된상태에서 로그인페이지 요청을 했을경우
   if ((to.fullPath === '/login' || to.fullPath === '/join')) {
 
     if (token) {
-      
+
       // 토큰이 존재하면 재발급 요청을 보냄
       axios.post('/reissue', {
         headers: {

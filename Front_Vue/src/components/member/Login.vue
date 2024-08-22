@@ -185,6 +185,7 @@ export default {
       this.isLoading=true 
 
       //로그인 api 호출
+      console.log('로그인에서의 토큰:'+localStorage.getItem('access'))
       api.post('/login', formdata)
       .then((res) => { 
           
@@ -209,6 +210,7 @@ export default {
         })
         .catch((err)=>{
         //실패시 서버에서 전송한 에러메시지 출력
+        console.log(localStorage.getItem('access'))
         alert(err.response.data.message)
        
         })

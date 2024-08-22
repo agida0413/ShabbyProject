@@ -436,7 +436,8 @@
           }
 
          
-            
+              const token=localStorage.getItem('access')
+              console.log(token)
                   this.loading = true; // 로딩 시작 = > 사용자에게 알려줄려고
                   //인증코드 이메일 전송 API
                     api.post('/members/emailAuth',{

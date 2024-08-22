@@ -177,7 +177,7 @@ export default {
                         //비밀번호 변경 요청 api
                         api.put("/setting/pwdChange",formdata) // 두개의 서로다른 객체에 매핑 되어야 하므로 formdata  @requestbody로받을 수 없음 
                         .then(()=>{
-                            //성공시 서버로 부터 받은 메시지 출력 
+                        //성공시 서버로 부터 받은 메시지 출력 
                         alert("비밀번호 변경에 성공하였습니다. 다시 로그인 해주세요.")
                         this.closeDialog()//모달을 닫음 
 

@@ -185,25 +185,36 @@ export default {
         
 
           }
-          //회원 탈퇴 api 전송 
-           api.delete('/setting',{
-            //delete http메서드 = 전송 데이터가 있을시 data :{} 형태로 전달해야 함 
-            data:{
-                name:this.name, //이름
-                password:this.password,//비밀번호
-                email:this.email//이메일
-            }
-          
-           })
-           .then(()=>{//회원삭제 성공시 alert
-                alert('그동안 이용해주셔서 감사합니다. 회원님의 정보는 안전하게 삭제하였습니다.')
 
-                localStorage.removeItem('access')//엑세스 토큰 지움 
-                this.$router.push('/login');//로그인 페이지로 이동
-           })
-          .catch((err)=>{//실패시 서버로 부터받은 메시지 출력
-                alert(err.response&&err.response.data.message)
-          })     
+          // 회원 탈퇴 API 호출
+    api.delete('/setting', {
+        data: {
+            name: this.name,
+            password: this.password,
+            email: this.email
+        }
+    })
+    .then(() => {
+        // 성공 시 로컬 스토리지에서 access 토큰 제거
+        localStorage.removeItem('access');
+
+        // 알림 표시
+        alert('그동안 이용해주셔서 감사합니다. 회원님의 정보는 안전하게 삭제하였습니다.');
+
+        // 라우터를 통해 로그인 페이지로 이동
+        this.$router.push('/login').then(() => {
+            // 페이지 이동 후 추가 작업 필요 시 여기에 작성
+        }).catch(err => {
+            console.error('라우터 이동 중 오류 발생:', err);
+        });
+    })
+    .catch(err => {
+        // 실패 시 서버로부터 받은 메시지 출력
+        const errorMessage = err.response?.data?.message || '회원 삭제에 실패했습니다.';
+        alert(errorMessage);
+    }).finally({
+      
+    });
       }
 
     }
