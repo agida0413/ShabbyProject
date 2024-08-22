@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.sist.common.exception.BadRequestException;
 import com.sist.common.exception.InternerException;
 import com.sist.common.util.SimpleCodeGet;
+import com.sist.common.util.ValidationService;
 import com.sist.dto.api.ResponseDTO;
 import com.sist.dto.member.MemberDTO;
 import com.sist.repository.member.MemberAccountRepository;
@@ -30,6 +31,8 @@ public class ChangeInfoServiceImpl implements ChangeInfoService{
 	private final SimpleCodeGet simpleCodeGet;
 	//패스워드 암호화
 	private final BCryptPasswordEncoder bCryptPasswordEncoder;
+	//검증 서비스
+	private final ValidationService validationService;
 	
 	//회원 정보 리턴
 	//2024.08.19 수정 = > 회원정보 전체를 넘기면 위험할 수 있음 ., 필요한 정보만 넘기게
@@ -62,6 +65,10 @@ public class ChangeInfoServiceImpl implements ChangeInfoService{
 	public ResponseEntity<ResponseDTO<Void>> nickNameUpdate(MemberDTO dto) {
 		// TODO Auto-generated method stub
 		
+		// 닉네임 validation==> 1 차 클라이언트 2차 서버
+		if(!validationService.nickNameValService(dto)){
+			throw new BadRequestException("비정상적인 접근입니다.");
+		}
 		//고유 아이디넘버 갖고오기 
 		int idNum = simpleCodeGet.getIdNum();
 		
@@ -94,6 +101,14 @@ public class ChangeInfoServiceImpl implements ChangeInfoService{
 	@Override
 	public ResponseEntity<ResponseDTO<Void>>  passwordUpdate(String password,String newPassword) {
 		// TODO Auto-generated method stub
+		//validation을 위한 memberDto 객체 생성
+		MemberDTO valDto=new MemberDTO();
+		//비밀번호 셋팅
+		valDto.setPassword(password);
+		//비밀번호 유효성 validation
+		if(!validationService.pwdValService(valDto)) {
+			throw new BadRequestException("잘못된 접근입니다.");
+		}
 		
 		int idNum=simpleCodeGet.getIdNum();//고유번호를 가져옴 
 	
@@ -138,6 +153,11 @@ public class ChangeInfoServiceImpl implements ChangeInfoService{
 			throw new BadRequestException("비밀번호가 일치 하지않습니다.");//사용자 정의400에러 발생
 		}
 		
+		if(dto.getPhone().equals(findDto.getPhone())) {//입력받은 핸드폰 번호와 현재 핸드폰 번호가 같을 시 
+			
+			throw new BadRequestException("기존 휴대폰번호와 동일한 번호로 수정할 수 없습니다.");//사용자 정의400에러 발생
+		}
+		
 		MemberDTO findSamePhoneUser= memberAccountRepository.findByUserPhone(dto.getPhone());
 		if (!(findSamePhoneUser==null)) {
 			//입력한 핸드폰 번호와 전체회원의 핸드폰 번호중 동일한 핸드폰있는 회원목록을 갖고옴 
@@ -147,15 +167,11 @@ public class ChangeInfoServiceImpl implements ChangeInfoService{
 		}
 		
 		
-		if(bCryptPasswordEncoder.matches(dto.getPhone(), findDto.getPhone())) {//입력받은 핸드폰 번호와 현재 핸드폰 번호가 같을 시 
-			
-			throw new BadRequestException("기존 휴대폰번호와 동일한 번호로 수정할 수 없습니다.");//사용자 정의400에러 발생
-		}
+		
 		
 		
 		dto.setIdNum(idNum); //dto에 회원고유번호를 담고 
-		String phone =bCryptPasswordEncoder.encode(dto.getPhone());//입력받은 휴대폰번호를 암호화 하여 스트링에 담고 
-		dto.setPhone(phone); //dto에 세팅한다음 
+	
 		memberSettingRepository.updatePhone(dto); // 데이터베이스에 휴대폰 번호 업데이트 
 		
 		 return new ResponseEntity<ResponseDTO<Void>>

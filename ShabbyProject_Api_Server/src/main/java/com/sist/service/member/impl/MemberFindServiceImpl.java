@@ -35,7 +35,7 @@ private final MailService mailService;
 		}
 			
 		//만약 핸드폰 번호가 일치하지 않다면 
-		if(!bCryptPasswordEncoder.matches(dto.getPhone(), findDto.getPhone())) {
+		if(!dto.getPhone().equals(findDto.getPhone())) {
 			//정보가 일치하지않음 
 			throw new BadRequestException("입력한 정보가 일치하지 않습니다.");//사용자 정의400에러 발생
 		}

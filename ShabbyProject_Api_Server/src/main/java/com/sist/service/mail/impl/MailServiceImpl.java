@@ -143,7 +143,7 @@ public class MailServiceImpl implements MailService{
 			throw new BadRequestException("입력한 정보가 일치하지 않습니다.");//사용자 정의 400에러 발생
 		}
 		//해당 이메일을 사용하는 회원은 존재하나 휴대폰 번호가 다를경우
-		if(!bCryptPasswordEncoder.matches(dto.getPhone(), findDto.getPhone())) {
+		if(!dto.getPhone().equals(findDto.getPhone())) {
 			throw new BadRequestException("입력한 정보가 일치하지 않습니다.");//사용자 정의 400에러 발생
 		}
 		
