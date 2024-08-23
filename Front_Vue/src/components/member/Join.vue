@@ -277,6 +277,7 @@
               auto-grow
               shaped
               v-model="introduce"
+              maxlength="100" 
             ></v-textarea>
         </v-row>
 

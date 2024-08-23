@@ -108,8 +108,12 @@ export default{
       api.post('/logout')
       .then(()=>{
         //성공시 
-          localStorage.removeItem('access')//엑세스 토큰 지움 
-          this.$router.push('/login');//로그인 페이지로 이동
+
+            
+        localStorage.removeItem('access');
+        this.$router.push('/login');
+
+          
         })
         .catch((err)=>{
           //실패시 에러메시지 출력 

@@ -59,7 +59,7 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
  
   const token = localStorage.getItem('access');
-
+ 
   //로그인 인증이 된상태에서 로그인페이지 요청을 했을경우
   if ((to.fullPath === '/login' || to.fullPath === '/join')) {
 
@@ -78,7 +78,7 @@ router.beforeEach((to, from, next) => {
       })
       .catch(() => {
         //실패하면 엑세스토큰 지우고 로그인 페이지로 라우팅
-      localStorage.removeItem('access')
+       localStorage.removeItem('access')
        router.push('/login')
     
        
