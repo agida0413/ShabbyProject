@@ -42,9 +42,11 @@ api.interceptors.request.use(config => {
 // 응답 인터셉터 설정
 api.interceptors.response.use(response => {
   //응답 성공시 그대로 반환 
+  console.log('응답성공')
     return response;
 }, error => {
   //만약 응답오류가 있다면 
+  console.log('응답오류')
     const token=localStorage.getItem("access") //토큰이 있다면 
     const originalRequest = error.config;
    
@@ -53,7 +55,7 @@ api.interceptors.response.use(response => {
         //만약 재발급 진행중이라면 
       
         if (isRefreshing) {
-          
+          console.log('dd')
           //새로 요청을 큐에 추가, 재발급 완료 후 요청 처리 
             return new Promise((resolve, reject) => {
                 failedQueue.push({ resolve, reject });
@@ -75,8 +77,7 @@ api.interceptors.response.use(response => {
                 .then(({ headers }) => {
                   // 새 액세스 토큰 저장
                     const newToken = headers['access'];
-                    localStorage.setItem('access', newToken);
-                    api.defaults.headers.access = newToken; // 이후 요청에 기본 헤더로 설정
+                    localStorage.setItem('access', newToken);                 
                     processQueue(null, newToken); // 큐에 있는 요청을 새 토큰으로 처리
                     isRefreshing = false; // 재발급 완료 상태로 변경
                     resolve(newToken); // 새 토큰 반환
@@ -85,7 +86,6 @@ api.interceptors.response.use(response => {
                   // 재발급 실패 시 큐에 있는 요청에 오류 전달
                   processQueue(err, null);
                   localStorage.removeItem('access'); // 액세스 토큰 삭제
-              
                   router.push({ name: 'login' }); // 로그인 페이지로 리다이렉트
                   isRefreshing = false; // 재발급 완료 상태로 변경
                   reject(err); // 오류 반환
