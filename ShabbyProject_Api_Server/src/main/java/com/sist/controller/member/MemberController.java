@@ -3,6 +3,7 @@ package com.sist.controller.member;
 import java.net.http.HttpRequest;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,6 +17,7 @@ import com.sist.service.mail.impl.MailServiceImpl;
 import com.sist.service.member.JoinService;
 import com.sist.service.member.MemberFindService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -27,7 +29,7 @@ private final MemberFindService memberFindService;// 회원정보 찾기 서비�
 	
 	//회원가입 
 	@PostMapping
-	public ResponseEntity<ResponseDTO<Void>> join(MemberDTO dto){	
+	public ResponseEntity<ResponseDTO<Void>> join(@Valid MemberDTO dto){	
 		return joinService.join(dto);
 	}
 	//닉네임 중복검증 

@@ -128,6 +128,7 @@ public class MybatisRefreshService implements RefreshService{
 			addRefreshEntity(idNum, newRefresh, 86400000L);//새 토큰 데이터에 저장
 	        
 	        response.setHeader("access", newAccess); //새로운 토큰을 헤더에 추가 
+	        
 	        response.addCookie(cookieUtil.createCookie("refresh", newRefresh)); // 쿠키생성 메서드
 
 	        return new ResponseEntity<ResponseDTO<Void>>

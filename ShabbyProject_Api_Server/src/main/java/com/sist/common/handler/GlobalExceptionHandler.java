@@ -2,6 +2,7 @@ package com.sist.common.handler;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -56,6 +57,20 @@ public class GlobalExceptionHandler {
 	        
 	        return new ResponseEntity<>(responseApi, HttpStatus.CONFLICT); // 응답객체와 상태코드
 	    }
+	    
+	    //validation 실패 오류
+	    @ExceptionHandler(MethodArgumentNotValidException.class)
+	    public ResponseEntity<ResponseDTO<Void>> handleValidationException(MethodArgumentNotValidException ex) {
+
+	        ResponseDTO<Void> responseApi = new ResponseDTO<Void>(
+	         
+	            HttpStatus.BAD_REQUEST.value(),// 상태코드 밸류
+	            "잘못된 입력입니다."//매개변수로 받을 오류 메시지 	         
+	        );
+	        
+	        return new ResponseEntity<>(responseApi, HttpStatus.BAD_REQUEST);// 응답객체와 상태코드
+	    }
+	    
 	 
 	    //서버내부오류 
 	    @ExceptionHandler(InternerException.class)

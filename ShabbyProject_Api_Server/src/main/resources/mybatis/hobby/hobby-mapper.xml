@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- 관심사 관련 매퍼-->
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+ <mapper namespace="com.sist.mapper.hobby.hobbyMapper">
+
+<!--전체 관심사 조회--> 
+<select id="allHobby" resultType="HobbyDTO">
+SELECT distinct hobby from hobby;
+</select>	
+
+<!--특정 매개변수에 의한 관심사 조회-->
+	
+<select id="findHobby" parameterType="String" resultType="HobbyDTO">	
+SELECT distinct hobby from hobby
+WHERE hobby LIKE CONCAT('%',#{keyword},'%')
+</select>
+ </mapper>

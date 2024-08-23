@@ -6,7 +6,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.sist.common.exception.BadRequestException;
-import com.sist.common.util.ValidationService;
 import com.sist.dto.api.ResponseDTO;
 import com.sist.dto.member.EmailAuthDTO;
 import com.sist.dto.member.MemberDTO;
@@ -25,7 +24,7 @@ public class JoinServiceImpl implements JoinService{
 private final MemberAccountRepository memberAccountRepository;
 private final MailService mailService; //이메일 인증관련 
 private final BCryptPasswordEncoder bCryptPasswordEncoder;
-private final ValidationService validationService;
+
 
 	//회원가입 
 	public ResponseEntity<ResponseDTO<Void>> join(MemberDTO dto){
@@ -38,13 +37,10 @@ private final ValidationService validationService;
 		EmailAuthDTO emailDto=memberAccountRepository.emailAuthGetValidation(dto.getEmail());
 		
 		//이메일 인증 validation ==> 이메일 인증코드 엔티티에서 인증완료여부를 갖고와 검증한다.
-		if(emailDto.getIsAuth().contains("N")) {
+		if(!emailDto.getIsAuth().contains("Y") ){
 			throw new BadRequestException("비정상적인 접근입니다.");
 		}
-		//회원가입 관련 데이터삽입 특정 조건 validation(Ex 비밀번호 특수문자 포함 등)
-		if(!validationService.joinValService(dto)) {
-			throw new BadRequestException("비정상적인 접근입니다.");
-		}
+		// 닉네임 중복, 핸드폰번호 중복 검증은 1차적으로 클라이언트에서 막고 데이터베이스 유니크 키가 막는다.
 		
 		dto.setPassword(bCryptPasswordEncoder.encode(password)); // 패스워드 암호화
 		dto.setRole("ROLE_USER"); //일반회원 권한 
