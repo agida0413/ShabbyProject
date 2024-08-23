@@ -2,10 +2,8 @@ package com.sist.service.setting.impl;
 
 
 
-import org.springframework.http.HttpStatus;import org.springframework.http.HttpStatusCode;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.method.P;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,9 +11,11 @@ import org.springframework.transaction.annotation.Transactional;
 import com.sist.common.exception.BadRequestException;
 import com.sist.common.exception.InternerException;
 import com.sist.common.util.SimpleCodeGet;
-import com.sist.common.util.ValidationService;
 import com.sist.dto.api.ResponseDTO;
 import com.sist.dto.member.MemberDTO;
+import com.sist.dto.setting.ChangeNickNameDTO;
+import com.sist.dto.setting.ChangePasswordDTO;
+import com.sist.dto.setting.ChangePhoneDTO;
 import com.sist.repository.member.MemberAccountRepository;
 import com.sist.repository.member.MemberSettingRepository;
 import com.sist.service.setting.ChangeInfoService;
@@ -31,13 +31,12 @@ public class ChangeInfoServiceImpl implements ChangeInfoService{
 	private final SimpleCodeGet simpleCodeGet;
 	//패스워드 암호화
 	private final BCryptPasswordEncoder bCryptPasswordEncoder;
-	//검증 서비스
-	private final ValidationService validationService;
+	
 	
 	//회원 정보 리턴
 	//2024.08.19 수정 = > 회원정보 전체를 넘기면 위험할 수 있음 ., 필요한 정보만 넘기게
 	@Override
-	public ResponseEntity<ResponseDTO<String>> getLockedInfo() {//회원 공개여부 데이터
+	public ResponseEntity<ResponseDTO<MemberDTO>> getLockedInfo() {//회원 공개여부 데이터
 		// TODO Auto-generated method stub
 		
 		//회원 고유번호를 가져옴 
@@ -53,22 +52,23 @@ public class ChangeInfoServiceImpl implements ChangeInfoService{
 		
 		}
 		//비공개/공개 상태여부를 가져옴 
-		String locked= dto.getLocked();
-			
-		  return new ResponseEntity<ResponseDTO<String>>
-			(new ResponseDTO<String>(locked),HttpStatus.OK); //성공 
+
+		//전송객체 생성	
+		MemberDTO sendDto=new MemberDTO();
+		//전송데이터 세팅
+		sendDto.setLocked(dto.getLocked());
+		
+		  return new ResponseEntity<ResponseDTO<MemberDTO>>
+			(new ResponseDTO<MemberDTO>(sendDto),HttpStatus.OK); //성공 
 	}
 
 	//선행조건 : 닉네임중복검사 통과 = >비밀번호 검증=>닉네임변경
 	@Transactional
 	@Override
-	public ResponseEntity<ResponseDTO<Void>> nickNameUpdate(MemberDTO dto) {
+	public ResponseEntity<ResponseDTO<Void>> nickNameUpdate(ChangeNickNameDTO dto) {
 		// TODO Auto-generated method stub
 		
-		// 닉네임 validation==> 1 차 클라이언트 2차 서버
-		if(!validationService.nickNameValService(dto)){
-			throw new BadRequestException("비정상적인 접근입니다.");
-		}
+		
 		//고유 아이디넘버 갖고오기 
 		int idNum = simpleCodeGet.getIdNum();
 		
@@ -82,11 +82,9 @@ public class ChangeInfoServiceImpl implements ChangeInfoService{
 			throw new BadRequestException("비밀번호가 일치 하지않습니다.");//사용자 정의400에러 발생
 		}
 		
-
 		
-		dto.setIdNum(idNum);//dto에 해당 고유번호 세팅 
-	
-		memberSettingRepository.updateNickName(dto);//최종적으로 vo에 닉네임과 ,고유번호 전달하여 데이터베이스 업데이트 
+		findDto.setNickname(dto.getNickname());//닉네임 세팅
+		memberSettingRepository.updateNickName(findDto);//최종적으로 vo에 닉네임과 ,고유번호 전달하여 데이터베이스 업데이트 
 	
 	
 		
@@ -99,16 +97,13 @@ public class ChangeInfoServiceImpl implements ChangeInfoService{
 	
 	//패스워드 변경 
 	@Override
-	public ResponseEntity<ResponseDTO<Void>>  passwordUpdate(String password,String newPassword) {
+	public ResponseEntity<ResponseDTO<Void>>  passwordUpdate(ChangePasswordDTO dto) {
 		// TODO Auto-generated method stub
 		//validation을 위한 memberDto 객체 생성
 		MemberDTO valDto=new MemberDTO();
 		//비밀번호 셋팅
-		valDto.setPassword(password);
-		//비밀번호 유효성 validation
-		if(!validationService.pwdValService(valDto)) {
-			throw new BadRequestException("잘못된 접근입니다.");
-		}
+		valDto.setPassword(dto.getPassword());
+		
 		
 		int idNum=simpleCodeGet.getIdNum();//고유번호를 가져옴 
 	
@@ -116,20 +111,20 @@ public class ChangeInfoServiceImpl implements ChangeInfoService{
 		
 		
 		//입력받은 패스워드와 일치하지않다면 , 
-		if(!bCryptPasswordEncoder.matches(password, findDto.getPassword())) {
+		if(!bCryptPasswordEncoder.matches(dto.getPassword(), findDto.getPassword())) {
 			throw new BadRequestException("비밀번호가 일치 하지않습니다.");//사용자 정의400에러 발생
 		}
 		
-		if(bCryptPasswordEncoder.matches(newPassword,findDto.getPassword())) {//바꾸려는 패스워드와 기존패스워드가 일치할경우 
+		if(bCryptPasswordEncoder.matches(dto.getNewPassword(),findDto.getPassword())) {//바꾸려는 패스워드와 기존패스워드가 일치할경우 
 			throw new BadRequestException("기존 비밀번호와 동일한 비밀번호는 사용할 수 없습니다.");//사용자 정의400에러 발생 
 		}
-		newPassword= bCryptPasswordEncoder.encode(newPassword);// 새로운 패스워드 암호화 
+		String newPassword= bCryptPasswordEncoder.encode(dto.getNewPassword());// 새로운 패스워드 암호화 
 		
-		MemberDTO dto = new MemberDTO();//dto에 데이터베이스 업데이트 할 값 세팅
-		dto.setIdNum(idNum);
-		dto.setPassword(newPassword);
+		MemberDTO updateDto = new MemberDTO();//dto에 데이터베이스 업데이트 할 값 세팅
+		updateDto.setIdNum(idNum);
+		updateDto.setPassword(newPassword);
 		
-		memberSettingRepository.updatePassword(dto); //데이터 베이스 비밀번호 업데이트
+		memberSettingRepository.updatePassword(updateDto); //데이터 베이스 비밀번호 업데이트
 		// 데이터베이스 리프레시토큰 삭제는 프론트영역에서 logout api를 곧바로 호출해주니까 해줄 필요가 없다(logout api에서 리프레시토큰 삭제)
 		
 		
@@ -141,7 +136,7 @@ public class ChangeInfoServiceImpl implements ChangeInfoService{
 	//핸드폰 번호 변경 ( 비밀번호 검증= > 동일한 휴대폰번호인지 검증 = > 이미 있는 핸드폰번호 인지 검증 )
 	@Transactional
 	@Override
-	public ResponseEntity<ResponseDTO<Void>>  phoneChange(MemberDTO dto) {
+	public ResponseEntity<ResponseDTO<Void>>  phoneChange(ChangePhoneDTO dto) {
 		// TODO Auto-generated method stub
 		
 		int idNum=simpleCodeGet.getIdNum(); //회원 고유번호
@@ -170,9 +165,9 @@ public class ChangeInfoServiceImpl implements ChangeInfoService{
 		
 		
 		
-		dto.setIdNum(idNum); //dto에 회원고유번호를 담고 
+		findDto.setPhone(dto.getPhone());
 	
-		memberSettingRepository.updatePhone(dto); // 데이터베이스에 휴대폰 번호 업데이트 
+		memberSettingRepository.updatePhone(findDto); // 데이터베이스에 휴대폰 번호 업데이트 
 		
 		 return new ResponseEntity<ResponseDTO<Void>>
 			(new ResponseDTO<Void>(),HttpStatus.OK); //성공 
