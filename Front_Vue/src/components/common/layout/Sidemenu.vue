@@ -77,7 +77,7 @@ export default{
         api.get('/setting')
         .then((res)=>{
           //성공시 
-          this.memberData.locked=res.data.reqData//공개여부 정보 저장 
+          this.memberData.locked=res.data.reqData.locked//공개여부 정보 저장 
        
           
         })

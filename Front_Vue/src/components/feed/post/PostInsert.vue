@@ -11,6 +11,7 @@
             <v-col cols="6" class="image-section">
              
         <!-- 사진 목록-->
+     
         <v-carousel v-model="currentPage" show-arrows="hover">
           <div v-if="images.length">
             <v-carousel-item
@@ -74,8 +75,13 @@
                       variant="filled"
                       auto-grow
                       shaped
-                      
+                     @keyup="handleFindInput"
+                      v-model="searchHobby"
                     ></v-textarea>
+                    <div v-for="(hobbyObj,index) in hobbyResponse" :key="index">
+                      <span style="color: aliceblue;">{{ hobbyObj.hobby }}</span>
+
+                    </div>
                   </v-col>
                   <v-col cols="12" class="like-icon-col mt-4">
                     <v-textarea
@@ -109,6 +115,7 @@
   </template>
   
   <script>
+  import api from '@/api';
    export default {
     name: 'PostInsert',
   
@@ -123,7 +130,11 @@
         images: [], // 선택한 이미지 파일들의 URL을 저장할 배열
         content:'',//게시물 내용(글)
         currentPage:0 ,//사진 첨부후 처음 인덱스로 돌아가게
+        searchHobby:'',//관심사 검색어
         hobbies:[],//관심사 태그 목록
+        hobbyResponse:{},//관심사 axios 결과데이터
+        isHobbyFetching:false,//현재 관심사가 검색되고 있는지 
+        person:'',//사람 태그
         peoples:[],//사람 태그 목록
         canReplyCheck:false,//댓글기능해제 체크박스 
         onlymeCheck:false//나만보기기능 체크박스
@@ -137,6 +148,22 @@
       }
     },
     methods: {
+     async handleFindInput(){
+      if(this.searchHobby===''){
+        this.hobbyResponse={}
+      }
+        if (this.isHobbyFetching) {
+            return;
+        }
+
+
+        this.isHobbyFetching=true;
+          try{
+            await this.findHobby()
+          }finally{
+            this.isHobbyFetching=false;
+          }
+      },
       handleFileChange(event) {
           const files = event.target.files; // 파일 객체 배열을 가져옵니다.
           const newImages = [];
@@ -172,11 +199,46 @@
            reader.readAsDataURL(file);
            }
         },
+
+        async findHobby(){
+        
+         
+          if(this.searchHobby===''||this.searchHobby===null){
+            return
+          }
+
+          if(this.searchHobby.length<1){
+            this.resultHobby=[];
+            return;
+
+          }
+
+        
+         
+            api.get(`/hobby/${this.searchHobby}`)
+            .then((res)=>{
+              const hobby= res.data.reqData.findList[0].hobby
+              console.log(hobby)
+              if(hobby!=='noData'){
+              this.hobbyResponse=res.data.reqData.findList
+              }
+             
+            })
+            .catch(()=>{
+
+              this.resultHobby=[]
+            })
+          
+          
+            
+              
+          
+          
+       
+        },
 submitPost(){
-console.log(this.content)
-console.log(this.files)
-console.log(this.canReplyCheck)
-console.log(this.onlymeCheck)
+
+
 },
    triggerFileInput() {
       this.$refs.fileInput.click();
