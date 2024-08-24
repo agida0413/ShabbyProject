@@ -3,7 +3,7 @@ package com.sist.repository.hobby.impl;
 import org.springframework.stereotype.Repository;
 
 import com.sist.dto.hobby.HobbyDTO;
-
+import com.sist.dto.hobby.RequestHobbyDTO;
 import com.sist.mapper.hobby.hobbyMapper;
 import com.sist.repository.hobby.HobbyRepository;
 import java.util.*;
@@ -23,9 +23,9 @@ public class MybatisHobbyRepository implements HobbyRepository{
 
 	//특정 관심사 조회
 	@Override
-	public List<HobbyDTO> findHobby(String keyword) {
+	public List<HobbyDTO> findHobby(RequestHobbyDTO dto) {
 		// TODO Auto-generated method stub
-		return hobbyMapper.findHobby(keyword);
+		return hobbyMapper.findHobby(dto);
 	}
 
 }

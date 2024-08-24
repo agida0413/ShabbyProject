@@ -45,5 +45,12 @@ public class SimpleCodeGet {
 	    		return email;
 	}
 	
+	//mysql 시작 위치 
+	public int getOffset(int rowsize,int page) {
+		int offSet= (page-1)*rowsize;
+		
+		return offSet;
+	}
+	
 	
 }

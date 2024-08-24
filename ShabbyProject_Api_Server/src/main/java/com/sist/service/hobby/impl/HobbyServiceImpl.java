@@ -7,9 +7,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.sist.common.util.SimpleCodeGet;
 import com.sist.dto.api.ResponseDTO;
 import com.sist.dto.hobby.HobbyDTO;
-import com.sist.dto.hobby.ResponseHobby;import com.sist.mapper.hobby.hobbyMapper;
+import com.sist.dto.hobby.RequestHobbyDTO;
+import com.sist.dto.hobby.ResponseHobbyDTO;import com.sist.mapper.hobby.hobbyMapper;
 import com.sist.repository.hobby.HobbyRepository;
 import com.sist.service.hobby.HobbyService;
 
@@ -17,8 +19,9 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class HobbyServiceImpl implements HobbyService {
-
+	private final int rowSize=5;
 	private final HobbyRepository hobbyRepository;
+	private final SimpleCodeGet simpleCodeGet;
 	
 	@Override
 	public ResponseEntity<ResponseDTO<HobbyDTO>> allHobby() {
@@ -28,24 +31,26 @@ public class HobbyServiceImpl implements HobbyService {
 
 	@Override
 	
-	public ResponseEntity<ResponseDTO<ResponseHobby>> findHobby(String keyword) {
+	public ResponseEntity<ResponseDTO<ResponseHobbyDTO>> findHobby(String keyword,int page) {
 		// TODO Auto-generated method stub
+		RequestHobbyDTO dto = new RequestHobbyDTO();
 		
-	
-		List<HobbyDTO> list=hobbyRepository.findHobby(keyword);
-		System.out.println(list.size());
-		ResponseHobby resDto=new ResponseHobby();
-		if(list.size()==0) {
-			HobbyDTO noDto= new HobbyDTO();
-			noDto.setHobby("noData");
-			list.add(noDto);
-		}
+		int offSet=simpleCodeGet.getOffset(rowSize,page);
+				
+		dto.setKeyword(keyword);
+		dto.setRowSize(rowSize);
+		dto.setStartRow(offSet);
+		
+		List<HobbyDTO> list=hobbyRepository.findHobby(dto);
+		
+		ResponseHobbyDTO resDto=new ResponseHobbyDTO();
+		
 		
 		resDto.setFindList(list);
 		
 		
-		return new ResponseEntity<ResponseDTO<ResponseHobby>>
-		(new ResponseDTO<ResponseHobby>(resDto),HttpStatus.OK); //성공 
+		return new ResponseEntity<ResponseDTO<ResponseHobbyDTO>>
+		(new ResponseDTO<ResponseHobbyDTO>(resDto),HttpStatus.OK); //성공 
 	}
 
 }
