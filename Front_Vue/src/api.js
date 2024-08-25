@@ -25,12 +25,11 @@ const processQueue = (error, token = null) => {
 api.interceptors.request.use(config => {
   //로컬스토리지에 있는 access토큰 가져오기 
     const token = localStorage.getItem('access');
-   console.log('인터'+token)
+   
     //만약 있다면 
     if (token) {
       //헤더에 담아 전송
-      console.log(token)
-      console.log(config)
+      
         config.headers.access = token;
     }
     return config;
@@ -42,11 +41,11 @@ api.interceptors.request.use(config => {
 // 응답 인터셉터 설정
 api.interceptors.response.use(response => {
   //응답 성공시 그대로 반환 
-  console.log('응답성공')
+
     return response;
 }, error => {
   //만약 응답오류가 있다면 
-  console.log('응답오류')
+
     const token=localStorage.getItem("access") //토큰이 있다면 
     const originalRequest = error.config;
    
@@ -55,7 +54,7 @@ api.interceptors.response.use(response => {
         //만약 재발급 진행중이라면 
       
         if (isRefreshing) {
-          console.log('dd')
+  
           //새로 요청을 큐에 추가, 재발급 완료 후 요청 처리 
             return new Promise((resolve, reject) => {
                 failedQueue.push({ resolve, reject });

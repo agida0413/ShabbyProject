@@ -1,163 +1,258 @@
 <template>
-    <div class="autocomplete-container" ref="container">
-      <ul v-if="results.length" class="results-list">
-        <li
-          v-for="(result, index) in results"
-          :key="index"
-          class="result-item"
-        >
-          {{ result.hobby }}
-        </li>
-        <!-- 스크롤 끝을 감지하기 위한 더미 요소 -->
-        <li ref="sentinel" class="result-item sentinel">loading</li>
-      </ul>
-      <!-- 로딩 인디케이터 -->
-      <div v-if="isFetching" class="loading-indicator ">
-        <v-progress-circular indeterminate color="primary" size="30"></v-progress-circular>
-      </div>
+  <div class="autocomplete-container" ref="container" @keydown.arrow-down="handleArrowDown" @keydown.arrow-up="handleArrowUp" @keydown.enter="handleEnter" tabindex="0">
+    <ul v-show="results.length" class="results-list">
+      <li
+        v-for="(result, index) in results"
+        :key="index"
+        class="result-item"
+        :class="{ selected: index === selectedIndex }"
+        @click="handleClick(result.hobby)"
+        @mouseover="handleMouseOver(index)"
+        :ref="index === selectedIndex ? 'selectedItem' : null"
+      >
+        {{ result.hobby }}
+      </li>
+      <li ref="sentinel" class="result-item sentinel"></li>
+    </ul>
+    <div v-if="isFetching" class="loading-indicator">
+      <v-progress-circular indeterminate color="primary" size="30"></v-progress-circular>
     </div>
-  </template>
-  
-  <script>
-  import { ref, onMounted, onUnmounted, watch } from 'vue';
-  import api from "@/api";
-  import debounce from 'lodash/debounce';
-  
-  export default {
-    props: {
-      keyword: String,
-      isHashtag: Boolean
-    },
-    setup(props) {
-      const results = ref([]);
-      const container = ref(null); // 컨테이너를 참조
-      const sentinel = ref(null); // 더미 요소를 참조
-      const page = ref(1); // 페이지 변수를 자식 컴포넌트에서 관리
-      const isFetching = ref(false); // 데이터 fetching 상태 관리
-      const nodata = ref(false); // 데이터가 더 이상 없는 상태 관리
-  
-      // 데이터 요청 및 병합
-      const fetchResults = async (keyword, page) => {
-        if (isFetching.value || !props.isHashtag) return; // 이미 데이터를 가져오는 중이거나 isHashtag가 false이면 리턴
-        isFetching.value = true; // 데이터 요청 중 상태로 변경
-  
-        try {
-          const res = await api.get(`/hobby/${keyword}/${page}`);
-          const newHobbies = res.data.reqData.findList;
-          if (newHobbies.length) {
-            results.value = [...results.value, ...newHobbies]; // 기존 결과와 새 결과 병합
-          } else {
-            nodata.value = true; // 더 이상 결과가 없음을 표시
-          }
-        } catch (error) {
-          console.error('API 호출 실패:', error);
-        } finally {
-          isFetching.value = false; // 데이터 요청 완료 상태로 변경
+  </div>
+</template>
+
+<script>
+import { ref, onMounted, onUnmounted, watch, nextTick } from 'vue';
+import api from "@/api";
+import debounce from 'lodash/debounce';
+
+export default {
+  props: {
+    keyword: String,
+    isHashtag: Boolean,
+  },
+
+  setup(props, { emit }) {
+    const results = ref([]);
+    const container = ref(null);
+    const sentinel = ref(null);
+    const selectedIndex = ref(-1);
+    const previousIndex = ref(-1); // Track the previous index
+    const isFetching = ref(false);
+    const page = ref(1);
+
+    const fetchResults = async (keyword, page) => {
+      if (isFetching.value || !props.isHashtag) return;
+      if (keyword === '#') return;
+      isFetching.value = true;
+
+      const sendKeyword = keyword.substring(1);
+      try {
+        const res = await api.get(`/hobby/${sendKeyword}/${page}`);
+        const newHobbies = res.data.reqData.findList;
+        if (newHobbies.length) {
+          results.value = [...results.value, ...newHobbies];
         }
-      };
-  
-      // 디바운스된 API 호출 메소드
-      const debouncedFetchResults = debounce((keyword, page) => {
-        fetchResults(keyword, page);
-      }, 150); // 디바운스 시간 조정 (150ms로 설정)
-  
-      // Intersection Observer를 통한 페이지 로딩
-      const handleIntersection = (entries) => {
-        console.log('실행')
-        entries.forEach((entry) => {
-         
-          if (entry.isIntersecting && entry.target === sentinel.value) {
-            console.log('Sentinel is intersecting');
-            page.value += 1; // 페이지 업데이트
-            console.log(page.value)
-            debouncedFetchResults(props.keyword, page.value); // 새 페이지의 결과를 가져옵니다.
-          }
-        });
-      };
-  
-      // 검색어가 변경될 때 처리
-      watch(() => props.keyword, (newKeyword) => {
-        if (newKeyword && props.isHashtag) {
-          page.value = 1; // 키워드가 변경되면 페이지를 1로 초기화
-          results.value = []; // 기존 결과 초기화
-          nodata.value = false; // 데이터가 더 이상 없음 상태 초기화
-          debouncedFetchResults(newKeyword, page.value);
-        } else {
-          results.value = []; // 키워드가 없으면 결과도 초기화
-          nodata.value = false; // 데이터가 더 이상 없음 상태 초기화
+      } catch (error) {
+        console.error('Error fetching results:', error);
+      } finally {
+        isFetching.value = false;
+      }
+    };
+
+    const debouncedFetchResults = debounce((keyword, page) => {
+      fetchResults(keyword, page);
+    }, 150);
+
+    const handleIntersection = (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting && entry.target === sentinel.value) {
+          page.value += 1;
+          debouncedFetchResults(props.keyword, page.value);
         }
       });
-  
-      // 컴포넌트가 마운트되었을 때
-      onMounted(() => {
-        
-        if (props.isHashtag) {
-            console.log('Container element:', container.value); // 확인
-    console.log('Sentinel element:', sentinel.value); // 확인
+    };
 
-           
-          // Intersection Observer 설정
+    watch(() => props.keyword, (newKeyword) => {
+      if (newKeyword && props.isHashtag) {
+        page.value = 1;
+        results.value = [];
+        selectedIndex.value = -1; // Reset selected index
+        previousIndex.value = -1; // Reset previous index
+        debouncedFetchResults(newKeyword, page.value);
+      } else {
+        results.value = [];
+        selectedIndex.value = -1; // Reset selected index
+        previousIndex.value = -1; // Reset previous index
+      }
+    });
+
+    onMounted(async () => {
+      if (props.isHashtag && container.value) {
+        await nextTick();
+        if (sentinel.value) {
           const observer = new IntersectionObserver(handleIntersection, {
             root: container.value,
             rootMargin: '0px',
-            threshold: 0.1, // 조정된 threshold (10% 영역이 보일 때 트리거)
+            threshold: 1.0,
           });
-          if (sentinel.value) {
           observer.observe(sentinel.value);
-        } else {
-          console.error('Sentinel element is null');
+
+          onUnmounted(() => {
+            observer.unobserve(sentinel.value);
+          });
         }
-          if (sentinel.value) {
-            observer.observe(sentinel.value); // 스크롤 끝을 감지할 더미 요소 관찰
+      }
+    });
+
+    const scrollToSelectedItem = () => {
+      const selectedItem = container.value?.querySelector('.selected');
+      if (selectedItem && container.value) {
+        const itemHeight = selectedItem.offsetHeight;
+        const containerHeight = container.value.clientHeight;
+        const scrollTop = container.value.scrollTop;
+        const selectedItemTop = selectedItem.offsetTop;
+
+        // Special handling when the selected index is 0
+        if (selectedIndex.value === 0) {
+          if (previousIndex.value !== -1 && previousIndex.value < selectedIndex.value) {
+            // Move to the previous item
+            const previousItem = container.value?.querySelectorAll('.result-item')[previousIndex.value];
+            if (previousItem) {
+              container.value.scrollTop = previousItem.offsetTop;
+            }
+          } else {
+            // Ensure the top item is visible if it's not the first item
+            container.value.scrollTop = 0;
+          }
+        } else {
+          // Regular scroll adjustment for other items
+          if (selectedItemTop < scrollTop) {
+            container.value.scrollTop = selectedItemTop - itemHeight * 4.5;
+          } else if (selectedItemTop + itemHeight > scrollTop + containerHeight) {
+            container.value.scrollTop = selectedItemTop + itemHeight * 4.5 - containerHeight;
           }
         }
-      });
-  
-      // 컴포넌트가 언마운트될 때
-      onUnmounted(() => {
-        if (sentinel.value) {
-          const observer = new IntersectionObserver(() => {});
-          observer.unobserve(sentinel.value);
+
+        // Ensure the scroll position is within bounds
+        if (container.value.scrollTop < 0) {
+          container.value.scrollTop = 0;
         }
-      });
-  
-      return {
-        results,
-        container,
-        sentinel,
-        nodata,
-        isFetching
-      };
-    },
-  };
-  </script>
-  
-  <style>
+        if (container.value.scrollTop > container.value.scrollHeight - containerHeight) {
+          container.value.scrollTop = container.value.scrollHeight - containerHeight;
+        }
+      }
+    };
+
+    const handleArrowDown = () => {
+      if (results.value.length === 0) return;
+
+      previousIndex.value = selectedIndex.value; // Update previous index before changing
+      if (selectedIndex.value === -1) {
+        selectedIndex.value = 0; // Select the first item if no item is selected
+      } else {
+        selectedIndex.value = (selectedIndex.value + 1) % results.value.length;
+      }
+      scrollToSelectedItem();
+      checkAndLoadMore();
+    };
+
+    const handleArrowUp = () => {
+      if (results.value.length === 0) return;
+
+      previousIndex.value = selectedIndex.value; // Update previous index before changing
+      if (selectedIndex.value === -1) {
+        selectedIndex.value = results.value.length - 1; // Select the last item if no item is selected
+      } else {
+        selectedIndex.value = (selectedIndex.value - 1 + results.value.length) % results.value.length;
+      }
+      scrollToSelectedItem();
+      checkAndLoadMore();
+    };
+
+    const handleEnter = () => {
+      if (selectedIndex.value >= 0 && selectedIndex.value < results.value.length) {
+        handleClick(results.value[selectedIndex.value].hobby);
+      }
+    };
+
+    const handleClick = (hobby) => {
+      emit('selectHobby', hobby);
+    };
+
+    const handleMouseOver = (index) => {
+      previousIndex.value = selectedIndex.value; // Update previous index on mouseover
+      selectedIndex.value = index;
+      scrollToSelectedItem();
+    };
+
+    const checkAndLoadMore = () => {
+      const containerElement = container.value;
+      const selectedItem = containerElement?.querySelector('.selected');
+      if (selectedItem) {
+        const containerRect = containerElement.getBoundingClientRect();
+        const itemRect = selectedItem.getBoundingClientRect();
+
+        // Check if the selected item is close to the bottom of the container
+        if (itemRect.bottom > containerRect.bottom - 50) {
+          // Item is close to the bottom of the visible area, load more data
+          if (!isFetching.value) {
+            page.value += 1;
+            debouncedFetchResults(props.keyword, page.value);
+          }
+        }
+
+        // Check if the selected item is close to the top of the container
+        if (itemRect.top < containerRect.top + 50) {
+          // Item is close to the top of the visible area, load more data
+          if (!isFetching.value) {
+            page.value += 1;
+            debouncedFetchResults(props.keyword, page.value);
+          }
+        }
+      }
+    };
+
+    return {
+      results,
+      container,
+      sentinel,
+      isFetching,
+      selectedIndex,
+      handleArrowDown,
+      handleArrowUp,
+      handleEnter,
+      handleClick,
+      handleMouseOver
+    };
+  }
+};
+</script>
+
+<style scoped>
+.selected {
+  background-color: #f0f0f0;
+}
+.results-list {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+  max-height: 300px;
  
-  .results-list {
-    margin: 0;
-    padding: 0;
-    list-style-type: none;
-  }
-  
-  .result-item {
-    padding: 8px;
-    cursor: pointer;
-  }
-  
-  .result-item:hover {
-    background-color: #f0f0f0;
-  }
-  
-  .sentinel {
-    height: 20px; /* 높이를 충분히 크게 설정 */
-    background: transparent; /* 배경을 투명으로 설정하여 시각적으로 방해하지 않음 */
-  }
-  
-  .loading-indicator {
-    text-align: center;
-    padding: 10px;
-    color: #888;
-  }
-  </style>
-  
+}
+.result-item {
+  padding: 8px;
+  cursor: pointer;
+}
+.result-item:hover {
+  background-color: #e0e0e0;
+}
+.sentinel {
+  height: 20px;
+  background: transparent;
+}
+.loading-indicator {
+  text-align: center;
+  padding: 10px;
+  color: #888;
+}
+</style>

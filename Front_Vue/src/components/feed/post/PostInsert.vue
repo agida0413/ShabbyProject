@@ -1,9 +1,12 @@
 <template>
   <!--게시물 상세 모달-->
-  <v-dialog v-model="localDialog" max-width="1100" class="modal">
+  <v-dialog v-model="localDialog" max-width="1100" class="modal" persistent> 
+    
     <v-card class="to-doubleBlack">
       <v-container fluid>
+        
         <v-row no-gutters>
+          
           <v-col cols="6" class="image-section">
             <!-- 사진 목록-->
             <v-carousel v-model="currentPage" show-arrows="hover">
@@ -19,7 +22,7 @@
               </div>
             </v-carousel>
           </v-col>
-
+          
           <!-- 게시물 상세 오른쪽 정보(내용,댓글 등 ) -->
           <v-col cols="6" class="content-section to-blackMode">
       
@@ -67,13 +70,16 @@
                     variant="filled"
                     auto-grow
                     shaped
-                   
+                    @input=" checkIsHashTag"
+                    @keydown=" handleKeyDown"
                     v-model="searchHobby"
                     class="autocomplete-input"
                   ></v-textarea>
                   <HobbySearchBar
+                           ref="hobbySearchBar"
                           :keyword="searchHobby"
                           :isHashtag="isHashtag"
+                          @selectHobby="selectHobby"
                           class="autocomplete-list"
                          
                   >
@@ -124,7 +130,8 @@ data() {
     currentPage: 0, // 사진 첨부 후 처음 인덱스로 돌아가게
     searchHobby: '', // 관심사 검색어
     hobbiesRequest: [], // 관심사 태그 목록,서버에 보낼 데이터 
-    isHashtag:true,//#을할시 자동완성 검색리스트 노출 
+    hobbiesReqIndex:0,//관심사태그목록 추가 ,삭제 제어할 인덱스
+    isHashtag:false,//#을할시 자동완성 검색리스트 노출 
     person: '', // 사람 태그
     peoples: [], // 사람 태그 목록
     canReplyCheck: false, // 댓글 기능 해제 체크박스
@@ -139,7 +146,25 @@ computed: {
   }
 },
 methods: {
-  
+  handleKeyDown(event) {
+      switch(event.key) {
+        case 'ArrowDown':
+          this.handleArrowDown();
+          break;
+        case 'ArrowUp':
+          this.handleArrowUp();
+          break;
+        case 'Enter':
+          this.handleEnter();
+          break;
+        default:
+          break;
+      }
+    },
+    handleArrowDown(){
+      console.log('ss')
+      this.$refs.hobbySearchBar.handleArrowDown();
+    },
   handleFileChange(event) {
     const files = event.target.files; // 파일 객체 배열
     const newImages = [];//해당 메서드내에서 관리할 사진파일 배열
@@ -195,24 +220,19 @@ methods: {
       reader.readAsDataURL(file);
     }
   },
-  //async await를 이용하여 자동완성검색시 비동기화 관리
-  async handleFindInput() {
-    if (this.searchHobby === '') {
-      this.hobbyAutoCompleteList = {}
-    }
-    if (this.isHobbyFetching) {
-      return;
-    }
-
-    this.isHobbyFetching = true;
-    try {
-      await this.findHobby()
-    } finally {
-      this.isHobbyFetching = false;
-    }
-  },
+  checkIsHashTag(){
   
+    this.isHashtag = this.searchHobby.startsWith('#');
+  },
+   selectHobby(hobby){
 
+   
+this.hobbiesRequest[this.hobbiesReqIndex++]=hobby;
+  this.searchHobby=''
+  this.isHashtag=false
+
+
+  },
   submitPost() {
     // 게시물 제출 로직
   },
@@ -244,6 +264,10 @@ components: {
 .modal {
   max-height: 90vh;
   overflow: hidden;
+  pointer-events: none; /* 부모는 클릭 불가능 */
+  
+  z-index:1;
+  
 }
 
 .image-section {
@@ -329,6 +353,7 @@ components: {
 
 .autocomplete-container {
   position: relative;
+ 
   
 }
 
@@ -342,13 +367,32 @@ components: {
   border: 1px solid #ccc;
   border-radius: 4px;
   width: calc(100% );
-  max-height: 200px; /* 높이를 지정하여 스크롤이 가능하게 함 */
+  max-height: 180px; /* 높이를 지정하여 스크롤이 가능하게 함 */
   overflow: auto; /* 스크롤 활성화 */
-  z-index: 1;
+  z-index: 1000; /* 충분히 높은 값 */
   top: 72%; /* 입력 필드 바로 아래에 위치 */
+  pointer-events: auto; /* 클릭 이벤트 허용 */
   left: 0;
+   /* 스크롤 바 커스텀 */
+   scrollbar-width: thin; /* Firefox */
+  scrollbar-color: #888 transparent; /* Firefox */
+}
+.autocomplete-list::-webkit-scrollbar {
+  width: 5px; /* 스크롤 바의 너비 */
 }
 
+.autocomplete-list::-webkit-scrollbar-track {
+  background: transparent; /* 스크롤 바 트랙 배경색 */
+}
+
+.autocomplete-list::-webkit-scrollbar-thumb {
+  background-color: #888; /* 스크롤 바 색상 */
+  border-radius: 10px; /* 스크롤 바 모서리 둥글게 */
+}
+
+.autocomplete-list::-webkit-scrollbar-thumb:hover {
+  background-color: #555; /* 스크롤 바 색상 (호버 시) */
+}
 .autocomplete-item {
   padding: 8px;
   cursor: pointer;
@@ -358,4 +402,5 @@ components: {
 .autocomplete-item.selected {
   background: #f0f0f0;
 }
+
 </style>
