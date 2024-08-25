@@ -36,7 +36,8 @@ public class HobbyServiceImpl implements HobbyService {
 		RequestHobbyDTO dto = new RequestHobbyDTO();
 		
 		int offSet=simpleCodeGet.getOffset(rowSize,page);
-				
+		System.out.println(keyword);
+	
 		dto.setKeyword(keyword);
 		dto.setRowSize(rowSize);
 		dto.setStartRow(offSet);
