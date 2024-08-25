@@ -75,6 +75,7 @@
                     v-model="searchHobby"
                     class="autocomplete-input"
                   ></v-textarea>
+                  
                   <HobbySearchBar
                            ref="hobbySearchBar"
                           :keyword="searchHobby"
@@ -165,6 +166,13 @@ methods: {
       console.log('ss')
       this.$refs.hobbySearchBar.handleArrowDown();
     },
+    handleArrowUp(){
+      this.$refs.hobbySearchBar.handleArrowUp();
+    },
+    handleEnter(){
+      this.$refs.hobbySearchBar.handleEnter();
+    },
+   
   handleFileChange(event) {
     const files = event.target.files; // 파일 객체 배열
     const newImages = [];//해당 메서드내에서 관리할 사진파일 배열
@@ -226,11 +234,10 @@ methods: {
   },
    selectHobby(hobby){
 
-   
-this.hobbiesRequest[this.hobbiesReqIndex++]=hobby;
+ this.hobbiesRequest[this.hobbiesReqIndex++]=hobby;
   this.searchHobby=''
   this.isHashtag=false
-
+    console.log(this.hobbiesRequest)
 
   },
   submitPost() {
