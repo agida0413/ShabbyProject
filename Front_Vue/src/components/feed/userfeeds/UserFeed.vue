@@ -6,7 +6,7 @@
                          <v-col cols="3">
                               <div class="avatar-wrapper">
                                         <v-avatar
-                                             image="https://tse2.mm.bing.net/th?id=OIP.kKqmVQKQfggQbuEborDDAAHaFa&pid=Api&P=0&h=220"
+                                             image="https://ta9termproject.s3.ap-northeast-2.amazonaws.com/2c0028c1-fKakaoTalk_20240806_221442968.jpg"
                                              size="300"
                                              class="avatar"
                                         ></v-avatar>
