@@ -1,10 +1,12 @@
 package com.sist.service.post.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
 import org.mybatis.spring.MyBatisSystemException;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.method.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -33,9 +35,11 @@ public class PostServiceImpl implements PostService {
 		// s3 업로드 시작= ==============================================
 		
 		List<MultipartFile> imgList = dto.getImgList();
+		List<String>imgUrList= new ArrayList<String>();
 		for (MultipartFile image : imgList) {
 			try {
-				imageService.upload(image);
+			String imgurl=	imageService.upload(image);
+				imgUrList.add(imgurl);
 			} catch (Exception e) {
 				// TODO: handle exception
 				throw new BadRequestException("사진 업로드중 서버오류가 발생하였습니다.");
@@ -73,13 +77,19 @@ public class PostServiceImpl implements PostService {
 			
 			//게시물 테이블 인서트 
 			postRepository.postInsert(dto);
-			//게시물관련 관심사 테이블 인서트 /동적쿼리로 인서트 ==> postNum은 게시물 테이블 인서트와 동시에 generatedkey로 받았다. 
-			postRepository.hobbyInsert(dto);
-			//게시물관련 인물태그 인서트 /동적쿼리 
-			postRepository.followTagInsert(dto);
+			//게시물관련 관심사 테이블 인서트 /동적쿼리로 인서트 ==> postNum은 게시물 테이블 인서트와 동시에 generatedkey로 받았다.
+			if(dto.getHobbyList().size()!=0 && dto.getHobbyList()!=null) {
+				postRepository.hobbyInsert(dto);
+			}
+			if(dto.getFollowTagList().size()!=0&&dto.getHobbyList()!=null) {
+				//게시물관련 인물태그 인서트 /동적쿼리 
+				postRepository.followTagInsert(dto);
+			}
+			
 			
 			//s3로 반환받은 url리스트 세팅 로직 ....
 			
+			dto.setImgUrlList(imgUrList);
 			//url리스트를 세팅한후 게시물 사진 테이블 인서트
 			postRepository.postImgInsert(dto);
 			
