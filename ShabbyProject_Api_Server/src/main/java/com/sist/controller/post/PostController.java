@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.sist.dto.api.ResponseDTO;
 import com.sist.dto.post.RequestPostDTO;
+import com.sist.service.post.PostService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -14,11 +15,12 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @RequestMapping("/api/post")
 public class PostController {
-
+	
+	private final PostService postService;
 	
 	@PostMapping
 	public ResponseEntity<ResponseDTO<Void>> postInsert(RequestPostDTO dto) {
-		System.out.println(dto);
-		return null;
+		
+		return postService.postInsertTransaction(dto);
 	}
 }
