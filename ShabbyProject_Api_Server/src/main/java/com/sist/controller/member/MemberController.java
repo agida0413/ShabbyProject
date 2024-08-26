@@ -4,6 +4,8 @@ import java.net.http.HttpRequest;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,7 +15,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.sist.dto.api.ResponseDTO;
 import com.sist.dto.member.EmailAuthDTO;
 import com.sist.dto.member.MemberDTO;
+import com.sist.dto.member.ResponseFollowDTO;
 import com.sist.service.mail.impl.MailServiceImpl;
+import com.sist.service.member.FollowService;
 import com.sist.service.member.JoinService;
 import com.sist.service.member.MemberFindService;
 
@@ -26,6 +30,7 @@ import lombok.RequiredArgsConstructor;
 public class MemberController {
 private final JoinService joinService;//회원가입 서비스 	
 private final MemberFindService memberFindService;// 회원정보 찾기 서비스 
+private final FollowService followService;
 	
 	//회원가입 
 	@PostMapping
@@ -66,7 +71,13 @@ private final MemberFindService memberFindService;// 회원정보 찾기 서비�
 	}
 	
 	
-	
+	//키워드 ,페이지 , 행개수 를 pathvariable로 받아 현재 세션(로그인한 아이디) 기반 팔로잉 리스트 
+	@GetMapping("/following/{keyword}/{page}/{rowSize}")
+	public ResponseEntity<ResponseDTO<ResponseFollowDTO>> followingByKeyword
+	(@PathVariable String keyword,@PathVariable int page,@PathVariable int rowSize)
+	{
+		return  followService.followingBykeyword(keyword, page, rowSize);
+	}
 	
 	
 }
