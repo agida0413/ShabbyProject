@@ -13,11 +13,11 @@
         :key="index"
         class="result-item"
         :class="{ selected: index === selectedIndex }"
-        @click="handleClick(result.hobby)"
+        @click="handleClick(result.nickname)"
         @mouseover="handleMouseOver(index)"
         :ref="index === selectedIndex ? 'selectedItem' : null"
       >
-        {{ result.hobby }}
+        {{ result.nickname }}
       </li>
       <li ref="sentinel" class="result-item sentinel"></li>
     </ul>
@@ -35,7 +35,7 @@ import debounce from 'lodash/debounce';
 export default {
   props: {
     keyword: String,
-    isHashtag: Boolean,
+    isAt: Boolean,
   },
 
   setup(props, { emit }) {
@@ -49,16 +49,17 @@ export default {
 
     // 결과를 서버에서 가져오는 함수
     const fetchResults = async (keyword, page) => {
-      if (isFetching.value || !props.isHashtag) return; // 이미 데이터 가져오는 중이거나 해시태그가 아닌 경우
-      if (keyword === '#') return; // 해시태그가 단지 '#'인 경우 아무 작업도 하지 않음
+      if (isFetching.value || !props.isAt) return; // 이미 데이터 가져오는 중이거나 @가 아닌 경우
+      if (keyword === '@') return; //  단지 '@'인 경우 아무 작업도 하지 않음
       isFetching.value = true; // 데이터 가져오기 시작
 
-      const sendKeyword = keyword.substring(1); // 해시태그 '#' 제거
+      const sendKeyword = keyword.substring(1); // '@' 제거
+      const rowSize=4
       try {
-        const res = await api.get(`/hobby/${sendKeyword}/${page}`); // API 호출
-        const newHobbies = res.data.reqData.findList; // 새로운 결과 리스트
-        if (newHobbies.length) {
-          results.value = [...results.value, ...newHobbies]; // 기존 결과에 새로운 결과 추가
+        const res = await api.get(`/members/following/${sendKeyword}/${page}/${rowSize}`); // API 호출
+        const newFollows = res.data.reqData.followList; // 새로운 결과 리스트
+        if (newFollows.length) {
+          results.value = [...results.value, ...newFollows]; // 기존 결과에 새로운 결과 추가
         }
       } catch (error) {
         console.error('Error fetching results:', error); // 오류 발생 시 로그 출력
@@ -84,7 +85,7 @@ export default {
 
     // 키워드가 변경될 때 호출되는 함수
     watch(() => props.keyword, (newKeyword) => {
-      if (newKeyword && props.isHashtag) {
+      if (newKeyword && props.isAt) {
         page.value = 1; // 페이지 1로 초기화
         results.value = []; // 결과 배열 초기화
         selectedIndex.value = -1; // 선택된 인덱스 초기화
@@ -99,7 +100,7 @@ export default {
 
     // 컴포넌트가 마운트될 때 호출되는 함수
     onMounted(async () => {
-      if (props.isHashtag && container.value) {
+      if (props.isAt && container.value) {
         await nextTick(); // 다음 틱을 기다림
         if (sentinel.value) {
           const observer = new IntersectionObserver(handleIntersection, {
@@ -187,19 +188,17 @@ export default {
 
     // Enter 키 처리 함수
     const handleEnter = () => {
-      if(props.isHashtag){
+      if(props.isAt){
         if (selectedIndex.value >= 0 && selectedIndex.value < results.value.length) {
-        handleClick(results.value[selectedIndex.value].hobby); // 선택된 항목 클릭 처리
-      }else{
-        emit('enterNoSearch')
+        handleClick(results.value[selectedIndex.value].nickname); // 선택된 항목 클릭 처리
       }
       }
     
     };
 
     // 항목 클릭 처리 함수
-    const handleClick = (hobby) => {
-      emit('selectHobby', hobby); // 선택된 관심사전달
+    const handleClick = (follow) => {
+      emit('selectFollow', follow); // 선택된 팔로우인원 전달
     };
 
     // 항목 마우스 오버 처리 함수
