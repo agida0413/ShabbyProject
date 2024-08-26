@@ -5,6 +5,7 @@ import java.util.List;
 
 
 import org.mybatis.spring.MyBatisSystemException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.method.P;
 import org.springframework.stereotype.Service;
@@ -12,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.sist.common.exception.BadRequestException;
+import com.sist.common.exception.InternerException;
 import com.sist.common.util.SimpleCodeGet;
 import com.sist.dto.api.ResponseDTO;
 import com.sist.dto.post.RequestPostDTO;
@@ -27,6 +29,10 @@ public class PostServiceImpl implements PostService {
 	private final PostRepository postRepository;
 	private final SimpleCodeGet simpleCodeGet;
 	private final ImageService imageService;
+	
+	
+	
+	
 	@Override
 	@Transactional
 	public ResponseEntity<ResponseDTO<Void>> postInsertTransaction(RequestPostDTO dto) {
@@ -59,9 +65,9 @@ public class PostServiceImpl implements PostService {
 			
 			//성공시 일단 체크박스 값을 읽어 게시물 상태 세팅(나만보기, 댓글 기능해제여부)
 			if(dto.isCanReply()) {
-				dto.setCanReplyState("USEREPLY");
-			}else {
 				dto.setCanReplyState("NOREPLY");
+			}else {
+				dto.setCanReplyState("USEREPLY");
 			}
 			
 			if(dto.isOnlyMe()) {
@@ -93,14 +99,27 @@ public class PostServiceImpl implements PostService {
 			//url리스트를 세팅한후 게시물 사진 테이블 인서트
 			postRepository.postImgInsert(dto);
 			
-		} catch (MyBatisSystemException e) {
+		} catch (Exception e) {
 			// TODO: handle exception
 			//에러 발생시 s3 사진업로드 된것 삭제 
+		
+			try {
+				for (String imgUrl : imgUrList) {
+				imageService.deleteImage(imgUrl);
+			}
+				
+			} catch (Exception e2) {
+				// TODO: handle exception
+				throw new InternerException("사진 업로드 중 서버 내부오류가 발생했습니다.");
+			}
+			//다시 던져서 트랜잭션 롤백
+			throw  new InternerException("서버 내부오류입니다.");
 		}
 		
 		//s3 업로드 실패시 모든 로직 수행 x 
 		
-		return null;
+		return new ResponseEntity<ResponseDTO<Void>>
+		(new ResponseDTO<Void>(),HttpStatus.OK); //성공 
 	}
 
 }
