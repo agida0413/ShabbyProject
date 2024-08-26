@@ -19,7 +19,8 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class HobbyServiceImpl implements HobbyService {
-	private final int rowSize=5;
+	
+	private final int rowSize=5;//조회할 행 개수 
 	private final HobbyRepository hobbyRepository;
 	private final SimpleCodeGet simpleCodeGet;
 	
@@ -29,25 +30,27 @@ public class HobbyServiceImpl implements HobbyService {
 		return null;
 	}
 
+	//키워드,페이지 기반 관심사 태그 조회 
 	@Override
-	
 	public ResponseEntity<ResponseDTO<ResponseHobbyDTO>> findHobby(String keyword,int page) {
 		// TODO Auto-generated method stub
+		//데이터베이스에 보낼 객체 생성
 		RequestHobbyDTO dto = new RequestHobbyDTO();
-		
+		//offset 설정 - > 계산로직은 항상 동일하여 공통함수에서 계산
 		int offSet=simpleCodeGet.getOffset(rowSize,page);
-		System.out.println(keyword);
-	
-		dto.setKeyword(keyword);
-		dto.setRowSize(rowSize);
-		dto.setStartRow(offSet);
 		
+	
+		dto.setKeyword(keyword);//키워드 세팅
+		dto.setRowSize(rowSize);//행개수 세팅
+		dto.setStartRow(offSet);//offset 세팅 
+		
+		//Limit rowsize offset offset 형태로 키워드기반 관심사 가져옴 
 		List<HobbyDTO> list=hobbyRepository.findHobby(dto);
 		
-		ResponseHobbyDTO resDto=new ResponseHobbyDTO();
+		ResponseHobbyDTO resDto=new ResponseHobbyDTO(); // 전송데이터 객체생성 
 		
 		
-		resDto.setFindList(list);
+		resDto.setFindList(list); //전송데이터 객체 리스트형태<HobbyDto> 에 세팅 
 		
 		
 		return new ResponseEntity<ResponseDTO<ResponseHobbyDTO>>

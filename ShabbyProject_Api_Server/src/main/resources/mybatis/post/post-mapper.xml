@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- 로그인 후 세팅 (닉네임 변경 , 비밀번호 변경 , 휴대폰 번호 변경 , 공개/비공개 모드 전환 , 탈퇴 등 )-->
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+ 
+ <mapper namespace="com.sist.mapper.post.PostMapper">
+ <!--게시물 삽입과 동시에 pk를 반환받는다 .RequestDTO post_num 세팅-->
+ <insert id="postInsert" parameterType="RequestPostDTO" useGeneratedKeys="true" keyProperty="postNum">
+ 	INSERT INTO POST (id_num,content,canReply,onlyME)
+ 	VALUES(#{idNum},#{content},#{canReplyState},#{onlyMeState})
+ </insert>
+ <!--게시물 삽입과 동시에 게시물에 입력된 관심사들도 관심사 테이블에 인서트 -->
+ <insert id="hobbyInsert" parameterType="RequestPostDTO">
+  <if test="hobbyList != null and hobbyList.size() > 0">
+        INSERT INTO hobby (id_num, post_num, hobby)
+        VALUES
+        <foreach collection="hobbyList" item="hobby" separator=",">
+            (#{idNum}, #{postNum}, #{hobby})
+        </foreach>
+    </if>
+ </insert>	
+ <!--게시물 삽입과 동시에 게시물에 태그된 인원 이 있다면 게시물 사람태그 테이블에 삽입-->
+ <!--회원고유번호를 갖고와야하는데 처음부터 고유번호를 클라이언트에게 보내야할까-->
+ <!--보안상  성능이 저하되더라도 서버에서 고유번호를 갖고 오는게 맞는거같다.-->
+ <!--컬럼중복반정규화....고려해야할부분-->
+ <insert id="followTagInsert" parameterType="RequestPostDTO">
+   <if test="followTagList != null and followTagList.size() > 0">
+        INSERT INTO member_tag (post_num, id_num)
+        SELECT  #{postNum}, id_num
+        FROM member
+        WHERE 
+        nickname IN
+       <foreach collection="followTagList" item="follow" open="(" separator="," close=")">
+       #{follow}
+       </foreach>
+        ;
+    </if>
+ </insert>	
+ <!--s3업로드후 반환받은 url리스트를 게시물 사진 테이블에 인서트-->
+ <insert id="postImgInsert" parameterType="RequestPostDTO">
+ 	  <if test="imgUrlList != null and imgUrlList.size() > 0">
+    	INSERT INTO POST_IMG (post_num,post_img_url)
+    	  VALUES
+        <foreach collection="imgUrlList" item="imgUrl" separator=",">
+            (#{postNum},#{imgUrl})
+        </foreach>
+     </if>
+ </insert>
+ 
+ </mapper>
