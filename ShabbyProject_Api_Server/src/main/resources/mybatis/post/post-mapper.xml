@@ -5,8 +5,8 @@
  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
  
- 
  <mapper namespace="com.sist.mapper.post.PostMapper">
+ 
  <!--게시물 삽입과 동시에 pk를 반환받는다 .RequestDTO post_num 세팅-->
  <insert id="postInsert" parameterType="RequestPostDTO" useGeneratedKeys="true" keyProperty="postNum">
  	INSERT INTO POST (id_num,content,canReply,onlyME)
@@ -22,6 +22,7 @@
         </foreach>
     </if>
  </insert>	
+ 
  <!--게시물 삽입과 동시에 게시물에 태그된 인원 이 있다면 게시물 사람태그 테이블에 삽입-->
  <!--회원고유번호를 갖고와야하는데 처음부터 고유번호를 클라이언트에게 보내야할까-->
  <!--보안상  성능이 저하되더라도 서버에서 고유번호를 갖고 오는게 맞는거같다.-->
@@ -39,6 +40,7 @@
         ;
     </if>
  </insert>	
+ 
  <!--s3업로드후 반환받은 url리스트를 게시물 사진 테이블에 인서트-->
  <insert id="postImgInsert" parameterType="RequestPostDTO">
  	  <if test="imgUrlList != null and imgUrlList.size() > 0">
@@ -50,4 +52,7 @@
      </if>
  </insert>
  
+ 
  </mapper>
+ 
+ 

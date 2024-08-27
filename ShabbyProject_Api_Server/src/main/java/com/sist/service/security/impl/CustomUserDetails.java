@@ -55,6 +55,10 @@ public class CustomUserDetails implements UserDetails {
     
         return dto.getEmail(); 
     }
+    //닉네임 
+    public String getNickname() {
+    	return dto.getNickname();
+    }
 
     @Override
     public boolean isAccountNonExpired() {

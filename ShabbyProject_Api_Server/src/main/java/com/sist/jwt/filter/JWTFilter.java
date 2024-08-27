@@ -85,6 +85,7 @@ public class JWTFilter extends OncePerRequestFilter{
 	    	String username = jwtUtil.getUsername(accessToken);//이메일
 	    	String role = jwtUtil.getRole(accessToken);//권한
 	    	int idNum = jwtUtil.getIdNum(accessToken);//고유번호
+	    	String nickname=jwtUtil.getNickname(accessToken);//닉네임
 	    	
 	    	//맴버dto 생성후 담기 
 	    	MemberDTO dto = new MemberDTO();
@@ -92,6 +93,7 @@ public class JWTFilter extends OncePerRequestFilter{
 	    	dto.setEmail(username);
 	    	dto.setRole(role);
 	    	dto.setIdNum(idNum);
+	    	dto.setNickname(nickname);
 	    	
 	    	CustomUserDetails customUserDetails = new CustomUserDetails(dto);//ueserDetails에 dto객체 전달
 	    	//일시적으로 세션에 담기위해 (SecurityContextHolder)

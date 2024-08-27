@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- 관심사 관련 매퍼-->
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+ <mapper namespace="com.sist.mapper.feed.FeedMapper">
+ 
+ <select id="userFeedInfoFromMember" parameterType="RequestUserFeedDTO" resultType="ResponseUserFeedDTO">
+SELECT profile,nickname,introduce,locked,
+	(SELECT COUNT(*) FROM POST 
+	 WHERE id_num= m.id_num
+	) as postAmount,
+	(SELECT COUNT(*) FROM FOLLOW 
+	 WHERE following_id= m.id_num
+	) as followerAmount,
+	(SELECT COUNT(*) FROM FOLLOW  
+	 WHERE id_num= m.id_num
+	) as followingAmount
+FROM MEMBER m
+WHERE nickname=#{nickname} 
+</select>
+
+<!--사용자  피드에서 게시물리스트 가져오기-->
+ 
+ <!--
+	
+	private int postNum;
+private String onlyMe;
+private int likeCount;
+private int replyCount;
+ -->
+ <select id="userFeedPostList" parameterType="RequestUserFeedDTO" resultType="ResponsePostListDTO">
+ SELECT p.post_num, post_img_url ,onlyMe, COALESCE(r.replyCount,0) AS replyCount,COALESCE(pl.likeCount,0) AS likeCount
+ FROM POST p
+ LEFT JOIN 
+ (
+	SELECT post_num,COUNT(*) AS replyCount 
+	FROM reply 
+	GROUP BY post_num
+ ) r 
+ ON p.post_num=r.post_num
+ LEFT JOIN 
+ (
+	SELECT post_num,COUNT(*) AS likeCount 
+	FROM post_like 
+	GROUP BY post_num
+ ) pl
+ ON p.post_num=pl.post_num
+LEFT JOIN (
+    SELECT pi.post_num, pi.post_img_url
+    FROM post_img pi
+    INNER JOIN (
+        SELECT post_num, MIN(post_img_num) AS min_img_num
+        FROM post_img
+        GROUP BY post_num
+    ) subquery 
+    ON pi.post_num = subquery.post_num AND pi.post_img_num = subquery.min_img_num
+) pi
+ ON p.post_num = pi.post_num
+ WHERE p.id_num=
+ (
+	SELECT id_num FROM MEMBER
+	WHERE nickname=#{nickname}
+ )
+ ORDER BY create_date DESC 
+ LIMIT #{rowSize} OFFSET #{startRow} 
+
+ 
+ 
+ </select>
+ </mapper>

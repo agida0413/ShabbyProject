@@ -11,4 +11,6 @@ public interface HobbyRepository {
 	public HobbyDTO allHobby();
 	//특정 관심사 조회
 	public List<HobbyDTO> findHobby(RequestHobbyDTO dto);
+	//닉네임 기반 관심사 리스트
+	public List<HobbyDTO> findHobbyByNickname(String nickname);
 }

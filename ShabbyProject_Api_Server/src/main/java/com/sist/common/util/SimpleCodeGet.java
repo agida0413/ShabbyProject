@@ -35,6 +35,24 @@ public class SimpleCodeGet {
 	    		return idNum;
 	}
 	
+	
+	public String getNickname(Authentication authentication) {
+		 
+		   CustomUserDetails userDetails= (CustomUserDetails)authentication.getPrincipal();
+	    	String nickname=userDetails.getNickname();
+	    		return nickname;
+	}
+	
+	public String getNickname() {
+		 
+		//securitycontext에서 authentication 가져옴 
+		  Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		//authentication에서 userdetails 가져옴 
+		   CustomUserDetails userDetails= (CustomUserDetails)authentication.getPrincipal();
+	    	String nickname = userDetails.getNickname();
+	    		return nickname;
+	}
+	
 	//이메일 정보를 꺼내옴 
 	public String getEmail() {
 		//securitycontext에서 authentication 가져옴 
