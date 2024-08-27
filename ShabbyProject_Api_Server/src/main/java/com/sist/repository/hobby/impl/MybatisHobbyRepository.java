@@ -27,5 +27,11 @@ public class MybatisHobbyRepository implements HobbyRepository{
 		// TODO Auto-generated method stub
 		return hobbyMapper.findHobby(dto);
 	}
+	//닉네임 기반 관심사 리스트
+	@Override
+	public List<HobbyDTO> findHobbyByNickname(String nickname) {
+		// TODO Auto-generated method stub
+		return hobbyMapper.findHobbyByNickname(nickname);
+	}
 
 }

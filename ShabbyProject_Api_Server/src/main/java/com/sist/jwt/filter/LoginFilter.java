@@ -85,6 +85,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     	//다중토큰발급 시작
     	String email = authentication.getName();
     	
+
     	// 권한 값 읽어오기
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities(); 
         Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
@@ -94,10 +95,13 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         int idNum=simpleCodeGet.getIdNum(authentication);
         //문자열로 변환 
         String strIdNuM=String.valueOf(idNum);
-     
+        
+        //닉네임 가져오기
+        String nickname=simpleCodeGet.getNickname(authentication);
+        
         //토큰 생성( 각토큰이름 + email+role+strIdNum + 유효기간 + 시크릿키(sha))
-        String access = jwtUtil.createJwt("access", email, role,strIdNuM, 10000L);//엑세스 토큰 
-        String refresh = jwtUtil.createJwt("refresh", email, role,strIdNuM, 86400000L); //리프레시 토큰 
+        String access = jwtUtil.createJwt("access", email, role,strIdNuM,nickname, 10000L);//엑세스 토큰 
+        String refresh = jwtUtil.createJwt("refresh", email, role,strIdNuM,nickname ,86400000L); //리프레시 토큰 
         
   
         //refresh토큰 데이터베이스에 저장 = > 서버에서 제어권을 가지려고 ( 나중에 탈취당했을때에 대비하여)

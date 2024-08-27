@@ -45,6 +45,10 @@ public class JWTUtil {
     	return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("category",String.class);
     }
     
+    public String getNickname(String token) {
+    	return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("nickname",String.class);
+    }
+    
     
     public int getIdNum(String token) {
     	return Integer.parseInt(Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("idNum",String.class)); 
@@ -53,13 +57,14 @@ public class JWTUtil {
     
     
     //토큰을 만듬 
-    public String createJwt(String category,String username, String role,String idNum, Long expiredMs) {
+    public String createJwt(String category,String username, String role,String idNum,String nickname, Long expiredMs) {
 
         return Jwts.builder()
         		.claim("category", category) //refresh토큰인지 access 토큰인지 
                 .claim("username", username) //이메일
                 .claim("role", role) //권한 
                 .claim("idNum",idNum)//고유번호
+                .claim("nickname", nickname)
                 .issuedAt(new Date(System.currentTimeMillis()))//만든날
                 .expiration(new Date(System.currentTimeMillis() + expiredMs))//유효기간
                 .signWith(secretKey)//시크릿키

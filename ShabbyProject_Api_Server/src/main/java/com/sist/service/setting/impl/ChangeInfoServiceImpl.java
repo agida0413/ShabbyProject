@@ -56,8 +56,8 @@ public class ChangeInfoServiceImpl implements ChangeInfoService{
 		//전송객체 생성	
 		MemberDTO sendDto=new MemberDTO();
 		//전송데이터 세팅
-		sendDto.setLocked(dto.getLocked());
-		
+		sendDto.setLocked(dto.getLocked());//비공개여부 
+		sendDto.setNickname(dto.getNickname());//닉네임 
 		  return new ResponseEntity<ResponseDTO<MemberDTO>>
 			(new ResponseDTO<MemberDTO>(sendDto),HttpStatus.OK); //성공 
 	}

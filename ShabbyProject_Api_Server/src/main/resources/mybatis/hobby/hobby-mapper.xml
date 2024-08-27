@@ -19,4 +19,13 @@ SELECT distinct hobby from hobby
 WHERE hobby LIKE CONCAT('%',#{keyword},'%')
 LIMIT #{rowSize} OFFSET #{startRow} 
 </select>
+
+<!--닉네임에 의한 관심사 리스트 -->
+<select id="findHobbyByNickname" parameterType="String" resultType="HobbyDTO">
+SELECT distinct hobby FROM hobby 
+WHERE id_num=
+(SELECT id_num FROM MEMBER
+WHERE nickname=#{nickname}
+)
+</select>
  </mapper>
