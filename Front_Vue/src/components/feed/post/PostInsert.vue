@@ -4,9 +4,13 @@
     
     <v-card class="to-doubleBlack">
       <v-container fluid>
-        
+        <v-progress-linear
+      color="cyan"
+      indeterminate
+      v-if="isLoading"
+    ></v-progress-linear>
         <v-row no-gutters>
-          
+            
           <v-col cols="6" class="image-section">
             <!-- 사진 목록-->
             <v-carousel v-model="currentPage" show-arrows="hover">
@@ -18,8 +22,29 @@
                   v-for="(image, index) in images" :key="index"
                   :src="image"
                   cover
-                ></v-carousel-item>
+                >
+                    <v-icon
+                      class="remove-icon"
+                      @click="removeImage(index)"
+                     :class="{ 'icon-disabled': isLoading }"
+                    >mdi-close
+                    </v-icon>
+              </v-carousel-item>
               </div>
+              <div v-if="!images.length">
+                <v-carousel-item
+                  width="550px"
+                  height="500px"
+                  style="object-fit: contain;"
+                 
+                  src="@/assets/noImg.png"
+                  cover
+                >
+                   
+              </v-carousel-item>
+              </div>
+
+              
             </v-carousel>
           </v-col>
           
@@ -29,6 +54,7 @@
             <v-icon
               class="close-icon"
               @click="closeDialog"
+              :class="{ 'icon-disabled': isLoading }"
             >mdi-close</v-icon><!-- x아이콘 - > 모달 닫음-->
 
             <v-card-text v-show="!moreReply"><!-- 아닐시 게시물 내용, 좋아요, 수정, 삭제, 댓글 하나만 보임 -->
@@ -40,9 +66,10 @@
                     color="primary"
                     @click="triggerFileInput"
                     rounded
+                    :disabled="isLoading"  
                   >
                     <v-icon left>mdi-attachment</v-icon>
-                    사진 첨부
+                    사진 여러장 첨부
                     <input
                       type="file"
                       ref="fileInput"
@@ -50,6 +77,25 @@
                       @change="handleFileChange"
                       style="display: none"
                       accept="image/*"
+                      :disabled="isLoading"  
+                    />
+                  </v-btn>
+                  <v-btn
+                    class="ma-2"
+                    color="primary"
+                    @click="triggerSingleFileInput"
+                    rounded
+                    :disabled="isLoading" 
+                  >
+                    <v-icon left>mdi-attachment</v-icon>
+                    사진 한장 씩 첨부
+                    <input
+                      type="file"
+                      ref="fileSingleInput"
+                      @change="handleSingleFileChange"
+                      style="display: none"
+                      accept="image/*"
+                      :disabled="isLoading"  
                     />
                   </v-btn>
                   <v-textarea
@@ -60,6 +106,7 @@
                     auto-grow
                     shaped
                     v-model="content"
+                    :disabled="isLoading" 
                   ></v-textarea>
                 </v-col>
 
@@ -74,6 +121,7 @@
                   <v-icon
                     class="v-close-icon"
                     @click.stop="removeHobby(index)"
+                    :class="{ 'icon-disabled': isLoading }" 
                   >mdi-close</v-icon>
                 </v-chip>
 
@@ -89,6 +137,7 @@
                     @keydown=" handleHobbyKeyDown"
                     v-model="searchHobby"
                     class="autocomplete-input"
+                    :disabled="isLoading"
                   ></v-textarea>
                  
                    
@@ -116,6 +165,7 @@
                   <v-icon
                     class="v-close-icon"
                     @click.stop="removeFollow(index)"
+                    :class="{ 'icon-disabled': isLoading }" 
                   >mdi-close</v-icon>
                 </v-chip>
 
@@ -130,6 +180,7 @@
                     @input=" checkIsAt"
                     @keydown=" handleFollowKeyDown"
                     v-model="searchFollow"
+                    :disabled="isLoading"
                   ></v-textarea>
                   <FollowSearchBar
                     ref="followSearchBar"
@@ -144,13 +195,13 @@
                 <v-divider></v-divider>
                 
                 <span >
-                  <v-checkbox v-model="canReplyCheck" label="댓글기능 해제" style="float: left;"></v-checkbox>
-                  <v-checkbox v-model="onlymeCheck" label="나만보기" style="float:left;" ></v-checkbox>
+                  <v-checkbox v-model="canReplyCheck" label="댓글기능 해제" style="float: left;" :disabled="isLoading"></v-checkbox>
+                  <v-checkbox v-model="onlymeCheck" label="나만보기" style="float:left;" :disabled="isLoading"></v-checkbox>
                  <span style="margin-left:200px">
-                   <v-btn icon="mdi-pencil" size="50" color="black" @click="submitPost()" style="float:right;">
+                   <v-btn icon="mdi-pencil" size="50" color="black" @click="submitPost()" :disabled="isLoading" style="float:right;">
 
                    </v-btn>
-                  </span><!--수정 버튼-->
+                  </span>
                 </span>
               </v-row>
             </v-card-text>
@@ -182,7 +233,6 @@ data() {
     content: '', // 게시물 내용(글)
     currentPage: 0, // 사진 첨부 후 처음 인덱스로 돌아가게
 
-  
     searchHobby: '', // 관심사 검색어
     hobbiesRequest: [], // 관심사 태그 목록,서버에 보낼 데이터 
     isHashtag:false,//#을할시 자동완성 검색리스트 노출 
@@ -192,10 +242,13 @@ data() {
     isAt:false,//입력값이 @인지 확인 
     
     canReplyCheck: false, // 댓글 기능 해제 체크박스
-    onlymeCheck: false // 나만 보기 기능 체크박스
+    onlymeCheck: false, // 나만 보기 기능 체크박스
+
+    isLoading:false //서버전송중 
   }
 },
 computed: {
+  //부모로부터 받은 모달 열림 제어변수 리턴
   localDialog: {
     get() {
       return this.value;
@@ -259,53 +312,108 @@ methods: {
    handleFollowEnter(){
      this.$refs.followSearchBar.handleEnter();
    },
-    
-   handleFileChange(event) {
-  const files = event.target.files; // 파일 목록 가져옴
-  const newImages = []; // 새 이미지 URL 저장 배열
-  const newSendImgs = []; // 새 이미지 파일객체 저장 배열
-  const MAX_SIZE_MB = 10; // 최대 파일 크기 설정 (MB)
-  const MAX_SIZE_BYTES = MAX_SIZE_MB * 1024 * 1024; // 최대 파일 크기 (바이트)
+   //사진 한장씩 추가 하는 메서드
+   handleSingleFileChange(event) {
+    const file = event.target.files[0]; // 선택한 첫 번째 파일 가져오기
+    if (!file) return; // 파일이 선택되지 않았으면 리턴
 
-  if (files.length === 0) return; // 파일 없으면 리턴
+    // 파일 크기 제한 (5MB 예제)
+    const MAX_SIZE_MB = 5;
+    const MAX_SIZE_BYTES = MAX_SIZE_MB * 1024 * 1024; // 최대 파일 크기 (바이트)
 
-  Array.from(files).forEach(file => { // 파일 리스트를 배열로 변환 후 반복 처리
-    if (file.size > MAX_SIZE_BYTES) { // 파일 크기 검사
-      alert(`파일 '${file.name}'의 크기가 ${MAX_SIZE_MB}MB를 초과합니다.`); // 크기 초과 시 경고
-      return; // 파일 크기 초과 시 처리 중지
+    //만약 파일크기가 5mb를 초과하면 메서드 종료 
+    if (file.size > MAX_SIZE_BYTES) {
+      alert(`파일 '${file.name}'의 크기가 ${MAX_SIZE_MB}MB를 초과합니다.`);
+      return;
     }
 
-    const reader = new FileReader(); // 파일 읽기 객체 생성
+  const reader = new FileReader(); // 파일 읽기 객체 생성
 
-    reader.onload = (e) => { // 파일 읽기 완료 시 실행되는 콜백
+  reader.onload = (e) => {
+    const img = new Image(); // 이미지 객체 생성
+    img.src = e.target.result; // 파일 데이터를 이미지 소스로 설정
+
+    img.onload = () => {
+      const canvas = document.createElement('canvas'); // 캔버스 생성
+      const ctx = canvas.getContext('2d'); // 2D 컨텍스트 가져옴
+      const width = 550; // 캔버스 너비 설정
+      const height = 500; // 캔버스 높이 설정
+
+      canvas.width = width; // 캔버스 너비 설정
+      canvas.height = height; // 캔버스 높이 설정
+      ctx.drawImage(img, 0, 0, width, height); // 이미지 그리기
+
+      canvas.toBlob((blob) => { // 캔버스를 Blob으로 변환
+        if (blob) {
+          const resizedFile = new File([blob], file.name, { type: 'image/jpeg' }); // 새 파일 생성
+          this.images.push(URL.createObjectURL(resizedFile)); // 새 이미지 URL 배열에 추가
+          this.sendImg.push(resizedFile); // 새 이미지 파일 배열에 추가
+          this.currentPage = this.images.length - 1; // 마지막으로 추가된 이미지로 페이지 이동
+        } else {
+          console.error('Blob 생성 실패');
+        }
+      }, 'image/jpeg'); // Blob 형식 설정
+    };
+
+    img.onerror = () => {
+      console.error('이미지 로드 실패');
+    };
+  };
+
+  reader.onerror = () => {
+    console.error('파일 읽기 실패');
+  };
+
+  reader.readAsDataURL(file); // 파일 읽기 시작
+},
+   //사진 여러장 한번에 추가하는 메서드
+   handleFileChange(event) {
+    const files = event.target.files; // 파일 목록 가져옴
+    const newImages = []; // 새 이미지 URL 저장 배열
+    const newSendImgs = []; // 새 이미지 파일객체 저장 배열
+    const MAX_SIZE_MB = 5; // 최대 파일 크기 설정 (MB)
+    const MAX_SIZE_BYTES = MAX_SIZE_MB * 1024 * 1024; // 최대 파일 크기 (바이트)
+
+    if (files.length === 0) return; // 파일 없으면 리턴
+
+   Array.from(files).forEach(file => { // 파일 리스트를 배열로 변환 후 반복 처리
+
+      if (file.size > MAX_SIZE_BYTES) { // 파일 크기 검사
+        alert(`파일 '${file.name}'의 크기가 ${MAX_SIZE_MB}MB를 초과합니다.`); // 크기 초과 시 경고
+        return; // 파일 크기 초과 시 처리 중지
+      }
+
+       const reader = new FileReader(); // 파일 읽기 객체 생성
+
+      reader.onload = (e) => { // 파일 읽기 완료 시 실행되는 콜백
       const img = new Image(); // 이미지 객체 생성
       img.src = e.target.result; // 파일 데이터를 이미지 소스로 설정
 
       img.onload = () => { // 이미지 로드 완료 시 실행되는 콜백
-        const canvas = document.createElement('canvas'); // 캔버스 생성
-        const ctx = canvas.getContext('2d'); // 2D 컨텍스트 가져옴
-        const width = 550; // 캔버스 너비 설정
-        const height = 500; // 캔버스 높이 설정
+          const canvas = document.createElement('canvas'); // 캔버스 생성
+          const ctx = canvas.getContext('2d'); // 2D 컨텍스트 가져옴
+          const width = 550; // 캔버스 너비 설정
+          const height = 500; // 캔버스 높이 설정
 
-        canvas.width = width; // 캔버스 너비 설정
-        canvas.height = height; // 캔버스 높이 설정
-        ctx.drawImage(img, 0, 0, width, height); // 이미지 그리기
+          canvas.width = width; // 캔버스 너비 설정
+          canvas.height = height; // 캔버스 높이 설정
+          ctx.drawImage(img, 0, 0, width, height); // 이미지 그리기
 
-        canvas.toBlob((blob) => { // 캔버스를 Blob으로 변환
-          if (blob) { // Blob 생성 성공 시
-            const resizedFile = new File([blob], file.name, { type: 'image/jpeg' }); // 새 파일 생성
-            newImages.push(URL.createObjectURL(resizedFile)); // 새 이미지 URL 배열에 추가
-            newSendImgs.push(resizedFile); // 새 이미지 파일 배열에 추가
+          canvas.toBlob((blob) => { // 캔버스를 Blob으로 변환
+            if (blob) { // Blob 생성 성공 시
+              const resizedFile = new File([blob], file.name, { type: 'image/jpeg' }); // 새 파일 생성
+              newImages.push(URL.createObjectURL(resizedFile)); // 새 이미지 URL 배열에 추가
+              newSendImgs.push(resizedFile); // 새 이미지 파일 배열에 추가
 
-            if (newImages.length === files.length) { // 모든 파일 처리 완료 시
-              this.images = newImages; // 이미지 URL 업데이트
-              this.sendImg = newSendImgs; // 이미지 파일 업데이트
-              this.currentPage = 0; // 현재 페이지 리셋
+              if (newImages.length === files.length) { // 모든 파일 처리 완료 시
+                this.images = newImages; // 이미지 URL 업데이트
+                this.sendImg = newSendImgs; // 이미지 파일 업데이트
+                this.currentPage = 0; // 현재 페이지 리셋
+              }
+            } else {
+              console.error('Blob 생성 실패'); // Blob 생성 실패 시 에러 출력
             }
-          } else {
-            console.error('Blob 생성 실패'); // Blob 생성 실패 시 에러 출력
-          }
-        }, 'image/jpeg'); // Blob 형식 설정
+          }, 'image/jpeg'); // Blob 형식 설정
       };
 
       img.onerror = () => {
@@ -320,6 +428,16 @@ methods: {
     reader.readAsDataURL(file); // 파일 읽기 시작
   });
 },
+//사진의 우상단 x아이콘 클릭시 사진배열에서 제거메서드
+removeImage(index) {//해당 인덱스를 받음
+  this.images.splice(index, 1);//url배열에서 인덱스 위치에서 한개 제거
+  this.sendImg.splice(index, 1);//파일객체 배열에서 인덱스 위치에서 한개 제거
+
+  // 사진 페이지 인덱스 조정
+  if (this.currentPage >= this.images.length) {
+    this.currentPage = this.images.length - 1; 
+  }
+},
   checkIsHashTag(){
     //#으로 시작하면 HobbySearchBar가 열림 
     this.isHashtag = this.searchHobby.startsWith('#');
@@ -328,24 +446,51 @@ methods: {
     //요약= > #테스트 하고 스페이스를 누르면 등록
     if(this.searchHobby.endsWith(' ')&&this.searchHobby.startsWith('#')&&this.searchHobby.length>1&&this.searchHobby.replace(/#/g, '').trim().length>0){
       this.searchHobby=this.searchHobby.substring(1,this.searchHobby.lastIndexOf(' '))
-      this.hobbiesRequest.push(this.searchHobby); // 인덱스 없이 배열에 추가
+      //현재 관심사 입력값 
+      const hobby=this.searchHobby
+      // 이미 현재 검색값이 배열에 존재하는지 확인 
+      const exists = this.hobbiesRequest.some(hb => hb === hobby);
+      //존재하지않다면 
+      if(!exists){
+        this.hobbiesRequest.push(hobby); // 인덱스 없이 배열에 추가
+      }
+      //초기값으로 # 
       this.searchHobby = '#';
+      //검색목록 닫기
       this.isHashtag = false;
     }
      //#으로 시작해서 ,으로 끝나고,#만입력한 경우가 아니면 관심사 태그목록배열에 자동추가
     //요약= > #테스트 하고 ,를 누르면 등록
     if(this.searchHobby.endsWith(',')&&this.searchHobby.startsWith('#')&&this.searchHobby.length>1&&this.searchHobby.replace(/#/g, '').trim().length>0){
       this.searchHobby=this.searchHobby.substring(1,this.searchHobby.lastIndexOf(','))
-      this.hobbiesRequest.push(this.searchHobby); // 인덱스 없이 배열에 추가
+      //현재 관심사 입력값 
+       const hobby=this.searchHobby
+      // 이미 현재 검색값이 배열에 존재하는지 확인 
+      const exists = this.hobbiesRequest.some(hb => hb === hobby);
+      //존재하지않다면 
+      if(!exists){
+        this.hobbiesRequest.push(hobby); // 인덱스 없이 배열에 추가
+      }
+      //초기값으로 # 
       this.searchHobby = '#';
+      //검색목록 닫기 
       this.isHashtag = false;
     }
      //#으로 시작해서 #으로 끝나고,#만입력한 경우가 아니면 관심사 태그목록배열에 자동추가
     //요약= > #테스트 하고 #하면 자동등록 
     if(this.searchHobby.endsWith('#')&&this.searchHobby.startsWith('#')&&this.searchHobby.length>1&&this.searchHobby.replace(/#/g, '').trim().length>0){
       this.searchHobby=this.searchHobby.substring(1,this.searchHobby.lastIndexOf('#'))
-      this.hobbiesRequest.push(this.searchHobby); // 인덱스 없이 배열에 추가
-      this.searchHobby = '#';//초기값을 #으로해서 바로 태그입력 편의성 제공 
+      //현재 관심사 입력값 
+      const hobby=this.searchHobby
+      // 이미 현재 검색값이 배열에 존재하는지 확인 
+      const exists = this.hobbiesRequest.some(hb => hb === hobby);
+      //존재하지않다면 
+      if(!exists){
+        this.hobbiesRequest.push(hobby); // 인덱스 없이 배열에 추가
+      }
+      //초기값으로 # 
+      this.searchHobby = '#';
+      //검색목록 닫기 
       this.isHashtag = false;
     }
   },
@@ -356,21 +501,32 @@ methods: {
   },
     //자식에서 해당항목 엔터를 누를시 호출한 메서드
     selectHobby(hobby) {
-      this.hobbiesRequest.push(hobby); // 인덱스 없이 배열에 추가
+      //만약 현재 배열에 현재입력값이 존재하는지 확인
+      const exists = this.hobbiesRequest.some(hb => hb === hobby);
+      //배열에 현재값이 없다면 
+      if(!exists){
+        this.hobbiesRequest.push(hobby); // 인덱스 없이 배열에 추가
+      }
+     
       this.searchHobby = '';//검색값은 초기값
       this.isHashtag = false;//검색창 닫힘
 
     },
-
+    //관심사 배열에서 해당인덱스 관심사 삭제 메서드
     removeHobby(index) {
       this.hobbiesRequest.splice(index, 1); // 인덱스로 배열에서 제거
 
     },
     //자식 컴포넌트에서 엔터시 자동완성 검색을 통한 태그입력이 아닌 본인이 원하는 태그입력 
     enterNoSearchHobby() {
-      
-      const hobby = this.searchHobby.substring(1);//#제거
-      this.hobbiesRequest.push(hobby); // 인덱스 없이 배열에 추가
+      //#제거
+      const hobby = this.searchHobby.substring(1);
+      //현재 배열에 현재 관심사 입력값이 존재하는지 확인
+      const exists = this.hobbiesRequest.some(hb => hb === hobby);
+      //만약 배열에 현재값이 존재하지않다면 
+      if(!exists){
+        this.hobbiesRequest.push(hobby); // 인덱스 없이 배열에 추가
+      }
       this.searchHobby = '';//초기값 설정
       this.isHashtag = false;//검색창 닫음
    
@@ -388,20 +544,27 @@ methods: {
       this.isAt = false;//검색창 닫음
 
     },
-    //배열에서 인물태그 제거
+    //배열에서 사람태그 제거
     removeFollow(index) {
       this.followRequest.splice(index, 1); // 인덱스로 배열에서 제거
 
     },
 
   
-    //게시물 등록 
+  //게시물 등록 
   submitPost() {
+    //이미 서버로 전송중인경우 방지
+    if(this.isLoading){
+      alert('이미 처리중인 요청입니다.')
+      return
+    }
     //사진없이는 게시물작성 불가 
     if(this.images.length===0){
       alert('사진한장이상을 첨부 해주세요.')
       return
     }
+
+    
     //사진을 포함한 formdata 객체
     let formData = new FormData();
     this.sendImg.forEach((image) => {
@@ -414,38 +577,58 @@ methods: {
     formData.append('canReply',this.canReplyCheck)//댓글 사용여부 
     formData.append('onlyMe',this.onlymeCheck)//나만보기 여부
     
+    //서버전송 true
+    this.isLoading=true
+
     //게시물 작성 api
     api.post('/post',formData,{
       headers: {
             'Content-Type': 'multipart/form-data'
         }
     })
-    .then((res)=>{
-      console.log(res)
+    .then(()=>{
+      //성공시 alert 띄우고 컴포넌트 해제
+      alert('게시물 등록이 완료되었습니다.')
+      this.closeDialog()
     })
     .catch((err)=>{
-      console.log(err)
+      alert(err.response.data.message)
+    })
+    .finally(()=>{
+      //서버 전송끝
+      this.isLoading=false
     })
 
   },
 
-  //css커스텀으로 인한 첨부파일 모듈 띄우기 위한 메소드(ref)
+  //css커스텀으로 인한 다중첨부파일 모듈 띄우기 위한 메소드(ref)
   triggerFileInput() {
     this.$refs.fileInput.click();
   },
+  //css커스텀으로 인한 단일첨부파일 모듈 띄우기 위한 메소드(ref)
+  triggerSingleFileInput(){
+    this.$refs.fileSingleInput.click();
+  },
   // 게시물 작성 모달 닫음 
   closeDialog() {
+    //컴포넌트 값 초기화
+    this.images=[],
+    this.sendImg=[],
+    this.content='',
+    this.currentPage=0,
+    this.searchHobby='',
+    this.hobbiesRequest=[],
+    this.isHashtag=false,
+    this.searchFollow='',
+    this.followRequest=[],
+    this.isAt=false,
+    this.canReplyCheck=false,
+    this.onlymeCheck=false
+    // 게시물 작성 컴포넌트 닫기 이벤트 전송 
     this.$emit('postInsertClose', false); 
-    this.moreReply = false;
+   
   },
-  //댓글 더보기 열음
-  moreReplyOpen() {
-    this.moreReply = true;
-  },
-  //댓글 더보기 닫음
-  moerReplyClose() {
-    this.moreReply = false;
-  }
+ 
 },
 components: {
   HobbySearchBar,
@@ -637,5 +820,33 @@ components: {
   right: 5px; /* 칩의 우측으로부터의 거리 조정 */
   top: 50%; /* 칩의 세로 중앙에 위치시키기 위한 설정 */
   transform: translateY(-50%); /* 세로 중앙 조정을 위한 변환 */
+}
+.remove-icon {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: #ff4d4d; /* 밝은 빨강색 배경 */
+  color: white; /* 아이콘 색상을 흰색으로 변경 */
+  border-radius: 50%; /* 원형 배경 유지 */
+  font-size: 20px; /* 적당한 아이콘 크기 */
+  width: 30px; /* 아이콘의 너비 */
+  height: 30px; /* 아이콘의 높이 */
+  display: flex; /* 아이콘 중앙 정렬을 위해 flex 사용 */
+  align-items: center; /* 세로 중앙 정렬 */
+  justify-content: center; /* 가로 중앙 정렬 */
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* 부드러운 그림자 효과 */
+  transition: background-color 0.3s, transform 0.2s; /* 배경색과 크기 변화에 애니메이션 추가 */
+}
+
+.remove-icon:hover {
+  background-color: #e60000; /* 호버 시 더 어두운 빨강색 배경 */
+  transform: scale(1.1); /* 호버 시 아이콘 확대 효과 */
+}
+
+.icon-disabled {
+ 
+  pointer-events: none; /* 클릭 불가능 */
+  cursor: not-allowed; /* 커서 모양 변경 */
 }
 </style>

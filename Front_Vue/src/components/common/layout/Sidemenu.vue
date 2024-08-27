@@ -28,7 +28,9 @@
           <v-list-item prepend-icon="mdi-pencil" title="새 게시물" value="account" @click="postInsertDialogOpen"></v-list-item>
               <router-link to="/globalfeed" class="router-link"> <v-list-item prepend-icon="mdi-account-group-outline" title="글로벌 피드" value="users"></v-list-item></router-link>
               <router-link to="/" class="router-link"> <v-list-item prepend-icon="mdi-home-city" title="메인 피드" value="users"></v-list-item></router-link>
-              <router-link to="/userfeed" class="router-link"><v-list-item prepend-icon="mdi-home" title="내 피드" value="home"></v-list-item></router-link>
+              <template v-if="memberData.nickname">
+              <router-link :to="{ name: 'userfeed', params: {nickname:this.memberData.nickname }}" class="router-link"><v-list-item prepend-icon="mdi-home" title="내 피드" value="home"></v-list-item></router-link>
+              </template>
               <v-list-item prepend-icon="mdi-heart-outline" title="활동" value="users"></v-list-item>
                 <v-list-item prepend-icon="mdi-wrench" title="설정" value="home" @click="settingDialogOpen()"></v-list-item>
                 <v-list-item prepend-icon="mdi-lock" title="로그아웃" value="users" @click="logout()"></v-list-item>
@@ -61,10 +63,14 @@ export default{
       memberData:{} //회원정보 
     }
   },
+ 
   components:{
     SettingComponent,//세팅 컴포넌트
     PostInsert//게시물 작성 컴포넌트
   },
+ mounted(){
+  this.getInitInfo()
+ },
   methods:{
     //자식에서 받은 변한 상태값 매개변수로 받음 
     reGetInfo(changeState){
@@ -77,8 +83,8 @@ export default{
         api.get('/setting')
         .then((res)=>{
           //성공시 
-          this.memberData.locked=res.data.reqData.locked//공개여부 정보 저장 
-       
+          this.memberData=res.data.reqData//공개여부 정보 저장 
+          console.log(this.memberData)
           
         })
         .catch((err)=>{

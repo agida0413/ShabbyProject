@@ -18,9 +18,10 @@ const routes = [
     component: Join
   },
   {
-    path: '/userfeed',
+    path: '/userfeed/:nickname',
     name: 'userfeed',
     component: UserFeed,
+    props: route => ({ nickname: route.params.nickname }), // URL 파라미터를 props로 전달
     meta: { requiresAuth: true }, // 인증이 필요한 라우터
   },
   {
