@@ -1,8 +1,8 @@
-<template>
-  <v-app class="no-cursor " style="background-color: #2C2C2C; color: aliceblue;">
-    <v-main :class="!isLoginPage && !isJoinPage ? 'main-container' : ''">
-      <v-container v-if="!isLoginPage && !isJoinPage" class="main-content ">
-        <v-row no-gutters>
+<template >
+  <v-app class="no-cursor to-blackMode">
+    <v-main :class="!isLoginPage && !isJoinPage ? 'main-container' : ''"  >
+      <v-container v-if="!isLoginPage && !isJoinPage" class="main-content " >
+        <v-row no-gutters >
           <!-- 사이드 메뉴 -->
          
             <SideMenu />
@@ -13,7 +13,7 @@
             <Header v-if="!isLoginPage && !isJoinPage" class="fixed-header "  ></Header>
 
             <!-- 콘텐츠 영역 -->
-             <v-container style=" margin-top: 60px;"  class="scrollable-row "> <router-view /></v-container>
+             <v-container style=" margin-top: 60px; background-color: #2C2C2C;"  class="scrollable-row "> <router-view /></v-container>
            <!-- 로그인 페이지와 회원가입페이지는 푸터 노출 x-->
             <Footer v-if="!isLoginPage && !isJoinPage" ></Footer>
         

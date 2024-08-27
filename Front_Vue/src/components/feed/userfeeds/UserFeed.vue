@@ -1,14 +1,14 @@
 <template>
-  <div>
-    <!-- 로딩 상태일 때 스피너만 보이도록 -->
-    <v-row v-if="isLoading" class="loading-overlay">
+  
+        <!-- 로딩 상태일 때 스피너만 보이도록 -->
+    <v-row v-if="isLoading || childIsLoading" class="loading-overlay">
       <v-col class="d-flex justify-center align-center">
         <v-progress-circular indeterminate color="primary"></v-progress-circular>
       </v-col>
     </v-row>
 
     <!-- 로딩 상태가 아닐 때만 나머지 콘텐츠가 보이도록 -->
-    <v-row v-else>
+    <v-row v-else >
       <!-- 프로필 사진 -->
       <v-col cols="3">
         <div class="avatar-wrapper">
@@ -109,16 +109,20 @@
     </v-row>
 
     <!-- 피드 게시글 -->
-    <v-row class="mt-7">
-    <UserFeedPostList></UserFeedPostList>
+    <v-row class="mt-7" style="height: 880px; width: 100%;">
+    <UserFeedPostList
+      @childLoadingComplete="childLoadingComplete"
+      :nickname="nickname"
+    ></UserFeedPostList>
     </v-row>
+
 
     <!-- 팔로우/팔로잉 목록 모달 -->
     <FlwListComponent v-model:value="flwListDialog" v-bind:flwType="flwType" @flwListClose="flwListDialogClose"></FlwListComponent>
 
     <!-- 프로필 편집 모달 -->
     <FeedEditComponent v-model:value="feedEditDialog" @feedEditClose="feedEditDialogClose"></FeedEditComponent>
-  </div>
+
 </template>
 
 <script>
@@ -135,7 +139,8 @@ export default {
       flwListDialog: false, // 팔로우/팔로잉 목록 모달 제어값
       flwType: '', // 팔로우 ? 팔로잉?
       feedEditDialog: false, // 프로필 편집 모달 제어값
-      isLoading: true // 로딩 상태 초기화
+      isLoading: true, // 로딩 상태 초기화
+      childIsLoading:true //자식 로딩
     };
   },
   components: {
@@ -164,16 +169,10 @@ export default {
         .finally(() => {
           this.isLoading = false;
         });
-        api.get(`/feed/userfeed/${this.nickname}/1`)
-        .then((res) => {
-          console.log(res.data)
-        })
-        .catch((err) => {
-          alert(err.response.data.message);
-        })
-        .finally(() => {
-          this.isLoading = false;
-        });
+       
+    },
+    childLoadingComplete(){
+      this.childIsLoading=false
     },
     flwListDialogOpen(str) {  // 팔로워, 팔로잉 각각 버튼 클릭 시 str로 매개변수 받아와 flwType을 초기화 
                             // => flwList 컴포넌트 하나로 운영 (str 전달 -> 팔로잉 목록 or 팔로우 목록)
@@ -195,13 +194,24 @@ export default {
 </script>
 
 <style>
+html, body, #app, .v-application {
+  background-color: #2C2C2C !important;
+  color: aliceblue;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.v-container, .v-main, .v-row, .v-col {
+  background-color: transparent !important; /* 상속된 스타일이 덮어쓰지 않도록 설정 */
+}
 .loading-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(255, 255, 255, 0.7);
+  background-color: rgba(255, 255, 255, 0.7) !important;
   display: flex;
   justify-content: center;
   align-items: center;

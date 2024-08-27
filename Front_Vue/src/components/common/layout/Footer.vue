@@ -1,9 +1,9 @@
 <template>
-    <div class="text-center">
+    <div class="text-center ">
      
       <v-bottom-sheet v-model="sheet">
         <v-card
-          class="text-center"
+          class="text-center "
           height="200"
         >
           <v-card-text>
