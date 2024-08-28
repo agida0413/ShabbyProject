@@ -191,7 +191,7 @@ export default {
           
           //성공했을시 
                 //서버로 부터 받은 access헤더에서 토큰을 꺼내옴   
-                const accessToken = res.headers['access'];
+                const accessToken = res?.headers['access'];
                 //로컬스토리지에 access토큰 저장 
                 localStorage.setItem('access', accessToken); 
 
@@ -210,8 +210,8 @@ export default {
         })
         .catch((err)=>{
         //실패시 서버에서 전송한 에러메시지 출력
-        console.log(localStorage.getItem('access'))
-        alert(err.response.data.message)
+       
+        alert(err?.response?.data?.message)
        
         })
         .finally(()=>{

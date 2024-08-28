@@ -247,13 +247,13 @@
               })
               .then((res)=>{  
                 //성공시
-                  this.findEmail=res.data.reqData.email;//응답객체에서 이메일정보를 가져옴 
-                  this.findCreateDate=res.data.reqData.vueCreateDate//응답객체에서 생성일을 가져옴 
+                  this.findEmail=res?.data?.reqData?.email;//응답객체에서 이메일정보를 가져옴 
+                  this.findCreateDate=res?.data?.reqData?.vueCreateDate//응답객체에서 생성일을 가져옴 
                   this.isAuth=true; // 아이디를 보여주는 변수 
               })
               .catch((err)=>{
                 //실패시 서버로부터 받은 메시지 출력 
-                alert(err.response&&err.response.data.message) 
+                alert(err?.response?.data?.message) 
                     
               })
               .finally(()=>{

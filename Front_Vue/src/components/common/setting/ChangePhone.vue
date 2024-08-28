@@ -230,7 +230,7 @@ export default {
             })
             .catch((err)=>{ //에러발생시 서버로부터 받은 메시지 출력
        
-              alert(err.response&&err.response.data.message)
+              alert(err?.response?.data?.message);
               
             })
             .finally(()=>{

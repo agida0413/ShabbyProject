@@ -252,13 +252,13 @@ export default {
           .then((res)=>{
             //성공시 전환 알람 
             alert('전환되었습니다.')
-            
-            this.$emit("updateSideMenuInfo",res.data.reqData.locked)// locked 정보다시가져와서 리랜더링 해야하므로 부모컴포넌트로 이벤트 전송
+            const locked=res?.data?.reqData?.locked
+            this.$emit("updateSideMenuInfo",locked)// locked 정보다시가져와서 리랜더링 해야하므로 부모컴포넌트로 이벤트 전송
               //res.data.reqData.locked  는 전환 성공후 바뀐 상태값 = > 부모로 전달 후 리랜더링
           })
           .catch((err)=>{
             //에러시 서버에서 내린 data에 있는 message 동적으로 출력 
-            alert(err.response && err.response.data.message)
+            alert(err?.response?.data?.message);
           })
         }
 

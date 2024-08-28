@@ -81,13 +81,13 @@ export default {
   const sendKeyword = keyword.substring(1); // 해시태그 '#' 제거
   api.get(`/hobby/${sendKeyword}/${page}`) // API 호출
     .then((res) => {
-      const newHobbies = res.data.reqData.findList; // 새로운 결과 리스트
-      if (newHobbies.length) {
+      const newHobbies = res?.data?.reqData?.findList; // 새로운 결과 리스트
+      if (newHobbies?.length) {
         this.results = [...this.results, ...newHobbies]; // 기존 결과에 새로운 결과 추가
       }
     })
-    .catch((error) => {
-      console.error('Error fetching results:', error); // 오류 발생 시 로그 출력
+    .catch((err) => {
+      console.error('Error fetching results:', err); // 오류 발생 시 로그 출력
     })
     .finally(() => {
       this.isFetching = false; // 데이터 가져오기 종료

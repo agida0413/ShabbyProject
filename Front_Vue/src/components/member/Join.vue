@@ -458,7 +458,7 @@
                     })
                     .catch(err => {
                       //실패시 서버로부터 받은 메시지 출력 
-                      alert(err.response && err.response.data.message);
+                      alert(err?.response?.data?.message)
                     })
                     .finally(() => {
                       this.loading = false; // 로딩 종료
@@ -495,7 +495,7 @@
           })
           .catch((err)=>{
             //실패시
-          alert(err.response&&err.response.data.message)
+            alert(err?.response?.data?.message)
        
          })
          .finally(()=>{
@@ -535,7 +535,7 @@
                 })
                 .catch((err)=>{
                     //실패시
-                    alert(err.response&&err.response.data.message)
+                    alert(err?.response?.data?.message)
                     
                 })
                 .finally(()=>{
@@ -616,8 +616,9 @@
 
                 //회원가입 api 호출 
                 api.post("/members", formdata) 
-                .then(async () => {//async / await 활용 
-                 //성공시
+                .then(
+                  async () => {//async / await 활용 
+                 
                     // showAlert 메서드로 alert을 먼저 띄우고 라우터로 푸시하도록 
                     await this.showAlert('회원가입이 완료되었습니다. 환영합니다!!!');
                     // alert이 닫힌 후 router.push 호출
@@ -626,7 +627,7 @@
                 })
                 .catch((err)=>{
                   //실패시
-                  alert(err.response&&err.response.data.message)
+                  alert(err?.response?.data?.message)
                   
                 })
                 .finally(()=>{

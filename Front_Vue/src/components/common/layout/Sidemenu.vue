@@ -83,13 +83,13 @@ export default{
         api.get('/setting')
         .then((res)=>{
           //성공시 
-          this.memberData=res.data.reqData//공개여부 정보 저장 
-          console.log(this.memberData)
+          this.memberData=res?.data?.reqData//공개여부 정보 저장 
+          
           
         })
         .catch((err)=>{
         
-          alert(err.response&&err.response.data.message)//에러 출력 
+          alert(err?.response?.data?.message);
         })
       
        
@@ -123,7 +123,7 @@ export default{
         })
         .catch((err)=>{
           //실패시 에러메시지 출력 
-          alert(err.response&&err.response.data.message)
+          alert(err?.response?.data?.message);
           
           localStorage.removeItem('access')//엑세스 토큰 지움 
           this.$router.push('/login');//에러 발생시 로그인 페이지로이동

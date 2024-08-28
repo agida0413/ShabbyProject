@@ -592,7 +592,7 @@ removeImage(index) {//해당 인덱스를 받음
       this.closeDialog()
     })
     .catch((err)=>{
-      alert(err.response.data.message)
+      alert(err?.response?.data?.message);
     })
     .finally(()=>{
       //서버 전송끝
