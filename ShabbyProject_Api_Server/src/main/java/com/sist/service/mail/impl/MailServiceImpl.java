@@ -169,7 +169,7 @@ public class MailServiceImpl implements MailService{
 			
 		} catch (Exception e) {
 			// TODO: handle exception
-			throw new InternerException("서버 내부오류입니다. 잠시 뒤 이용해 주세요. ");//사용자 정의 500에러 발생
+			throw new InternerException("서버 내부오류입니다. 잠시 뒤 이용해 주세요. ","임시패스워드 발급 중 메일링 오류 발생");//사용자 정의 500에러 발생
 			// 익셉션 발생 = > 글로벌 핸들러에서잡음
 		}		
 		

@@ -10,6 +10,5 @@ private int postNum;
 private String postImgUrl;
 private String onlyMe;
 private int likeCount;
-private int replyCount;
 
 }

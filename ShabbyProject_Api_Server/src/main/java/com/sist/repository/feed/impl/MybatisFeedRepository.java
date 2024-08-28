@@ -17,12 +17,15 @@ import lombok.RequiredArgsConstructor;
 public class MybatisFeedRepository implements FeedRepository{
 	private final FeedMapper feedMapper;
 	
+	
+	// 사용자 피드에서 게시물 리스트를 제외한 피드정보 가져오기 ( 닉네임,프로필사진 ,자기소개 , 비공개여부 , 게시물등록수 , 팔로잉수 , 팔로워 수 ) 
 	@Override
 	public ResponseUserFeedDTO userFeedInfoFromMember(RequestUserFeedDTO dto) {
 		// TODO Auto-generated method stub
 		return feedMapper.userFeedInfoFromMember(dto);
 	}
-
+	
+	//사용자  피드에서 게시물리스트 가져오기
 	@Override
 	public List<ResponsePostListDTO> userFeedPostList(RequestUserFeedDTO dto) {
 		// TODO Auto-generated method stub

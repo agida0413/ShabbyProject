@@ -51,6 +51,7 @@ public class S3ImageService implements ImageService{
     
     public String upload(MultipartFile image) {
     	 bucket=bucket.trim();
+    	
         // 입력받은 이미지 파일이 빈 파일인지 검증
         if (image == null || image.isEmpty() || image.getOriginalFilename() == null) {
             throw new BadRequestException("파일이 비어있거나 이름이 없습니다.");
@@ -61,17 +62,17 @@ public class S3ImageService implements ImageService{
             return uploadImageToS3(image);
         } catch (SdkException e) {
             // S3 관련 SDK 예외 처리
-        	  logger.error("S3에 파일 업로드 중 오류 발생", e.getMessage());
-            throw new InternerException(" 서버 내부 오류입니다.");
+        	  
+            throw new InternerException(" 서버 내부 오류입니다.","S3에 파일 업로드 중 오류 발생");
         } catch (IOException e) {
             // 파일 읽기 중 IO 예외 처리
-        	logger.error("파일 읽기 중 IO 오류 발생", e.getMessage());
-        	   throw new InternerException("서버 내부오류입니다.");
+        	
+        	   throw new InternerException("서버 내부오류입니다.","파일 읽기 중 IO 오류 발생");
    
         } catch (Exception e) {
             // 기타 예외 처리
-        	logger.error("이미지 업로드 중 오류 발생", e.getMessage());
-            throw new InternerException("서버 내부 오류입니다.");
+        	
+            throw new InternerException("서버 내부 오류입니다.","이미지 업로드 중 오류 발생");
         }
     }
     private void validateImageFileExtension(String filename) {
@@ -92,19 +93,7 @@ public class S3ImageService implements ImageService{
         }
     }
 
-//    public String uploadImage(MultipartFile image) {
-//        validateImageFileExtension(image.getOriginalFilename());
-//
-//        try {
-//            return uploadImageToS3(image);
-//        } catch (IOException e) {
-//            logger.error("이미지 업로드 중 IO 오류 발생: {}", e.getMessage());
-//            throw new InternerException("서버 내부 오류입니다.");
-//        } catch (Exception e) {
-//            logger.error("이미지 업로드 중 오류 발생: {}", e.getMessage());
-//            throw new InternerException("서버 내부 오류입니다.");
-//        }
-//    }
+
 
     private String uploadImageToS3(MultipartFile image) throws IOException {
         String originalFilename = image.getOriginalFilename();
@@ -127,11 +116,11 @@ public class S3ImageService implements ImageService{
 
             s3Client.putObject(putObjectRequest, RequestBody.fromBytes(bytes));
         } catch (S3Exception e) {
-            logger.error("S3에 파일 업로드 실패: {}", e.getMessage());
-            throw new InternerException("서버 내부 오류입니다." );
+            
+            throw new InternerException("서버 내부 오류입니다.","S3에 파일 업로드 실패" );
         } catch (SdkException e) {
-            logger.error("SDK 오류 발생: {}", e.getMessage());
-            throw new InternerException("서버 내부 오류입니다." );
+          
+            throw new InternerException("서버 내부 오류입니다." ,"SDK 오류 발생");
         }
 
         return s3Client.utilities().getUrl(builder -> builder.bucket(bucket).key(s3FileName)).toExternalForm();
@@ -146,11 +135,11 @@ public class S3ImageService implements ImageService{
                     .build();
             s3Client.deleteObject(deleteObjectRequest);
         } catch (S3Exception e) {
-            logger.error("S3에서 이미지 삭제 중 오류 발생: {}", e.getMessage());
-            throw new InternerException("서버 내부오류입니다.");
+            
+            throw new InternerException("서버 내부오류입니다.","S3에서 이미지 삭제 중 오류 발생");
         } catch (Exception e) {
-            logger.error("이미지 삭제 중 오류 발생: {}", e.getMessage());
-            throw new InternerException("서버 내부오류입니다.");
+            
+            throw new InternerException("서버 내부오류입니다.","이미지 삭제 중 오류 발생");
         }
     }
 
@@ -160,11 +149,15 @@ public class S3ImageService implements ImageService{
             String decodedPath = URLDecoder.decode(url.getPath(), StandardCharsets.UTF_8.name());
             return decodedPath.startsWith("/") ? decodedPath.substring(1) : decodedPath;
         } catch (MalformedURLException e) {
-            logger.error("잘못된 이미지 주소 형식입니다: {}", e.getMessage());
-            throw new BadRequestException("서버 내부 오류입니다." );
+            
+            throw new InternerException("서버 내부 오류입니다." ,"잘못된 이미지 주소 형식입니다");
         } catch (UnsupportedEncodingException e) {
-            logger.error("URL 디코딩 중 오류 발생: {}", e.getMessage());
-            throw new InternerException("서버 내부 오류입니다." );
+
+            throw new InternerException("서버 내부 오류입니다." ,"URL 디코딩 중 오류 발생");
+        }
+          catch (Exception e) {
+            
+            throw new InternerException("서버 내부오류입니다.","삭제 시 키를 가져오는 과정에서 오류 발생");
         }
     }
 }
