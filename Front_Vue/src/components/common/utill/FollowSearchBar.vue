@@ -28,7 +28,6 @@
 </template>
 
 <script>
-import { ref, onMounted, onUnmounted, watch, nextTick } from 'vue';
 import api from "@/api";
 import debounce from 'lodash/debounce';
 
@@ -37,215 +36,203 @@ export default {
     keyword: String,
     isAt: Boolean,
   },
-
-  setup(props, { emit }) {
-    const results = ref([]); // 검색 결과를 담는 배열
-    const container = ref(null); // 검색 결과 컨테이너를 참조
-    const sentinel = ref(null); // 무한 스크롤을 위한 Sentinel 참조
-    const selectedIndex = ref(-1); // 현재 선택된 인덱스
-    const previousIndex = ref(-1); // 이전 인덱스 저장
-    const isFetching = ref(false); // 데이터 가져오고 있는지 여부
-    const page = ref(1); // 페이지 번호
-
-    // 결과를 서버에서 가져오는 함수
-    const fetchResults = async (keyword, page) => {
-      if (isFetching.value || !props.isAt) return; // 이미 데이터 가져오는 중이거나 @가 아닌 경우
-      if (keyword === '@') return; //  단지 '@'인 경우 아무 작업도 하지 않음
-      isFetching.value = true; // 데이터 가져오기 시작
-
-      const sendKeyword = keyword.substring(1); // '@' 제거
-      const rowSize=4
-      try {
-        const res = await api.get(`/members/following/${sendKeyword}/${page}/${rowSize}`); // API 호출
-        const newFollows = res.data.reqData.followList; // 새로운 결과 리스트
-        if (newFollows.length) {
-          results.value = [...results.value, ...newFollows]; // 기존 결과에 새로운 결과 추가
-        }
-      } catch (error) {
-        console.error('Error fetching results:', error); // 오류 발생 시 로그 출력
-      } finally {
-        isFetching.value = false; // 데이터 가져오기 종료
-      }
+  data() {
+    return {
+      results: [], // 검색 결과를 담는 배열
+      selectedIndex: -1, // 현재 선택된 인덱스
+      previousIndex: -1, // 이전 인덱스 저장
+      isFetching: false, // 데이터 가져오고 있는지 여부
+      page: 1, // 페이지 번호
+      observer: null, // IntersectionObserver 인스턴스
+      
     };
+  },
+  computed: {
+    container() {
+      return this.$refs.container;
+    },
+    sentinel() {
+      return this.$refs.sentinel;
+    },
+  },
+  watch: {
+    keyword: {
+      handler(newKeyword) {
+        if (newKeyword && this.isAt) {
+          this.page = 1; // 페이지 1로 초기화
+          this.results = []; // 결과 배열 초기화
+          this.selectedIndex = -1; // 선택된 인덱스 초기화
+          this.previousIndex = -1; // 이전 인덱스 초기화
+          this.debouncedFetchResults(newKeyword, this.page); // 결과 가져오기
+        } else {
+          this.results = []; // 결과 배열 초기화
+          this.selectedIndex = -1; // 선택된 인덱스 초기화
+          this.previousIndex = -1; // 이전 인덱스 초기화
+        }
+      },
+      immediate: true, // 초기 렌더링 시에도 실행
+    },
+  },
+  methods: {
+    fetchResults(keyword, page) {
+  if (this.isFetching || !this.isAt) return; // 이미 데이터 가져오는 중이거나 @가 아닌 경우
+  if (keyword === '@') return; // '@'인 경우 아무 작업도 하지 않음
+  this.isFetching = true; // 데이터 가져오기 시작
 
-    // 디바운스된 결과 가져오기 함수
-    const debouncedFetchResults = debounce((keyword, page) => {
-      fetchResults(keyword, page); // 디바운스 처리 후 fetchResults 호출
-    }, 150);
-
-    // IntersectionObserver 콜백 함수
-    const handleIntersection = (entries) => {
+  const sendKeyword = keyword.substring(1); // '@' 제거
+  const rowSize = 4;
+  
+  api.get(`/members/following/${sendKeyword}/${page}/${rowSize}`) // API 호출
+    .then((res) => {
+      const newFollows = res.data.reqData.followList; // 새로운 결과 리스트
+      if (newFollows.length) {
+        this.results = [...this.results, ...newFollows]; // 기존 결과에 새로운 결과 추가
+      }
+    
+    })
+    .catch((error) => {
+      console.error('Error fetching results:', error); // 오류 발생 시 로그 출력
+    })
+    .finally(() => {
+      this.isFetching = false; // 데이터 가져오기 종료
+    });
+},
+    debouncedFetchResults: debounce(function (keyword, page) {
+      this.fetchResults(keyword, page); // 디바운스 처리 후 fetchResults 호출
+    }, 150),
+    handleIntersection(entries) {
       entries.forEach((entry) => {
-        if (entry.isIntersecting && entry.target === sentinel.value) { // Sentinel이 보일 때
-          page.value += 1; // 페이지 증가
-          debouncedFetchResults(props.keyword, page.value); // 결과 가져오기
+        if (entry.isIntersecting && entry.target === this.sentinel) { // Sentinel이 보일 때
+          this.page += 1; // 페이지 증가
+          this.debouncedFetchResults(this.keyword, this.page); // 결과 가져오기
         }
       });
-    };
+    },
+    handleArrowDown() {
+      if (this.results.length === 0) return; // 결과가 없으면 아무 작업도 안 함
 
-    // 키워드가 변경될 때 호출되는 함수
-    watch(() => props.keyword, (newKeyword) => {
-      if (newKeyword && props.isAt) {
-        page.value = 1; // 페이지 1로 초기화
-        results.value = []; // 결과 배열 초기화
-        selectedIndex.value = -1; // 선택된 인덱스 초기화
-        previousIndex.value = -1; // 이전 인덱스 초기화
-        debouncedFetchResults(newKeyword, page.value); // 결과 가져오기
+      this.previousIndex = this.selectedIndex; // 이전 인덱스 업데이트
+      if (this.selectedIndex === -1) {
+        this.selectedIndex = 0; // 선택된 항목이 없으면 첫 번째 항목 선택
       } else {
-        results.value = []; // 결과 배열 초기화
-        selectedIndex.value = -1; // 선택된 인덱스 초기화
-        previousIndex.value = -1; // 이전 인덱스 초기화
+        this.selectedIndex = (this.selectedIndex + 1) % this.results.length; // 다음 항목 선택
       }
-    });
+      this.scrollToSelectedItem(); // 선택된 항목으로 스크롤 이동
+      this.checkAndLoadMore(); // 추가 데이터 로드 여부 확인
+    },
+    handleArrowUp() {
+      if (this.results.length === 0) return; // 결과가 없으면 아무 작업도 안 함
 
-    // 컴포넌트가 마운트될 때 호출되는 함수
-    onMounted(async () => {
-      if (props.isAt && container.value) {
-        await nextTick(); // 다음 틱을 기다림
-        if (sentinel.value) {
-          const observer = new IntersectionObserver(handleIntersection, {
-            root: container.value, // 관찰할 컨테이너
-            rootMargin: '0px',
-            threshold: 1.0, // 100% 노출 시 콜백 호출
-          });
-          observer.observe(sentinel.value); // Sentinel 관찰 시작
+      this.previousIndex = this.selectedIndex; // 이전 인덱스 업데이트
 
-          onUnmounted(() => {
-            observer.unobserve(sentinel.value); // 컴포넌트 언마운트 시 관찰 중지
-          });
+      if (this.selectedIndex === 0) {
+        this.selectedIndex = this.results.length - 1; // 첫 번째 항목에서 위로 이동 시 마지막 항목 선택
+      } else if (this.selectedIndex === -1) {
+        this.selectedIndex = this.results.length - 1; // 선택된 항목이 없으면 마지막 항목 선택
+      } else {
+        this.selectedIndex = (this.selectedIndex - 1 + this.results.length) % this.results.length; // 이전 항목 선택
+      }
+      this.scrollToSelectedItem(); // 선택된 항목으로 스크롤 이동
+      this.checkAndLoadMore(); // 추가 데이터 로드 여부 확인
+    },
+    handleEnter() {
+      if (this.isAt) {
+        if (this.selectedIndex >= 0 && this.selectedIndex < this.results.length) {
+          this.handleClick(this.results[this.selectedIndex].nickname); // 선택된 항목 클릭 처리
         }
       }
-    });
-
-    // 선택된 항목으로 스크롤 이동하는 함수
-    const scrollToSelectedItem = () => {
-      const selectedItem = container.value?.querySelector('.selected'); // 선택된 항목 찾기
-      if (selectedItem && container.value) {
+    },
+    handleClick(follow) {
+      this.$emit('selectFollow', follow); // 선택된 팔로우인원 전달
+    },
+    handleMouseOver(index) {
+      this.previousIndex = this.selectedIndex; // 이전 인덱스 업데이트
+      this.selectedIndex = index; // 현재 인덱스 업데이트
+      this.scrollToSelectedItem(); // 선택된 항목으로 스크롤 이동
+    },
+    scrollToSelectedItem() {
+      const selectedItem = this.container?.querySelector('.selected'); // 선택된 항목 찾기
+      if (selectedItem && this.container) {
         const itemHeight = selectedItem.offsetHeight; // 항목의 높이
-        const containerHeight = container.value.clientHeight; // 컨테이너의 높이
-        const scrollTop = container.value.scrollTop; // 현재 스크롤 위치
+        const containerHeight = this.container.clientHeight; // 컨테이너의 높이
+        const scrollTop = this.container.scrollTop; // 현재 스크롤 위치
         const selectedItemTop = selectedItem.offsetTop; // 선택된 항목의 상단 위치
 
-        if (selectedIndex.value === 0) { // 첫 번째 항목일 때
-          if (previousIndex.value !== -1 && previousIndex.value < selectedIndex.value) {
-            const previousItem = container.value?.querySelectorAll('.result-item')[previousIndex.value]; // 이전 항목 찾기
+        if (this.selectedIndex === 0) { // 첫 번째 항목일 때
+          if (this.previousIndex !== -1 && this.previousIndex < this.selectedIndex) {
+            const previousItem = this.container?.querySelectorAll('.result-item')[this.previousIndex]; // 이전 항목 찾기
             if (previousItem) {
-              container.value.scrollTop = previousItem.offsetTop; // 이전 항목으로 스크롤 이동
+              this.container.scrollTop = previousItem.offsetTop; // 이전 항목으로 스크롤 이동
             }
           } else {
-            container.value.scrollTop = 0; // 첫 번째 항목은 컨테이너 상단으로 이동
+            this.container.scrollTop = 0; // 첫 번째 항목은 컨테이너 상단으로 이동
           }
-        } else if (selectedIndex.value === results.value.length - 1) { // 마지막 항목일 때
-          container.value.scrollTop = container.value.scrollHeight; // 컨테이너 하단으로 이동
+        } else if (this.selectedIndex === this.results.length - 1) { // 마지막 항목일 때
+          this.container.scrollTop = this.container.scrollHeight; // 컨테이너 하단으로 이동
         } else { // 일반 항목일 때
           if (selectedItemTop < scrollTop) {
-            container.value.scrollTop = selectedItemTop - itemHeight * 2.5; // 2칸 반 이동
+            this.container.scrollTop = selectedItemTop - itemHeight * 2.5; // 2칸 반 이동
           } else if (selectedItemTop + itemHeight > scrollTop + containerHeight) {
-            container.value.scrollTop = selectedItemTop + itemHeight * 2.5 - containerHeight; // 2칸 반 이동
+            this.container.scrollTop = selectedItemTop + itemHeight * 2.5 - containerHeight; // 2칸 반 이동
           }
         }
 
         // 스크롤 위치가 범위를 벗어나지 않도록 조정
-        if (container.value.scrollTop < 0) {
-          container.value.scrollTop = 0;
+        if (this.container.scrollTop < 0) {
+          this.container.scrollTop = 0;
         }
-        if (container.value.scrollTop > container.value.scrollHeight - containerHeight) {
-          container.value.scrollTop = container.value.scrollHeight - containerHeight;
+        if (this.container.scrollTop > this.container.scrollHeight - containerHeight) {
+          this.container.scrollTop = this.container.scrollHeight - containerHeight;
         }
       }
-    };
-
-    // 아래 방향 화살표 키 처리 함수
-    const handleArrowDown = () => {
-      if (results.value.length === 0) return; // 결과가 없으면 아무 작업도 안 함
-
-      previousIndex.value = selectedIndex.value; // 이전 인덱스 업데이트
-      if (selectedIndex.value === -1) {
-        selectedIndex.value = 0; // 선택된 항목이 없으면 첫 번째 항목 선택
-      } else {
-        selectedIndex.value = (selectedIndex.value + 1) % results.value.length; // 다음 항목 선택
-      }
-      scrollToSelectedItem(); // 선택된 항목으로 스크롤 이동
-      checkAndLoadMore(); // 추가 데이터 로드 여부 확인
-    };
-
-    // 위 방향 화살표 키 처리 함수
-    const handleArrowUp = () => {
-      if (results.value.length === 0) return; // 결과가 없으면 아무 작업도 안 함
-
-      previousIndex.value = selectedIndex.value; // 이전 인덱스 업데이트
-      
-      if (selectedIndex.value === 0) {
-        selectedIndex.value = results.value.length - 1; // 첫 번째 항목에서 위로 이동 시 마지막 항목 선택
-      } else if (selectedIndex.value === -1) {
-        selectedIndex.value = results.value.length - 1; // 선택된 항목이 없으면 마지막 항목 선택
-      } else {
-        selectedIndex.value = (selectedIndex.value - 1 + results.value.length) % results.value.length; // 이전 항목 선택
-      }
-      scrollToSelectedItem(); // 선택된 항목으로 스크롤 이동
-      checkAndLoadMore(); // 추가 데이터 로드 여부 확인
-    };
-
-    // Enter 키 처리 함수
-    const handleEnter = () => {
-      if(props.isAt){
-        if (selectedIndex.value >= 0 && selectedIndex.value < results.value.length) {
-        handleClick(results.value[selectedIndex.value].nickname); // 선택된 항목 클릭 처리
-      }
-      }
-    
-    };
-
-    // 항목 클릭 처리 함수
-    const handleClick = (follow) => {
-      emit('selectFollow', follow); // 선택된 팔로우인원 전달
-    };
-
-    // 항목 마우스 오버 처리 함수
-    const handleMouseOver = (index) => {
-      previousIndex.value = selectedIndex.value; // 이전 인덱스 업데이트
-      selectedIndex.value = index; // 현재 인덱스 업데이트
-      scrollToSelectedItem(); // 선택된 항목으로 스크롤 이동
-    };
-
-    // 스크롤 위치에 따라 추가 데이터 로드 여부 확인 함수
-    const checkAndLoadMore = () => {
-      const containerElement = container.value;
+    },
+    checkAndLoadMore() {
+      const containerElement = this.container;
       const selectedItem = containerElement?.querySelector('.selected'); // 선택된 항목 찾기
       if (selectedItem) {
         const containerRect = containerElement.getBoundingClientRect(); // 컨테이너의 위치 및 크기
         const itemRect = selectedItem.getBoundingClientRect(); // 선택된 항목의 위치 및 크기
 
         if (itemRect.bottom > containerRect.bottom - 50) { // 항목이 컨테이너 하단 가까이에 있을 때
-          if (!isFetching.value) {
-            page.value += 1; // 페이지 증가
-            debouncedFetchResults(props.keyword, page.value); // 결과 가져오기
+          if (!this.isFetching) {
+            this.page += 1; // 페이지 증가
+            this.debouncedFetchResults(this.keyword, this.page); // 결과 가져오기
           }
         }
 
         if (itemRect.top < containerRect.top + 50) { // 항목이 컨테이너 상단 가까이에 있을 때
-          if (!isFetching.value) {
-            page.value += 1; // 페이지 증가
-            debouncedFetchResults(props.keyword, page.value); // 결과 가져오기
+          if (!this.isFetching) {
+            this.page += 1; // 페이지 증가
+            this.debouncedFetchResults(this.keyword, this.page); // 결과 가져오기
           }
         }
       }
-    };
-
-    return {
-      results,
-      container,
-      sentinel,
-      isFetching,
-      selectedIndex,
-      handleArrowDown,
-      handleArrowUp,
-      handleEnter,
-      handleClick,
-      handleMouseOver
-    };
+    },
+    initObserver() {
+      if (this.isAt && this.container) {
+        this.$nextTick(() => {
+          if (this.sentinel) {
+            this.observer = new IntersectionObserver(this.handleIntersection, {
+              root: this.container, // 관찰할 컨테이너
+              rootMargin: '0px',
+              threshold: 1.0, // 100% 노출 시 콜백 호출
+            });
+            this.observer.observe(this.sentinel); // Sentinel 관찰 시작
+          }
+        });
+      }
+    }
+  },
+  mounted() {
+    this.initObserver(); // 컴포넌트가 마운트될 때 IntersectionObserver 초기화
+  },
+  beforeUnmount() {
+    if (this.observer) {
+      this.observer.unobserve(this.sentinel); // 컴포넌트 언마운트 시 IntersectionObserver 중지
+    }
   }
 };
+
 </script>
 
 <style scoped>

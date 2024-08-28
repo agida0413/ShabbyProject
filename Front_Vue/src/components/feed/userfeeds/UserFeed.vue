@@ -135,7 +135,7 @@ export default {
   props: ['nickname'],
   data() {
     return {
-      userFeedData: {},
+      userFeedData: {},//게시글 정보를 제외한 사용자피드에 필요한 데이터
       flwListDialog: false, // 팔로우/팔로잉 목록 모달 제어값
       flwType: '', // 팔로우 ? 팔로잉?
       feedEditDialog: false, // 프로필 편집 모달 제어값
@@ -144,36 +144,47 @@ export default {
     };
   },
   components: {
-    FlwListComponent,
-    FeedEditComponent,
-    UserFeedPostList
+    FlwListComponent, //팔로우/팔로워 목록 컴포넌트
+    FeedEditComponent,//프로필 편집 컴포넌트
+    UserFeedPostList //게시물 목록 컴포넌트
   },
+  //마운트시 해당 유저의 피드정보를 불러온다
   mounted() {
     this.getInfoData();
   },
+  //닉네임(router 의 props) 변경시 감지하여 다시 정보를 로드한다.
   watch: {
     nickname() {
+      
       // nickname이 변경될 때 호출되는 메서드
       this.getInfoData();
     }
   },
   methods: {
+    //유저정보를 읽어오는 api 메서드
     getInfoData() {
+      //props 닉네임을 api pathvariable로 
       api.get(`/feed/userfeed/${this.nickname}`)
         .then((res) => {
+          //성공시 정보를 담는다.
           this.userFeedData = res.data.reqData;
         })
         .catch((err) => {
+          //실패시 에러 alert
           alert(err.response.data.message);
         })
         .finally(() => {
+          //현재 로딩 정보를 false로 하여 스켈레톤 로딩 스피너가 동작을 멈추도록 
           this.isLoading = false;
         });
        
     },
+    // 유저피드에서의 게시물 정보를 읽어오는데 자식컴포넌트에서 데이터 로드가 완료되면 현 컴포넌트로 이벤트를 전송하여 스켈레톤 로딩 스피너가 동작을 멈추도록한다
+    //스켈레톤 스피너 동작 조건 현 컴포넌트 데이터 로딩완료 && 자식컴포넌트 데이터 로딩완료
     childLoadingComplete(){
       this.childIsLoading=false
     },
+    
     flwListDialogOpen(str) {  // 팔로워, 팔로잉 각각 버튼 클릭 시 str로 매개변수 받아와 flwType을 초기화 
                             // => flwList 컴포넌트 하나로 운영 (str 전달 -> 팔로잉 목록 or 팔로우 목록)
       this.flwType = str;

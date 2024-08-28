@@ -1,5 +1,5 @@
 <template >
-  <v-app class="no-cursor to-blackMode">
+  <v-app class="no-cursor to-blackMode ">
     <v-main :class="!isLoginPage && !isJoinPage ? 'main-container' : ''"  >
       <v-container v-if="!isLoginPage && !isJoinPage" class="main-content " >
         <v-row no-gutters >
@@ -122,10 +122,10 @@ export default {
 .white-text {
   color: white;
 } 
-.scrollable-row {
-  overflow-y: auto; /* 수직 스크롤 생성 */
-  max-height: 100vh; /* 최대 높이 설정, 화면의 50%로 설정 */
-}
+
+
+
+
 .to-blackMode{
   background-color: #2C2C2C;
   color: aliceblue;
@@ -153,6 +153,24 @@ export default {
 }
   
 
+.parentContainer{
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: #888 transparent; /* Firefox */
+}
+.parentContainer::-webkit-scrollbar {
+  width: 5px; /* 스크롤 바의 너비 */
+}
 
+.parentContainer::-webkit-scrollbar-track {
+  background: transparent; /* 스크롤 바 트랙 배경색 */
+}
 
+.parentContainer::-webkit-scrollbar-thumb {
+  background-color: #888; /* 스크롤 바 색상 */
+  border-radius: 10px; /* 스크롤 바 모서리 둥글게 */
+}
+
+.parentContainer::-webkit-scrollbar-thumb:hover {
+  background-color: #555; /* 스크롤 바 색상 (호버 시) */
+}
 </style>
