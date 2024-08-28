@@ -35,25 +35,48 @@ public class PostServiceImpl implements PostService {
     //게시물 업로드 서비스 
     @Override
     @Transactional
-    public ResponseEntity<ResponseDTO<Void>> postInsertTransaction(RequestPostDTO dto) {
+    public ResponseEntity<ResponseDTO<Void>> postInsertTransaction(RequestPostDTO dto)  {
         List<MultipartFile> imgList = dto.getImgList(); // 업로드할 이미지 리스트
         List<String> imgUrList = new ArrayList<>(); // 업로드된 이미지의 URL을 저장할 리스트
 
         // S3 업로드 시작
+        		
         try {
-        		// request로 받은 img파일 리스트
-            for (MultipartFile image : imgList) {
-                validateFileSize(image); // 파일 크기 검증
-                String imgUrl = imageService.upload(image); //하나씩 꺼내와서 이미지 업로드==>s3에서 반환받은 url 값 저장
-                imgUrList.add(imgUrl); // 업로드된 이미지를 url리스트에 URL 추가
-            }
-        } 
-        catch (BadRequestException e) {
-			throw new BadRequestException(e.getMessage());//사진파일용량 검증 에러 캐치
+        	   for (MultipartFile image : imgList) {
+                   validateFileSize(image); // 파일 크기 검증
+                   String imgUrl = imageService.upload(image); //하나씩 꺼내와서 이미지 업로드==>s3에서 반환받은 url 값 저장
+                   imgUrList.add(imgUrl); // 업로드된 이미지를 url리스트에 URL 추가
+               }
+        
+		} catch (BadRequestException e) {
+			// TODO: handle exception
+			 if (!imgUrList.isEmpty()) {
+			        // 업로드된 이미지가 있을 경우, 필요한 추가 처리 (이미지 삭제)
+			        removeImageToRollback(imgUrList);
+			    }
+			throw new BadRequestException(e.getMessage());
+		}
+        catch (InternerException e) {
+			// TODO: handle exception
+        	 if (!imgUrList.isEmpty()) {
+        	        // 업로드된 이미지가 있을 경우, 필요한 추가 처리 ( 이미지 삭제)
+        	        removeImageToRollback(imgUrList);
+        	    }
+        	throw new InternerException(e.getMessage(), e.getServerErrorMsg());
 		}
         catch (Exception e) {
-            throw new BadRequestException("사진 업로드 중 서버 오류가 발생하였습니다."); // 파일 업로드 오류 처리
-        }
+			// TODO: handle exception
+        	 if (!imgUrList.isEmpty()) {
+        	        // 업로드된 이미지가 있을 경우, 필요한 추가 처리 (예: 이미지 삭제)
+        	        removeImageToRollback(imgUrList);
+        	    }
+        	 throw new InternerException("예기치 않은 오류 발생","이미지 ");
+        	
+		}
+        		
+        		// request로 받은 img파일 리스트
+         
+      
 
         // 데이터베이스 저장
         try {
@@ -116,13 +139,20 @@ public class PostServiceImpl implements PostService {
      
   //데이터베이스 작업 중 오류 발생 시, 업로드된 이미지를 삭제하고 예외를 던짐
     private void removeImageToRollback(List<String> imgUrList) {
-        try {
-            for (String imgUrl : imgUrList) {
-                imageService.deleteImage(imgUrl); // S3에서 이미지 삭제
-            }
-        } catch (Exception e) {
-            throw new InternerException("사진 업로드 중 서버 내부 오류가 발생했습니다."); // 이미지 삭제 오류 처리
-        }
-        throw new InternerException("서버 내부 오류입니다."); // 데이터베이스 오류 처리
+    		
+    	try {
+    		 for (String imgUrl : imgUrList) {
+                 imageService.deleteImage(imgUrl); // S3에서 이미지 삭제
+             }
+		} catch (InternerException e) {
+			// TODO: handle exception
+			throw new InternerException(e.getMessage(), e.getServerErrorMsg());
+		}
+    	 catch (Exception e) {
+ 			// TODO: handle exception
+ 			throw new InternerException("서버 내부 오류입니다.", "이미지 업로드 예외발생으로 인한 사진 롤백삭제중 예외발생");
+ 		}
+           
+      
     }
 }

@@ -1,5 +1,6 @@
 package com.sist.common.handler;
 
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -14,16 +15,19 @@ import com.sist.common.exception.InternerException;
 import com.sist.common.exception.NotFoundException;
 import com.sist.dto.api.ResponseDTO;
 
+import lombok.extern.slf4j.Slf4j;
+
 @RestControllerAdvice
+@Slf4j
 public class GlobalExceptionHandler {
 
-    private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+    
 
     // 400 관련 예외 처리
     @ExceptionHandler(BadRequestException.class)
     public ResponseEntity<ResponseDTO<Void>> handleBadRequestException(BadRequestException ex) {
-        logger.error("BadRequestException: {}", ex.getMessage(), ex);
-
+        log.error("BadRequestException: {}", ex.getMessage(), ex);
+        
         ResponseDTO<Void> responseApi = new ResponseDTO<>(
             HttpStatus.BAD_REQUEST.value(),
             ex.getMessage()
@@ -35,7 +39,7 @@ public class GlobalExceptionHandler {
     // 404 관련 예외 처리
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<ResponseDTO<Void>> handleNotFoundException(NotFoundException ex) {
-        logger.error("NotFoundException: {}", ex.getMessage(), ex);
+        log.error("NotFoundException: {}", ex.getMessage(), ex);
 
         ResponseDTO<Void> responseApi = new ResponseDTO<>(
             HttpStatus.NOT_FOUND.value(),
@@ -48,7 +52,7 @@ public class GlobalExceptionHandler {
     // 409 관련 예외 처리
     @ExceptionHandler(ConflictException.class)
     public ResponseEntity<ResponseDTO<Void>> handleConflictException(ConflictException ex) {
-        logger.error("ConflictException: {}", ex.getMessage(), ex);
+        log.error("ConflictException: {}", ex.getMessage(), ex);
 
         ResponseDTO<Void> responseApi = new ResponseDTO<>(
             HttpStatus.CONFLICT.value(),
@@ -61,7 +65,7 @@ public class GlobalExceptionHandler {
     // Validation 실패 오류 처리
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ResponseDTO<Void>> handleValidationException(MethodArgumentNotValidException ex) {
-        logger.error("ValidationException: {}", ex.getMessage(), ex);
+        log.error("ValidationException: {}", ex.getMessage(), ex);
 
         ResponseDTO<Void> responseApi = new ResponseDTO<>(
             HttpStatus.BAD_REQUEST.value(),
@@ -74,7 +78,9 @@ public class GlobalExceptionHandler {
     // 서버 내부 오류 처리
     @ExceptionHandler(InternerException.class)
     public ResponseEntity<ResponseDTO<Void>> handleInternerException(InternerException ex) {
-        logger.error("InternerException: {}", ex.getMessage(), ex);
+    	//서버 내부오류는 클라이언트에게는 단순 ' 서버내부 오류입니다. ' 를 전송하고 , 서버측에서는 상세 로그를 확인해야하니
+    	//두개의 매개변수를 받아 첫번째 인자는 클라이언트에게 전송할 에러메시지 , 두번째 인자는 서버가 인지할 메시지를 받는다 .
+        log.error("InternerException: {}", ex.getServerErrorMsg(), ex);
 
         ResponseDTO<Void> responseApi = new ResponseDTO<>(
             HttpStatus.INTERNAL_SERVER_ERROR.value(),
@@ -87,7 +93,7 @@ public class GlobalExceptionHandler {
     // 기타 예기치 못한 예외 처리
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ResponseDTO<Void>> handleGenericException(Exception ex) {
-        logger.error("Exception: {}", ex.getMessage(), ex);
+        log.error("Exception: {}", ex.getMessage(), ex);
 
         ResponseDTO<Void> response = new ResponseDTO<>(
             HttpStatus.INTERNAL_SERVER_ERROR.value(),
