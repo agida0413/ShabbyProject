@@ -5,7 +5,7 @@
             <v-card rounded="lg" class="to-blackMode">
               <v-card-title class="d-flex justify-space-between align-center">
                 <div class="text-h5 text-medium-emphasis ps-2">
-                 <span style="color: white;"> 자기소개 편집</span>
+                 <span style="color: white;"> 자기소개 수정</span>
                 </div>
 
                 <v-btn  
@@ -17,14 +17,7 @@
               <v-divider class="mb-4"></v-divider>
 
               <v-card-text>
-                <!-- <v-file-input
-                  label="프로필 사진 변경"
-                  prepend-icon="mdi-camera"
-                  variant="filled"
-                  accept="image/*"
-                  @change="handleFileEvent"
-                ></v-file-input> -->
-
+             
                   <div class="mb-2">자기소개 수정</div>
 
                 <v-textarea
@@ -34,7 +27,8 @@
                   variant="outlined"
                   persistent-counter
                   no-resize
-                  v-model="introduce"
+                 placeholder="변경할 자기소개 입력"
+                  v-model="UpdateIntroduce"
                 ></v-textarea>
 
                
@@ -58,7 +52,7 @@
                   rounded="xl"
                   text="Send"
                   variant="flat"
-                  @click="changeProfile()"
+                  @click="UpdateIntroduceSubmit()"
                 ></v-btn>
               </v-card-actions>
             </v-card>
@@ -68,6 +62,7 @@
 </template>
 
 <script>
+import api from "@/api"
 export default {
   name: 'FeedEdit',
 
@@ -81,7 +76,7 @@ export default {
 },data(){
   return{
     
-     introduce:'',
+    
      isLoading:false 
 
   }
@@ -98,25 +93,27 @@ export default {
     closeDialog() {
       this.$emit('feedEditClose');// 로그인 컴포넌트로 닫는 이벤트 전송
     },
-  //    handleFileEvent(event){
-  //     const file= event.target.files[0]
-  //     if(!file)return;
-  //     // 파일 크기 제한 
-  //     const MAX_SIZE_MB = 5;
-  //     const MAX_SIZE_BYTES = MAX_SIZE_MB * 1024 * 1024; // 최대 파일 크기 (바이트)
-
-  //     //만약 파일크기가 5mb를 초과하면 메서드 종료 
-  //     if (file.size > MAX_SIZE_BYTES) {
-  //       alert(`파일 '${file.name}'의 크기가 ${MAX_SIZE_MB}MB를 초과합니다.`);
-  //       return;
-  //     }
-
-  //      // 파일을 data 속성에 저장
-  //      this.profileImgFile = file;
-
-  //  },
-   changeProfile(){
+  
+   UpdateIntroduceSubmit(){
     
+     
+      if(this.introduce===this.UpdateIntroduce){
+        alert('이전 자기소개와 동일합니다.')
+        return
+      }
+
+      api.put('/feed/introduce',{
+       introduce:this.UpdateIntroduce
+      })
+      .then(()=>{
+        alert('성공적으로 변경되었습니다.')
+        this.closeDialog()
+      })
+      .catch((err)=>{
+        alert(err?.response?.data?.message)
+      })
+      
+
    } 
   }
 }

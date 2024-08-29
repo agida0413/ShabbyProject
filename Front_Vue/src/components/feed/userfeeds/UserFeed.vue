@@ -176,7 +176,11 @@
     <FlwListComponent v-model:value="flwListDialog" v-bind:flwType="flwType" @flwListClose="flwListDialogClose"></FlwListComponent>
 
     <!-- 프로필 편집 모달 -->
-    <FeedEditComponent v-model:value="feedEditDialog" @feedEditClose="feedEditDialogClose"></FeedEditComponent>
+    <FeedEditComponent 
+     v-model:value="feedEditDialog"
+     @feedEditClose="feedEditDialogClose"
+     :introduce="userFeedData.introduce"
+     ></FeedEditComponent>
     <ChangeProfileImg v-model:value="changeProfileImgDialog" @changeProfileImgClose="changeProfileImgClose"></ChangeProfileImg>
 </template>
 
@@ -270,6 +274,7 @@ export default {
       this.changeProfileImgDialog=true;
     },
     changeProfileImgClose(){
+      this.getInfoData()
       this.changeProfileImgDialog=false;
     }
   }

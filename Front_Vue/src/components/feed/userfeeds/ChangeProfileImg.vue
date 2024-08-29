@@ -2,6 +2,13 @@
 
     <v-dialog activator="parent" v-model="localDialog" max-width="500">
               <template v-slot:default="{ isActive }">
+
+                <v-progress-linear
+                  color="cyan"
+                  indeterminate
+                  v-if="isLoading"
+                ></v-progress-linear>
+
                 <v-card rounded="lg" class="to-blackMode">
                   <v-card-title class="d-flex justify-space-between align-center">
                     <div class="text-h5 text-medium-emphasis ps-2">
@@ -11,6 +18,7 @@
                     <v-btn  
                       variant="text"
                       @click="isActive.value = false"
+                      :disabled="isLoading"
                     ></v-btn>
                   </v-card-title>
     
@@ -23,6 +31,7 @@
                       variant="filled"
                       accept="image/*"
                       @change="handleFileEvent"
+                      :disabled="isLoading"
                     ></v-file-input> 
     
                    
@@ -41,6 +50,7 @@
                       rounded="xl"
                       text="Cancel"
                       @click="closeDialog()"
+                       :disabled="isLoading"
                     ></v-btn>
     
                     <v-btn
@@ -50,6 +60,7 @@
                       text="Send"
                       variant="flat"
                       @click="changeProfile()"
+                      :disabled="isLoading"
                     ></v-btn>
                   </v-card-actions>
                 </v-card>
@@ -86,7 +97,10 @@ import api from '@/api';
     }   
       ,
       methods: {
+        
         closeDialog() {
+          this.profileImgFile=null,
+          this.isLoading=false
           this.$emit('changeProfileImgClose');// 로그인 컴포넌트로 닫는 이벤트 전송
         },
          handleFileEvent(event){
@@ -107,14 +121,25 @@ import api from '@/api';
     
        },
        changeProfile(){
+
+        if(this.isLoading){
+        return
+       }
+
        const formData= new FormData()
        formData.append('profileImgFile',this.profileImgFile)
-        api.put('/feed/userfeed',formData)
+       
+       this.isLoading=true;
+       api.put('/feed/userfeed',formData)
        .then(()=>{
+       alert('성공적으로 프로필 사진이 변경되었습니다.')
         this.closeDialog()
        })
        .catch((err)=>{
         alert(err?.response?.data?.message)
+       })
+       .finally(()=>{
+        this.isLoading=false
        })
        } 
       }
