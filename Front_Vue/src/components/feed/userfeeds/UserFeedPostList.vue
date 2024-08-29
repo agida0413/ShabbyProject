@@ -1,4 +1,8 @@
 <template>
+
+  
+
+
   <v-container >
    
     <v-row v-if="!postData.length">
@@ -43,7 +47,8 @@ export default{
     name:'UserFeedPostList',
     //부모로 부터 받은 닉네임 값 
   props:{
-    nickname:String
+    nickname:String,
+   
   },
   data(){
     return{
@@ -51,17 +56,19 @@ export default{
       isLoading:true, // 로딩상태를 저장할  변수 
       page:1, // 페이지
       observer:null, //intersection observer 객체
-      noMoreNeedData:false //더이상 로드할 데이터가 없다면 불필요한 api 호출을 방지하기 위한 변수 
+      noMoreNeedData:false, //더이상 로드할 데이터가 없다면 불필요한 api 호출을 방지하기 위한 변수 
+     
     }
   },
   // intersection observer 참조할 태그 ref
   computed:{
     sentinel() {
       return this.$refs.sentinel;
-    },
+    }
   },
     //마운트 시 게시물 정보 , intersection observer 초기화
     mounted(){
+  
      this.loadPost()
      this.initObserver(); // IntersectionObserver 초기화
     },
@@ -73,7 +80,7 @@ export default{
   },
     methods:{
       //게시물 정보 읽어오는 api
-      loadPost(){
+      loadPost(){ 
         //api 호출중 상태 
         this.isLoading=true
         //noMoreNeedData가 true 이면 리턴 ( 더이상 불러올 데이터가 없는경우)

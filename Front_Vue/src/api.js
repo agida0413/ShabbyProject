@@ -32,6 +32,9 @@ api.interceptors.request.use(config => {
       
         config.headers.access = token;
     }
+   
+    
+ 
     return config;
 }, error => {
   //요청중 오류 발생시 x 

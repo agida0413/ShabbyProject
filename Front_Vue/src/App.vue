@@ -5,7 +5,7 @@
         <v-row no-gutters >
           <!-- 사이드 메뉴 -->
          
-            <SideMenu />
+            <SideMenu v-if="!isLoginPage" />
         
 
           <!-- 헤더와 콘텐츠 영역 -->
@@ -47,6 +47,7 @@ export default {
     isJoinPage() {//현재 라우터가 회원가입인지 확인
       return this.$route.path === '/join';
     }
+    
   }
 }
 </script>

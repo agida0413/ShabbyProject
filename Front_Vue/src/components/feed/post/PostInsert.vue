@@ -317,7 +317,7 @@ methods: {
     const file = event.target.files[0]; // 선택한 첫 번째 파일 가져오기
     if (!file) return; // 파일이 선택되지 않았으면 리턴
 
-    // 파일 크기 제한 (5MB 예제)
+    // 파일 크기 제한 
     const MAX_SIZE_MB = 5;
     const MAX_SIZE_BYTES = MAX_SIZE_MB * 1024 * 1024; // 최대 파일 크기 (바이트)
 

@@ -25,7 +25,10 @@
             class="avatar"
             v-if="userFeedData.profile === null"
           ></v-avatar>
-          <button v-if="userFeedData.itsMe">
+          <button 
+          v-if="userFeedData.itsMe"
+          @click="changeProfileImgOpen"
+          >
             <v-icon class="edit-icon">mdi-pencil</v-icon>
           </button>
         </div>
@@ -34,15 +37,38 @@
       <v-col cols="3">
         <v-col cols="auto">
           <!-- 팔로우, 언팔로우 버튼 -->
-          <v-row v-if="!userFeedData.itsMe">
-            <v-col>
-              <v-btn elevation="16" width="300" color="primary">Follow</v-btn>
-            </v-col>
-          </v-row>
+          
+         
+
+             <!--내 계정이 아닐 경우 -->
+             <v-row v-if="!userFeedData.itsMe">
+               <!-- 공개 계정일 경우 -->
+                <v-col v-if="userFeedData.locked==='PUBLICID'">
+                      
+                       <!--팔로우 상태가 아닌경우-->
+                    <v-btn elevation="16" width="300" color="primary" v-if="userFeedData.followState==='isNotFollow'">Follow</v-btn>
+                     <!--팔로우 상태인 경우 -->
+                    <v-btn elevation="16" width="300" color="red" v-if="userFeedData.followState==='alreadyFollow'">UNFollow</v-btn>
+                </v-col>
+
+                  <!-- 비공개 계정일 경우 -->
+                  <v-col v-if="userFeedData.locked==='LOCKED'">
+                    <!--팔로우 상태가 아닌경우-->
+                    <v-btn elevation="16" width="300" color="primary" v-if="userFeedData.followState==='isNotFollow'">Follow</v-btn>
+                    <!--해당계정 팔로우 상태가 OK인경우-->
+                    <v-btn elevation="16" width="300" color="red" v-if="userFeedData.followState==='alreadyFollow'">UNFollow</v-btn>
+                    <!--해당계정 팔로우 상태가 NO 인경우-->
+                    <v-btn elevation="16" width="300" color="grey" v-if="userFeedData.followState==='alreadyRequest'">FOLLOW 요청 취소</v-btn>
+                </v-col>
+
+             </v-row>
+
+         
+        
           <!-- 프로필 편집 -->
           <v-row class="mt-2" v-if="userFeedData.itsMe">
             <v-col>
-              <v-btn elevation="16" width="300" color="success" @click="feedEditDialogOpen">프로필 편집</v-btn>
+              <v-btn elevation="16" width="300" color="success" @click="feedEditDialogOpen">자기소개 편집</v-btn>
             </v-col>
           </v-row>
           <!-- 게시물, 팔로워, 팔로잉 노출 -->
@@ -51,11 +77,13 @@
               게시물 {{ userFeedData.postAmount }}
             </v-col>
 
-            <v-col cols="3" class="isHover" @click="flwListDialogOpen('팔로워')">
+            <v-col cols="3" :class="userFeedData.itsMe || userFeedData.locked ==='PUBLICID'||
+             userFeedData.followState==='alreadyFollow'?'isHover':''" @click="flwListDialogOpen('팔로워')">
               팔로워 {{ userFeedData.followerAmount }}
             </v-col>
 
-            <v-col cols="3" class="isHover" @click="flwListDialogOpen('팔로잉')">
+            <v-col cols="3" :class="userFeedData.itsMe || userFeedData.locked ==='PUBLICID'|| 
+            userFeedData.followState==='alreadyFollow'?'isHover':''" @click="flwListDialogOpen('팔로잉')">
               팔로잉 {{ userFeedData.followingAmount }}
             </v-col>
           </v-row>
@@ -69,11 +97,15 @@
       </v-col>
 
       <v-col cols="6">
-        <v-card class="mx-auto to-blackMode" elevation="16" max-width="100%" height="100%">
+
+
+        <v-card class="mx-auto to-blackMode" elevation="16" max-width="100%" height="100%" 
+        v-if="userFeedData.itsMe || userFeedData.locked ==='PUBLICID'|| userFeedData.followState==='alreadyFollow'">
           <v-card-item>
             <v-card-title>자기소개</v-card-title>
             <v-card-subtitle></v-card-subtitle>
           </v-card-item>
+
 
           <v-card-text v-if="userFeedData.introduce !== null">
             {{ userFeedData.introduce }}
@@ -82,6 +114,20 @@
           <v-card-text v-if="userFeedData.introduce === null">
             아직 등록된 자기소개가 없습니다.
           </v-card-text>
+        </v-card>
+        <v-card class="mx-auto to-blackMode" elevation="16" max-width="100%" height="100%" v-else>
+        
+
+
+        <v-card-text  class="d-flex child-flex justify-center align-center" 
+          style="font-size: 25px;"
+        >
+        비공개 계정입니다.
+        </v-card-text>
+
+
+       
+
         </v-card>
       </v-col>
     </v-row>
@@ -109,11 +155,20 @@
     </v-row>
 
     <!-- 피드 게시글 -->
-    <v-row class="mt-7" style="height: 880px; width: 100%;">
-    <UserFeedPostList
-      @childLoadingComplete="childLoadingComplete"
-      :nickname="nickname"
-    ></UserFeedPostList>
+    <v-row class="mt-7" style="height: 880px; width: 100%;" >
+      <UserFeedPostList
+        v-if="userFeedData.itsMe || userFeedData.locked ==='PUBLICID'|| userFeedData.followState==='alreadyFollow'"
+        @childLoadingComplete="childLoadingComplete"
+        :nickname="nickname"
+      ></UserFeedPostList>
+
+      <!-- 비공개 계정, 팔로우 상태가 아닌경우 -->
+      <v-row v-else>
+        <v-col class="d-flex child-flex justify-center align-center" cols="12" style="font-size: 25px;">
+          비공개 계정입니다.
+        </v-col>
+      </v-row>
+
     </v-row>
 
 
@@ -122,13 +177,14 @@
 
     <!-- 프로필 편집 모달 -->
     <FeedEditComponent v-model:value="feedEditDialog" @feedEditClose="feedEditDialogClose"></FeedEditComponent>
-
+    <ChangeProfileImg v-model:value="changeProfileImgDialog" @changeProfileImgClose="changeProfileImgClose"></ChangeProfileImg>
 </template>
 
 <script>
 import FlwListComponent from "./Flwlist.vue";
 import FeedEditComponent from "./FeedEdit.vue";
 import UserFeedPostList from "./UserFeedPostList.vue";
+import ChangeProfileImg from "./ChangeProfileImg.vue";
 import api from "@/api";
 
 export default {
@@ -138,15 +194,17 @@ export default {
       userFeedData: {},//게시글 정보를 제외한 사용자피드에 필요한 데이터
       flwListDialog: false, // 팔로우/팔로잉 목록 모달 제어값
       flwType: '', // 팔로우 ? 팔로잉?
-      feedEditDialog: false, // 프로필 편집 모달 제어값
+      feedEditDialog: false, // 자기소개 편집 모달 제어값
+      changeProfileImgDialog:false,//프로필 이미지 편집 모달 제억밧 
       isLoading: true, // 로딩 상태 초기화
-      childIsLoading:true //자식 로딩
+      childIsLoading:true //자식 로딩 상태
     };
   },
   components: {
     FlwListComponent, //팔로우/팔로워 목록 컴포넌트
     FeedEditComponent,//프로필 편집 컴포넌트
-    UserFeedPostList //게시물 목록 컴포넌트
+    UserFeedPostList, //게시물 목록 컴포넌트
+    ChangeProfileImg// 프로필 이미지 변경 컴포넌트
   },
   //마운트시 해당 유저의 피드정보를 불러온다
   mounted() {
@@ -154,8 +212,7 @@ export default {
   },
   //닉네임(router 의 props) 변경시 감지하여 다시 정보를 로드한다.
   watch: {
-    nickname() {
-      
+    nickname() {      
       // nickname이 변경될 때 호출되는 메서드
       this.getInfoData();
     }
@@ -168,6 +225,12 @@ export default {
         .then((res) => {
           //성공시 정보를 담는다.
           this.userFeedData = res?.data?.reqData;
+          // 비공개 계정일시 팔로우상태가 아니면 게시물 정보도 노출하지않는데 , 불필요한 api호출을 방지하기 위해 
+          // 컴포넌트 자체를 마운트시키지않는다 . 
+          if(!this.userFeedData.itsMe && this.userFeedData.locked !== 'PUBLICID' && this.userFeedData.followState !== 'alreadyFollow'){
+            //따라서 기존 자식컴포넌트 api호출 완료 상태 여부를 임의로 완료 상태로 설정 
+            this.childIsLoading=false
+          }
         })
         .catch((err) => {
           //실패시 에러 alert
@@ -187,6 +250,9 @@ export default {
     
     flwListDialogOpen(str) {  // 팔로워, 팔로잉 각각 버튼 클릭 시 str로 매개변수 받아와 flwType을 초기화 
                             // => flwList 컴포넌트 하나로 운영 (str 전달 -> 팔로잉 목록 or 팔로우 목록)
+      if(!this.userFeedData.itsMe && this.userFeedData.locked !== 'PUBLICID' && this.userFeedData.followState !== 'alreadyFollow'){
+        return
+      }
       this.flwType = str;
       this.flwListDialog = true; // 모달 열음
     },
@@ -199,6 +265,12 @@ export default {
     },
     feedEditDialogClose() {
       this.feedEditDialog = false;
+    },
+    changeProfileImgOpen(){
+      this.changeProfileImgDialog=true;
+    },
+    changeProfileImgClose(){
+      this.changeProfileImgDialog=false;
     }
   }
 }

@@ -1,7 +1,5 @@
 <template >
 
-
-
   <v-card >
    
       <v-navigation-drawer
@@ -69,6 +67,7 @@ export default{
     PostInsert//게시물 작성 컴포넌트
   },
  mounted(){
+  
   this.getInitInfo()
  },
   methods:{
@@ -79,6 +78,12 @@ export default{
     //세팅 컴포넌트 클릭시 공개/비공개 여부 가져오는 메소드 ==> 여부에따라 세팅 내 비공개 전환 / 공개전환 여부가 달라지므로 
     getInitInfo(){ // 회원정보를 가져옴 ( 공개/비공개 여부) 
 
+      // 로그인, 회원가입 페이지에서의 api호출을 방지 ( 사이드메뉴이기 떄문에 마운트를 막지않으면 api 호출함 )
+      const token= localStorage.getItem('access')
+      if(!token){
+
+        return
+      }
         //상태정보 가져오는 api 호출 
         api.get('/setting')
         .then((res)=>{

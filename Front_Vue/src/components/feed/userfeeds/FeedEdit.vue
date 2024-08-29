@@ -5,11 +5,10 @@
             <v-card rounded="lg" class="to-blackMode">
               <v-card-title class="d-flex justify-space-between align-center">
                 <div class="text-h5 text-medium-emphasis ps-2">
-               <span style="color: white;"> 프로필 편집</span>
+                 <span style="color: white;"> 자기소개 편집</span>
                 </div>
 
-                <v-btn
-                  
+                <v-btn  
                   variant="text"
                   @click="isActive.value = false"
                 ></v-btn>
@@ -18,21 +17,24 @@
               <v-divider class="mb-4"></v-divider>
 
               <v-card-text>
-                <v-file-input
+                <!-- <v-file-input
                   label="프로필 사진 변경"
                   prepend-icon="mdi-camera"
                   variant="filled"
-                ></v-file-input>
+                  accept="image/*"
+                  @change="handleFileEvent"
+                ></v-file-input> -->
 
-                <div class="mb-2">자기소개 수정</div>
+                  <div class="mb-2">자기소개 수정</div>
 
                 <v-textarea
-
-                  :counter="300"
+                  maxlength="100"
                   class="mb-2"
-                  rows="2"
+                  rows="3"
                   variant="outlined"
                   persistent-counter
+                  no-resize
+                  v-model="introduce"
                 ></v-textarea>
 
                
@@ -56,7 +58,7 @@
                   rounded="xl"
                   text="Send"
                   variant="flat"
-                  @click="closeDialog()"
+                  @click="changeProfile()"
                 ></v-btn>
               </v-card-actions>
             </v-card>
@@ -78,7 +80,10 @@ export default {
   
 },data(){
   return{
-     
+    
+     introduce:'',
+     isLoading:false 
+
   }
 }
 ,computed:{
@@ -92,7 +97,27 @@ export default {
   methods: {
     closeDialog() {
       this.$emit('feedEditClose');// 로그인 컴포넌트로 닫는 이벤트 전송
-    }
+    },
+  //    handleFileEvent(event){
+  //     const file= event.target.files[0]
+  //     if(!file)return;
+  //     // 파일 크기 제한 
+  //     const MAX_SIZE_MB = 5;
+  //     const MAX_SIZE_BYTES = MAX_SIZE_MB * 1024 * 1024; // 최대 파일 크기 (바이트)
+
+  //     //만약 파일크기가 5mb를 초과하면 메서드 종료 
+  //     if (file.size > MAX_SIZE_BYTES) {
+  //       alert(`파일 '${file.name}'의 크기가 ${MAX_SIZE_MB}MB를 초과합니다.`);
+  //       return;
+  //     }
+
+  //      // 파일을 data 속성에 저장
+  //      this.profileImgFile = file;
+
+  //  },
+   changeProfile(){
+    
+   } 
   }
 }
 </script>
