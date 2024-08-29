@@ -5,18 +5,22 @@ import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.sist.common.exception.InternerException;
 import com.sist.common.util.SimpleCodeGet;
 import com.sist.dto.api.ResponseDTO;
 import com.sist.dto.feed.RequestUserFeedDTO;
 import com.sist.dto.feed.ResponsePostListDTO;
 import com.sist.dto.feed.ResponseUserFeedDTO;
+import com.sist.dto.feed.UpdateProfileDTO;
 import com.sist.dto.hobby.HobbyDTO;
 import com.sist.dto.hobby.ResponseHobbyDTO;
 import com.sist.dto.member.MemberDTO;
 import com.sist.repository.feed.FeedRepository;
 import com.sist.repository.hobby.HobbyRepository;
 import com.sist.service.feed.FeedService;
+import com.sist.service.image.ImageService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -26,9 +30,9 @@ public class FeedServiceImpl implements FeedService{
 	
 	private final HobbyRepository hobbyRepository;
 	private final FeedRepository feedRepository;
+	private final ImageService imageService;
 	
-	
-	//게시물 리스트를 제외한 사용자피드에서의 피드정보를 불러오는  서비스 
+	//게시물 리스트를 제외한 사용자 피드에서의 피드정보를 불러오는  서비스 
 	@Override
 	public ResponseEntity<ResponseDTO<ResponseUserFeedDTO>> loadUserFeedInfo(String nickname) {
 		// TODO Auto-generated method stub
@@ -37,20 +41,83 @@ public class FeedServiceImpl implements FeedService{
 		RequestUserFeedDTO reqDTO = new RequestUserFeedDTO();
 		//닉네임 세팅 
 		reqDTO.setNickname(nickname);
-		//클라이언트에게 전송할 객체에 피드관련 정보를 데이터베이스에서 가져온다.
+		//만약 현재 스레드에서의 세션 닉네임과 , 요청 닉네임이 같을경우 이 요청은 자신의 피드(내피드) 요청이다.
+		
+		if(nickname.equals(SimpleCodeGet.getNickname())) {
+			//내 피드인지에 대한 정보 TRUE
+			reqDTO.setItsMe(true);
+		
+			//내피드가 아니라 다른유저의 피드를 요청한 것이라면 
+		}else {
+			//나(현재 세션유저) 와 조회할 유저의 팔로우 상관관계를 조회해야한다.
+			//팔로우 유무, 비공개 유무 , 등 다양한 정보에 따라 프론트 영역에서 보여질 정보가 달라진다.
+			
+			//현재 세션 유저의 고유 IDNUM을 갖고온다.
+			int idNum=SimpleCodeGet.getIdNum();
+			//데이터베이스에 전송할 객체의 idnum 에 값을 세팅한다.
+			reqDTO.setSessionIdNum(idNum);
+		}
+		
+		//클라이언트에게 전송할 객체에 데이터베이스에서 조회한 값을 넣는다.
 		ResponseUserFeedDTO dto = feedRepository.userFeedInfoFromMember(reqDTO);
+		
+		//만약 매개변수로 받은 닉네임과 현재 세션정보에 담긴 닉네임과 일치한다면 
+		//itsMe 변수를 true로 ( 자신의 피드인지 다른 회원의 피드인지 확인하기 위함) 세팅한다. ==== > 여기서 세팅은 클라이언트에게 보낼객체에 대한 세팅이다.
+		if(nickname.equals(SimpleCodeGet.getNickname())) {
+			//클라이언트에게 보낼 객체에 자신의 피드임을 세팅
+			dto.setItsMe(true);
+		
+			
+		}//자신이 아닌 다른유저의 피드를 조회하는 경우
+		else {
+			
+			//해당계정이 비공개 계정인 경우
+			if(dto.getLocked().equals("LOCKED")) {
+				
+				// 현재 세션 유저와 , 조회할 대상의 유저의 상관관계에서 
+				//FOLLOW 테이블 컬럼명 approve(요청승인상태)의 값이 FOLLOWOK 인경우 
+				if(dto.getFollowOKCount()>0) {
+					//팔로우 요청승인 상태(팔로우상태)
+					dto.setFollowState("alreadyFollow");
+				}
+				// 현재 세션 유저와 , 조회할 대상의 유저의 상관관계에서 
+				//FOLLOW 테이블 컬럼명 approve(요청승인상태)의 값이 FOLLOWNO 인경우 
+				else if (dto.getFollowNOCount()>0) {
+					//팔로우 요청 대기상태(공개계정의 FOLLOW 테이블 C 작업의 경우 디폴트가 FOLLOWOK이기때문에 FOLLOWNO인 상태면 무조건 비공개 계정에서의 팔로우 요청승인대기 상태이다)
+					dto.setFollowState("alreadyRequest");
+				}
+				//현재 세션유저와 , 조회할 대상의 유정의 상관관계가 어떠한 팔로우관계도 일어나지않은경우
+				else if (dto.getFollowAllCount()==0) {
+					//팔로우 하지않은 상태
+					dto.setFollowState("isNotFollow");
+				}		
+				
+			}
+			//해당계정이 공개계정인 경우 
+			else {
+				
+				//팔로우 상태인경우 
+				if(dto.getFollowOKCount()>0) {
+					dto.setFollowState("alreadyFollow");
+				}
+				//팔로우 상태가 아닌경우 
+				else if (dto.getFollowAllCount()==0) {
+					dto.setFollowState("isNotFollow");
+				}
+				
+				//공개 계정은  FOLLOWNO 상태가 없다.
+			}
+			
+			
+		}
+		
+		
 		//닉네임에 해당하는 관심사 리스트를 불러온다.
 		List<HobbyDTO> list = hobbyRepository.findHobbyByNickname(nickname);
 		
 		//위에서 생성한 객체에 관심사 리스트를 추가한다.
 		dto.setHobbies(list);
-		
-		//만약 매개변수로 받은 닉네임과 현재 세션정보에 담긴 닉네임과 일치한다면 
-		//itsMe 변수를 true로 ( 자신의 피드인지 다른 회원의 피드인지 확인하기 위함) 세팅한다.
-		if(dto.getNickname().equals(SimpleCodeGet.getNickname())) {
-			dto.setItsMe(true);
-		}
-		
+					
 		
 		return new ResponseEntity<ResponseDTO<ResponseUserFeedDTO>>
 		(new ResponseDTO<ResponseUserFeedDTO>(dto),HttpStatus.OK); //성공 
@@ -73,10 +140,67 @@ public class FeedServiceImpl implements FeedService{
 		//닉네임 기반으로 게시물 정보를 읽어서 리스트에 담는다 .
 		List<ResponsePostListDTO> list  = feedRepository.userFeedPostList(dto);
 		
+		
 			
 		
 		return new ResponseEntity<ResponseDTO<List<ResponsePostListDTO>>>
 		(new ResponseDTO<List<ResponsePostListDTO>>(list),HttpStatus.OK); //성공 
+	}
+	
+	
+	//프로필 이미지 변경 
+	@Override
+	@Transactional
+	public ResponseEntity<ResponseDTO<Void>> updateProfileImg(UpdateProfileDTO dto) {
+		// TODO Auto-generated method stub
+		//현재 세션 회원고유번호 갖고오기
+		int idNum=SimpleCodeGet.getIdNum();
+		
+		//기존 프로필 이미지 url을 데이터베이스에서 가져옴
+		String originalImg= feedRepository.profileImgGet(idNum);
+		
+		//만약 기존 이미지가 존재한다면 
+		if(originalImg!=null) {
+			//s3에서 삭제
+			imageService.deleteImage(originalImg);
+		}
+		
+		//클라이언트로 받은 파일이 존재한다면 
+		if(dto.getProfileImgFile()!=null) {
+			//s3 이미지 업로드 url 반환 
+		String profile=	imageService.upload(dto.getProfileImgFile());
+		dto.setProfile(profile);
+		}
+				
+		dto.setIdNum(idNum);
+		
+		
+		//만약 파일이 null 이면 null인상태로 저장 ==> 기본이미지 
+		
+		
+		try {
+			feedRepository.profileImgUpdate(dto);
+		} catch (Exception e) {
+			// TODO: handle exception
+			if(dto.getProfile()!=null) {
+				imageService.deleteImage(dto.getProfile());
+			}
+			
+			dto.setProfile(null);
+			
+			try {
+				feedRepository.profileImgUpdate(dto);
+			} catch (Exception e2) {
+				// TODO: handle exception
+				throw new InternerException("서버내부 오류입니다. 잠시 뒤 이용해주세요.", "프로필 사진변경중 sql 오류발생");
+			}
+			throw new InternerException("서버내부 오류입니다. 잠시 뒤 이용해주세요.", "프로필 사진변경중 오류발생");
+		}
+		
+		
+		
+		return new ResponseEntity<ResponseDTO<Void>>
+		(new ResponseDTO<Void>(),HttpStatus.OK); //성공 
 	}
 
 }

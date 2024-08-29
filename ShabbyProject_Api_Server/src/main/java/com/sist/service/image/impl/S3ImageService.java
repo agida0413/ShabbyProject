@@ -4,7 +4,7 @@ import com.sist.common.exception.BadRequestException;
 import com.sist.common.exception.InternerException;
 import com.sist.service.image.ImageService;
 
-
+import lombok.RequiredArgsConstructor;
 
 import java.io.ByteArrayInputStream;
 
@@ -33,20 +33,17 @@ import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.S3Exception;
 @Service
+@RequiredArgsConstructor
 public class S3ImageService implements ImageService{
 	
-	private static final Logger logger = LoggerFactory.getLogger(S3ImageService.class);
+	
 
     private final S3Client s3Client;
 
     @Value("${s3.bucket}")
     private String bucket;
 
-    @Autowired
-    public S3ImageService(S3Client s3Client) {
-        this.s3Client = s3Client;
-      
-    }
+    
 
     
     public String upload(MultipartFile image) {
@@ -127,6 +124,7 @@ public class S3ImageService implements ImageService{
     }
 
     public void deleteImage(String imageAddress) {
+   	 bucket=bucket.trim();
         String key = getKeyFromImageAddress(imageAddress);
         try {
             DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
