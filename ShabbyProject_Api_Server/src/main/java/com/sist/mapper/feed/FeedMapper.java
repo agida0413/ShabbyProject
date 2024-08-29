@@ -18,4 +18,6 @@ public interface FeedMapper {
 	
 	public String profileImgGet(int idNum);
 	public void profileImgUpdate(UpdateProfileDTO dto);
+	
+	public void introduceUpdate(UpdateProfileDTO dto);
 }

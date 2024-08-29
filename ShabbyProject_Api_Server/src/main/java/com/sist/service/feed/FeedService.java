@@ -17,4 +17,6 @@ public interface FeedService {
 	public ResponseEntity<ResponseDTO<List<ResponsePostListDTO>>> loadUserFeedPostList(String nickname,int page);
 	
 	public ResponseEntity<ResponseDTO<Void>> updateProfileImg(UpdateProfileDTO dto);
+	
+	public ResponseEntity<ResponseDTO<Void>> updateIntroduce(UpdateProfileDTO dto);
 }

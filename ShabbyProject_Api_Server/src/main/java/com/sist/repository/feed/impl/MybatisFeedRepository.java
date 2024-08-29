@@ -45,4 +45,10 @@ public class MybatisFeedRepository implements FeedRepository{
 		feedMapper.profileImgUpdate(dto);
 	}
 
+	@Override
+	public void introduceUpdate(UpdateProfileDTO dto) {
+		// TODO Auto-generated method stub
+		feedMapper.introduceUpdate(dto);
+	}
+
 }
