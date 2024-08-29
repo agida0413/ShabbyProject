@@ -119,6 +119,10 @@
 	 WHERE id_num=#{idNum}
  </update>
  
- 
-
+ <!-- 자기소개 변경 업데이트-->
+<update id="introduceUpdate" parameterType="UpdateProfileDTO">
+UPDATE MEMBER SET 
+introduce=#{introduce}
+WHERE id_num=#{idNum}
+</update>
  </mapper>

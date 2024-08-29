@@ -203,4 +203,19 @@ public class FeedServiceImpl implements FeedService{
 		(new ResponseDTO<Void>(),HttpStatus.OK); //성공 
 	}
 
+	@Override
+	public ResponseEntity<ResponseDTO<Void>> updateIntroduce(UpdateProfileDTO dto) {
+		// TODO Auto-generated method stub
+		
+		int idNum=SimpleCodeGet.getIdNum();
+		
+		dto.setIdNum(idNum);
+		
+		feedRepository.introduceUpdate(dto);
+		
+
+		return new ResponseEntity<ResponseDTO<Void>>
+		(new ResponseDTO<Void>(),HttpStatus.OK); //성공 
+	}
+
 }

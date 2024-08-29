@@ -14,4 +14,5 @@ public interface FeedRepository {
 	public List<ResponsePostListDTO> userFeedPostList(RequestUserFeedDTO dto);
 	public String profileImgGet(int idNum);
 	public void profileImgUpdate(UpdateProfileDTO dto);
+	public void introduceUpdate(UpdateProfileDTO dto);
 }
