@@ -39,22 +39,19 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     private final JWTUtil jwtUtil;
     //액세스 토큰 재발급 서비스 
     private final RefreshService refreshService;
-    //공통 모듈함수
-    private final SimpleCodeGet simpleCodeGet;
+  
     //jackson objectmapper
     private final ObjectMapper objectMapper;
-    //쿠키관련 제어 함수 
-    private final CookieUtil cookieUtil;
+ 
    
     
-    public LoginFilter(AuthenticationManager authenticationManager, JWTUtil jwtUtil,RefreshService refreshService,SimpleCodeGet simpleCodeGet,ObjectMapper objectMapper,CookieUtil cookieUtil) {
+    public LoginFilter(AuthenticationManager authenticationManager, JWTUtil jwtUtil,RefreshService refreshService,ObjectMapper objectMapper) {
 
         this.authenticationManager = authenticationManager;
         this.jwtUtil = jwtUtil;
         this.refreshService=refreshService;
-        this.simpleCodeGet=simpleCodeGet;
         this.objectMapper=objectMapper;
-        this.cookieUtil=cookieUtil;
+    
         
         //로그인 api url
         setFilterProcessesUrl("/api/login");
@@ -92,12 +89,12 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         GrantedAuthority auth = iterator.next();
         String role = auth.getAuthority();
         //authentication 객체에서 아이디 고유번호값 읽어오기 
-        int idNum=simpleCodeGet.getIdNum(authentication);
+        int idNum=SimpleCodeGet.getIdNum(authentication);
         //문자열로 변환 
         String strIdNuM=String.valueOf(idNum);
         
         //닉네임 가져오기
-        String nickname=simpleCodeGet.getNickname(authentication);
+        String nickname=SimpleCodeGet.getNickname(authentication);
         
         //토큰 생성( 각토큰이름 + email+role+strIdNum + 유효기간 + 시크릿키(sha))
         String access = jwtUtil.createJwt("access", email, role,strIdNuM,nickname, 10000L);//엑세스 토큰 
@@ -109,7 +106,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         
         //응답 설정
         response.setHeader("access", access);//엑세스 토큰은 헤더에 
-        response.addCookie(cookieUtil.createCookie("refresh", refresh));//리프레시 토큰은 쿠키에
+        response.addCookie(CookieUtil.createCookie("refresh", refresh));//리프레시 토큰은 쿠키에
         
         //성공시 응답
         ResponseDTO<Void> succesResponseApi = new ResponseDTO<Void>();

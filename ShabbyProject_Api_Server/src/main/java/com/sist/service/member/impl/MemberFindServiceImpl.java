@@ -19,7 +19,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class MemberFindServiceImpl implements MemberFindService{
 private final MemberAccountRepository memberAccountRepository;
-private final BCryptPasswordEncoder bCryptPasswordEncoder;	
 private final MailService mailService;
 	
 	//이메일(아이디) 찾기 서비스

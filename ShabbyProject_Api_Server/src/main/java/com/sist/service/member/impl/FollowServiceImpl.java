@@ -20,14 +20,14 @@ import lombok.RequiredArgsConstructor;
 public class FollowServiceImpl implements FollowService {
 	
 	private final FollowRepository followRepository;
-	private final SimpleCodeGet simpleCodeGet;
+	
 	@Override
 	public ResponseEntity<ResponseDTO<ResponseFollowDTO>> followingBykeyword(String keyword,int page,int rowSize) {
 		// TODO Auto-generated method stub
 		
 		//공통모듈에서 offset 계산과 , 현재 securityContextHolder에 담긴  idNum가져옴
-		int offSet=simpleCodeGet.getOffset(rowSize,page);
-		int idNum=simpleCodeGet.getIdNum();
+		int offSet=SimpleCodeGet.getOffset(rowSize,page);
+		int idNum=SimpleCodeGet.getIdNum();
 		
 		//데이터베이스 전송객체 생성 및 값 세팅 
 		RequestFollowDTO dto = new RequestFollowDTO();

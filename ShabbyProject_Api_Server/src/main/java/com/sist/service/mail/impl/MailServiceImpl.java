@@ -16,7 +16,7 @@ import com.sist.common.exception.BadRequestException;
 import com.sist.common.exception.InternerException;
 import com.sist.common.exception.NotFoundException;
 import com.sist.common.util.MailUtil;
-import com.sist.common.util.PasswordGenerator;
+import com.sist.common.util.RandomGenerator;
 import com.sist.common.util.SimpleCodeGet;
 import com.sist.dto.api.ResponseDTO;
 import com.sist.dto.member.EmailAuthDTO;
@@ -32,11 +32,11 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class MailServiceImpl implements MailService{
-	private final MailUtil mailUtil;
+	
 	private final JavaMailSender javaMailSender;
 	private final MemberAccountRepository memberAccountRepository;//멤버관련 레파지토리
 	private final BCryptPasswordEncoder bCryptPasswordEncoder;
-	private final PasswordGenerator passwordGenerator;// 임시패스워드 생성 
+
 	
 	//이메일 중복검증 및 발송
 	@Transactional
@@ -56,7 +56,7 @@ public class MailServiceImpl implements MailService{
 				MimeMessage message= javaMailSender.createMimeMessage(); //메일링 객체 생성 
 				MimeMessageHelper mimeMessageHelper= new MimeMessageHelper(message,true);
 				
-				String certificationNumber=mailUtil.generateRandomCode(); //랜덤 인증번호 생성 
+				String certificationNumber=RandomGenerator.generateRandomCode(); //랜덤 인증번호 생성 
 			
 			    EmailAuthDTO emailDto = new EmailAuthDTO();//이메일 정보 엔티티 
 		        emailDto.setEmail(email);// 매개변수로 받은 이메일 세팅
@@ -66,7 +66,7 @@ public class MailServiceImpl implements MailService{
 		        
 		   
 		        
-				String htmlContent=mailUtil.getCertificationMessage(certificationNumber); // 이메일로 보낼 html 
+				String htmlContent=MailUtil.getCertificationMessage(certificationNumber); // 이메일로 보낼 html 
 				
 				mimeMessageHelper.setTo(email);//보낼 상대 
 				mimeMessageHelper.setSubject("[Shabby] 회원가입 인증코드입니다."); //제목 
@@ -153,10 +153,10 @@ public class MailServiceImpl implements MailService{
 			MimeMessage message= javaMailSender.createMimeMessage(); //메일링 객체 생성 
 			MimeMessageHelper mimeMessageHelper= new MimeMessageHelper(message,true);
 			
-			String password =passwordGenerator.generateRandomPassword();//임시패스워드 생성
+			String password =RandomGenerator.generateRandomPassword();//임시패스워드 생성
 		
 	  
-			String htmlContent=mailUtil.getPasswordResetMessage(password); // 이메일로 보낼 html 
+			String htmlContent=MailUtil.getPasswordResetMessage(password); // 이메일로 보낼 html 
 			
 			mimeMessageHelper.setTo(email);//보낼 상대 
 			mimeMessageHelper.setSubject("[Shabby] 임시패스워드 발급메일입니다."); //제목 

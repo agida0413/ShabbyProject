@@ -28,7 +28,7 @@ public class CustomLogoutFilter extends GenericFilterBean {
     private final JWTUtil jwtUtil;
     private final RefreshService refreshService;
     private final ObjectMapper objectMapper;
-    private final CookieUtil cookieUtil;
+   
 
    
 
@@ -64,7 +64,7 @@ public class CustomLogoutFilter extends GenericFilterBean {
 	       
 	        try {
 	        	//쿠키를 읽어오는 메서드     
-	        	refresh=(String)cookieUtil.getCookie("refresh", request);         
+	        	refresh=(String)CookieUtil.getCookie("refresh", request);         
 	
 	      		} catch (Exception e) {
 	      			// TODO: handle exception
@@ -95,7 +95,7 @@ public class CustomLogoutFilter extends GenericFilterBean {
 	        } catch (ExpiredJwtException e) {
 	        	
 	        	//refresh 쿠키제거메서드
-	        	response.addCookie(cookieUtil.deleteRefreshCookie());
+	        	response.addCookie(CookieUtil.deleteRefreshCookie());
 	        	
 	            //만료됬을 경우 
 	        	ResponseDTO<Void> responseApi = new ResponseDTO<Void>(
@@ -125,7 +125,7 @@ public class CustomLogoutFilter extends GenericFilterBean {
 	        if (!isExist) {
 	        	
 	        	//refresh 쿠키제거메서드
-	        	response.addCookie(cookieUtil.deleteRefreshCookie());
+	        	response.addCookie(CookieUtil.deleteRefreshCookie());
 	        	ResponseDTO<Void> responseApi = new ResponseDTO<Void>(
 	          			 HttpStatus.UNAUTHORIZED.value(),
 	                       "비정상적인 접근입니다"
@@ -141,7 +141,7 @@ public class CustomLogoutFilter extends GenericFilterBean {
 		
 	        	 
 	        //Refresh 토큰 Cookie 값 0
-	        response.addCookie(cookieUtil.deleteRefreshCookie());//refresh 쿠키제거메서드
+	        response.addCookie(CookieUtil.deleteRefreshCookie());//refresh 쿠키제거메서드
 	        response.setStatus(HttpServletResponse.SC_OK);
 	        
 	        //성공 응답값 

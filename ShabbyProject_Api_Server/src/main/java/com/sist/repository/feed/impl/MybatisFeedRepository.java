@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 import com.sist.dto.feed.RequestUserFeedDTO;
 import com.sist.dto.feed.ResponsePostListDTO;
 import com.sist.dto.feed.ResponseUserFeedDTO;
+import com.sist.dto.feed.UpdateProfileDTO;
 import com.sist.mapper.feed.FeedMapper;
 import com.sist.repository.feed.FeedRepository;
 
@@ -30,6 +31,18 @@ public class MybatisFeedRepository implements FeedRepository{
 	public List<ResponsePostListDTO> userFeedPostList(RequestUserFeedDTO dto) {
 		// TODO Auto-generated method stub
 		return feedMapper.userFeedPostList(dto);
+	}
+
+	@Override
+	public String profileImgGet(int idNum) {
+		// TODO Auto-generated method stub
+		return feedMapper.profileImgGet(idNum);
+	}
+
+	@Override
+	public void profileImgUpdate(UpdateProfileDTO dto) {
+		// TODO Auto-generated method stub
+		feedMapper.profileImgUpdate(dto);
 	}
 
 }

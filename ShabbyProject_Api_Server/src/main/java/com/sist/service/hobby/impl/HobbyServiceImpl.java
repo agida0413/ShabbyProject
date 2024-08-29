@@ -22,7 +22,7 @@ public class HobbyServiceImpl implements HobbyService {
 	
 	private final int rowSize=5;//조회할 행 개수 
 	private final HobbyRepository hobbyRepository;
-	private final SimpleCodeGet simpleCodeGet;
+
 	
 	@Override
 	public ResponseEntity<ResponseDTO<HobbyDTO>> allHobby() {
@@ -37,7 +37,7 @@ public class HobbyServiceImpl implements HobbyService {
 		//데이터베이스에 보낼 객체 생성
 		RequestHobbyDTO dto = new RequestHobbyDTO();
 		//offset 설정 - > 계산로직은 항상 동일하여 공통함수에서 계산
-		int offSet=simpleCodeGet.getOffset(rowSize,page);
+		int offSet=SimpleCodeGet.getOffset(rowSize,page);
 		
 	
 		dto.setKeyword(keyword);//키워드 세팅
