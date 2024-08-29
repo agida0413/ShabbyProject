@@ -27,8 +27,6 @@ public class ChangeInfoServiceImpl implements ChangeInfoService{
 	
 	private final MemberAccountRepository memberAccountRepository;
 	private final MemberSettingRepository memberSettingRepository;
-	//공통함수모듈
-	private final SimpleCodeGet simpleCodeGet;
 	//패스워드 암호화
 	private final BCryptPasswordEncoder bCryptPasswordEncoder;
 	
@@ -40,7 +38,7 @@ public class ChangeInfoServiceImpl implements ChangeInfoService{
 		// TODO Auto-generated method stub
 		
 		//회원 고유번호를 가져옴 
-		int idNum=simpleCodeGet.getIdNum();
+		int idNum=SimpleCodeGet.getIdNum();
 			
 			//고유번호에 해당하는 회원정보 가져오기 
 			MemberDTO dto =	memberAccountRepository.findByIdNum(idNum);
@@ -70,7 +68,7 @@ public class ChangeInfoServiceImpl implements ChangeInfoService{
 		
 		
 		//고유 아이디넘버 갖고오기 
-		int idNum = simpleCodeGet.getIdNum();
+		int idNum = SimpleCodeGet.getIdNum();
 		
 		//회원정보 갖고오기 
 		MemberDTO findDto = memberAccountRepository.findByIdNum(idNum);
@@ -105,7 +103,7 @@ public class ChangeInfoServiceImpl implements ChangeInfoService{
 		valDto.setPassword(dto.getPassword());
 		
 		
-		int idNum=simpleCodeGet.getIdNum();//고유번호를 가져옴 
+		int idNum=SimpleCodeGet.getIdNum();//고유번호를 가져옴 
 	
 		MemberDTO findDto= memberAccountRepository.findByIdNum(idNum); // 데이터베이스에서 일치하는 회원정보 
 		
@@ -139,7 +137,7 @@ public class ChangeInfoServiceImpl implements ChangeInfoService{
 	public ResponseEntity<ResponseDTO<Void>>  phoneChange(ChangePhoneDTO dto) {
 		// TODO Auto-generated method stub
 		
-		int idNum=simpleCodeGet.getIdNum(); //회원 고유번호
+		int idNum=SimpleCodeGet.getIdNum(); //회원 고유번호
 		 
 		MemberDTO findDto = memberAccountRepository.findByIdNum(idNum);//데이터 베이스에서 고유번호 기반 정보 같고옴 
 		
@@ -195,7 +193,7 @@ public class ChangeInfoServiceImpl implements ChangeInfoService{
 			
 		}
 		
-		int idNum=simpleCodeGet.getIdNum();//회원 고유 아이디갖고오기 
+		int idNum=SimpleCodeGet.getIdNum();//회원 고유 아이디갖고오기 
 		
 		
 		dto.setIdNum(idNum);//고유번호 세팅
@@ -213,8 +211,8 @@ public class ChangeInfoServiceImpl implements ChangeInfoService{
 	public ResponseEntity<ResponseDTO<Void>> deleteMember(MemberDTO dto) {
 		// TODO Auto-generated method stub
 		
-		String sessionEmail=simpleCodeGet.getEmail();// 현재 토큰기반 인증된 임시유지세션에서 이메일 갖고옴 
-		int idNum=simpleCodeGet.getIdNum();//토큰기반 인증된 임시유지세션에서 고유번호 갖고옴 
+		String sessionEmail=SimpleCodeGet.getEmail();// 현재 토큰기반 인증된 임시유지세션에서 이메일 갖고옴 
+		int idNum=SimpleCodeGet.getIdNum();//토큰기반 인증된 임시유지세션에서 고유번호 갖고옴 
 		
 		if(!dto.getEmail().equals(sessionEmail)) {//만약 현재 세션이메일과 입력받은 이메일이 같지않다면 
 			throw new BadRequestException("입력한 정보가 일치하지 않습니다."); // 익셉션 발생 

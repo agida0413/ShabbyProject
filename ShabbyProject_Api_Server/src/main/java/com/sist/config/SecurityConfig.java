@@ -43,12 +43,10 @@ public class SecurityConfig {
 		private final JWTUtil jwtUtil;
 		//액세스 토큰 재발급 서비스 
 		private final RefreshService refreshService;
-		//공통 모듈함수 
-		private final SimpleCodeGet simpleCodeGet;
+	
 		//jackson objectmapper
 		private final ObjectMapper objectMapper;
-		//쿠키를 보다 쉽게 가져오고 제어하기 위해 정의한 클래스
-		private final CookieUtil cookieUtil;
+		
    
 		@Bean
 	    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
@@ -117,11 +115,11 @@ public class SecurityConfig {
 		
 		// 로그인필터를  UsernamePasswordAuthenticationFilter 위치에 
 		http
-		.addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil,refreshService,simpleCodeGet,objectMapper,cookieUtil), UsernamePasswordAuthenticationFilter.class);
+		.addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil,refreshService,objectMapper), UsernamePasswordAuthenticationFilter.class);
 		
 		//커스텀한 로그아웃 필터를 등록 =>기존 필터위치에 
 		http
-		.addFilterBefore(new CustomLogoutFilter(jwtUtil, refreshService,objectMapper,cookieUtil), LogoutFilter.class);
+		.addFilterBefore(new CustomLogoutFilter(jwtUtil, refreshService,objectMapper), LogoutFilter.class);
 		
 		// 세션방식 미사용
 		http

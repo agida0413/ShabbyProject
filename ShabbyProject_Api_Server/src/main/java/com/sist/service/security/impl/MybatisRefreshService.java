@@ -30,7 +30,7 @@ public class MybatisRefreshService implements RefreshService{
 	
 	private final JwtStoreRepository repository;
 	private final JWTUtil jwtUtil;
-	private final CookieUtil cookieUtil;
+
 
 	// 데이터베이스에서 리프레시 토큰을 지움 매개변수는 토큰 			
 	public	void deleteRefresh(String refresh) {
@@ -68,7 +68,7 @@ public class MybatisRefreshService implements RefreshService{
 	     
 	        String refresh = null;
 	       try {
-	    	  refresh=(String)cookieUtil.getCookie("refresh", request);
+	    	  refresh=(String)CookieUtil.getCookie("refresh", request);
 
 		} catch (Exception e) {
 			// TODO: handle exception
@@ -88,7 +88,7 @@ public class MybatisRefreshService implements RefreshService{
 	            jwtUtil.isExpired(refresh);// 유효기간 검증 
 	        } catch (ExpiredJwtException e) {
 	        	
-	        	response.addCookie(cookieUtil.deleteRefreshCookie());//refresh 쿠키제거메서드
+	        	response.addCookie(CookieUtil.deleteRefreshCookie());//refresh 쿠키제거메서드
 	        	  throw new BadRequestException("비정상적인 접근입니다.");//사용자 정의 익셉션 발생
 	        }
 
@@ -105,7 +105,7 @@ public class MybatisRefreshService implements RefreshService{
 			Boolean isExist = isExist(refresh); //DB에 저장되어 있는지 확인
 			if (!isExist) {//없다면 
 			
-				  response.addCookie(cookieUtil.deleteRefreshCookie());//refresh 쿠키제거메서드
+				  response.addCookie(CookieUtil.deleteRefreshCookie());//refresh 쿠키제거메서드
 				  throw new BadRequestException("비정상적인 접근입니다.");//사용자 정의 익셉션 발생
 			}
 	        
@@ -129,7 +129,7 @@ public class MybatisRefreshService implements RefreshService{
 	        
 	        response.setHeader("access", newAccess); //새로운 토큰을 헤더에 추가 
 	        
-	        response.addCookie(cookieUtil.createCookie("refresh", newRefresh)); // 쿠키생성 메서드
+	        response.addCookie(CookieUtil.createCookie("refresh", newRefresh)); // 쿠키생성 메서드
 
 	        return new ResponseEntity<ResponseDTO<Void>>
 			(new ResponseDTO<Void>(),HttpStatus.OK); //성공 

@@ -19,7 +19,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class DuplicateRequestInterceptor implements HandlerInterceptor {
 
     private final Map<String, Boolean> requestMap = new ConcurrentHashMap<>(); //요청 을 저장하는 map = > concurrenthashmap은 멀티스레드에서 안전함 (LOCK) 
-    private final SimpleCodeGet simpleCodeGet;
+    
     
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -50,7 +50,7 @@ public class DuplicateRequestInterceptor implements HandlerInterceptor {
     		int idNum;
        
 	    	try {//사용자 인증후 요청에 대해서 
-	    		 idNum=simpleCodeGet.getIdNum();
+	    		 idNum=SimpleCodeGet.getIdNum();
 			}
 	    	catch (Exception e) {//아직로그인 하지않은 요청에 대해서 
 				// TODO: handle exception

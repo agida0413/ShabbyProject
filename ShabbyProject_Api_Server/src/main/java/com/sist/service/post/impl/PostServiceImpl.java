@@ -25,8 +25,6 @@ import lombok.RequiredArgsConstructor;
 public class PostServiceImpl implements PostService {
 	//게시물 repository
     private final PostRepository postRepository;
-    //공통 함수모듈
-    private final SimpleCodeGet simpleCodeGet;
     //이미지업로드 서비스
     private final ImageService imageService;
  // 최대 파일 크기 5MB 변수
@@ -80,7 +78,7 @@ public class PostServiceImpl implements PostService {
 
         // 데이터베이스 저장
         try {
-            int idNum = simpleCodeGet.getIdNum(); // 현재 세션의 ID 가져오기
+            int idNum = SimpleCodeGet.getIdNum(); // 현재 세션의 ID 가져오기
             dto.setIdNum(idNum); // 게시물 DTO에 ID 설정
             setPostState(dto); // 게시물 상태 설정
 

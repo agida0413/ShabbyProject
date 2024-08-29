@@ -26,7 +26,7 @@ public class FeedServiceImpl implements FeedService{
 	
 	private final HobbyRepository hobbyRepository;
 	private final FeedRepository feedRepository;
-	private final SimpleCodeGet simpleCodeGet;
+	
 	
 	//게시물 리스트를 제외한 사용자피드에서의 피드정보를 불러오는  서비스 
 	@Override
@@ -47,7 +47,7 @@ public class FeedServiceImpl implements FeedService{
 		
 		//만약 매개변수로 받은 닉네임과 현재 세션정보에 담긴 닉네임과 일치한다면 
 		//itsMe 변수를 true로 ( 자신의 피드인지 다른 회원의 피드인지 확인하기 위함) 세팅한다.
-		if(dto.getNickname().equals(simpleCodeGet.getNickname())) {
+		if(dto.getNickname().equals(SimpleCodeGet.getNickname())) {
 			dto.setItsMe(true);
 		}
 		
@@ -63,7 +63,7 @@ public class FeedServiceImpl implements FeedService{
 		//행의 개수 
 		int rowSize=6;
 		//offset(시작위치)
-		int offSet=simpleCodeGet.getOffset(rowSize, page);
+		int offSet=SimpleCodeGet.getOffset(rowSize, page);
 		//데이터베이스 전송 객체 생성
 		RequestUserFeedDTO dto= new RequestUserFeedDTO();
 		dto.setNickname(nickname);//닉네임 세팅
