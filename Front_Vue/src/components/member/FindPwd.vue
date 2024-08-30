@@ -10,26 +10,11 @@
        <v-divider></v-divider>
 
         <!--로딩 스피너-->
-        <v-row
-        align="center"
-        justify="center"
-        class="mt-5"
-        v-if="loading"
-        >
-            <v-col
-              cols="auto"
-              class="text-center"
-            >
-              
-                    <v-progress-circular
-                      
-                      indeterminate
-                      color="primary"
-                      size="64"
-                    ></v-progress-circular>
-            </v-col>
-
-    </v-row>
+        <v-progress-linear
+          color="black"
+          indeterminate
+          v-if="loading"
+         ></v-progress-linear>
 
     <v-card-text class="mt-6">
       <!--이메일 입력-->
@@ -44,6 +29,7 @@
                         v-model="email"
                         :rules="emailRules"
                         :error-messages="emailErrors"
+                        :disabled="loading"
                       ></v-text-field>
                 </v-col>
               </v-row>
@@ -63,7 +49,7 @@
                    prepend-inner-icon="mdi-account"
                    variant="outlined"               
                   v-model="name"
-                   
+                     :disabled="loading"
                   ></v-text-field>
              </v-col>
          </v-row>
@@ -82,7 +68,8 @@
                   variant="outlined"
                   v-model="firstPhoneNum"
                   :items="items"                         
-                  required             
+                  required   
+                  :disabled="loading"          
                 ></v-select>
            </v-col>
 
@@ -93,7 +80,8 @@
                   density="compact"
                   maxlength="4" 
                   v-model="middlePhoneNum"
-                  variant="outlined"         
+                  variant="outlined"  
+                  :disabled="loading"       
                 ></v-text-field>
 
             </v-col>
@@ -105,6 +93,7 @@
                      density="compact"
                      variant="outlined"
                      v-model="lastPhoneNum"
+                       :disabled="loading"
                   ></v-text-field>
 
               </v-col>

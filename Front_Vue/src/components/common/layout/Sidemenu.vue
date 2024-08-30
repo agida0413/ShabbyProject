@@ -52,13 +52,15 @@
 import PostInsert from "@/components/feed/post/PostInsert.vue";
 import SettingComponent from "../setting/Setting.vue"
 import api from "@/api"
+
 export default{
 
   data(){
     return{
       settingDialog:false, //세팅 모달 제어값
       postInsertDialog:false, //새 게시물 작성 제어값 
-      memberData:{} //회원정보 
+      memberData:{}, //회원정보
+      isLoading:false //로딩상태 
     }
   },
  
@@ -70,6 +72,20 @@ export default{
   
   this.getInitInfo()
  },
+ //변경추적
+    watch:{
+      //현재 컴포넌트에서 데이터 교환이 완료됫음을 app.vue에전달(스켈레톤 요소제어)
+      isLoading(newLoading){
+        if(newLoading){
+          this.$emit('childLoading')
+        }
+      },
+      //세팅 컴포넌트내에서 닉네임 변경등 변경되면 변경된값으로 다시 정보를 읽기위함
+      settingDialog(){
+        this.getInitInfo()
+      }
+     
+    },
   methods:{
     //자식에서 받은 변한 상태값 매개변수로 받음 
     reGetInfo(changeState){
@@ -77,7 +93,12 @@ export default{
     },
     //세팅 컴포넌트 클릭시 공개/비공개 여부 가져오는 메소드 ==> 여부에따라 세팅 내 비공개 전환 / 공개전환 여부가 달라지므로 
     getInitInfo(){ // 회원정보를 가져옴 ( 공개/비공개 여부) 
+      
+      if(this.isLoading===true){
+        return;
+      }
 
+      this.isLoading=true
       // 로그인, 회원가입 페이지에서의 api호출을 방지 ( 사이드메뉴이기 떄문에 마운트를 막지않으면 api 호출함 )
       const token= localStorage.getItem('access')
       if(!token){
@@ -95,6 +116,9 @@ export default{
         .catch((err)=>{
         
           alert(err?.response?.data?.message);
+        })
+        .finally(()=>{
+          this.isLoading=false
         })
       
        
@@ -115,6 +139,11 @@ export default{
     },
     //로그아웃 진행 
     logout(){
+      if(this.isLoading){
+        return
+      }
+
+      this.isLoading=true
       //로그아웃 api 호출 
       api.post('/logout')
       .then(()=>{
@@ -132,6 +161,9 @@ export default{
           
           localStorage.removeItem('access')//엑세스 토큰 지움 
           this.$router.push('/login');//에러 발생시 로그인 페이지로이동
+        })
+        .finally(()=>{
+          this.isLoading=false
         })
          
     }

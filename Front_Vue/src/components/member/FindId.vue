@@ -3,14 +3,19 @@
    <!-- 아이디 찾기 모달-->
    
    <v-dialog v-model="localDialog"  max-width="500" >
-
+      
       <v-card  
         prepend-icon="mdi-account"
         title="이메일 찾기"
         class="pa-3"   
       >
-      <v-divider></v-divider>
 
+      <v-divider></v-divider>
+        <v-progress-linear
+          color="black"
+          indeterminate
+          v-if="isLoading"
+         ></v-progress-linear>
     <v-card-text class="mt-6" v-show="isAuth" >
 
       <table width="400px" style="border:1px #D3D3D3 solid;">
@@ -37,7 +42,7 @@
                                prepend-inner-icon="mdi-account"
                                variant="outlined"
                                v-model="nickname"
-                         
+                              :disabled="isLoading"
                                :rules="nickNameRules"
                                required
                                :error-messages="nickNameErrors"
@@ -58,6 +63,7 @@
                    prepend-inner-icon="mdi-account"
                    variant="outlined"
                    v-model="name"
+                   :disabled="isLoading"
                   ></v-text-field>
              </v-col>
          </v-row>    
@@ -73,7 +79,8 @@
                   variant="outlined"
                   v-model="firstPhoneNum"
                   :items="items"             
-                  required             
+                  required          
+                  :disabled="isLoading"   
                 ></v-select>
            </v-col>
 
@@ -83,7 +90,8 @@
                     density="compact"
                     maxlength="4" 
                     v-model="middlePhoneNum"
-                    variant="outlined"         
+                    variant="outlined"      
+                    :disabled="isLoading"   
                   ></v-text-field>
             </v-col>
 
@@ -94,6 +102,7 @@
                     density="compact"
                     variant="outlined"
                     v-model="lastPhoneNum"
+                    :disabled="isLoading"
                   ></v-text-field>
               </v-col>
 
@@ -109,6 +118,7 @@
           <v-btn
             text="Close"
             variant="plain"
+            :disabled="isLoading"
             @click=closeDialog()> 
           </v-btn>
 
@@ -117,6 +127,7 @@
             color="primary"
             text="Submit"
             variant="tonal"
+            :disabled="isLoading"
             @click=sumbmitFindId()
           ></v-btn>
         </v-card-actions>

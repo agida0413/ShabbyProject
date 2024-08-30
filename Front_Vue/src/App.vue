@@ -1,11 +1,19 @@
 <template >
+  <v-row v-if="isLoading " class="loading-overlay">
+      <v-col class="d-flex justify-center align-center">
+        <v-progress-circular indeterminate color="primary"></v-progress-circular>
+      </v-col>
+    </v-row>
+
   <v-app class="no-cursor to-blackMode ">
     <v-main :class="!isLoginPage && !isJoinPage ? 'main-container' : ''"  >
       <v-container v-if="!isLoginPage && !isJoinPage" class="main-content " >
         <v-row no-gutters >
           <!-- 사이드 메뉴 -->
          
-            <SideMenu v-if="!isLoginPage" />
+            <SideMenu 
+            @childLoading="isLoadingHandle"
+            v-if="!isLoginPage" />
         
 
           <!-- 헤더와 콘텐츠 영역 -->
@@ -33,6 +41,16 @@ import SideMenu from './components/common/layout/Sidemenu.vue';
 
 export default {
   name: 'App',
+  data(){
+    return{
+      isLoading:true
+    }
+  },
+  methods:{
+    isLoadingHandle(){
+      this.isLoading=false
+    }
+  },
   components: {
     //전역 컴포넌트 
     Header,  //헤더 , 검색바

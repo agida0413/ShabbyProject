@@ -5,10 +5,10 @@
     <v-card class="to-doubleBlack">
       <v-container fluid>
         <v-progress-linear
-      color="cyan"
-      indeterminate
-      v-if="isLoading"
-    ></v-progress-linear>
+          color="cyan"
+          indeterminate
+          v-if="isLoading"
+         ></v-progress-linear>
         <v-row no-gutters>
             
           <v-col cols="6" class="image-section">

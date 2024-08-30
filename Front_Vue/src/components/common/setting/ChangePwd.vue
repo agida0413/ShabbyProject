@@ -4,7 +4,11 @@
         v-model="localDialog"
         max-width="600"
       >
-        
+       <v-progress-linear
+          color="cyan"
+          indeterminate
+          v-if="isLoading"
+         ></v-progress-linear>
         <v-card
           prepend-icon="mdi-account"
           title="비밀번호 변경"
@@ -30,6 +34,7 @@
                 :rules="passwordRules"
                 required
                 :error-messages="passwordErrors"
+                :disabled="isLoading"
               ></v-text-field>
             </v-col>
         </v-row>
@@ -53,6 +58,7 @@
                 :rules="newPasswordRules"
                 required
                 :error-messages="newPaasswordErrors"
+                :disabled="isLoading"
               ></v-text-field>
              </v-col>
          </v-row>
@@ -68,6 +74,7 @@
                   text="Close"
                   variant="plain"
                   @click="closeDialog()"
+                  :disabled="isLoading"
                 ></v-btn>
       
                 <v-btn
@@ -75,6 +82,7 @@
                   text="Save"
                   variant="tonal"
                   @click="submitPasswordChange()"
+                  :disabled="isLoading"
                 ></v-btn>
 
           </v-card-actions>

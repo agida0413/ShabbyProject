@@ -1,7 +1,15 @@
 <template>
-
+ 
 <v-dialog activator="parent" v-model="localDialog" max-width="500">
+  
           <template v-slot:default="{ isActive }">
+              
+            <v-progress-linear
+                  color="cyan"
+                  indeterminate
+                  v-if="isLoading"
+                ></v-progress-linear>
+
             <v-card rounded="lg" class="to-blackMode">
               <v-card-title class="d-flex justify-space-between align-center">
                 <div class="text-h5 text-medium-emphasis ps-2">
@@ -11,6 +19,7 @@
                 <v-btn  
                   variant="text"
                   @click="isActive.value = false"
+                  :disabled="isLoading"
                 ></v-btn>
               </v-card-title>
 
@@ -27,8 +36,8 @@
                   variant="outlined"
                   persistent-counter
                   no-resize
-                 placeholder="변경할 자기소개 입력"
-                  v-model="UpdateIntroduce"
+                 :disabled="isLoading"
+                  v-model="introduce"
                 ></v-textarea>
 
                
@@ -44,6 +53,7 @@
                   rounded="xl"
                   text="Cancel"
                   @click="closeDialog()"
+                  :disabled="isLoading"
                 ></v-btn>
 
                 <v-btn
@@ -53,6 +63,7 @@
                   text="Send"
                   variant="flat"
                   @click="UpdateIntroduceSubmit()"
+                  :disabled="isLoading"
                 ></v-btn>
               </v-card-actions>
             </v-card>
@@ -66,7 +77,6 @@ import api from "@/api"
 export default {
   name: 'FeedEdit',
 
-
   props: {
     value: {//유저피드로부터  받은 모달 불리안값 
       type: Boolean,
@@ -75,10 +85,9 @@ export default {
   
 },data(){
   return{
-    
-    
+     originalIntroduce:'',
+     introduce:'',
      isLoading:false 
-
   }
 }
 ,computed:{
@@ -87,32 +96,72 @@ export default {
           return this.value // 현재 아이디찾기 컴포넌트에서의 다이얼로그 (true/false) 리턴 , props로 value를받아 메소드를 통해 리턴해야한다.
       }
   }
-}   
-  ,
+},
+watch: {
+    value(newVal) {
+      if(newVal===true){
+        this.getOriginalIntroduce()
+      }
+      
+    }
+  },
+mounted() {
+  
+},
   methods: {
     closeDialog() {
       this.$emit('feedEditClose');// 로그인 컴포넌트로 닫는 이벤트 전송
     },
-  
+   getOriginalIntroduce(){
+    
+    if(this.isLoading===true){
+      return
+    }
+    
+    this.isLoading=true
+    api.get('/feed/introduce')
+    .then((res)=>{
+      this.introduce=res?.data?.reqData?.introduce
+      this.originalIntroduce=res?.data?.reqData?.introduce
+      console.log(this.introduce)
+      console.log(this.originalIntroduce)
+
+    })
+    .catch((err)=>{
+      alert(err?.response?.data?.message)
+      this.closeDialog()
+    })
+    .finally(()=>{
+
+      this.isLoading=false
+    })
+   },
    UpdateIntroduceSubmit(){
     
-     
-      if(this.introduce===this.UpdateIntroduce){
-        alert('이전 자기소개와 동일합니다.')
-        return
-      }
+    
+    if(this.introduce===this.originalIntroduce){
+      alert('이전 자기소개와 동일합니다.')
+      return
+    }
 
+    if(this.introduce===''){
+      this.introduce=null
+    }
+      this.isLoading=true;
       api.put('/feed/introduce',{
-       introduce:this.UpdateIntroduce
+       introduce:this.introduce
       })
       .then(()=>{
         alert('성공적으로 변경되었습니다.')
-        this.closeDialog()
+       
       })
       .catch((err)=>{
         alert(err?.response?.data?.message)
       })
-      
+      .finally(()=>{
+        this.isLoading=false
+        this.closeDialog()
+      })
 
    } 
   }

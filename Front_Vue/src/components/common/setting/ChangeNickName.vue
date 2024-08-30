@@ -1,12 +1,16 @@
 <template>
-
+       
     <div class="pa-4 text-center">
       <v-dialog
         v-model="localDialog"
         max-width="600"    
       >
         
-  
+         <v-progress-linear
+          color="cyan"
+          indeterminate
+          v-if="isLoading"
+         ></v-progress-linear>
         <v-card
           prepend-icon="mdi-account"
           title="닉네임 변경"
@@ -33,6 +37,7 @@
                   required
                   :error-messages="nickNameErrors"
                   :readonly="isNickNameReadonly"
+                  :disabled="isLoading"
                 ></v-text-field>
             </v-col>
 
@@ -43,6 +48,7 @@
                   min-width="50"
                 color="blue"
                 @click="nickNameValidation"
+                :disabled="isLoading"
                 >
                   검증
                 </v-btn>
@@ -69,7 +75,7 @@
                 :rules="passwordRules"
                 required
                 :error-messages="passwordErrors"
-                
+                :disabled="isLoading"
               ></v-text-field>
             </v-col>
         </v-row>
@@ -85,6 +91,7 @@
               text="Close"
               variant="plain"
               @click="cancle"
+              :disabled="isLoading"
             ></v-btn>
   
             <v-btn
@@ -92,6 +99,7 @@
               text="Save"
               variant="tonal"
               @click="submitNickChange()"
+              :disabled="isLoading"
             ></v-btn>
           </v-card-actions>
         </v-card>
@@ -214,11 +222,16 @@ export default {
       },
       //닉네임 변경 메서드
       submitNickChange(){
+        if(this.isLoading){
+          return
+        }
         //만약 닉네임 검증이 진행되지않았다면 return
         if(!this.isNickNameClear){
           alert('닉네임 검증을 진행 해주세요.')
           return
-        }
+        } 
+
+        this.isLoading=true
 
         //비밀번호 검증 에러메시지 배열
         this.passwordErrors = this.validateField(this.password, this.passwordRules); 
@@ -245,6 +258,10 @@ export default {
           //실패시 서버로부터 받은 에러메시지 출력 
           alert(err?.response?.data?.message);
           
+        })
+        .finally(()=>{
+                  //현재 로딩상태정보를 false로 
+                  this.isLoading=false;
         })
        
       },

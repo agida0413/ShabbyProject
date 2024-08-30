@@ -268,6 +268,7 @@ export default {
       this.feedEditDialog = true;
     },
     feedEditDialogClose() {
+      this.getInfoData()
       this.feedEditDialog = false;
     },
     changeProfileImgOpen(){
