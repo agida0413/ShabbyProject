@@ -15,9 +15,10 @@ public interface FeedMapper {
 	public ResponseUserFeedDTO userFeedInfoFromMember(RequestUserFeedDTO dto);
 	//사용자  피드에서 게시물리스트 가져오기
 	public List<ResponsePostListDTO> userFeedPostList(RequestUserFeedDTO dto);
-	
+	//현재 프로필 이미지 url 갖고오기
 	public String profileImgGet(int idNum);
+	//프로필 이미지 업데이트
 	public void profileImgUpdate(UpdateProfileDTO dto);
-	
+	//자기소개 업데이트
 	public void introduceUpdate(UpdateProfileDTO dto);
 }

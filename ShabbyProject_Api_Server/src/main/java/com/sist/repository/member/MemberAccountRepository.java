@@ -10,6 +10,8 @@ public interface MemberAccountRepository {
 		public MemberDTO findByUserEmail(String email);
 		//고유번호 기반 회원정보 찾기
 		public MemberDTO findByIdNum(int idNum);
+		//회원 자기소개를 고유번호를 통한 셀렉트
+		public MemberDTO introduceByUserIdNum(int idNum);
 		// 닉네임 기반 회원정보 찾기
 		public MemberDTO findByUserNickname(String nickname);
 		// 휴대폰번호 기반 회원정보 찾기

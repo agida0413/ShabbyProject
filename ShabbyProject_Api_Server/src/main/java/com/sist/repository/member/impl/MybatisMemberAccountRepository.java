@@ -24,6 +24,12 @@ private final MemberAccountMapper mapper;
 		// TODO Auto-generated method stub
 		return mapper.findByUserIdNum(idNum);
 	}
+	//고유번호 기반 회원 자기소개 찾기
+	@Override
+	public MemberDTO introduceByUserIdNum(int idNum) {
+		// TODO Auto-generated method stub
+		return mapper.introduceByUserIdNum(idNum);
+	}
 	// 닉네임 기반 회원정보 찾기
 	
 	public MemberDTO findByUserNickname(String nickname) {
@@ -65,6 +71,7 @@ private final MemberAccountMapper mapper;
 	public void tempPasswordUpdate(MemberDTO dto) {
 		mapper.tempPasswordUpdate(dto);
 	}
+	
 
 
 

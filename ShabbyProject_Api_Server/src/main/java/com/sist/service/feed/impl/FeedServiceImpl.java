@@ -19,6 +19,7 @@ import com.sist.dto.hobby.ResponseHobbyDTO;
 import com.sist.dto.member.MemberDTO;
 import com.sist.repository.feed.FeedRepository;
 import com.sist.repository.hobby.HobbyRepository;
+import com.sist.repository.member.MemberAccountRepository;
 import com.sist.service.feed.FeedService;
 import com.sist.service.image.ImageService;
 
@@ -31,6 +32,7 @@ public class FeedServiceImpl implements FeedService{
 	private final HobbyRepository hobbyRepository;
 	private final FeedRepository feedRepository;
 	private final ImageService imageService;
+	private final MemberAccountRepository memberAccountRepository;
 	
 	//게시물 리스트를 제외한 사용자 피드에서의 피드정보를 불러오는  서비스 
 	@Override
@@ -159,6 +161,8 @@ public class FeedServiceImpl implements FeedService{
 		//기존 프로필 이미지 url을 데이터베이스에서 가져옴
 		String originalImg= feedRepository.profileImgGet(idNum);
 		
+		//s3업로드 로직 시작 
+		
 		//만약 기존 이미지가 존재한다면 
 		if(originalImg!=null) {
 			//s3에서 삭제
@@ -168,33 +172,41 @@ public class FeedServiceImpl implements FeedService{
 		//클라이언트로 받은 파일이 존재한다면 
 		if(dto.getProfileImgFile()!=null) {
 			//s3 이미지 업로드 url 반환 
-		String profile=	imageService.upload(dto.getProfileImgFile());
-		dto.setProfile(profile);
+			String profile=	imageService.upload(dto.getProfileImgFile());
+			//dto에 반환받은 url 세팅
+			dto.setProfile(profile);
 		}
-				
+		//회원 고유번호 세팅 		
 		dto.setIdNum(idNum);
 		
 		
 		//만약 파일이 null 이면 null인상태로 저장 ==> 기본이미지 
-		
-		
+		//데이터베이스 변경로직 시작 
 		try {
+			//프로필 이미지 url 데이터베이스 업데이트 시도 
 			feedRepository.profileImgUpdate(dto);
 		} catch (Exception e) {
+			//에러 발생시
 			// TODO: handle exception
+			//만약 null인상태 (기본이미지로 변경하려는 상태) 가 아니라면 
 			if(dto.getProfile()!=null) {
+				//위에서 s3에 업로드한 이미지 재삭제
 				imageService.deleteImage(dto.getProfile());
 			}
 			
+			//프로필을 기본이미지로 세팅
 			dto.setProfile(null);
 			
 			try {
+				//프로필 null로 업데이트 시도
 				feedRepository.profileImgUpdate(dto);
 			} catch (Exception e2) {
 				// TODO: handle exception
-				throw new InternerException("서버내부 오류입니다. 잠시 뒤 이용해주세요.", "프로필 사진변경중 sql 오류발생");
+				//에러시 예외 서버내부오류 던짐 
+				throw new InternerException("서버내부 오류입니다. 잠시 뒤 이용해주세요.", "프로필 사진변경중 오류발생하여 롤백 후 기본이미지 변경중 오류발생");
 			}
-			throw new InternerException("서버내부 오류입니다. 잠시 뒤 이용해주세요.", "프로필 사진변경중 오류발생");
+			//롤백후 기본이미지로 변경 성공
+			throw new InternerException("서버내부 오류입니다. 우선 기본 이미지로 변경되었습니다.", "프로필 사진변경중 오류발생/ 기본이미지로 업데이트 ");
 		}
 		
 		
@@ -202,20 +214,38 @@ public class FeedServiceImpl implements FeedService{
 		return new ResponseEntity<ResponseDTO<Void>>
 		(new ResponseDTO<Void>(),HttpStatus.OK); //성공 
 	}
-
+	
+	
+	//자기소개 변경 서비스 
 	@Override
 	public ResponseEntity<ResponseDTO<Void>> updateIntroduce(UpdateProfileDTO dto) {
 		// TODO Auto-generated method stub
 		
+		//회원고유번호 갖고오기 
 		int idNum=SimpleCodeGet.getIdNum();
-		
+		//값 세팅 
 		dto.setIdNum(idNum);
-		
+		//자기소개 데이터베이스 변경 
 		feedRepository.introduceUpdate(dto);
 		
 
 		return new ResponseEntity<ResponseDTO<Void>>
 		(new ResponseDTO<Void>(),HttpStatus.OK); //성공 
+	}
+
+	
+	//자기소개 변경 시 해당 컴포넌트에서 디폴트값으로 현재 자기소개를 보여주기 위한 서비스 
+	@Override
+	public ResponseEntity<ResponseDTO<MemberDTO>> getOriginalIntroduce() {
+		// TODO Auto-generated method stub
+		//회원고유번호
+		int idNum= SimpleCodeGet.getIdNum();
+		
+		//현재 자기소개 갖고오기
+		MemberDTO dto=memberAccountRepository.introduceByUserIdNum(idNum);
+		
+		return new ResponseEntity<ResponseDTO<MemberDTO>>
+		(new ResponseDTO<MemberDTO>(dto),HttpStatus.OK); //성공 
 	}
 
 }

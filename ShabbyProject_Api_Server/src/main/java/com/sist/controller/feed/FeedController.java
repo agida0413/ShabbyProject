@@ -16,9 +16,11 @@ import com.sist.dto.api.ResponseDTO;
 import com.sist.dto.feed.ResponsePostListDTO;
 import com.sist.dto.feed.ResponseUserFeedDTO;
 import com.sist.dto.feed.UpdateProfileDTO;
+import com.sist.dto.member.MemberDTO;
 import com.sist.dto.member.ResponseFollowDTO;
 import com.sist.service.feed.FeedService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -28,19 +30,21 @@ public class FeedController {
 
 	
 	private final FeedService feedService;
+	// 유저피드 접근시 해당유저에 대한 정보를 불러오는 api
 	@GetMapping("/userfeed/{nickname}")
 	public ResponseEntity<ResponseDTO<ResponseUserFeedDTO>> loadUserfeedInfo(@PathVariable String nickname){
 		
 		return feedService.loadUserFeedInfo(nickname);
 	}
 	
-	
+	//유저피드 접근시 해당유저에 대한 정보 외 해당유저의 게시물정보를 불러오는 api
 	@GetMapping("/userfeed/{nickname}/{page}")
 	public ResponseEntity<ResponseDTO<List<ResponsePostListDTO>>> loadUserfeedPostList(@PathVariable String nickname,@PathVariable int page){
 	
 		return feedService.loadUserFeedPostList(nickname, page);
 	}
 	
+	//유저피드에서의 프로필 사진 변경 api
 	@PutMapping("/userfeed")
 	public ResponseEntity<ResponseDTO<Void>> updateProfileImg(@RequestParam(value = "profileImgFile", required = false) MultipartFile file){
 		
@@ -48,9 +52,16 @@ public class FeedController {
 		dto.setProfileImgFile(file);
 		return feedService.updateProfileImg(dto);
 	}
+	//유저피드에서의 자기소개 변경시 원래 자기소개정보를 가져오는 api
+	@GetMapping("/introduce")
+	public ResponseEntity<ResponseDTO<MemberDTO>> getOriginalIntroduce(){
+		
+		return feedService.getOriginalIntroduce();
+	}
 	
+	//유저피드에서의 자기소개 변경api
 	@PutMapping("/introduce")
-	public ResponseEntity<ResponseDTO<Void>> updateIntroduce(@RequestBody UpdateProfileDTO dto){
+	public ResponseEntity<ResponseDTO<Void>> updateIntroduce(@RequestBody @Valid UpdateProfileDTO dto){
 		return feedService.updateIntroduce(dto);
 	}
 }
