@@ -78,12 +78,12 @@
             </v-col>
 
             <v-col cols="3" :class="userFeedData.itsMe || userFeedData.locked ==='PUBLICID'||
-             userFeedData.followState==='alreadyFollow'?'isHover':''" @click="flwListDialogOpen('팔로워')">
+             userFeedData.followState==='alreadyFollow'?'isHover':''" @click="flwListDialogOpen('FOLLOWER')">
               팔로워 {{ userFeedData.followerAmount }}
             </v-col>
 
             <v-col cols="3" :class="userFeedData.itsMe || userFeedData.locked ==='PUBLICID'|| 
-            userFeedData.followState==='alreadyFollow'?'isHover':''" @click="flwListDialogOpen('팔로잉')">
+            userFeedData.followState==='alreadyFollow'?'isHover':''" @click="flwListDialogOpen('FOLLOWING')">
               팔로잉 {{ userFeedData.followingAmount }}
             </v-col>
           </v-row>
@@ -173,7 +173,11 @@
 
 
     <!-- 팔로우/팔로잉 목록 모달 -->
-    <FlwListComponent v-model:value="flwListDialog" v-bind:flwType="flwType" @flwListClose="flwListDialogClose"></FlwListComponent>
+    <FlwListComponent 
+    :value="flwListDialog" 
+    :flwType="flwType"
+    :nickname="nickname"
+     @flwListClose="flwListDialogClose"></FlwListComponent>
 
     <!-- 프로필 편집 모달 -->
     <FeedEditComponent 
