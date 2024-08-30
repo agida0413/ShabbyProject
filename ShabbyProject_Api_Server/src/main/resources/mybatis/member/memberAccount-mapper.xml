@@ -19,7 +19,11 @@
 	Select * from member where id_num=#{idNum}
 	</select>
 	
-	
+	<!--회원 고유번호를 통한 회원 자기소개 -->
+	<select id="introduceByUserIdNum" parameterType="int" resultType="MemberDTO">
+	 
+	Select introduce from member where id_num=#{idNum}
+	</select>
 	<!--닉네임을 통한 회원검증(중복 닉네임)-->
 	<select id="findByUserNickname" parameterType="String" resultType="MemberDTO">
 	 

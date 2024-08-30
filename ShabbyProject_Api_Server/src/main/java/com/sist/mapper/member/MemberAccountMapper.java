@@ -12,6 +12,8 @@ public interface MemberAccountMapper {
 	public MemberDTO findByUserEmail(String email);
 	//<!--회원 고유번호를 통한 회원 셀렉트 -->
 	public MemberDTO findByUserIdNum(int idNum);
+	//회원 자기소개를 고유번호를 통한 셀렉트
+	public MemberDTO introduceByUserIdNum(int idNum);
 	//<!--닉네임을 통한 회원검증(중복 닉네임)-->
 	public MemberDTO findByUserNickname(String nickname);
 	//<!--핸드폰 번호 중복검증-->

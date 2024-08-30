@@ -1,11 +1,12 @@
 package com.sist.dto.feed;
 
 import java.util.List;
-
 import com.sist.dto.hobby.HobbyDTO;
 
 
 import lombok.Data;
+
+// 서버 => 클라이언트 에게보낼 피드에 대한 정보 
 @Data
 public class ResponseUserFeedDTO {
 private String profile;//프로필 사진 

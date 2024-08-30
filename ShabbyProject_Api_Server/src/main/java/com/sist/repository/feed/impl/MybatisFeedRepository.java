@@ -32,19 +32,19 @@ public class MybatisFeedRepository implements FeedRepository{
 		// TODO Auto-generated method stub
 		return feedMapper.userFeedPostList(dto);
 	}
-
+	//현재 프로필 이미지 url 갖고오기
 	@Override
 	public String profileImgGet(int idNum) {
 		// TODO Auto-generated method stub
 		return feedMapper.profileImgGet(idNum);
 	}
-
+	//프로필 이미지 업데이트
 	@Override
 	public void profileImgUpdate(UpdateProfileDTO dto) {
 		// TODO Auto-generated method stub
 		feedMapper.profileImgUpdate(dto);
 	}
-
+	//자기소개 업데이트
 	@Override
 	public void introduceUpdate(UpdateProfileDTO dto) {
 		// TODO Auto-generated method stub
