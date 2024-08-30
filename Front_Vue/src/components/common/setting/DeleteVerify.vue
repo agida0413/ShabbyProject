@@ -4,7 +4,11 @@
         v-model="localDialog"
         max-width="600"
       >
-        
+        <v-progress-linear
+          color="cyan"
+          indeterminate
+          v-if="isLoading"
+         ></v-progress-linear>
         <v-card
           prepend-icon="mdi-account"
           title="개인정보 확인"
@@ -28,7 +32,8 @@
                   required
                   v-model="name"
                   :rules="nameRules"
-                  :error-messages="nameErrors"              
+                  :error-messages="nameErrors" 
+                  :disabled="isLoading"             
                 ></v-text-field>
            </v-col>
         </v-row>
@@ -47,6 +52,7 @@
                         :rules="emailRules"
                         required
                         :error-messages="emailErrors"
+                        :disabled="isLoading"
                         ></v-text-field>
                     </v-col>    
                  </v-row>
@@ -71,6 +77,7 @@
                 :rules="passwordRules"
                 required
                 :error-messages="passwordErrors"
+                :disabled="isLoading"
               ></v-text-field>
             </v-col>
         </v-row>
@@ -84,6 +91,7 @@
                       text="Close"
                       variant="plain"
                       @click="closeDialog()"
+                      :disabled="isLoading"
                     ></v-btn>
           
                     <v-btn
@@ -91,6 +99,7 @@
                       text="Save"
                       variant="tonal"
                       @click="memberDelete()"
+                      :disabled="isLoading"
                     ></v-btn>
             </v-card-actions>
         </v-card>
@@ -186,6 +195,7 @@ export default {
 
           }
 
+          this.isLoading=true
           // 회원 탈퇴 API 호출
     api.delete('/setting', {
         data: {
@@ -211,9 +221,12 @@ export default {
     .catch(err => {
         // 실패 시 서버로부터 받은 메시지 출력
         alert(err?.response?.data?.message);
-    }).finally({
-      
-    });
+    })
+    .finally(()=>{
+      this.isLoading=false
+    })
+
+
       }
 
     }

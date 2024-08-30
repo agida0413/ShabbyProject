@@ -1,5 +1,5 @@
 <template>
-
+   
     <v-dialog activator="parent" v-model="localDialog" max-width="500">
               <template v-slot:default="{ isActive }">
 
@@ -153,4 +153,6 @@ import api from '@/api';
     margin-top: 8px; /* 상단 여백 조정 */
     text-align: center;
 }
+
+
     </style>

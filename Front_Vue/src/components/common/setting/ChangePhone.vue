@@ -1,11 +1,16 @@
 <template>
     <div class="pa-4 text-center">
+      
       <v-dialog
         v-model="localDialog"
         max-width="600"
       >
        
-  
+        <v-progress-linear
+          color="cyan"
+          indeterminate
+          v-if="isLoading"
+         ></v-progress-linear>
         <v-card
           prepend-icon="mdi-account"
           title="핸드폰 번호 변경"
@@ -31,6 +36,7 @@
                       v-model="firstPhoneNum"
                       :items="items"            
                       required
+                      :disabled="isLoading"
                     ></v-select>
                 </v-col>
 
@@ -42,6 +48,7 @@
                         v-model="middlePhoneNum"
                         maxlength="4" 
                         variant="outlined"
+                        :disabled="isLoading"
                       ></v-text-field>
 
                 </v-col>
@@ -54,6 +61,7 @@
                       maxlength="4" 
                       variant="outlined"
                       v-model="lastPhoneNum"
+                      :disabled="isLoading"
                     ></v-text-field>
 
                 </v-col>
@@ -72,7 +80,7 @@
                 :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
                 :type="visible ? 'text' : 'password'"
                 density="compact"
-                placeholder="현재 비밀번호"
+                placeholder="비밀번호"
                 prepend-inner-icon="mdi-lock-outline"
                 variant="outlined"
                 @click:append-inner="visible = !visible"
@@ -80,6 +88,7 @@
                 :rules="passwordRules"
                 required
                 :error-messages="passwordErrors"
+                :disabled="isLoading"
               ></v-text-field>
             </v-col>
         </v-row>
@@ -96,6 +105,7 @@
               text="Close"
               variant="plain"
               @click="closeDialog()"
+              :disabled="isLoading"
             ></v-btn>
   
             <v-btn
@@ -103,6 +113,7 @@
               text="Save"
               variant="tonal"
               @click="submitChangePhone()"
+              :disabled="isLoading"
             ></v-btn>
           </v-card-actions>
         </v-card>

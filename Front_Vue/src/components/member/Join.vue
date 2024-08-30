@@ -10,25 +10,12 @@
         max-height="1000"        
       >
 
-      <v-row
-      align="center"
-      justify="center"
-      >
-            <v-col
-              cols="auto"
-              class="text-center"
-            >
-                <!-- 로딩 스피너 -->
-                <v-progress-circular
-                  v-if="loading"
-                  indeterminate
-                  color="primary"
-                  size="64"
-                ></v-progress-circular>
-
-             </v-col>
-
-      </v-row>
+      <!--로딩 스피너-->
+      <v-progress-linear
+          color="black"
+          indeterminate
+          v-if="loading"
+         ></v-progress-linear>
      
     <!--뒤로가기-->
    <router-link to="/login"> <v-btn icon="mdi-arrow-left" size="32"  class="btn-back"></v-btn></router-link>
@@ -49,6 +36,7 @@
                       :readonly="isEmailReadonly"
                       required
                       :error-messages="emailErrors"
+                      :disabled="loading"
                   ></v-text-field>
               </v-col>
 
@@ -66,6 +54,7 @@
                         class="me-2 text-none" 
                         flat
                         @click="emailAuth()"
+                        :disabled="loading"
                       ></v-btn>
 
                       <v-btn 
@@ -78,7 +67,7 @@
                         :text="isSubscriber ? 'Cancel' : '인증코드 다시 보내기'"
                         :variant="isSubscriber ? 'plain' : 'tonal'"
                         class="me-2 text-none"
-                        
+                        :disabled="loading"
                         flat
                       @click="emailAuth()"
                       ></v-btn>
@@ -98,7 +87,8 @@
                     v-model="code"
                     :rules="codeRules"
                     required
-                    :error-messages="codeErrors"                   
+                    :error-messages="codeErrors"   
+                    :disabled="loading"                
                   ></v-text-field>
                </v-col>
 
@@ -108,6 +98,7 @@
                         min-width="50"
                         color="blue"
                         @click="emailValidation()"
+                        :disabled="loading"
                     >
                     검증
                   </v-btn>
@@ -142,6 +133,7 @@
                   :rules="nickNameRules"
                   :error-messages="nickNameErrors"
                   :readonly="isNickNameReadonly"
+                  :disabled="loading"
                 ></v-text-field>
             </v-col>
 
@@ -152,6 +144,7 @@
                       height="40"
                       min-width="50"
                       color="blue"
+                      :disabled="loading"
                       @click="nickNameValidation()"
                     >
                     중복확인
@@ -174,7 +167,8 @@
                   required
                   v-model="name"
                   :rules="nameRules"
-                  :error-messages="nameErrors"               
+                  :error-messages="nameErrors"     
+                  :disabled="loading"          
                 ></v-text-field>
            </v-col>
          </v-row>
@@ -199,6 +193,7 @@
                       :rules="passwordRules"
                       required
                       :error-messages="passwordErrors"
+                      :disabled="loading"
                     ></v-text-field>
                   </v-col>
               </v-row>
@@ -221,6 +216,7 @@
               :rules="PasswordValidationRules"
               required
               :error-messages="PasswordValidationErrors"
+              :disabled="loading"
               ></v-text-field>
              </v-col>
          </v-row>
@@ -237,7 +233,7 @@
                   v-model="firstPhoneNum"
                   :items="items"                          
                   required
-              
+                  :disabled="loading"
                 ></v-select>
             </v-col>
 
@@ -249,7 +245,8 @@
                         variant="outlined"
                         v-model="middlePhoneNum"                      
                         required                
-                        maxlength="4"                    
+                        maxlength="4" 
+                        :disabled="loading"                   
                   ></v-text-field>
 
             </v-col>
@@ -262,6 +259,7 @@
                   v-model="lastPhoneNum"         
                   required        
                   maxlength="4"   
+                  :disabled="loading"
                 ></v-text-field>
             </v-col>
 
@@ -278,6 +276,7 @@
               shaped
               v-model="introduce"
               maxlength="100" 
+              :disabled="loading"
             ></v-textarea>
         </v-row>
 
@@ -289,6 +288,7 @@
           variant="tonal"
           block
           @click="submitJoin()"
+          :disabled="loading"
         >
          회원가입
         </v-btn>
@@ -437,8 +437,8 @@
           }
 
          
-              const token=localStorage.getItem('access')
-              console.log(token)
+         
+         
                   this.loading = true; // 로딩 시작 = > 사용자에게 알려줄려고
                   //인증코드 이메일 전송 API
                     api.post('/members/emailAuth',{

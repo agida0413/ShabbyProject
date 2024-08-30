@@ -8,13 +8,17 @@
           src="@/assets/logo2.png"
         ></v-img> 
     </div>
-
+  
     <v-card
       class="mx-auto pa-12 pb-8"
       elevation="8"
       max-width="448"
       rounded="lg"
     >
+  
+      <!--로딩 스피너-->
+    
+
         <!--이메일-->
         <div class="text-subtitle-1 text-medium-emphasis">Email</div>
 
@@ -27,6 +31,7 @@
           :rules="emailRules"
           required
           :error-messages="emailErrors"
+          :disabled="isLoading"
         ></v-text-field>
 
         <!--비밀번호-->
@@ -46,8 +51,9 @@
           :rules="passwordRules"
           required
           :error-messages="passwordErrors"
+          :disabled="isLoading"
         ></v-text-field>
-
+     
         <!--로그인 버튼 -->
         <v-btn
           class="mb-8"
@@ -56,17 +62,23 @@
           variant="tonal"
           block
           @click="login"
+          :disabled="isLoading"
         >
           Log In
         </v-btn>
  
-
+        <v-progress-linear
+          color="black"
+          indeterminate
+          v-if="isLoading"
+         ></v-progress-linear>
       <v-card-text class="text-center">
 
         <!--이메일 찾기 모달 true 버튼-->
             <button
               class="text-caption text-decoration-none text-blue"
               @click="openFindIdDialog"
+              :disabled="isLoading"
             >
             이메일을 잊으셨나요?
             </button>
@@ -78,6 +90,7 @@
         <button
           class="text-caption text-decoration-none text-blue"
           @click="openFindPwdDialog"
+          :disabled="isLoading"
         >
         비밀번호를 잊으셨나요?
         </button>
@@ -86,8 +99,11 @@
         <v-card-text class="text-center">
           <!--회원가입으로 라우터 이동-->
             <router-link to="/join">
-                <button class="text-blue text-decoration-none">
+                <button class="text-blue text-decoration-none"
+                  :disabled="isLoading"
+                >
                   회원가입<v-icon icon="mdi-chevron-right"></v-icon>
+
                 </button>
             </router-link>
         </v-card-text>
