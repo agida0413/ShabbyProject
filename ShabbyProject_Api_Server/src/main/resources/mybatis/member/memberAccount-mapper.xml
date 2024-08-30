@@ -56,7 +56,7 @@
 	    SELECT MAX(EMAILAUTH_NUM)
 		FROM EMAIL_AUTH
 		WHERE EMAIL = #{email}
-		 )
+		)
 	
 	</select>
 	<!--이메일 인증 성공시 해당 로우 인증완료로 상태 업데이트-->

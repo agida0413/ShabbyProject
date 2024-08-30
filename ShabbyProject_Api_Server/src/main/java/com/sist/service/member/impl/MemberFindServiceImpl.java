@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.sist.common.exception.BadRequestException;
 import com.sist.common.exception.NotFoundException;
+import com.sist.common.util.PathVariableValidation;
 import com.sist.dto.api.ResponseDTO;
 import com.sist.dto.member.MemberDTO;
 import com.sist.repository.member.MemberAccountRepository;
@@ -25,7 +26,14 @@ private final MailService mailService;
 	@Override
 	public  ResponseEntity<ResponseDTO<MemberDTO>>  findEmail(MemberDTO dto ) {
 		// TODO Auto-generated method stub
-			
+		//validation
+		if (!PathVariableValidation.nameValSevice(dto.getName())
+			||!PathVariableValidation.nickNameValService(dto.getNickname())
+			||!PathVariableValidation.phoneValService(dto.getPhone())	
+			)
+		{
+			throw new BadRequestException("유효하지 않은 입력입니다.");
+		}	
 		MemberDTO findDto= memberAccountRepository.findEmail(dto);//해당 하는 정보 찾음 
 		
 		//findDto가 없을시(찾은 정보가 없을시)
@@ -56,6 +64,13 @@ private final MailService mailService;
 	@Override
 	public  ResponseEntity<ResponseDTO<Void>>  passwordFind(MemberDTO dto) {
 		
+		// validation
+		if (!PathVariableValidation.nameValSevice(dto.getName())
+				|| !PathVariableValidation.emailValService(dto.getEmail())
+				|| !PathVariableValidation.phoneValService(dto.getPhone())) {
+			throw new BadRequestException("유효하지 않은 입력입니다.");
+		}
+
 		// TODO Auto-generated method stub
 		return mailService.emailPasswordReset(dto);
 	}

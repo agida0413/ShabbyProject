@@ -3,6 +3,7 @@ package com.sist.service.feed;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.sist.dto.api.ResponseDTO;
 
@@ -10,6 +11,7 @@ import com.sist.dto.feed.ResponsePostListDTO;
 import com.sist.dto.feed.ResponseUserFeedDTO;
 import com.sist.dto.feed.UpdateProfileDTO;
 import com.sist.dto.member.MemberDTO;
+import com.sist.dto.member.RequestFollowDTO;
 
 public interface FeedService {
 	//사용자 피드 정보 ==> 게시물 제외
@@ -18,11 +20,15 @@ public interface FeedService {
 	public ResponseEntity<ResponseDTO<List<ResponsePostListDTO>>> loadUserFeedPostList(String nickname,int page);
 	
 	//프로필 이미지를 업데이트 하는 서비스 
-	public ResponseEntity<ResponseDTO<Void>> updateProfileImg(UpdateProfileDTO dto);
+	public ResponseEntity<ResponseDTO<Void>> updateProfileImg(MultipartFile file);
 	
 	//자기소개를 업데이트 하는 서비스 
 	public ResponseEntity<ResponseDTO<Void>> updateIntroduce(UpdateProfileDTO dto);
 	
 	//클라이언트에게 자기소개 변경 컴포넌트에서 현재 자기소개 데이터를 전송
 	public ResponseEntity<ResponseDTO<MemberDTO>> getOriginalIntroduce();
+	
+	//사용자 피드에서 팔로우,팔로워 목록 가져오기 
+	
+	public ResponseEntity<ResponseDTO<List<MemberDTO>>> getFollowInFeed(String flwType, int page);
 }

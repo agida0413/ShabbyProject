@@ -15,13 +15,7 @@
  		nickname LIKE CONCAT('%',#{keyword},'%')
  		LIMIT #{rowSize} OFFSET #{startRow}  
  	</select>
- 	<!-- 전체 자신이 팔로잉 하는 리스트 -->
- 	<select id="followingAll" parameterType="RequestFollowDTO" resultType="MemberDTO">
- 		SELECT nickname FROM MEMBER m
- 		JOIN FOLLOW f ON m.id_num=f.following_id
- 		WHERE id_num=#{idNum}
- 		LIMIT #{rowSize} OFFSET #{startRow}  
- 	</select>
+ 
  	<!--키워드 검색을 통한 자신을 팔로워 하는 리스트 -->
  	<select id="followerByKeyword" parameterType="RequestFollowDTO" resultType="MemberDTO">
  		SELECT nickname FROM MEMEBER m
@@ -30,14 +24,23 @@
  		nickname LIKE CONCAT('%',#{keyword},'%')
  		LIMIT #{rowSize} OFFSET #{startRow}  
  	</select>
- 	<!-- 전체 자신을 팔로잉 하는 리스트 -->
- 	<select id="followerAll" parameterType="RequestFollowDTO" resultType="MemberDTO">
- 		SELECT nickname FROM MEMEBER m
- 		JOIN FOLLOW f ON m.id_num=f.following_id
- 		WHERE following_id=#{idNum}
- 		LIMIT #{rowSize} OFFSET #{startRow}  
+ 	
+ 	
+ 	<select id="getFollowInFeed" parameterType="RequestFollowListDTO" resultType="MemberDTO">
+	 	SELECT nickname,profile FROM FOLLOW f
+	 	LEFT JOIN MEMBER m 
+	 	<if test="flwType=='FOLLOWING'">	<!--팔로잉하는 사람들-->
+	 	ON f.following_id=m.id_num
+	 	WHERE f.id_num =#{idNum}
+	 	</if>	
+	 	<if test="flwType=='FOLLOWER'">	<!--팔로우 하는 사람-->
+	 	ON f.id_num=m.id_num
+	 	WHERE f.following_id =#{idNum}
+	 	</if>
+	 	ORDER BY follow_Date DESC
+	 	LIMIT #{rowSize} OFFSET #{startRow}
  	</select>
  	
- 	
+ 
  	
  </mapper>

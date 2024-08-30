@@ -9,6 +9,7 @@ import com.sist.dto.api.ResponseDTO;
 import com.sist.dto.post.RequestPostDTO;
 import com.sist.service.post.PostService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -19,7 +20,7 @@ public class PostController {
 	private final PostService postService;
 	
 	@PostMapping
-	public ResponseEntity<ResponseDTO<Void>> postInsert(RequestPostDTO dto) {
+	public ResponseEntity<ResponseDTO<Void>> postInsert(@Valid RequestPostDTO dto) {
 		
 		return postService.postInsertTransaction(dto);
 	}

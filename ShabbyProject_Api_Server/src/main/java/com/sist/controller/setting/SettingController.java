@@ -38,12 +38,13 @@ public class SettingController {
 	}
 	
 	//회원탈퇴 api
+	//서비스에서 검증 
 	@DeleteMapping
 	public ResponseEntity<ResponseDTO<Void>> memberDelete(@RequestBody MemberDTO dto){
 		return changeInfoService.deleteMember(dto);
 	}
 	
-	//닉네임 변경하는 apis
+	//닉네임 변경하는 api
 	@PutMapping("/nickChange")
 	public  ResponseEntity<ResponseDTO<Void>> nicknameChange(@RequestBody @Valid ChangeNickNameDTO dto){
 		return changeInfoService.nickNameUpdate(dto);
@@ -66,6 +67,7 @@ public class SettingController {
 	}
 	
 	@PutMapping("/lockStateChange")
+	//서비스에서 검증
 	public ResponseEntity<ResponseDTO<MemberDTO>> lockStateChange(@RequestBody MemberDTO dto){
 		
 		return changeInfoService.updateLockedState(dto);
