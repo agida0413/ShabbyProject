@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
+import com.sist.dto.feed.RequestFollowListDTO;
 import com.sist.dto.member.MemberDTO;
 import com.sist.dto.member.RequestFollowDTO;
 import com.sist.mapper.member.FollowMapper;
@@ -37,6 +38,12 @@ public class MyBatisFollowRepository implements FollowRepository{
 	public List<MemberDTO> followerAll() {
 		// TODO Auto-generated method stub
 		return followMapper.followerAll();
+	}
+
+	@Override
+	public List<MemberDTO> getFollowInFeed(RequestFollowListDTO dto) {
+		// TODO Auto-generated method stub
+		return followMapper.getFollowInFeed(dto);
 	}
 
 }

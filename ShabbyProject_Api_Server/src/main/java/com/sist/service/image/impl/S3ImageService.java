@@ -37,7 +37,8 @@ import software.amazon.awssdk.services.s3.model.S3Exception;
 public class S3ImageService implements ImageService{
 	
 	
-
+	 // 최대 파일 크기 5MB 변수
+    private static final long MAX_FILE_SIZE = 5* 1024 * 1024; 
     private final S3Client s3Client;
 
     @Value("${s3.bucket}")
@@ -53,11 +54,19 @@ public class S3ImageService implements ImageService{
         if (image == null || image.isEmpty() || image.getOriginalFilename() == null) {
             throw new BadRequestException("파일이 비어있거나 이름이 없습니다.");
         }
-
+        validateFileSize(image);
         // 이미지 업로드 메서드 호출
         try {
             return uploadImageToS3(image);
-        } catch (SdkException e) {
+        } catch (BadRequestException e) {
+			// TODO: handle exception
+        	throw new BadRequestException(e.getMessage());
+		}
+        catch (InternerException e) {
+			// TODO: handle exception
+        	throw new InternerException(e.getMessage(),e.getErrorCode());
+		}
+        catch (SdkException e) {
             // S3 관련 SDK 예외 처리
         	  
             throw new InternerException(" 서버 내부 오류입니다.","S3에 파일 업로드 중 오류 발생");
@@ -83,14 +92,20 @@ public class S3ImageService implements ImageService{
         }
 
         String extension = filename.substring(lastDotIndex + 1).toLowerCase();
-        List<String> allowedExtensions = Arrays.asList("jpg", "jpeg", "png", "gif");
+        List<String> allowedExtensions = Arrays.asList("jpg", "jpeg", "png");
 
         if (!allowedExtensions.contains(extension)) {
-            throw new BadRequestException("허용되지 않는 파일 확장자입니다.");
+            throw new BadRequestException("허용되지 않는 파일 확장자입니다.(jpg,jpeg,png 파일만 가능)");
         }
     }
 
-
+    //파일크기 서버측 검증 (한번더 ) 1차 : 클라이언트 , 2차 : 게시물서비스 
+    private void validateFileSize(MultipartFile file) {
+        if (file.getSize() > MAX_FILE_SIZE) {
+        	
+            throw new BadRequestException("사진 파일의 용량이 너무 큽니다."); // 파일 크기 초과 오류 처리
+        }
+    }
 
     private String uploadImageToS3(MultipartFile image) throws IOException {
         String originalFilename = image.getOriginalFilename();

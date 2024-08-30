@@ -6,10 +6,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.sist.common.exception.BadRequestException;
 import com.sist.common.exception.InternerException;
+import com.sist.common.util.PathVariableValidation;
 import com.sist.common.util.SimpleCodeGet;
 import com.sist.dto.api.ResponseDTO;
+import com.sist.dto.feed.RequestFollowListDTO;
 import com.sist.dto.feed.RequestUserFeedDTO;
 import com.sist.dto.feed.ResponsePostListDTO;
 import com.sist.dto.feed.ResponseUserFeedDTO;
@@ -17,8 +21,10 @@ import com.sist.dto.feed.UpdateProfileDTO;
 import com.sist.dto.hobby.HobbyDTO;
 import com.sist.dto.hobby.ResponseHobbyDTO;
 import com.sist.dto.member.MemberDTO;
+import com.sist.dto.member.RequestFollowDTO;
 import com.sist.repository.feed.FeedRepository;
 import com.sist.repository.hobby.HobbyRepository;
+import com.sist.repository.member.FollowRepository;
 import com.sist.repository.member.MemberAccountRepository;
 import com.sist.service.feed.FeedService;
 import com.sist.service.image.ImageService;
@@ -33,11 +39,17 @@ public class FeedServiceImpl implements FeedService{
 	private final FeedRepository feedRepository;
 	private final ImageService imageService;
 	private final MemberAccountRepository memberAccountRepository;
+	private final FollowRepository followRepository;
 	
 	//게시물 리스트를 제외한 사용자 피드에서의 피드정보를 불러오는  서비스 
 	@Override
 	public ResponseEntity<ResponseDTO<ResponseUserFeedDTO>> loadUserFeedInfo(String nickname) {
 		// TODO Auto-generated method stub
+		
+		//닉네임 validation
+		if(!PathVariableValidation.nickNameValService(nickname)) {
+			throw new BadRequestException("유효하지 않은 입력입니다.");
+		}
 		
 		//데이터베이스 매핑 객체 생성 
 		RequestUserFeedDTO reqDTO = new RequestUserFeedDTO();
@@ -129,6 +141,14 @@ public class FeedServiceImpl implements FeedService{
 	@Override
 	public ResponseEntity<ResponseDTO<List<ResponsePostListDTO>>> loadUserFeedPostList(String nickname,int page) {
 		// TODO Auto-generated method stub
+		
+		if(!PathVariableValidation.nickNameValService(nickname)) {
+			throw new BadRequestException("유효하지 않은 닉네임입니다.");
+		}
+		if(!PathVariableValidation.pageValidation(page)) {
+			throw new BadRequestException("유효하지 않은 페이지입니다.");
+		}
+		
 		//행의 개수 
 		int rowSize=6;
 		//offset(시작위치)
@@ -153,11 +173,15 @@ public class FeedServiceImpl implements FeedService{
 	//프로필 이미지 변경 
 	@Override
 	@Transactional
-	public ResponseEntity<ResponseDTO<Void>> updateProfileImg(UpdateProfileDTO dto) {
+	public ResponseEntity<ResponseDTO<Void>> updateProfileImg(MultipartFile file) {
 		// TODO Auto-generated method stub
 		//현재 세션 회원고유번호 갖고오기
 		int idNum=SimpleCodeGet.getIdNum();
-		
+		//데이터베이스 전송객체
+		UpdateProfileDTO dto= new UpdateProfileDTO();
+		//파일 세팅
+		dto.setProfileImgFile(file);
+			
 		//기존 프로필 이미지 url을 데이터베이스에서 가져옴
 		String originalImg= feedRepository.profileImgGet(idNum);
 		
@@ -246,6 +270,36 @@ public class FeedServiceImpl implements FeedService{
 		
 		return new ResponseEntity<ResponseDTO<MemberDTO>>
 		(new ResponseDTO<MemberDTO>(dto),HttpStatus.OK); //성공 
+	}
+	
+	//사용자 피드에서 팔로우,팔로워 목록 가져오기 
+	@Override
+	public ResponseEntity<ResponseDTO<List<MemberDTO>>> getFollowInFeed(String flwType,int page) {
+		// TODO Auto-generated method stub
+		int idNum=SimpleCodeGet.getIdNum();
+		//validation
+			if(!PathVariableValidation.pageValidation(page)) {
+				throw new BadRequestException("유효하지 않은 입력입니다.");
+			}
+			if(!"FOLLOWING".equals(flwType) && !"FOLLOWER".equals(flwType)) {
+				throw new BadRequestException("유효하지 않은 입력입니다.");
+			}
+			//행의 개수 
+			int rowSize=10;
+			
+			//offset(시작위치)
+			int offSet=SimpleCodeGet.getOffset(rowSize, page);
+			
+			RequestFollowListDTO dto=new RequestFollowListDTO();
+			
+			dto.setFlwType(flwType);
+			dto.setRowSize(rowSize);
+			dto.setStartRow(offSet);
+			dto.setIdNum(idNum);
+			List<MemberDTO> list = followRepository.getFollowInFeed(dto);
+			System.out.println(list.size());
+		return new ResponseEntity<ResponseDTO<List<MemberDTO>>>
+		(new ResponseDTO<List<MemberDTO>>(list),HttpStatus.OK); //성공 
 	}
 
 }

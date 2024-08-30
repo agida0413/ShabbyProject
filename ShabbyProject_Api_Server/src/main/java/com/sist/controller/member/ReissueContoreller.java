@@ -24,6 +24,7 @@ public class ReissueContoreller {
 	private final RefreshService service;
 	
 	//refresh토큰 재발행 api
+	//서비스에서 검증
 	@PostMapping("/reissue")
 	public ResponseEntity<ResponseDTO<Void>> reisue(HttpServletRequest request, HttpServletResponse response){
 		

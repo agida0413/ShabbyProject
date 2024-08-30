@@ -6,6 +6,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.sist.common.exception.BadRequestException;
+import com.sist.common.util.PathVariableValidation;
 import com.sist.common.util.SimpleCodeGet;
 import com.sist.dto.api.ResponseDTO;
 import com.sist.dto.member.MemberDTO;
@@ -24,6 +26,10 @@ public class FollowServiceImpl implements FollowService {
 	@Override
 	public ResponseEntity<ResponseDTO<ResponseFollowDTO>> followingBykeyword(String keyword,int page,int rowSize) {
 		// TODO Auto-generated method stub
+		
+		if(!PathVariableValidation.pageValidation(page)||!PathVariableValidation.pageValidation(rowSize)) {
+			throw new BadRequestException("유효하지 않은 입력입니다.");
+		}
 		
 		//공통모듈에서 offset 계산과 , 현재 securityContextHolder에 담긴  idNum가져옴
 		int offSet=SimpleCodeGet.getOffset(rowSize,page);

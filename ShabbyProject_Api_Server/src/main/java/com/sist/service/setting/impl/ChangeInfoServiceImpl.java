@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.sist.common.exception.BadRequestException;
 import com.sist.common.exception.InternerException;
+import com.sist.common.util.PathVariableValidation;
 import com.sist.common.util.SimpleCodeGet;
 import com.sist.dto.api.ResponseDTO;
 import com.sist.dto.member.MemberDTO;
@@ -176,7 +177,12 @@ public class ChangeInfoServiceImpl implements ChangeInfoService{
 	@Override
 	@Transactional
 	public ResponseEntity<ResponseDTO<MemberDTO>> updateLockedState(MemberDTO dto) 
-	{
+	{	
+		//검증
+		if(!dto.getLocked().equals("LOCKED") && !dto.getLocked().equals("PUBLICID")) {
+			throw new BadRequestException("유효하지 않은 입력입니다.");
+		}
+		
 		// TODO Auto-generated method stub
 		String currentState=dto.getLocked();//현재 상태값 
 		String changeState=""; //변경할 공개/비공개 모드 상태값 초기화
@@ -210,6 +216,12 @@ public class ChangeInfoServiceImpl implements ChangeInfoService{
 	@Override
 	public ResponseEntity<ResponseDTO<Void>> deleteMember(MemberDTO dto) {
 		// TODO Auto-generated method stub
+		//검증
+		if(!PathVariableValidation.nameValSevice(dto.getName())
+			||!PathVariableValidation.emailValService(dto.getEmail())	)
+		{
+			throw new BadRequestException("유효하지 않은 입력입니다.");
+		}
 		
 		String sessionEmail=SimpleCodeGet.getEmail();// 현재 토큰기반 인증된 임시유지세션에서 이메일 갖고옴 
 		int idNum=SimpleCodeGet.getIdNum();//토큰기반 인증된 임시유지세션에서 고유번호 갖고옴 

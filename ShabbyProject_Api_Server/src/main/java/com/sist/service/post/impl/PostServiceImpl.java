@@ -27,8 +27,7 @@ public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
     //이미지업로드 서비스
     private final ImageService imageService;
- // 최대 파일 크기 5MB 변수
-    private static final long MAX_FILE_SIZE = 5* 1024 * 1024; 
+
 
     //게시물 업로드 서비스 
     @Override
@@ -41,7 +40,7 @@ public class PostServiceImpl implements PostService {
         		
         try {
         	   for (MultipartFile image : imgList) {
-                   validateFileSize(image); // 파일 크기 검증
+                 
                    String imgUrl = imageService.upload(image); //하나씩 꺼내와서 이미지 업로드==>s3에서 반환받은 url 값 저장
                    imgUrList.add(imgUrl); // 업로드된 이미지를 url리스트에 URL 추가
                }
@@ -103,13 +102,7 @@ public class PostServiceImpl implements PostService {
 
     
     
-    //파일크기 서버측 검증 (한번더 ) 1차 : 클라이언트 , 2차 : 게시물서비스 
-    private void validateFileSize(MultipartFile file) {
-        if (file.getSize() > MAX_FILE_SIZE) {
-        	
-            throw new BadRequestException("사진 파일의 용량이 너무 큽니다."); // 파일 크기 초과 오류 처리
-        }
-    }
+  
 
     //게시물의 나만보기, 댓글기능해제 상태를 설정
     private void setPostState(RequestPostDTO dto) {

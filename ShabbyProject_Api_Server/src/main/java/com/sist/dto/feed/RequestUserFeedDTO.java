@@ -1,6 +1,6 @@
 package com.sist.dto.feed;
 
-import jakarta.validation.constraints.NotBlank;
+
 import lombok.Data;
 
 @Data

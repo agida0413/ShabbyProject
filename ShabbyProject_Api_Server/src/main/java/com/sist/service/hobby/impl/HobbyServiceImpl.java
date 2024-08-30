@@ -2,11 +2,13 @@ package com.sist.service.hobby.impl;
 
 import java.util.List;
 
-import org.apache.coyote.BadRequestException;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.sist.common.exception.BadRequestException;
+import com.sist.common.util.PathVariableValidation;
 import com.sist.common.util.SimpleCodeGet;
 import com.sist.dto.api.ResponseDTO;
 import com.sist.dto.hobby.HobbyDTO;
@@ -35,6 +37,10 @@ public class HobbyServiceImpl implements HobbyService {
 	public ResponseEntity<ResponseDTO<ResponseHobbyDTO>> findHobby(String keyword,int page) {
 		// TODO Auto-generated method stub
 		//데이터베이스에 보낼 객체 생성
+		if(!PathVariableValidation.pageValidation(page)) {
+			throw new BadRequestException("유효하지 않은 페이지 입니다.");
+		}
+		
 		RequestHobbyDTO dto = new RequestHobbyDTO();
 		//offset 설정 - > 계산로직은 항상 동일하여 공통함수에서 계산
 		int offSet=SimpleCodeGet.getOffset(rowSize,page);

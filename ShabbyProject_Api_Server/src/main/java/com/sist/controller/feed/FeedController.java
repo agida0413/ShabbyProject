@@ -45,12 +45,11 @@ public class FeedController {
 	}
 	
 	//유저피드에서의 프로필 사진 변경 api
+	//이미지 서비스에서 형식, 용량 검증 
 	@PutMapping("/userfeed")
 	public ResponseEntity<ResponseDTO<Void>> updateProfileImg(@RequestParam(value = "profileImgFile", required = false) MultipartFile file){
-		
-		UpdateProfileDTO dto = new UpdateProfileDTO();
-		dto.setProfileImgFile(file);
-		return feedService.updateProfileImg(dto);
+			
+		return feedService.updateProfileImg(file);
 	}
 	//유저피드에서의 자기소개 변경시 원래 자기소개정보를 가져오는 api
 	@GetMapping("/introduce")
@@ -63,5 +62,11 @@ public class FeedController {
 	@PutMapping("/introduce")
 	public ResponseEntity<ResponseDTO<Void>> updateIntroduce(@RequestBody @Valid UpdateProfileDTO dto){
 		return feedService.updateIntroduce(dto);
+	}
+	
+	@GetMapping("/userfeed/follow/{flwType}/{page}")
+	public ResponseEntity<ResponseDTO<List<MemberDTO>>> getFollowInFeed(@PathVariable String flwType, @PathVariable int page){
+	
+		return feedService.getFollowInFeed(flwType, page);
 	}
 }

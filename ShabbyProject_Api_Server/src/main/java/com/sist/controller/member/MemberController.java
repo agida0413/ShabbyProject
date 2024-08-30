@@ -38,12 +38,14 @@ private final FollowService followService;
 		return joinService.join(dto);
 	}
 	//닉네임 중복검증 
+	//서비스에서 검증
 	@PostMapping("/nickValidate")
 	public ResponseEntity<ResponseDTO<Void>> nickNameValidation(@RequestBody MemberDTO dto){
 		return joinService.nickNameValidation(dto.getNickname());
 	}
 
 	//회원가입시 이메일 인증코드 받는 api
+	//서비스에서 검증 
 	@PostMapping("/emailAuth")
 	public ResponseEntity<ResponseDTO<Void>> emailAuth(@RequestBody MemberDTO dto){
 			
@@ -51,19 +53,22 @@ private final FollowService followService;
 		
 	}
 	// 회원가입시 인증번호 검증하는 api
+	//서비스에서 검증 
 	@PostMapping("/emailValidate")
 	public ResponseEntity<ResponseDTO<Void>> emailValidation(@RequestBody EmailAuthDTO dto){
 		return joinService.emailValidation(dto);
 	}
 	
 	//아이디 찾기 
+	//서비스에서 검증
 	@PostMapping("/findEmail")
 	public ResponseEntity<ResponseDTO<MemberDTO>> findId(@RequestBody MemberDTO dto){
 		
 		return memberFindService.findEmail(dto);
 	}
 	
-	//패스워드 찾기/초기화 = > 이메일 서비스 
+	//패스워드 찾기/초기화 = > 이메일 서비스
+	//서비스에서 검증
 	@PostMapping("/findPassword")
 	public ResponseEntity<ResponseDTO<Void>> findPassword(@RequestBody MemberDTO dto){
 		
