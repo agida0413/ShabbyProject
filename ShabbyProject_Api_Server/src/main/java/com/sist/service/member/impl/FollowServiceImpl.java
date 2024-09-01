@@ -2,6 +2,8 @@ package com.sist.service.member.impl;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -10,6 +12,7 @@ import com.sist.common.exception.BadRequestException;
 import com.sist.common.util.PathVariableValidation;
 import com.sist.common.util.SimpleCodeGet;
 import com.sist.dto.api.ResponseDTO;
+import com.sist.dto.feed.DoFollowDTO;
 import com.sist.dto.member.MemberDTO;
 import com.sist.dto.member.RequestFollowDTO;
 import com.sist.dto.member.ResponseFollowDTO;
@@ -21,7 +24,11 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class FollowServiceImpl implements FollowService {
 	
+	
 	private final FollowRepository followRepository;
+	
+	
+	
 	
 	@Override
 	public ResponseEntity<ResponseDTO<ResponseFollowDTO>> followingBykeyword(String keyword,int page,int rowSize) {
@@ -51,6 +58,21 @@ public class FollowServiceImpl implements FollowService {
 		
 		return new ResponseEntity<ResponseDTO<ResponseFollowDTO>>
 		(new ResponseDTO<ResponseFollowDTO>(resDto),HttpStatus.OK); //성공 
+	}
+
+
+
+
+	@Override
+	public ResponseEntity<ResponseDTO<Void>> doFollow(DoFollowDTO dto) {
+		// TODO Auto-generated method stub
+		
+		int idNum=SimpleCodeGet.getIdNum();
+		dto.setIdNum(idNum);
+		followRepository.doFollow(dto);
+		
+		return new ResponseEntity<ResponseDTO<Void>>
+		(new ResponseDTO<Void>(),HttpStatus.OK); //성공 
 	}
 
 }

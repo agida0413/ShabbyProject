@@ -1,5 +1,6 @@
 package com.sist.service.member.impl;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -19,9 +20,11 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class MemberFindServiceImpl implements MemberFindService{
+	
 private final MemberAccountRepository memberAccountRepository;
 private final MailService mailService;
 	
+
 	//이메일(아이디) 찾기 서비스
 	@Override
 	public  ResponseEntity<ResponseDTO<MemberDTO>>  findEmail(MemberDTO dto ) {

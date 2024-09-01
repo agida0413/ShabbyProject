@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.sist.dto.api.ResponseDTO;
-
+import com.sist.dto.feed.ResponseFollowListDTO;
 import com.sist.dto.feed.ResponsePostListDTO;
 import com.sist.dto.feed.ResponseUserFeedDTO;
 import com.sist.dto.feed.UpdateProfileDTO;
@@ -30,5 +30,5 @@ public interface FeedService {
 	
 	//사용자 피드에서 팔로우,팔로워 목록 가져오기 
 	
-	public ResponseEntity<ResponseDTO<List<MemberDTO>>> getFollowInFeed(String flwType, int page);
+	public ResponseEntity<ResponseDTO<List<ResponseFollowListDTO>>> getFollowInFeed(String nickname,String flwType, int page);
 }

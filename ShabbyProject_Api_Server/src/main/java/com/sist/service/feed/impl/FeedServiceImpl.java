@@ -15,6 +15,7 @@ import com.sist.common.util.SimpleCodeGet;
 import com.sist.dto.api.ResponseDTO;
 import com.sist.dto.feed.RequestFollowListDTO;
 import com.sist.dto.feed.RequestUserFeedDTO;
+import com.sist.dto.feed.ResponseFollowListDTO;
 import com.sist.dto.feed.ResponsePostListDTO;
 import com.sist.dto.feed.ResponseUserFeedDTO;
 import com.sist.dto.feed.UpdateProfileDTO;
@@ -46,8 +47,10 @@ public class FeedServiceImpl implements FeedService{
 	public ResponseEntity<ResponseDTO<ResponseUserFeedDTO>> loadUserFeedInfo(String nickname) {
 		// TODO Auto-generated method stub
 		
+		
 		//닉네임 validation
 		if(!PathVariableValidation.nickNameValService(nickname)) {
+			
 			throw new BadRequestException("유효하지 않은 입력입니다.");
 		}
 		
@@ -274,9 +277,11 @@ public class FeedServiceImpl implements FeedService{
 	
 	//사용자 피드에서 팔로우,팔로워 목록 가져오기 
 	@Override
-	public ResponseEntity<ResponseDTO<List<MemberDTO>>> getFollowInFeed(String flwType,int page) {
+	public ResponseEntity<ResponseDTO<List<ResponseFollowListDTO>>> getFollowInFeed(String nickname,String flwType,int page) {
 		// TODO Auto-generated method stub
 		int idNum=SimpleCodeGet.getIdNum();
+		
+		
 		//validation
 			if(!PathVariableValidation.pageValidation(page)) {
 				throw new BadRequestException("유효하지 않은 입력입니다.");
@@ -292,14 +297,15 @@ public class FeedServiceImpl implements FeedService{
 			
 			RequestFollowListDTO dto=new RequestFollowListDTO();
 			
+			dto.setNickname(nickname);
 			dto.setFlwType(flwType);
 			dto.setRowSize(rowSize);
 			dto.setStartRow(offSet);
 			dto.setIdNum(idNum);
-			List<MemberDTO> list = followRepository.getFollowInFeed(dto);
-			System.out.println(list.size());
-		return new ResponseEntity<ResponseDTO<List<MemberDTO>>>
-		(new ResponseDTO<List<MemberDTO>>(list),HttpStatus.OK); //성공 
+			List<ResponseFollowListDTO> list = followRepository.getFollowInFeed(dto);
+			
+		return new ResponseEntity<ResponseDTO<List<ResponseFollowListDTO>>>
+		(new ResponseDTO<List<ResponseFollowListDTO>>(list),HttpStatus.OK); //성공 
 	}
 
 }

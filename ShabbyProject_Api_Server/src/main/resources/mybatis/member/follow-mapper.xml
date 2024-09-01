@@ -26,21 +26,60 @@
  	</select>
  	
  	
- 	<select id="getFollowInFeed" parameterType="RequestFollowListDTO" resultType="MemberDTO">
-	 	SELECT nickname,profile FROM FOLLOW f
+ 	<select id="getFollowInFeed" parameterType="RequestFollowListDTO" resultType="ResponseFollowListDTO">
+	 	SELECT nickname,profile,approve,locked
+	 
+	 	,(SELECT
+	 	 approve FROM FOLLOW
+	 	 WHERE id_num=#{idNum}
+	 	 AND
+	 	 following_id=
+	 	 (
+			SELECT id_num FROM 
+			MEMBER 
+			WHERE nickname=m.nickname
+		 )
+	 	
+	 	)as myApprove
+	 
+	 	 FROM FOLLOW f
 	 	LEFT JOIN MEMBER m 
 	 	<if test="flwType=='FOLLOWING'">	<!--팔로잉하는 사람들-->
 	 	ON f.following_id=m.id_num
-	 	WHERE f.id_num =#{idNum}
+	 	WHERE f.id_num =(
+		SELECT id_num FROM MEMBER
+		WHERE nickname=#{nickname}	
+		)
+	 	and approve='FOLLOWOK'
 	 	</if>	
 	 	<if test="flwType=='FOLLOWER'">	<!--팔로우 하는 사람-->
 	 	ON f.id_num=m.id_num
-	 	WHERE f.following_id =#{idNum}
+	 	WHERE f.following_id =(
+		SELECT id_num FROM MEMBER
+		WHERE nickname=#{nickname}	
+		)
+	 	and approve='FOLLOWOK'
 	 	</if>
 	 	ORDER BY follow_Date DESC
 	 	LIMIT #{rowSize} OFFSET #{startRow}
  	</select>
  	
- 
+ <!--팔로잉 작업 -->
  	
+ <insert id="doFollow" parameterType="DoFollowDTO">
+    INSERT INTO FOLLOW (id_num, following_id, approve)
+    VALUES (
+        #{idNum},
+        (SELECT id_num FROM MEMBER WHERE nickname = #{nickname}),
+        <choose>
+            <when test="locked == 'LOCKED'">
+                'FOLLOWNO'
+            </when>
+            <when test="locked == 'PUBLICID'">
+                'FOLLOWOK'
+            </when>
+        </choose>
+    )
+</insert>
+
  </mapper>

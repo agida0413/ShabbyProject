@@ -4,7 +4,9 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 
+import com.sist.dto.feed.DoFollowDTO;
 import com.sist.dto.feed.RequestFollowListDTO;
+import com.sist.dto.feed.ResponseFollowListDTO;
 import com.sist.dto.member.MemberDTO;
 import com.sist.dto.member.RequestFollowDTO;
 @Mapper
@@ -18,5 +20,8 @@ public interface FollowMapper {
 	//	<!-- 전체 자신을 팔로잉 하는 리스트 -->
 	public List<MemberDTO>followerAll();
 	//사용자 피드에서 follow, follower 가져오기
-	public List<MemberDTO>getFollowInFeed(RequestFollowListDTO dto);
+	public List<ResponseFollowListDTO>getFollowInFeed(RequestFollowListDTO dto);
+	
+	
+	public void doFollow(DoFollowDTO dto);
 }
