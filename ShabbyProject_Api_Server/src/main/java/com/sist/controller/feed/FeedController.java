@@ -1,10 +1,13 @@
 package com.sist.controller.feed;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,12 +16,15 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.sist.dto.api.ResponseDTO;
+import com.sist.dto.feed.DoFollowDTO;
+import com.sist.dto.feed.ResponseFollowListDTO;
 import com.sist.dto.feed.ResponsePostListDTO;
 import com.sist.dto.feed.ResponseUserFeedDTO;
 import com.sist.dto.feed.UpdateProfileDTO;
 import com.sist.dto.member.MemberDTO;
 import com.sist.dto.member.ResponseFollowDTO;
 import com.sist.service.feed.FeedService;
+import com.sist.service.member.FollowService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +36,7 @@ public class FeedController {
 
 	
 	private final FeedService feedService;
+	private final FollowService followService;
 	// 유저피드 접근시 해당유저에 대한 정보를 불러오는 api
 	@GetMapping("/userfeed/{nickname}")
 	public ResponseEntity<ResponseDTO<ResponseUserFeedDTO>> loadUserfeedInfo(@PathVariable String nickname){
@@ -64,9 +71,16 @@ public class FeedController {
 		return feedService.updateIntroduce(dto);
 	}
 	
-	@GetMapping("/userfeed/follow/{flwType}/{page}")
-	public ResponseEntity<ResponseDTO<List<MemberDTO>>> getFollowInFeed(@PathVariable String flwType, @PathVariable int page){
+	@GetMapping("/userfeed/{nickname}/{flwType}/{page}")
+	public ResponseEntity<ResponseDTO<List<ResponseFollowListDTO>>> getFollowInFeed(@PathVariable String nickname, @PathVariable String flwType, @PathVariable int page){
 	
-		return feedService.getFollowInFeed(flwType, page);
+		return feedService.getFollowInFeed(nickname, flwType, page);
 	}
+	
+	@PostMapping("/follow")
+	public ResponseEntity<ResponseDTO<Void>> doFollow(@RequestBody DoFollowDTO dto){
+		
+		return followService.doFollow(dto);
+	}
+	
 }

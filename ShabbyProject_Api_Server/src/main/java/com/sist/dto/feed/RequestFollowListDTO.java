@@ -12,5 +12,6 @@ public class RequestFollowListDTO {
 	private int page;
 	private int startRow;
 	private int idNum;
+	private String nickname;
 	private String flwType;
 }
