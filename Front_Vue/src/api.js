@@ -53,7 +53,7 @@ api.interceptors.response.use(response => {
     const originalRequest = error.config;
    
     // 410 상태 코드 오류가 발생하고, 엑세스 토큰이 있고 ,재발급 시도하지 않았으면
-    if (error.response && error.response.status === 410 && !originalRequest._retry &&token) {
+    if (errtor.response && error.response.status === 410 && !originalRequest._retry &&oken) {
         //만약 재발급 진행중이라면 
       
         if (isRefreshing) {

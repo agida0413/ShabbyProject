@@ -7,18 +7,25 @@
     class="mx-auto to-blackMode"
     width="400"
   >
- 
+              <v-progress-linear
+                  color="cyan"
+                  indeterminate
+                  v-if="isLoading"
+                ></v-progress-linear>
+                
           <v-btn
           style="margin-left: 360px; margin-top: 10px; background-color: gray;"
           icon
           class="close-btn"
           size="30"
           @click="closeDialog()"
+          v-if="!isLoading"
           >
           <v-icon >mdi-close</v-icon>
           </v-btn> 
 
           <span 
+          v-if="!isLoading"
           style=" display: flex;
           font-size: 20px;
           align-items: center; /* 수직 중앙 정렬 */
@@ -34,7 +41,7 @@
               
             </v-col>
 
-    <v-list lines="three" class="to-blackMode pa-3"> 
+    <v-list v-if="!isLoading" lines="three" class="to-blackMode pa-3"> 
      <v-list-item>
                                 
       <v-list-item-content>
@@ -66,9 +73,19 @@
               <span class="large-font">{{ follow.nickname }}</span>
             </v-col>
 
-            <v-col cols="4">
-              <v-btn color="primary">FOLLOW</v-btn>
+            <v-col cols="4" v-if="follow.myApprove===null ">
+              <v-btn color="primary" @click="doFollow(follow.nickname,follow.locked)">FOLLOW</v-btn>
             </v-col>
+
+            <v-col cols="4" v-if="follow.myApprove==='FOLLOWOK' ">
+              <v-btn color="red">UNFOLLOW</v-btn>
+            </v-col>
+
+            <v-col cols="4" v-if="follow.myApprove==='FOLLOWNO' ">
+              <v-btn color="grey">Follow 요청취소</v-btn>
+            </v-col>
+
+           
         </v-row>
 
         <!-- 순회부분 -->
@@ -76,8 +93,9 @@
       </v-list-item-content>
      </v-list-item>
     </v-list>
-    
+  
   </v-card>
+  
      </v-dialog>
    </template>
    
@@ -99,6 +117,10 @@
        nickname:{
         type:String,
         required:true 
+       },
+       itsMe:{
+        type:Boolean,
+        required:true
        }
      
     },data(){
@@ -110,6 +132,7 @@
     },
     watch: {
     value(newVal) {
+      
       if(newVal===true){
         this.callFollowList()
       }
@@ -135,7 +158,7 @@
        
         this.isLoading=true
 
-        api.get(`/feed/userfeed/follow/${this.flwType}/${this.page}`)
+        api.get(`/feed/userfeed/${this.nickname}/${this.flwType}/${this.page}`)
         .then((res)=>{
           this.FollowData=res?.data?.reqData
           console.log(this.FollowData)
@@ -148,6 +171,19 @@
           this.isLoading=false
         })
 
+       },
+
+       doFollow(nickname,locked){
+        api.post("/feed/follow",{
+          nickname:nickname,
+          locked:locked
+        })
+        .then(()=>{
+          this.callFollowList()
+        })
+        .catch((err)=>{
+          alert(err?.response?.data?.message)
+        })
        }
      }
    }
