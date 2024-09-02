@@ -69,9 +69,21 @@ export default{
     //마운트 시 게시물 정보 , intersection observer 초기화
     mounted(){
   
-     this.loadPost()
+    
      this.initObserver(); // IntersectionObserver 초기화
     },
+    watch: {
+    nickname: {
+      immediate: true, // 컴포넌트가 마운트될 때도 실행
+      handler(newNickname, oldNickname) {
+        // nickname이 변경될 때 호출
+        if (newNickname !== oldNickname) {
+          this.resetData();
+        }
+      }
+    }
+  },
+
     // 컴포넌트 언마운트 시 옵저버 해제
     beforeUnmount() {
     if (this.observer) {
@@ -106,6 +118,14 @@ export default{
           this.$emit('childLoadingComplete')
         });
       },
+      
+    // 데이터를 초기화하고 새로 로드
+    resetData() {
+      this.page = 1;
+      this.postData = [];
+      this.noMoreNeedData = false;
+      this.loadPost();
+    },
       //intersectionobserver 초기화 메서드
       initObserver() {
       this.$nextTick(() => {

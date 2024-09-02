@@ -233,8 +233,14 @@ export default {
   //닉네임(router 의 props) 변경시 감지하여 다시 정보를 로드한다.
   watch: {
     nickname() {      
-      // nickname이 변경될 때 호출되는 메서드
+      // nickname이 변경될 때 호출되는 메서드==> 값 초기화
       this.getInfoData();
+      this.childIsLoading=true;
+      this.flwType=''
+      this.feedEditDialog=false;
+      this.changeProfileImgDialog=false;
+      this.isLoading=true
+
     }
   },
   methods: {
