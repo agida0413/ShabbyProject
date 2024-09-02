@@ -50,7 +50,9 @@
                     @click="doFollow()"
                     >Follow</v-btn>
                      <!--팔로우 상태인 경우 -->
-                    <v-btn elevation="16" width="300" color="red" v-if="userFeedData.followState==='alreadyFollow'">UNFollow</v-btn>
+                    <v-btn elevation="16" width="300" color="red" v-if="userFeedData.followState==='alreadyFollow'"
+                    @click="unFollow()"
+                    >UNFollow</v-btn>
                 </v-col>
 
                   <!-- 비공개 계정일 경우 -->
@@ -60,9 +62,13 @@
                       @click="doFollow()"
                     >Follow</v-btn>
                     <!--해당계정 팔로우 상태가 OK인경우-->
-                    <v-btn elevation="16" width="300" color="red" v-if="userFeedData.followState==='alreadyFollow'">UNFollow</v-btn>
+                    <v-btn elevation="16" width="300" color="red" v-if="userFeedData.followState==='alreadyFollow'"
+                    @click="unFollow()"
+                    >UNFollow</v-btn>
                     <!--해당계정 팔로우 상태가 NO 인경우-->
-                    <v-btn elevation="16" width="300" color="grey" v-if="userFeedData.followState==='alreadyRequest'">FOLLOW 요청 취소</v-btn>
+                    <v-btn elevation="16" width="300" color="grey" v-if="userFeedData.followState==='alreadyRequest'"
+                    @click="unFollow()"
+                    >FOLLOW 요청 취소</v-btn>
                 </v-col>
 
              </v-row>
@@ -256,23 +262,51 @@ export default {
         });
        
     },
-    doFollow(){
+    //팔로우를 하는 메서드
+    doFollow(){ 
+      //현재 데이터통신이 일어나는지 여부 
       this.isLoading=true;
+      //인서트 팔로우 api
         api.post("/feed/follow",{
-          nickname:this.userFeedData.nickname,
-          locked:this.userFeedData.locked
+          nickname:this.userFeedData.nickname, //팔로우할 닉네임
+          locked:this.userFeedData.locked // 해당 계정의 공개/비공개  상태 여부 
         })
         .then(()=>{
+          //성공시 데이터 리로드 
           this.getInfoData()
         })
         .catch((err)=>{
           alert(err?.response?.data?.message)
         })
         .finally(()=>{
+          //데이터 통신 종료
           this.isLoading=false
         })
        }
-,
+      ,
+      //언팔로우(delete follow)
+      unFollow(){
+        //현재 데이터 통신이 일어나고 있는지 정보 
+        this.isLoading=true;
+
+      api.delete("/feed/follow",{
+        data:{
+          nickname:this.userFeedData.nickname //닉네임
+        }
+       
+      })
+      .then(()=>{
+        //언팔로우 성공 후 데이터 리로드 
+        this.getInfoData()
+      })
+      .catch((err)=>{
+        alert(err?.response?.data?.message);
+        
+      })
+      .finally(()=>{
+        this.isLoading=false
+      })
+      },
 
     // 유저피드에서의 게시물 정보를 읽어오는데 자식컴포넌트에서 데이터 로드가 완료되면 현 컴포넌트로 이벤트를 전송하여 스켈레톤 로딩 스피너가 동작을 멈추도록한다
     //스켈레톤 스피너 동작 조건 현 컴포넌트 데이터 로딩완료 && 자식컴포넌트 데이터 로딩완료
@@ -288,7 +322,8 @@ export default {
       this.flwType = str;
       this.flwListDialog = true; // 모달 열음
     },
-    flwListDialogClose() {   // 팔로우, 팔로잉 목록 닫음
+    flwListDialogClose() {
+      this.getInfoData()   // 팔로우, 팔로잉 목록 닫음
       this.flwListDialog = false;
     },
     // 프로필 편집 모달 제어

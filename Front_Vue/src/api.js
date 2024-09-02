@@ -49,13 +49,16 @@ api.interceptors.response.use(response => {
 }, error => {
   //만약 응답오류가 있다면 
 
-    const token=localStorage.getItem("access") //토큰이 있다면 
-    const originalRequest = error.config;
-   
+  const token = localStorage.getItem("access"); // 토큰이 있다면 
+  const originalRequest = error.config;
+
+  // 특정 URL에서 아무 것도 수행하지 않도록 설정
+  
+  
     // 410 상태 코드 오류가 발생하고, 엑세스 토큰이 있고 ,재발급 시도하지 않았으면
-    if (error.response && error.response.status === 410 && !originalRequest._retry &&token) {
+    if (error.response && error.response.status === 410 && !originalRequest._retry &&token ) {
         //만약 재발급 진행중이라면 
-      
+     
         if (isRefreshing) {
   
           //새로 요청을 큐에 추가, 재발급 완료 후 요청 처리 
@@ -75,6 +78,9 @@ api.interceptors.response.use(response => {
         isRefreshing = true;//재발급 상태로 설정
 
         return new Promise((resolve, reject) => {
+       
+
+
             api.post('/reissue')
                 .then(({ headers }) => {
                   // 새 액세스 토큰 저장

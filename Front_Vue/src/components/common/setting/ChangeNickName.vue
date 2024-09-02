@@ -248,8 +248,12 @@ export default {
           nickname:this.nickname,//닉네임 
           password:this.password//패스워드
         })
-        .then(()=>{
-        //성공시
+        .then((res)=>{
+        //성공시 새로운 엑세스 토큰 저장 
+        //why? 현재 프로젝트에서 jwt 토큰에 닉네임값도 들어가 있는데 닉네임을 변경할 시 토큰 재발급을 받지않으면 , 이전 닉네임 정보를 
+        //파싱해서 사용한다. 즉 이전 닉네임을 통한 데이터 교환이 일어난다.
+        const newToken =res.headers['access'];
+        localStorage.setItem('access', newToken);
           alert('성공적으로 변경되었습니다.')
           //컴포넌트 닫음 
           this.closeDialog()
