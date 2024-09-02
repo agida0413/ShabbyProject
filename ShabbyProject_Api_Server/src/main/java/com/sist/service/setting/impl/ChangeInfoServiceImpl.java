@@ -2,6 +2,8 @@ package com.sist.service.setting.impl;
 
 
 
+import java.net.http.HttpResponse;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -10,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.sist.common.exception.BadRequestException;
 import com.sist.common.exception.InternerException;
+import com.sist.common.util.CookieUtil;
 import com.sist.common.util.PathVariableValidation;
 import com.sist.common.util.SimpleCodeGet;
 import com.sist.dto.api.ResponseDTO;
@@ -17,10 +20,14 @@ import com.sist.dto.member.MemberDTO;
 import com.sist.dto.setting.ChangeNickNameDTO;
 import com.sist.dto.setting.ChangePasswordDTO;
 import com.sist.dto.setting.ChangePhoneDTO;
+import com.sist.jwt.JWTUtil;
 import com.sist.repository.member.MemberAccountRepository;
 import com.sist.repository.member.MemberSettingRepository;
+import com.sist.service.security.RefreshService;
 import com.sist.service.setting.ChangeInfoService;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
@@ -30,7 +37,8 @@ public class ChangeInfoServiceImpl implements ChangeInfoService{
 	private final MemberSettingRepository memberSettingRepository;
 	//패스워드 암호화
 	private final BCryptPasswordEncoder bCryptPasswordEncoder;
-	
+	private final JWTUtil jwtUtil;
+	private final RefreshService refreshService;
 	
 	//회원 정보 리턴
 	//2024.08.19 수정 = > 회원정보 전체를 넘기면 위험할 수 있음 ., 필요한 정보만 넘기게
@@ -64,7 +72,7 @@ public class ChangeInfoServiceImpl implements ChangeInfoService{
 	//선행조건 : 닉네임중복검사 통과 = >비밀번호 검증=>닉네임변경
 	@Transactional
 	@Override
-	public ResponseEntity<ResponseDTO<Void>> nickNameUpdate(ChangeNickNameDTO dto) {
+	public ResponseEntity<ResponseDTO<Void>> nickNameUpdate(ChangeNickNameDTO dto,HttpServletResponse response,HttpServletRequest request) {
 		// TODO Auto-generated method stub
 		
 		
@@ -85,7 +93,47 @@ public class ChangeInfoServiceImpl implements ChangeInfoService{
 		findDto.setNickname(dto.getNickname());//닉네임 세팅
 		memberSettingRepository.updateNickName(findDto);//최종적으로 vo에 닉네임과 ,고유번호 전달하여 데이터베이스 업데이트 
 	
-	
+		//현재 시큐리티 컨텍스트 홀더 닉네임 값 변경 
+		SimpleCodeGet.setNickname(dto.getNickname());
+		
+		
+	        String username = SimpleCodeGet.getEmail();//이메일
+	        String strIdNum=String.valueOf(idNum);//고유번호 문자열로변환
+			String nickname=dto.getNickname();//닉네임
+	      
+	        //새로운 jwt 토큰 발급
+			//why? 기존 토큰이용 시 닉네임 변경 전 닉네임이 토큰에 들어있고 그 값을 파싱하여 서버에서 이용하기 때문에
+			//이상현상 및 잘못된 값을 이용 큰 버그를 초래한다.
+	        String newAccess = jwtUtil.createJwt("access", username, strIdNum,nickname, 300000L);
+	        String newRefresh = jwtUtil.createJwt("refresh", username, strIdNum,nickname, 86400000L);
+	        
+	        String refresh=null;
+	        
+	        try {
+		    	  refresh=(String)CookieUtil.getCookie("refresh", request);
+
+			} catch (Exception e) {
+				// TODO: handle exception
+				 throw new BadRequestException("비정상적인 접근입니다.");//사용자 정의 익셉션 발생
+				 
+				 
+			}
+	        if(refresh.equals("")||refresh==null) {
+	        	throw new  BadRequestException("비정상적인 접근입니다.");
+	        }
+	        
+	      
+	     	        
+			refreshService.deleteRefresh(refresh); //Refresh 토큰 저장 DB에 기존의 Refresh 토큰 삭제 후 새 Refresh 토큰 저장
+			
+			 
+			refreshService.addRefreshEntity(idNum, newRefresh, 86400000L);//새 토큰 데이터에 저장
+	        
+	        response.setHeader("access", newAccess); //새로운 토큰을 헤더에 추가 
+	        
+	        response.addCookie(CookieUtil.createCookie("refresh", newRefresh)); // 쿠키생성 메서드
+
+		
 		
 		 return new ResponseEntity<ResponseDTO<Void>>
 			(new ResponseDTO<Void>(),HttpStatus.OK); //성공 

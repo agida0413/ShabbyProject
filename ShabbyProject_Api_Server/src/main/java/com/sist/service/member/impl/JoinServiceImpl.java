@@ -44,7 +44,7 @@ private final BCryptPasswordEncoder bCryptPasswordEncoder;
 		// 닉네임 중복, 핸드폰번호 중복 검증은 1차적으로 클라이언트에서 막고 데이터베이스 유니크 키가 막는다.
 		
 		dto.setPassword(bCryptPasswordEncoder.encode(password)); // 패스워드 암호화
-		dto.setRole("ROLE_USER"); //일반회원 권한 
+	
 		
 		MemberDTO findDto= memberAccountRepository.findByUserPhone(phone);
 		
@@ -56,9 +56,6 @@ private final BCryptPasswordEncoder bCryptPasswordEncoder;
 		if(dto.getIntroduce().equals("")) {
 			dto.setIntroduce(null); // 만약 자기소개 입력안했을시에는 데이터베이스에 널값으로 저장 =- > 관리용이
 		}
-		
-	
-	
 		
 		
 		

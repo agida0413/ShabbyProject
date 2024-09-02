@@ -1,9 +1,15 @@
 package com.sist.common.util;
 
+import java.util.Collections;
+
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
+import com.sist.dto.member.MemberDTO;
+import com.sist.jwt.JWTUtil;
 import com.sist.service.security.impl.CustomUserDetails;
 
 import lombok.RequiredArgsConstructor;
@@ -42,6 +48,33 @@ public final class SimpleCodeGet {
 	    	String nickname=userDetails.getNickname();
 	    		return nickname;
 	}
+	
+	 public static void setNickname(String nickname) {
+	        SecurityContext context = SecurityContextHolder.getContext();
+	        Authentication currentAuth = context.getAuthentication();
+
+	        // MemberDTO 생성 및 설정
+	        MemberDTO dto = new MemberDTO();
+	        dto.setNickname(nickname);
+	        dto.setEmail(getEmail());
+	        dto.setIdNum(getIdNum());
+
+	        // CustomUserDetails 객체 생성
+	        CustomUserDetails userDetails = new CustomUserDetails(dto);
+
+	        // Authentication 객체 생성, 빈 권한 리스트 추가
+	        Authentication newAuth = new UsernamePasswordAuthenticationToken(userDetails, currentAuth.getCredentials(), Collections.emptyList());
+
+	        // SecurityContext에 Authentication 설정
+	        context.setAuthentication(newAuth);
+	        SecurityContextHolder.setContext(context);
+	        
+	      
+	      
+	     
+	        
+	    }
+
 	
 	public static String getNickname() {
 		 

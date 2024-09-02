@@ -2,7 +2,7 @@ package com.sist.repository.post.impl;
 
 import org.springframework.stereotype.Repository;
 
-import com.sist.dto.post.RequestPostDTO;
+import com.sist.dto.post.WritePostDTO;
 import com.sist.mapper.post.PostMapper;
 import com.sist.repository.post.PostRepository;
 
@@ -15,25 +15,25 @@ public class MybatisPostRepository implements PostRepository {
 	
 	//게시물 테이블 삽입
 	@Override
-	public void postInsert(RequestPostDTO dto) {
+	public void postInsert(WritePostDTO dto) {
 		// TODO Auto-generated method stub
 		postMapper.postInsert(dto);
 	}
 	//해당 게시물과 연관된 관심사 테이블 삽입
 	@Override
-	public void hobbyInsert(RequestPostDTO dto) {
+	public void hobbyInsert(WritePostDTO dto) {
 		// TODO Auto-generated method stub
 		postMapper.hobbyInsert(dto);
 	}
 	//해당 게시물과 연관된 인물태그 삽입
 	@Override
-	public void followTagInsert(RequestPostDTO dto) {
+	public void followTagInsert(WritePostDTO dto) {
 		// TODO Auto-generated method stub
 		postMapper.followTagInsert(dto);
 	}
 	//해당 게시물과 연관된 사진들 삽입
 	@Override
-	public void postImgInsert(RequestPostDTO dto) {
+	public void postImgInsert(WritePostDTO dto) {
 		// TODO Auto-generated method stub
 		postMapper.postImgInsert(dto);
 	}

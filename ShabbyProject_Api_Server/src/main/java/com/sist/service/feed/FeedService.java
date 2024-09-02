@@ -6,18 +6,18 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.sist.dto.api.ResponseDTO;
-import com.sist.dto.feed.ResponseFollowListDTO;
-import com.sist.dto.feed.ResponsePostListDTO;
-import com.sist.dto.feed.ResponseUserFeedDTO;
+import com.sist.dto.feed.UserFeedInformDTO;
+import com.sist.dto.follow.FollowListDTO;
+import com.sist.dto.follow.FollowSearchDTO;
 import com.sist.dto.feed.UpdateProfileDTO;
 import com.sist.dto.member.MemberDTO;
-import com.sist.dto.member.RequestFollowDTO;
+import com.sist.dto.post.PostListDTO;
 
 public interface FeedService {
 	//사용자 피드 정보 ==> 게시물 제외
-	public ResponseEntity<ResponseDTO<ResponseUserFeedDTO>> loadUserFeedInfo(String nickname);
+	public ResponseEntity<ResponseDTO<UserFeedInformDTO>> loadUserFeedInfo(String nickname);
 	//사용자 피드 정보 == >게시물
-	public ResponseEntity<ResponseDTO<List<ResponsePostListDTO>>> loadUserFeedPostList(String nickname,int page);
+	public ResponseEntity<ResponseDTO<List<PostListDTO>>> loadUserFeedPostList(String nickname,int page);
 	
 	//프로필 이미지를 업데이트 하는 서비스 
 	public ResponseEntity<ResponseDTO<Void>> updateProfileImg(MultipartFile file);
@@ -28,7 +28,5 @@ public interface FeedService {
 	//클라이언트에게 자기소개 변경 컴포넌트에서 현재 자기소개 데이터를 전송
 	public ResponseEntity<ResponseDTO<MemberDTO>> getOriginalIntroduce();
 	
-	//사용자 피드에서 팔로우,팔로워 목록 가져오기 
 	
-	public ResponseEntity<ResponseDTO<List<ResponseFollowListDTO>>> getFollowInFeed(String nickname,String flwType, int page);
 }

@@ -7,7 +7,7 @@ import org.springframework.web.multipart.MultipartFile;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 @Data
-public class RequestPostDTO {
+public class WritePostDTO {
 
 private List<MultipartFile> imgList;
 private List<String> hobbyList;

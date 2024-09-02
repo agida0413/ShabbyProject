@@ -37,8 +37,8 @@
 	
 	<!-- 회원가입-->
 	<insert id="join" parameterType="MemberDTO">
-	Insert into member (email,password,nickname,name,phone,introduce,role)
-	values(#{email},#{password},#{nickname},#{name},#{phone},#{introduce},#{role})
+	Insert into member (email,password,nickname,name,phone,introduce)
+	values(#{email},#{password},#{nickname},#{name},#{phone},#{introduce})
 	</insert>
 	
 	<!-- 이메일 인증이력 저장 -->
@@ -73,7 +73,6 @@
 		SELECT * FROM MEMBER 
 		WHERE nickname=#{nickname}
 		AND name=#{name}
-	
 	</select>
 	
 	<!--임시패스워드 발급 후 저장-->

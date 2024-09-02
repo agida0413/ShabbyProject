@@ -59,7 +59,8 @@ public class JWTFilter extends OncePerRequestFilter{
 	    	} catch (ExpiredJwtException e) {
 	    		
 	    		// 클라이언트 측에 410 에러전송 ,410 에러는 현재 서버내 유일하고 , 클라이언트 측에서는 응답 인터셉트로 받아 액세스토큰 재발급 진행 
-	    		
+	    	
+	    	
 	    		ResponseDTO<Void> responseApi = new ResponseDTO<Void>(
 	         			 HttpStatus.GONE.value(),
 	                      "만료된 인증입니다."
@@ -83,7 +84,7 @@ public class JWTFilter extends OncePerRequestFilter{
 	
 	    	// username, role,idNum 값을 획득
 	    	String username = jwtUtil.getUsername(accessToken);//이메일
-	    	String role = jwtUtil.getRole(accessToken);//권한
+//	    	String role = jwtUtil.getRole(accessToken);//권한
 	    	int idNum = jwtUtil.getIdNum(accessToken);//고유번호
 	    	String nickname=jwtUtil.getNickname(accessToken);//닉네임
 	    	
@@ -91,13 +92,13 @@ public class JWTFilter extends OncePerRequestFilter{
 	    	MemberDTO dto = new MemberDTO();
 	    	
 	    	dto.setEmail(username);
-	    	dto.setRole(role);
+//	    	dto.setRole(role);
 	    	dto.setIdNum(idNum);
 	    	dto.setNickname(nickname);
 	    	
 	    	CustomUserDetails customUserDetails = new CustomUserDetails(dto);//ueserDetails에 dto객체 전달
 	    	//일시적으로 세션에 담기위해 (SecurityContextHolder)
-	    	Authentication authToken = new UsernamePasswordAuthenticationToken(customUserDetails, null, customUserDetails.getAuthorities());
+	    	Authentication authToken = new UsernamePasswordAuthenticationToken(customUserDetails, null, null);
 	    	SecurityContextHolder.getContext().setAuthentication(authToken);
 	
 	    	filterChain.doFilter(request, response);

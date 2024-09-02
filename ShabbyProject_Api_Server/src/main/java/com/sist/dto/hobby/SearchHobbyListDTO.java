@@ -7,6 +7,6 @@ import lombok.Data;
 
 
 @Data
-public class ResponseHobbyDTO {
-private List<HobbyDTO> findList=new ArrayList<HobbyDTO>();
+public class SearchHobbyListDTO {
+private List<HobbyDTO> findList;
 }

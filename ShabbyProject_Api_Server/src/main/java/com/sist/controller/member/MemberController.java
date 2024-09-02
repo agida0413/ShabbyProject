@@ -13,9 +13,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.sist.dto.api.ResponseDTO;
+import com.sist.dto.follow.FollowSearchResultDTO;
 import com.sist.dto.member.EmailAuthDTO;
 import com.sist.dto.member.MemberDTO;
-import com.sist.dto.member.ResponseFollowDTO;
 import com.sist.service.mail.impl.MailServiceImpl;
 import com.sist.service.member.FollowService;
 import com.sist.service.member.JoinService;
@@ -78,9 +78,9 @@ private final FollowService followService;
 	
 	//키워드 ,페이지 , 행개수 를 pathvariable로 받아 현재 세션(로그인한 아이디) 기반 팔로잉 리스트 
 	@GetMapping("/following/{keyword}/{page}/{rowSize}")
-	public ResponseEntity<ResponseDTO<ResponseFollowDTO>> followingByKeyword
-	(@PathVariable String keyword,@PathVariable int page,@PathVariable int rowSize)
-	{
+	public ResponseEntity<ResponseDTO<FollowSearchResultDTO>> followingByKeyword(@PathVariable String keyword,
+	@PathVariable int page,@PathVariable int rowSize){
+	
 		return  followService.followingBykeyword(keyword, page, rowSize);
 	}
 	

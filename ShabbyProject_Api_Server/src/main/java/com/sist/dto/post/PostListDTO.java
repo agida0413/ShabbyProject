@@ -1,12 +1,14 @@
 package com.sist.dto.post;
 
+
+
 import lombok.Data;
-import lombok.Getter;
 
 @Data
-public class PostImgDTO {
-private int postImgNum;
+public class PostListDTO {
 private int postNum;
 private String postImgUrl;
+private String onlyMe;
+private int likeCount;
 
 }
