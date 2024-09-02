@@ -13,11 +13,13 @@ import com.sist.dto.follow.UnFollowDTO;
 public interface FollowService {
 	//검색어,행개수, 페이지 기반 현재 본인의 팔로잉 리스트를 가져옴 
 	public ResponseEntity<ResponseDTO<FollowSearchResultDTO>> followingBykeyword(String keyword,int page,int rowSize);
-	
+	//인서트 팔로우(팔로잉)
 	public ResponseEntity<ResponseDTO<String>> doFollow(DoFollowDTO dto);
-	
+	//딜리트 팔로우 (언팔로우)
+	public ResponseEntity<ResponseDTO<Void>> unFollow(UnFollowDTO dto);
+	//사용자 피드내에서 팔로우/팔로워 목록을 불러옴 ==> flwType은 팔로우냐 팔로워냐 구분
 	public ResponseEntity<ResponseDTO<FollowListDTO>> getFollowInFeed(String nickname,String flwType,int page);
 
 
-	public ResponseEntity<ResponseDTO<Void>> unFollow(UnFollowDTO dto);
+	
 }

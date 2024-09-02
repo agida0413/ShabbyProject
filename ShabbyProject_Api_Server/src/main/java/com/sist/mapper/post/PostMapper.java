@@ -1,7 +1,11 @@
 package com.sist.mapper.post;
 
+import java.util.List;
+
 import org.apache.ibatis.annotations.Mapper;
 
+import com.sist.dto.feed.GetUserFeedInformDTO;
+import com.sist.dto.post.PostListDTO;
 import com.sist.dto.post.WritePostDTO;
 @Mapper
 public interface PostMapper {
@@ -14,4 +18,6 @@ public interface PostMapper {
 	public void followTagInsert(WritePostDTO dto);
 	//해당 게시물과 연관된 사진들 삽입
 	public void postImgInsert(WritePostDTO dto);
+	//사용자  피드에서 게시물리스트 가져오기
+	public List<PostListDTO> postList(GetUserFeedInformDTO dto);
 }

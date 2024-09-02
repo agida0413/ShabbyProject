@@ -27,6 +27,7 @@ import com.sist.repository.feed.FeedRepository;
 import com.sist.repository.hobby.HobbyRepository;
 import com.sist.repository.member.FollowRepository;
 import com.sist.repository.member.MemberAccountRepository;
+import com.sist.repository.post.PostRepository;
 import com.sist.service.feed.FeedService;
 import com.sist.service.image.ImageService;
 
@@ -38,8 +39,10 @@ public class FeedServiceImpl implements FeedService{
 	
 	private final HobbyRepository hobbyRepository;
 	private final FeedRepository feedRepository;
+	private final PostRepository postRepository;
 	private final ImageService imageService;
 	private final MemberAccountRepository memberAccountRepository;
+	
 	
 	
 	//게시물 리스트를 제외한 사용자 피드에서의 피드정보를 불러오는  서비스 
@@ -152,18 +155,23 @@ public class FeedServiceImpl implements FeedService{
 			throw new BadRequestException("유효하지 않은 페이지입니다.");
 		}
 		
+		
 		//행의 개수 
 		int rowSize=6;
 		//offset(시작위치)
 		int offSet=SimpleCodeGet.getOffset(rowSize, page);
 		//데이터베이스 전송 객체 생성
 		GetUserFeedInformDTO dto= new GetUserFeedInformDTO();
+		//읽고자하는 피드가 유저 피드인지 세팅한다 ===> 동적쿼리를 통해 유저피드 ,메인피드, 글로벌 피드 나누기위함 		
+		dto.setFeedState("USERFEED");
+		
+		
 		dto.setNickname(nickname);//닉네임 세팅
 		dto.setRowSize(rowSize);//행개수 세팅
 		dto.setStartRow(offSet);//offset 세팅 
-		
+	
 		//닉네임 기반으로 게시물 정보를 읽어서 리스트에 담는다 .
-		List<PostListDTO> list  = feedRepository.userFeedPostList(dto);
+		List<PostListDTO> list  = postRepository.postList(dto);
 		
 		
 			

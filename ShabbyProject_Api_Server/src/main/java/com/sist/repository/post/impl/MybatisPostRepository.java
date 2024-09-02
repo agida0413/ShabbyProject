@@ -1,7 +1,11 @@
 package com.sist.repository.post.impl;
 
+import java.util.List;
+
 import org.springframework.stereotype.Repository;
 
+import com.sist.dto.feed.GetUserFeedInformDTO;
+import com.sist.dto.post.PostListDTO;
 import com.sist.dto.post.WritePostDTO;
 import com.sist.mapper.post.PostMapper;
 import com.sist.repository.post.PostRepository;
@@ -36,6 +40,13 @@ public class MybatisPostRepository implements PostRepository {
 	public void postImgInsert(WritePostDTO dto) {
 		// TODO Auto-generated method stub
 		postMapper.postImgInsert(dto);
+	}
+	
+	//사용자  피드에서 게시물리스트 가져오기
+	@Override
+	public List<PostListDTO> postList(GetUserFeedInformDTO dto) {
+		// TODO Auto-generated method stub
+		return postMapper.postList(dto);
 	}
 
 }
