@@ -26,12 +26,7 @@ public class MybatisFeedRepository implements FeedRepository{
 		return feedMapper.userFeedInfoFromMember(dto);
 	}
 	
-	//사용자  피드에서 게시물리스트 가져오기
-	@Override
-	public List<PostListDTO> userFeedPostList(GetUserFeedInformDTO dto) {
-		// TODO Auto-generated method stub
-		return feedMapper.userFeedPostList(dto);
-	}
+	
 	//현재 프로필 이미지 url 갖고오기
 	@Override
 	public String profileImgGet(int idNum) {
