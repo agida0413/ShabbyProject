@@ -3,7 +3,7 @@ package com.sist.dto.feed;
 import lombok.Data;
 
 @Data
-public class ResponseFollowListDTO {
+public class FollowListDTO {
 private String nickname;
 private String profile;
 private String approve;

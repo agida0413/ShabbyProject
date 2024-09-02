@@ -8,7 +8,7 @@ import lombok.Data;
 
 // 서버 => 클라이언트 에게보낼 피드에 대한 정보 
 @Data
-public class ResponseUserFeedDTO {
+public class UserFeedInformDTO {
 private String profile;//프로필 사진 
 private String nickname;//닉네임 
 private String introduce; //자기소개 

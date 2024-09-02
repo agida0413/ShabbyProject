@@ -4,7 +4,7 @@ package com.sist.dto.feed;
 import lombok.Data;
 
 @Data
-public class RequestUserFeedDTO {
+public class GetUserFeedInformDTO {
 
 
 private String nickname;

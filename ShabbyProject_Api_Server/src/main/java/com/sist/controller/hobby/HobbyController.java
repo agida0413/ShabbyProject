@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.sist.dto.api.ResponseDTO;
 import com.sist.dto.hobby.HobbyDTO;
-import com.sist.dto.hobby.ResponseHobbyDTO;
+import com.sist.dto.hobby.SearchHobbyListDTO;
 import com.sist.service.hobby.HobbyService;
 
 import lombok.RequiredArgsConstructor;
@@ -27,7 +27,7 @@ public class HobbyController {
 	}
 	//keyword, page 기반으로 관심사를 조회하는 api
 	@GetMapping("/{keyword}/{page}")
-	public  ResponseEntity<ResponseDTO<ResponseHobbyDTO>> findHobby(@PathVariable String keyword,@PathVariable int page){
+	public  ResponseEntity<ResponseDTO<SearchHobbyListDTO>> findHobby(@PathVariable String keyword,@PathVariable int page){
 		return hobbyService.findHobby(keyword,page);
 	}
 }

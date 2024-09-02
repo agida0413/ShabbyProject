@@ -4,6 +4,6 @@ import java.util.List;
 
 import lombok.Data;
 @Data
-public class ResponseFollowDTO {
+public class FollowSearchResultDTO {
 private List<MemberDTO> followList;
 }

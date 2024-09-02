@@ -14,8 +14,8 @@ import com.sist.common.util.SimpleCodeGet;
 import com.sist.dto.api.ResponseDTO;
 import com.sist.dto.feed.DoFollowDTO;
 import com.sist.dto.member.MemberDTO;
-import com.sist.dto.member.RequestFollowDTO;
-import com.sist.dto.member.ResponseFollowDTO;
+import com.sist.dto.member.FollowSearchDTO;
+import com.sist.dto.member.FollowSearchResultDTO;
 import com.sist.repository.member.FollowRepository;
 import com.sist.service.member.FollowService;
 
@@ -31,7 +31,7 @@ public class FollowServiceImpl implements FollowService {
 	
 	
 	@Override
-	public ResponseEntity<ResponseDTO<ResponseFollowDTO>> followingBykeyword(String keyword,int page,int rowSize) {
+	public ResponseEntity<ResponseDTO<FollowSearchResultDTO>> followingBykeyword(String keyword,int page,int rowSize) {
 		// TODO Auto-generated method stub
 		
 		if(!PathVariableValidation.pageValidation(page)||!PathVariableValidation.pageValidation(rowSize)) {
@@ -43,7 +43,7 @@ public class FollowServiceImpl implements FollowService {
 		int idNum=SimpleCodeGet.getIdNum();
 		
 		//데이터베이스 전송객체 생성 및 값 세팅 
-		RequestFollowDTO dto = new RequestFollowDTO();
+		FollowSearchDTO dto = new FollowSearchDTO();
 		dto.setIdNum(idNum);
 		dto.setKeyword(keyword);	
 		dto.setRowSize(rowSize);
@@ -52,12 +52,12 @@ public class FollowServiceImpl implements FollowService {
 		//MemberDto 리스트 형태로 결과 반환
 		List<MemberDTO> list= followRepository.followingByKeyword(dto);
 		//클라이언트 전송 객체 생성
-		ResponseFollowDTO resDto= new ResponseFollowDTO();
+		FollowSearchResultDTO resDto= new FollowSearchResultDTO();
 		//MemberDto 리스트 형태 변수에 값 세팅  
 		resDto.setFollowList(list);
 		
-		return new ResponseEntity<ResponseDTO<ResponseFollowDTO>>
-		(new ResponseDTO<ResponseFollowDTO>(resDto),HttpStatus.OK); //성공 
+		return new ResponseEntity<ResponseDTO<FollowSearchResultDTO>>
+		(new ResponseDTO<FollowSearchResultDTO>(resDto),HttpStatus.OK); //성공 
 	}
 
 

@@ -13,16 +13,16 @@ import com.sist.common.exception.InternerException;
 import com.sist.common.util.PathVariableValidation;
 import com.sist.common.util.SimpleCodeGet;
 import com.sist.dto.api.ResponseDTO;
-import com.sist.dto.feed.RequestFollowListDTO;
-import com.sist.dto.feed.RequestUserFeedDTO;
-import com.sist.dto.feed.ResponseFollowListDTO;
-import com.sist.dto.feed.ResponsePostListDTO;
-import com.sist.dto.feed.ResponseUserFeedDTO;
+import com.sist.dto.feed.FollowInFeedDTO;
+import com.sist.dto.feed.GetUserFeedInformDTO;
+import com.sist.dto.feed.FollowListDTO;
+import com.sist.dto.feed.UserFeedInformDTO;
 import com.sist.dto.feed.UpdateProfileDTO;
 import com.sist.dto.hobby.HobbyDTO;
-import com.sist.dto.hobby.ResponseHobbyDTO;
+import com.sist.dto.hobby.SearchHobbyListDTO;
 import com.sist.dto.member.MemberDTO;
-import com.sist.dto.member.RequestFollowDTO;
+import com.sist.dto.post.PostListDTO;
+import com.sist.dto.member.FollowSearchDTO;
 import com.sist.repository.feed.FeedRepository;
 import com.sist.repository.hobby.HobbyRepository;
 import com.sist.repository.member.FollowRepository;
@@ -44,7 +44,7 @@ public class FeedServiceImpl implements FeedService{
 	
 	//게시물 리스트를 제외한 사용자 피드에서의 피드정보를 불러오는  서비스 
 	@Override
-	public ResponseEntity<ResponseDTO<ResponseUserFeedDTO>> loadUserFeedInfo(String nickname) {
+	public ResponseEntity<ResponseDTO<UserFeedInformDTO>> loadUserFeedInfo(String nickname) {
 		// TODO Auto-generated method stub
 		
 		
@@ -55,7 +55,7 @@ public class FeedServiceImpl implements FeedService{
 		}
 		
 		//데이터베이스 매핑 객체 생성 
-		RequestUserFeedDTO reqDTO = new RequestUserFeedDTO();
+		GetUserFeedInformDTO reqDTO = new GetUserFeedInformDTO();
 		//닉네임 세팅 
 		reqDTO.setNickname(nickname);
 		//만약 현재 스레드에서의 세션 닉네임과 , 요청 닉네임이 같을경우 이 요청은 자신의 피드(내피드) 요청이다.
@@ -76,7 +76,7 @@ public class FeedServiceImpl implements FeedService{
 		}
 		
 		//클라이언트에게 전송할 객체에 데이터베이스에서 조회한 값을 넣는다.
-		ResponseUserFeedDTO dto = feedRepository.userFeedInfoFromMember(reqDTO);
+		UserFeedInformDTO dto = feedRepository.userFeedInfoFromMember(reqDTO);
 		
 		//만약 매개변수로 받은 닉네임과 현재 세션정보에 담긴 닉네임과 일치한다면 
 		//itsMe 변수를 true로 ( 자신의 피드인지 다른 회원의 피드인지 확인하기 위함) 세팅한다. ==== > 여기서 세팅은 클라이언트에게 보낼객체에 대한 세팅이다.
@@ -136,13 +136,13 @@ public class FeedServiceImpl implements FeedService{
 		dto.setHobbies(list);
 					
 		
-		return new ResponseEntity<ResponseDTO<ResponseUserFeedDTO>>
-		(new ResponseDTO<ResponseUserFeedDTO>(dto),HttpStatus.OK); //성공 
+		return new ResponseEntity<ResponseDTO<UserFeedInformDTO>>
+		(new ResponseDTO<UserFeedInformDTO>(dto),HttpStatus.OK); //성공 
 	}
 	
 	// 사용자 피드에서 게시물 정보를 읽어온다 . 
 	@Override
-	public ResponseEntity<ResponseDTO<List<ResponsePostListDTO>>> loadUserFeedPostList(String nickname,int page) {
+	public ResponseEntity<ResponseDTO<List<PostListDTO>>> loadUserFeedPostList(String nickname,int page) {
 		// TODO Auto-generated method stub
 		
 		if(!PathVariableValidation.nickNameValService(nickname)) {
@@ -157,19 +157,19 @@ public class FeedServiceImpl implements FeedService{
 		//offset(시작위치)
 		int offSet=SimpleCodeGet.getOffset(rowSize, page);
 		//데이터베이스 전송 객체 생성
-		RequestUserFeedDTO dto= new RequestUserFeedDTO();
+		GetUserFeedInformDTO dto= new GetUserFeedInformDTO();
 		dto.setNickname(nickname);//닉네임 세팅
 		dto.setRowSize(rowSize);//행개수 세팅
 		dto.setStartRow(offSet);//offset 세팅 
 		
 		//닉네임 기반으로 게시물 정보를 읽어서 리스트에 담는다 .
-		List<ResponsePostListDTO> list  = feedRepository.userFeedPostList(dto);
+		List<PostListDTO> list  = feedRepository.userFeedPostList(dto);
 		
 		
 			
 		
-		return new ResponseEntity<ResponseDTO<List<ResponsePostListDTO>>>
-		(new ResponseDTO<List<ResponsePostListDTO>>(list),HttpStatus.OK); //성공 
+		return new ResponseEntity<ResponseDTO<List<PostListDTO>>>
+		(new ResponseDTO<List<PostListDTO>>(list),HttpStatus.OK); //성공 
 	}
 	
 	
@@ -277,7 +277,7 @@ public class FeedServiceImpl implements FeedService{
 	
 	//사용자 피드에서 팔로우,팔로워 목록 가져오기 
 	@Override
-	public ResponseEntity<ResponseDTO<List<ResponseFollowListDTO>>> getFollowInFeed(String nickname,String flwType,int page) {
+	public ResponseEntity<ResponseDTO<List<FollowListDTO>>> getFollowInFeed(String nickname,String flwType,int page) {
 		// TODO Auto-generated method stub
 		int idNum=SimpleCodeGet.getIdNum();
 		
@@ -295,17 +295,17 @@ public class FeedServiceImpl implements FeedService{
 			//offset(시작위치)
 			int offSet=SimpleCodeGet.getOffset(rowSize, page);
 			
-			RequestFollowListDTO dto=new RequestFollowListDTO();
+			FollowInFeedDTO dto=new FollowInFeedDTO();
 			
 			dto.setNickname(nickname);
 			dto.setFlwType(flwType);
 			dto.setRowSize(rowSize);
 			dto.setStartRow(offSet);
 			dto.setIdNum(idNum);
-			List<ResponseFollowListDTO> list = followRepository.getFollowInFeed(dto);
+			List<FollowListDTO> list = followRepository.getFollowInFeed(dto);
 			
-		return new ResponseEntity<ResponseDTO<List<ResponseFollowListDTO>>>
-		(new ResponseDTO<List<ResponseFollowListDTO>>(list),HttpStatus.OK); //성공 
+		return new ResponseEntity<ResponseDTO<List<FollowListDTO>>>
+		(new ResponseDTO<List<FollowListDTO>>(list),HttpStatus.OK); //성공 
 	}
 
 }

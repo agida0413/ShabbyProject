@@ -13,7 +13,7 @@ import com.sist.common.exception.BadRequestException;
 import com.sist.common.exception.InternerException;
 import com.sist.common.util.SimpleCodeGet;
 import com.sist.dto.api.ResponseDTO;
-import com.sist.dto.post.RequestPostDTO;
+import com.sist.dto.post.WritePostDTO;
 import com.sist.repository.post.PostRepository;
 import com.sist.service.image.ImageService;
 import com.sist.service.post.PostService;
@@ -32,7 +32,7 @@ public class PostServiceImpl implements PostService {
     //게시물 업로드 서비스 
     @Override
     @Transactional
-    public ResponseEntity<ResponseDTO<Void>> postInsertTransaction(RequestPostDTO dto)  {
+    public ResponseEntity<ResponseDTO<Void>> postInsertTransaction(WritePostDTO dto)  {
         List<MultipartFile> imgList = dto.getImgList(); // 업로드할 이미지 리스트
         List<String> imgUrList = new ArrayList<>(); // 업로드된 이미지의 URL을 저장할 리스트
 
@@ -105,7 +105,7 @@ public class PostServiceImpl implements PostService {
   
 
     //게시물의 나만보기, 댓글기능해제 상태를 설정
-    private void setPostState(RequestPostDTO dto) {
+    private void setPostState(WritePostDTO dto) {
         dto.setCanReplyState(dto.isCanReply() ? "NOREPLY" : "USEREPLY"); // 댓글 기능 설정
         dto.setOnlyMeState(dto.isOnlyMe() ? "ONLYME" : "NOTONLYME"); // 나만 보기 설정
         if (dto.getContent().isEmpty()) {
@@ -115,13 +115,13 @@ public class PostServiceImpl implements PostService {
 
    
     //게시물과 연관된 관심사테이블에 데이터  삽입 
-    private void insertHobbies(RequestPostDTO dto) {
+    private void insertHobbies(WritePostDTO dto) {
     	  if (dto.getHobbyList() != null && !dto.getHobbyList().isEmpty()) {
               postRepository.hobbyInsert(dto); // 관심사 테이블에 인서트
           }
     }
     //게시물과 연관된 사람태그 테이블에 데이터  삽입 
-    private void insertFollowTags(RequestPostDTO dto) {
+    private void insertFollowTags(WritePostDTO dto) {
     	 if (dto.getFollowTagList() != null && !dto.getFollowTagList().isEmpty()) {
              postRepository.followTagInsert(dto); // 인물 태그 테이블에 인서트
          }

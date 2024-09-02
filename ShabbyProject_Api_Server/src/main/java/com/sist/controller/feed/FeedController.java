@@ -17,12 +17,12 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.sist.dto.api.ResponseDTO;
 import com.sist.dto.feed.DoFollowDTO;
-import com.sist.dto.feed.ResponseFollowListDTO;
-import com.sist.dto.feed.ResponsePostListDTO;
-import com.sist.dto.feed.ResponseUserFeedDTO;
+import com.sist.dto.feed.FollowListDTO;
+import com.sist.dto.feed.UserFeedInformDTO;
 import com.sist.dto.feed.UpdateProfileDTO;
 import com.sist.dto.member.MemberDTO;
-import com.sist.dto.member.ResponseFollowDTO;
+import com.sist.dto.post.PostListDTO;
+import com.sist.dto.member.FollowSearchResultDTO;
 import com.sist.service.feed.FeedService;
 import com.sist.service.member.FollowService;
 
@@ -39,14 +39,14 @@ public class FeedController {
 	private final FollowService followService;
 	// 유저피드 접근시 해당유저에 대한 정보를 불러오는 api
 	@GetMapping("/userfeed/{nickname}")
-	public ResponseEntity<ResponseDTO<ResponseUserFeedDTO>> loadUserfeedInfo(@PathVariable String nickname){
+	public ResponseEntity<ResponseDTO<UserFeedInformDTO>> loadUserfeedInfo(@PathVariable String nickname){
 		
 		return feedService.loadUserFeedInfo(nickname);
 	}
 	
 	//유저피드 접근시 해당유저에 대한 정보 외 해당유저의 게시물정보를 불러오는 api
 	@GetMapping("/userfeed/{nickname}/{page}")
-	public ResponseEntity<ResponseDTO<List<ResponsePostListDTO>>> loadUserfeedPostList(@PathVariable String nickname,@PathVariable int page){
+	public ResponseEntity<ResponseDTO<List<PostListDTO>>> loadUserfeedPostList(@PathVariable String nickname,@PathVariable int page){
 	
 		return feedService.loadUserFeedPostList(nickname, page);
 	}
@@ -72,7 +72,7 @@ public class FeedController {
 	}
 	
 	@GetMapping("/userfeed/{nickname}/{flwType}/{page}")
-	public ResponseEntity<ResponseDTO<List<ResponseFollowListDTO>>> getFollowInFeed(@PathVariable String nickname, @PathVariable String flwType, @PathVariable int page){
+	public ResponseEntity<ResponseDTO<List<FollowListDTO>>> getFollowInFeed(@PathVariable String nickname, @PathVariable String flwType, @PathVariable int page){
 	
 		return feedService.getFollowInFeed(nickname, flwType, page);
 	}

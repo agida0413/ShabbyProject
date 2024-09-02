@@ -6,7 +6,7 @@ import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 
 @Data
-public class RequestFollowListDTO {
+public class FollowInFeedDTO {
 	
 	private int rowSize;
 	private int page;

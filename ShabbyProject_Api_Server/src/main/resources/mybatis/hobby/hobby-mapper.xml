@@ -14,7 +14,7 @@ SELECT distinct hobby from hobby;
 
 <!--특정 매개변수에 의한 관심사 조회-->
 	
-<select id="findHobby" parameterType="RequestHobbyDTO" resultType="HobbyDTO">	
+<select id="findHobby" parameterType="SearchHobbyDTO" resultType="HobbyDTO">	
 SELECT distinct hobby from hobby
 WHERE hobby LIKE CONCAT('%',#{keyword},'%')
 LIMIT #{rowSize} OFFSET #{startRow} 

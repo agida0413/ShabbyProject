@@ -12,8 +12,8 @@ import com.sist.common.util.PathVariableValidation;
 import com.sist.common.util.SimpleCodeGet;
 import com.sist.dto.api.ResponseDTO;
 import com.sist.dto.hobby.HobbyDTO;
-import com.sist.dto.hobby.RequestHobbyDTO;
-import com.sist.dto.hobby.ResponseHobbyDTO;import com.sist.mapper.hobby.hobbyMapper;
+import com.sist.dto.hobby.SearchHobbyDTO;
+import com.sist.dto.hobby.SearchHobbyListDTO;import com.sist.mapper.hobby.hobbyMapper;
 import com.sist.repository.hobby.HobbyRepository;
 import com.sist.service.hobby.HobbyService;
 
@@ -34,14 +34,14 @@ public class HobbyServiceImpl implements HobbyService {
 
 	//키워드,페이지 기반 관심사 태그 조회 
 	@Override
-	public ResponseEntity<ResponseDTO<ResponseHobbyDTO>> findHobby(String keyword,int page) {
+	public ResponseEntity<ResponseDTO<SearchHobbyListDTO>> findHobby(String keyword,int page) {
 		// TODO Auto-generated method stub
 		//데이터베이스에 보낼 객체 생성
 		if(!PathVariableValidation.pageValidation(page)) {
 			throw new BadRequestException("유효하지 않은 페이지 입니다.");
 		}
 		
-		RequestHobbyDTO dto = new RequestHobbyDTO();
+		SearchHobbyDTO dto = new SearchHobbyDTO();
 		//offset 설정 - > 계산로직은 항상 동일하여 공통함수에서 계산
 		int offSet=SimpleCodeGet.getOffset(rowSize,page);
 		
@@ -53,14 +53,14 @@ public class HobbyServiceImpl implements HobbyService {
 		//Limit rowsize offset offset 형태로 키워드기반 관심사 가져옴 
 		List<HobbyDTO> list=hobbyRepository.findHobby(dto);
 		
-		ResponseHobbyDTO resDto=new ResponseHobbyDTO(); // 전송데이터 객체생성 
+		SearchHobbyListDTO resDto=new SearchHobbyListDTO(); // 전송데이터 객체생성 
 		
 		
 		resDto.setFindList(list); //전송데이터 객체 리스트형태<HobbyDto> 에 세팅 
 		
 		
-		return new ResponseEntity<ResponseDTO<ResponseHobbyDTO>>
-		(new ResponseDTO<ResponseHobbyDTO>(resDto),HttpStatus.OK); //성공 
+		return new ResponseEntity<ResponseDTO<SearchHobbyListDTO>>
+		(new ResponseDTO<SearchHobbyListDTO>(resDto),HttpStatus.OK); //성공 
 	}
 
 }

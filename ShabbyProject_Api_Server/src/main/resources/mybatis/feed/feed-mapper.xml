@@ -7,7 +7,7 @@
  
  <mapper namespace="com.sist.mapper.feed.FeedMapper">
  <!-- 사용자 피드에서 게시물 리스트를 제외한 피드정보 가져오기 ( 닉네임,프로필사진 ,자기소개 , 비공개여부 , 게시물등록수 , 팔로잉수 , 팔로워 수 ) -->
- <select id="userFeedInfoFromMember" parameterType="RequestUserFeedDTO" resultType="ResponseUserFeedDTO">
+ <select id="userFeedInfoFromMember" parameterType="GetUserFeedInformDTO" resultType="UserFeedInformDTO">
 	SELECT profile,nickname,introduce,locked, <!-- 프로필사진,닉네임,자기소개,비공개/공개 여부 -->
 	(
 	SELECT COUNT(*) FROM POST     
@@ -73,7 +73,7 @@
 </select>
 
 <!--사용자  피드에서 게시물리스트 가져오기-->
- <select id="userFeedPostList" parameterType="RequestUserFeedDTO" resultType="ResponsePostListDTO">
+ <select id="userFeedPostList" parameterType="GetUserFeedInformDTO" resultType="PostListDTO">
 	SELECT p.post_num, post_img_url ,onlyMe,COALESCE(pl.likeCount,0) AS likeCount <!-- 게시물 고유번호 , 이미지 url , 나만보기 여부 , 좋아요 수 -->
 	FROM POST p <!-- 게시물 테이블에서 -->
 	LEFT JOIN  <!--left조인-->

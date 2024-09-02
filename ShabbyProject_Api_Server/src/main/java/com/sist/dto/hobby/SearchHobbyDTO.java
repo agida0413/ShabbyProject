@@ -3,7 +3,7 @@ package com.sist.dto.hobby;
 import lombok.Data;
 
 @Data
-public class RequestHobbyDTO {
+public class SearchHobbyDTO {
 
 private String keyword;
 private int rowSize;
