@@ -19,23 +19,23 @@ public class CustomUserDetails implements UserDetails {
         this.dto = dto;
     }
 
-    //회원 권한 정보 읽어오기
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-
-        Collection<GrantedAuthority> collection = new ArrayList<>(); 
-
-        collection.add(new GrantedAuthority() {
-
-            @Override
-            public String getAuthority() {
-
-                return dto.getRole();
-            }
-        });
-
-        return collection;
-    }
+//    //회원 권한 정보 읽어오기
+//    @Override
+//    public Collection<? extends GrantedAuthority> getAuthorities() {
+//
+//        Collection<GrantedAuthority> collection = new ArrayList<>(); 
+//
+//        collection.add(new GrantedAuthority() {
+//
+//            @Override
+//            public String getAuthority() {
+//
+//                return dto.getRole();
+//            }
+//        });
+//
+//        return collection;
+//    }
 
     //패스워드 
     @Override
@@ -84,4 +84,10 @@ public class CustomUserDetails implements UserDetails {
 
         return true;
     }
+
+	@Override
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

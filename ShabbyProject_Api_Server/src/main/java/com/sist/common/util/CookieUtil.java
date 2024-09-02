@@ -36,7 +36,7 @@ public  final class CookieUtil {
         Cookie cookie = new Cookie(key, value); // 매개변수로 부터 받은 정보를 바탕으로 쿠키 생성 
         cookie.setMaxAge(24*60*60); // 유효기간 
         //cookie.setSecure(true); https
-        //cookie.setPath("/");
+        cookie.setPath("/");
         cookie.setHttpOnly(true); //xss 공격방지 
 
         return cookie;
@@ -46,7 +46,7 @@ public  final class CookieUtil {
 	public static Cookie deleteRefreshCookie() {//리프레시 토큰을 쿠키에서 지우기 위함 
 			Cookie cookie = new Cookie("refresh", null); // 리프레시 토큰의 밸류룰 null
 	        cookie.setMaxAge(0);//유효기간 0 
-	        cookie.setPath("/api");//path
+	        cookie.setPath("/");//path
 	        
 	        return cookie;
 	}

@@ -111,14 +111,14 @@ public class MybatisRefreshService implements RefreshService{
 	        
 
 	        String username = jwtUtil.getUsername(refresh); //토큰에서 이메일을 읽어옴
-	        String role = jwtUtil.getRole(refresh);// 권한을 읽어옴 
+//	        String role = jwtUtil.getRole(refresh);// 권한을 읽어옴 
 	        int idNum=jwtUtil.getIdNum(refresh); //고유번호를 읽어옴
 	        String strIdNum=String.valueOf(idNum);//고유번호 문자열로변환
 			String nickname=jwtUtil.getNickname(refresh);//닉네임 읽어옴
 	      
 	        //새로운 jwt 토큰 발급 
-	        String newAccess = jwtUtil.createJwt("access", username, role,strIdNum,nickname, 10000L);
-	        String newRefresh = jwtUtil.createJwt("refresh", username, role,strIdNum,nickname, 86400000L);
+	        String newAccess = jwtUtil.createJwt("access", username, strIdNum,nickname, 10000L);
+	        String newRefresh = jwtUtil.createJwt("refresh", username, strIdNum,nickname, 86400000L);
 
 	        
 	     	        

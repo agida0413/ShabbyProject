@@ -19,6 +19,8 @@ import com.sist.dto.setting.ChangePasswordDTO;
 import com.sist.dto.setting.ChangePhoneDTO;
 import com.sist.service.setting.ChangeInfoService;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -46,8 +48,8 @@ public class SettingController {
 	
 	//닉네임 변경하는 api
 	@PutMapping("/nickChange")
-	public  ResponseEntity<ResponseDTO<Void>> nicknameChange(@RequestBody @Valid ChangeNickNameDTO dto){
-		return changeInfoService.nickNameUpdate(dto);
+	public  ResponseEntity<ResponseDTO<Void>> nicknameChange(@RequestBody @Valid ChangeNickNameDTO dto,HttpServletResponse response,HttpServletRequest request){
+		return changeInfoService.nickNameUpdate(dto,response,request);
 	}
 	
 	//비밀번호 변경 api

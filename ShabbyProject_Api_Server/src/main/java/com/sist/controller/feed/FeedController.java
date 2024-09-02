@@ -1,10 +1,12 @@
 package com.sist.controller.feed;
 
+import java.lang.annotation.Retention;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,13 +18,15 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.sist.dto.api.ResponseDTO;
-import com.sist.dto.feed.DoFollowDTO;
-import com.sist.dto.feed.FollowListDTO;
 import com.sist.dto.feed.UserFeedInformDTO;
+import com.sist.dto.follow.DoFollowDTO;
+import com.sist.dto.follow.FollowInformDTO;
+import com.sist.dto.follow.FollowListDTO;
+import com.sist.dto.follow.FollowSearchResultDTO;
+import com.sist.dto.follow.UnFollowDTO;
 import com.sist.dto.feed.UpdateProfileDTO;
 import com.sist.dto.member.MemberDTO;
 import com.sist.dto.post.PostListDTO;
-import com.sist.dto.member.FollowSearchResultDTO;
 import com.sist.service.feed.FeedService;
 import com.sist.service.member.FollowService;
 
@@ -70,17 +74,22 @@ public class FeedController {
 	public ResponseEntity<ResponseDTO<Void>> updateIntroduce(@RequestBody @Valid UpdateProfileDTO dto){
 		return feedService.updateIntroduce(dto);
 	}
-	
+	//유저피드에서 팔로우,팔로잉 목록을 불러온다   /해당피드의 닉네임 / 팔로우인지 팔로워인지 / 페이지
 	@GetMapping("/userfeed/{nickname}/{flwType}/{page}")
-	public ResponseEntity<ResponseDTO<List<FollowListDTO>>> getFollowInFeed(@PathVariable String nickname, @PathVariable String flwType, @PathVariable int page){
+	public ResponseEntity<ResponseDTO<FollowListDTO>> getFollowInFeed(@PathVariable String nickname, @PathVariable String flwType, @PathVariable int page){
 	
-		return feedService.getFollowInFeed(nickname, flwType, page);
+		return followService.getFollowInFeed(nickname, flwType, page);
 	}
-	
+	//팔로우 인서트 (팔로잉 작업) ==> 비공개 계정 or 공개 계정에 따라 다른작업 
 	@PostMapping("/follow")
-	public ResponseEntity<ResponseDTO<Void>> doFollow(@RequestBody DoFollowDTO dto){
+	public ResponseEntity<ResponseDTO<String>> doFollow(@RequestBody @Valid DoFollowDTO dto){
 		
 		return followService.doFollow(dto);
+	}
+	//팔로우 delete (언팔로우 작업) == > 비공개,공개여부 상관없이 레코드 삭제 작업 
+	@DeleteMapping("/follow")
+	public ResponseEntity<ResponseDTO<Void>> unFollow(@RequestBody @Valid UnFollowDTO dto){
+		return followService.unFollow(dto);
 	}
 	
 }

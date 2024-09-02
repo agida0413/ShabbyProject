@@ -1,4 +1,4 @@
-package com.sist.dto.member;
+package com.sist.dto.follow;
 
 import lombok.Data;
 

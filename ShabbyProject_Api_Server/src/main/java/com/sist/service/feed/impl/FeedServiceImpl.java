@@ -13,16 +13,16 @@ import com.sist.common.exception.InternerException;
 import com.sist.common.util.PathVariableValidation;
 import com.sist.common.util.SimpleCodeGet;
 import com.sist.dto.api.ResponseDTO;
-import com.sist.dto.feed.FollowInFeedDTO;
 import com.sist.dto.feed.GetUserFeedInformDTO;
-import com.sist.dto.feed.FollowListDTO;
 import com.sist.dto.feed.UserFeedInformDTO;
+import com.sist.dto.follow.FollowInFeedDTO;
+import com.sist.dto.follow.FollowListDTO;
+import com.sist.dto.follow.FollowSearchDTO;
 import com.sist.dto.feed.UpdateProfileDTO;
 import com.sist.dto.hobby.HobbyDTO;
 import com.sist.dto.hobby.SearchHobbyListDTO;
 import com.sist.dto.member.MemberDTO;
 import com.sist.dto.post.PostListDTO;
-import com.sist.dto.member.FollowSearchDTO;
 import com.sist.repository.feed.FeedRepository;
 import com.sist.repository.hobby.HobbyRepository;
 import com.sist.repository.member.FollowRepository;
@@ -40,7 +40,7 @@ public class FeedServiceImpl implements FeedService{
 	private final FeedRepository feedRepository;
 	private final ImageService imageService;
 	private final MemberAccountRepository memberAccountRepository;
-	private final FollowRepository followRepository;
+	
 	
 	//게시물 리스트를 제외한 사용자 피드에서의 피드정보를 불러오는  서비스 
 	@Override
@@ -59,7 +59,7 @@ public class FeedServiceImpl implements FeedService{
 		//닉네임 세팅 
 		reqDTO.setNickname(nickname);
 		//만약 현재 스레드에서의 세션 닉네임과 , 요청 닉네임이 같을경우 이 요청은 자신의 피드(내피드) 요청이다.
-		
+		SimpleCodeGet.getNickname();
 		if(nickname.equals(SimpleCodeGet.getNickname())) {
 			//내 피드인지에 대한 정보 TRUE
 			reqDTO.setItsMe(true);
@@ -275,37 +275,6 @@ public class FeedServiceImpl implements FeedService{
 		(new ResponseDTO<MemberDTO>(dto),HttpStatus.OK); //성공 
 	}
 	
-	//사용자 피드에서 팔로우,팔로워 목록 가져오기 
-	@Override
-	public ResponseEntity<ResponseDTO<List<FollowListDTO>>> getFollowInFeed(String nickname,String flwType,int page) {
-		// TODO Auto-generated method stub
-		int idNum=SimpleCodeGet.getIdNum();
-		
-		
-		//validation
-			if(!PathVariableValidation.pageValidation(page)) {
-				throw new BadRequestException("유효하지 않은 입력입니다.");
-			}
-			if(!"FOLLOWING".equals(flwType) && !"FOLLOWER".equals(flwType)) {
-				throw new BadRequestException("유효하지 않은 입력입니다.");
-			}
-			//행의 개수 
-			int rowSize=10;
-			
-			//offset(시작위치)
-			int offSet=SimpleCodeGet.getOffset(rowSize, page);
-			
-			FollowInFeedDTO dto=new FollowInFeedDTO();
-			
-			dto.setNickname(nickname);
-			dto.setFlwType(flwType);
-			dto.setRowSize(rowSize);
-			dto.setStartRow(offSet);
-			dto.setIdNum(idNum);
-			List<FollowListDTO> list = followRepository.getFollowInFeed(dto);
-			
-		return new ResponseEntity<ResponseDTO<List<FollowListDTO>>>
-		(new ResponseDTO<List<FollowListDTO>>(list),HttpStatus.OK); //성공 
-	}
+	
 
 }

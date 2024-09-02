@@ -1,6 +1,8 @@
-package com.sist.dto.member;
+package com.sist.dto.follow;
 
 import java.util.List;
+
+import com.sist.dto.member.MemberDTO;
 
 import lombok.Data;
 @Data

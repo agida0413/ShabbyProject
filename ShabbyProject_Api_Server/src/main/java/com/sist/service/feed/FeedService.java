@@ -6,12 +6,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.sist.dto.api.ResponseDTO;
-import com.sist.dto.feed.FollowListDTO;
 import com.sist.dto.feed.UserFeedInformDTO;
+import com.sist.dto.follow.FollowListDTO;
+import com.sist.dto.follow.FollowSearchDTO;
 import com.sist.dto.feed.UpdateProfileDTO;
 import com.sist.dto.member.MemberDTO;
 import com.sist.dto.post.PostListDTO;
-import com.sist.dto.member.FollowSearchDTO;
 
 public interface FeedService {
 	//사용자 피드 정보 ==> 게시물 제외
@@ -28,7 +28,5 @@ public interface FeedService {
 	//클라이언트에게 자기소개 변경 컴포넌트에서 현재 자기소개 데이터를 전송
 	public ResponseEntity<ResponseDTO<MemberDTO>> getOriginalIntroduce();
 	
-	//사용자 피드에서 팔로우,팔로워 목록 가져오기 
 	
-	public ResponseEntity<ResponseDTO<List<FollowListDTO>>> getFollowInFeed(String nickname,String flwType, int page);
 }

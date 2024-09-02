@@ -3,6 +3,7 @@ package com.sist.jwt.filter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 
 import org.springframework.http.HttpStatus;
@@ -64,10 +65,10 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     	
       String email=obtainUsername(request); //프론트엔드에서 username으로 formdata로 준값 읽기
       String password=obtainPassword(request); //프론트엔드에서 password로 formdata로 준값 읽기
-    
+      
 
       	//로그인을 위해  UsernamePasswordAuthenticationToken 에 정보를 담고 authenticate= > userdetailservice = > 인가 
-        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(email, password, null);
+        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(email, password, Collections.emptyList());
 
         return authenticationManager.authenticate(authToken);
     }
@@ -84,10 +85,10 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     	
 
     	// 권한 값 읽어오기
-        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities(); 
-        Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
-        GrantedAuthority auth = iterator.next();
-        String role = auth.getAuthority();
+//        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities(); 
+//        Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
+//        GrantedAuthority auth = iterator.next();
+//        String role = auth.getAuthority();
         //authentication 객체에서 아이디 고유번호값 읽어오기 
         int idNum=SimpleCodeGet.getIdNum(authentication);
         //문자열로 변환 
@@ -97,8 +98,8 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         String nickname=SimpleCodeGet.getNickname(authentication);
         
         //토큰 생성( 각토큰이름 + email+role+strIdNum + 유효기간 + 시크릿키(sha))
-        String access = jwtUtil.createJwt("access", email, role,strIdNuM,nickname, 10000L);//엑세스 토큰 
-        String refresh = jwtUtil.createJwt("refresh", email, role,strIdNuM,nickname ,86400000L); //리프레시 토큰 
+        String access = jwtUtil.createJwt("access", email, strIdNuM,nickname, 10000L);//엑세스 토큰 
+        String refresh = jwtUtil.createJwt("refresh", email, strIdNuM,nickname ,86400000L); //리프레시 토큰 
         
   
         //refresh토큰 데이터베이스에 저장 = > 서버에서 제어권을 가지려고 ( 나중에 탈취당했을때에 대비하여)

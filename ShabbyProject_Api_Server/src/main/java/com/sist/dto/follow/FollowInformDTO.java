@@ -1,9 +1,9 @@
-package com.sist.dto.feed;
+package com.sist.dto.follow;
 
 import lombok.Data;
 
 @Data
-public class FollowListDTO {
+public class FollowInformDTO {
 private String nickname;
 private String profile;
 private String approve;

@@ -1,4 +1,4 @@
-package com.sist.dto.feed;
+package com.sist.dto.follow;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
