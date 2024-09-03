@@ -38,7 +38,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class FeedController {
 
-	
+	//유저피드 관련 API 시작 
 	private final FeedService feedService;
 	private final FollowService followService;
 	// 유저피드 접근시 해당유저에 대한 정보를 불러오는 api
@@ -69,11 +69,6 @@ public class FeedController {
 		return feedService.getOriginalIntroduce();
 	}
 	
-	//유저피드에서의 자기소개 변경api
-	@PutMapping("/introduce")
-	public ResponseEntity<ResponseDTO<Void>> updateIntroduce(@RequestBody @Valid UpdateProfileDTO dto){
-		return feedService.updateIntroduce(dto);
-	}
 	//유저피드에서 팔로우,팔로잉 목록을 불러온다   /해당피드의 닉네임 / 팔로우인지 팔로워인지 / 페이지
 	@GetMapping("/userfeed/{nickname}/{flwType}/{page}")
 	public ResponseEntity<ResponseDTO<FollowListDTO>> getFollowInFeed(@PathVariable String nickname, @PathVariable String flwType, @PathVariable int page){
@@ -90,6 +85,32 @@ public class FeedController {
 	@DeleteMapping("/follow")
 	public ResponseEntity<ResponseDTO<Void>> unFollow(@RequestBody @Valid UnFollowDTO dto){
 		return followService.unFollow(dto);
+	}
+	
+	//유저피드에서의 자기소개 변경api
+	@PutMapping("/introduce")
+	public ResponseEntity<ResponseDTO<Void>> updateIntroduce(@RequestBody @Valid UpdateProfileDTO dto) {
+		return feedService.updateIntroduce(dto);
+	}
+	
+	//유저피드 관련 API 종료 
+	
+	
+	//메인피드 관련 API 시작
+	
+	@GetMapping("/mainfeed/{page}")
+	public ResponseEntity<ResponseDTO<List<PostListDTO>>> loadMainFeedPostList(@PathVariable int page){
+		
+		return feedService.loadMainFeedPostList(page);
+	}
+	
+	//메인피드 관련 종료
+	
+	//글로벌피드 관련시작
+	@GetMapping("/globalfeed/{page}")
+	public ResponseEntity<ResponseDTO<List<PostListDTO>>> loadGlobalPostList(@PathVariable int page){
+		
+		return feedService.loadGlobalFeedPostList(page);
 	}
 	
 }

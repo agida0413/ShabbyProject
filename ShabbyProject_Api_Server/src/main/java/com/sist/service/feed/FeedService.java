@@ -18,7 +18,11 @@ public interface FeedService {
 	public ResponseEntity<ResponseDTO<UserFeedInformDTO>> loadUserFeedInfo(String nickname);
 	//사용자 피드 정보 == >게시물
 	public ResponseEntity<ResponseDTO<List<PostListDTO>>> loadUserFeedPostList(String nickname,int page);
+	//메인피드 게시물 리스트
+	public ResponseEntity<ResponseDTO<List<PostListDTO>>> loadMainFeedPostList(int page);
 	
+	//글로벌 피드 게시물 리스트
+	public ResponseEntity<ResponseDTO<List<PostListDTO>>> loadGlobalFeedPostList(int page);
 	//프로필 이미지를 업데이트 하는 서비스 
 	public ResponseEntity<ResponseDTO<Void>> updateProfileImg(MultipartFile file);
 	

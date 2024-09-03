@@ -36,12 +36,26 @@
   
    
     	<choose>
-    		<when test="feedState=='MAIN'">
-    			
+    		<when test="feedState=='MAINFEED'">
+    			p.id_num IN
+    			(SELECT following_id FROM FOLLOW
+    			WHERE id_num=#{idNum}
+    			AND
+    			approve='FOLLOWOK'
+    			)
+    			AND
+    			onlyMe='NOTONLYME' 
+    			ORDER BY create_date DESC
     		</when>
     		
-    		<when test="feedState=='GLOBAL'">
-    		
+    		<when test="feedState=='GLOBALFEED'">
+    			p.id_num IN
+    			(SELECT id_num FROM MEMBER
+    			WHERE locked='PUBLICID'    			
+    			)
+    			AND
+    			onlyMe='NOTONLYME' 
+    			ORDER BY create_date DESC
     		</when>
     		
     		<when test="feedState=='USERFEED'">
@@ -50,11 +64,15 @@
 			    SELECT id_num FROM MEMBER <!-- 회원테이블에서 -->
 			    WHERE nickname=#{nickname} <!-- 닉네임이 매개변수로 받은닉네임일 경우에-->
 			    )
-			    ORDER BY create_date DESC  <!-- 최신순 정렬 -->
+			    <if test="!itsMe">
+			    AND
+    		    onlyMe='NOTONLYME' 
+			    </if>
+			     ORDER BY create_date DESC  <!-- 최신순 정렬 -->
     		</when>
+    		<!-- itsMe에 따른 게시물 가져오기 -->
     	</choose>
     	
-
     
     LIMIT #{rowSize} OFFSET #{startRow}  <!--페이징 -->
  </select>
