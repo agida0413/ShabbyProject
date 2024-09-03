@@ -13,6 +13,7 @@ public class PostDetailDTO {
 	 private String editDate;
 	 private String onlyMe;
 	 private String nickname;
+	 private int likeCount;
 	 private String strImgList; // 쉼표로 구분된 이미지 URL 목록
 	 private String strHobbyList; // 쉼표로 구분된 취미 목록
 	 private String strTagList; // 쉼표로 구분된 태그 목록
@@ -21,4 +22,5 @@ public class PostDetailDTO {
 	 private List<String> imgList; 
 	 private List<String> hobbyList;
 	 private List<String> tagList;
+	 
 }
