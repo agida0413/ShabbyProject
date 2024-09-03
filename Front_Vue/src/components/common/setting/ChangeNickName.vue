@@ -1,6 +1,6 @@
 <template>
        
-    <div class="pa-4 text-center">
+    <div class="text-center">
       <v-dialog
         v-model="localDialog"
         max-width="600"    

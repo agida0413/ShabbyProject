@@ -44,6 +44,8 @@ export default {
       isFetching: false, // 데이터 가져오고 있는지 여부
       page: 1, // 페이지 번호
       observer: null, // IntersectionObserver 인스턴스
+      firstCall:true,// 첫번째 페이지 로드인지에 대한 변수 
+      isNomoreData:false//더이상 로드할 데이터가 있는지에 대한 변수
       
     };
   },
@@ -63,51 +65,72 @@ export default {
           this.results = []; // 결과 배열 초기화
           this.selectedIndex = -1; // 선택된 인덱스 초기화
           this.previousIndex = -1; // 이전 인덱스 초기화
-          this.debouncedFetchResults(newKeyword, this.page); // 결과 가져오기
+          this.isNomoreData = false;//더이상 로드할 데이터가 있는지에 대한 변수
+          this.firstCall=true// 첫번째 페이지 로드인지에 대한 변수 
+          this.debouncedFetchResults(newKeyword); // 결과 가져오기
         } else {
           this.results = []; // 결과 배열 초기화
           this.selectedIndex = -1; // 선택된 인덱스 초기화
           this.previousIndex = -1; // 이전 인덱스 초기화
+          this.firstCall=true // 첫번째 페이지 로드인지에 대한 변수 
         }
       },
       immediate: true, // 초기 렌더링 시에도 실행
     },
   },
   methods: {
-    fetchResults(keyword, page) {
-  if (this.isFetching || !this.isAt) return; // 이미 데이터 가져오는 중이거나 @가 아닌 경우
-  if (keyword === '@') return; // '@'인 경우 아무 작업도 하지 않음
+    //실제 데이터 로드 작업 
+    fetchResults(keyword) {
+  if (this.isFetching || !this.isAt||this.isNomoreData) return; // 이미 데이터 가져오는 중이거나 @가 아닌 경우 , 더이상 로드할 데이터가 없는경우
+  if (keyword === '@') return; // 아무 작업도 하지 않음
   this.isFetching = true; // 데이터 가져오기 시작
 
   const sendKeyword = keyword.substring(1); // '@' 제거
-  const rowSize = 4;
-  
-  api.get(`/members/following/${sendKeyword}/${page}/${rowSize}`) // API 호출
+  const rowSize = 4; // 행개수 
+        // 만약 첫 번째 로드이면 페이지를 증가시키지 않고 아니면 페이지를 증가시킴 
+       if(!this.firstCall){
+        this.page += 1;
+      }
+      //통과 하면 , 이제 더이상 첫번째 페이지로드가 아님 
+      this.firstCall=false;
+
+    api.get(`/members/following/${sendKeyword}/${this.page}/${rowSize}`) // API 호출
     .then((res) => {
+   
       const newFollows = res?.data?.reqData?.followList; // 새로운 결과 리스트
+      //결과가 있으면 
       if (newFollows?.length) {
         this.results = [...this.results, ...newFollows]; // 기존 결과에 새로운 결과 추가
+      }
+      else{ //결과가 없으면
+        //페이지를 다시 원복시키고
+        this.page--;
+        //더이상 로드할 페이지가 없다는 변수를 true
+        this.isNomoreData=true;
+       
       }
     
     })
     .catch((err) => {
-      console.error('Error fetching results:', err); // 오류 발생 시 로그 출력
+      alert(err?.response?.data?.message)
     })
     .finally(() => {
       this.isFetching = false; // 데이터 가져오기 종료
     });
-},
-    debouncedFetchResults: debounce(function (keyword, page) {
-      this.fetchResults(keyword, page); // 디바운스 처리 후 fetchResults 호출
-    }, 150),
+},  //디바운싱
+    debouncedFetchResults: debounce(function (keyword) {
+      this.fetchResults(keyword,); // 디바운스 처리 후 fetchResults 호출
+    }, 150)
+    ,// intersection observer에따른 무한스크롤 데이터 호출
     handleIntersection(entries) {
       entries.forEach((entry) => {
         if (entry.isIntersecting && entry.target === this.sentinel) { // Sentinel이 보일 때
-          this.page += 1; // 페이지 증가
-          this.debouncedFetchResults(this.keyword, this.page); // 결과 가져오기
+         
+          this.debouncedFetchResults(this.keyword); // 결과 가져오기
         }
       });
     },
+    //부모로 부터 받은 키다운 이벤트 
     handleArrowDown() {
       if (this.results.length === 0) return; // 결과가 없으면 아무 작업도 안 함
 
@@ -120,6 +143,7 @@ export default {
       this.scrollToSelectedItem(); // 선택된 항목으로 스크롤 이동
       this.checkAndLoadMore(); // 추가 데이터 로드 여부 확인
     },
+    //부모로 부터 받은 키업이벤트
     handleArrowUp() {
       if (this.results.length === 0) return; // 결과가 없으면 아무 작업도 안 함
 
@@ -135,6 +159,7 @@ export default {
       this.scrollToSelectedItem(); // 선택된 항목으로 스크롤 이동
       this.checkAndLoadMore(); // 추가 데이터 로드 여부 확인
     },
+    //부모로 부터 받은 엔터이벤트
     handleEnter() {
       if (this.isAt) {
         if (this.selectedIndex >= 0 && this.selectedIndex < this.results.length) {
@@ -142,6 +167,7 @@ export default {
         }
       }
     },
+    //클릭이벤트
     handleClick(follow) {
       this.$emit('selectFollow', follow); // 선택된 팔로우인원 전달
     },
@@ -150,6 +176,7 @@ export default {
       this.selectedIndex = index; // 현재 인덱스 업데이트
       this.scrollToSelectedItem(); // 선택된 항목으로 스크롤 이동
     },
+    //인덱스를통한 스크롤 조정
     scrollToSelectedItem() {
       const selectedItem = this.container?.querySelector('.selected'); // 선택된 항목 찾기
       if (selectedItem && this.container) {
@@ -186,6 +213,7 @@ export default {
         }
       }
     },
+    //인덱스를 통한 데이터 호출 
     checkAndLoadMore() {
       const containerElement = this.container;
       const selectedItem = containerElement?.querySelector('.selected'); // 선택된 항목 찾기
@@ -195,21 +223,22 @@ export default {
 
         if (itemRect.bottom > containerRect.bottom - 50) { // 항목이 컨테이너 하단 가까이에 있을 때
           if (!this.isFetching) {
-            this.page += 1; // 페이지 증가
-            this.debouncedFetchResults(this.keyword, this.page); // 결과 가져오기
+            
+            this.debouncedFetchResults(this.keyword); // 결과 가져오기
           }
         }
 
         if (itemRect.top < containerRect.top + 50) { // 항목이 컨테이너 상단 가까이에 있을 때
           if (!this.isFetching) {
-            this.page += 1; // 페이지 증가
-            this.debouncedFetchResults(this.keyword, this.page); // 결과 가져오기
+           
+            this.debouncedFetchResults(this.keyword); // 결과 가져오기
           }
         }
       }
     },
+    //intersection observer 초기화 
     initObserver() {
-      if (this.isAt && this.container) {
+      if (this.container) {
         this.$nextTick(() => {
           if (this.sentinel) {
             this.observer = new IntersectionObserver(this.handleIntersection, {
