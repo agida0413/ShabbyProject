@@ -23,6 +23,7 @@
           aspect-ratio="1"
           class="image-container"
           cover
+           @click="openPostDetailDialog(post.postNum)"
         >
           <template v-slot:placeholder>
             <v-row align="center" class="fill-height ma-0" justify="center">
@@ -39,10 +40,16 @@
     </v-row>
     <div ref="sentinel" class="sentinel" ></div>
   </v-container>
+  <PostDetail 
+   :value="postDetailDialog"
+   :postNum="sendPostNum"
+   @postDetailClose="closePostDetailDialog"
+   ></PostDetail>
 </template>
 
 <script>
 import api from "@/api"
+import PostDetail from '../post/PostDetail.vue';
 export default{
     name:'UserFeedPostList',
     //부모로 부터 받은 닉네임 값 
@@ -57,7 +64,7 @@ export default{
       page:1, // 페이지
       observer:null, //intersection observer 객체
       noMoreNeedData:false, //더이상 로드할 데이터가 없다면 불필요한 api 호출을 방지하기 위한 변수 
-     
+      sendPostNum:0
     }
   },
   // intersection observer 참조할 태그 ref
@@ -65,6 +72,9 @@ export default{
     sentinel() {
       return this.$refs.sentinel;
     }
+  },
+  components:{
+    PostDetail
   },
     //마운트 시 게시물 정보 , intersection observer 초기화
     mounted(){
@@ -91,6 +101,14 @@ export default{
     }
   },
     methods:{
+      openPostDetailDialog(postNum){
+      this.sendPostNum=postNum
+      this.postDetailDialog=true;
+    },
+    closePostDetailDialog(){
+      this.sendPostNum=0;
+      this.postDetailDialog=false;
+    },
       //게시물 정보 읽어오는 api
       loadPost(){ 
         //api 호출중 상태 

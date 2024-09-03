@@ -60,6 +60,7 @@ export default {
   watch: {
     keyword: {
       handler(newKeyword) {
+      
         if (newKeyword && this.isAt) {
           this.page = 1; // 페이지 1로 초기화
           this.results = []; // 결과 배열 초기화

@@ -58,30 +58,54 @@
 
                 </v-col>
               
-                <v-col cols="12" class="mt-1" style="height: 150px;">
-                  <v-card class="to-blackMode" elevation="1" max-width="100%" height="100%" >
+                <v-col cols="12" class="mt-1" style="height: 150px;"  >
+                  <v-card class="to-blackMode scroll-container" elevation="1" max-width="100%" height="100%" >
    
                     <v-card-item>
                      
                       <v-card-subtitle>관심사</v-card-subtitle>
-                    </v-card-item>                 
-
-                    <v-card-text >
+                    </v-card-item>     
+                     <v-card-text v-if="postDetailData.hobbyList!==null" >           
+                        <v-chip
+                          class="ma-2"
+                          color="green"
+                          label
+                          v-for="(hobby,index) in postDetailData.hobbyList"
+                          :key="index"
+                          >
+                           <v-icon icon="mdi-label" start></v-icon>
+                          {{ hobby }}
+                        </v-chip>
+                  </v-card-text>
+                    <v-card-text v-if="postDetailData.hobbyList===null">
                       등록된 관심사가 없습니다.
                     </v-card-text>
                   </v-card>
 
                 </v-col>
                 
-                <v-col cols="12" class="mt-2">
-                  <v-card class="to-blackMode" elevation="1" max-width="100%" height="100%" >
+                <v-col cols="12" class="mt-2" style="height: 100px;">
+                  <v-card class="to-blackMode  scroll-container" elevation="1" max-width="100%" height="100%" >
    
                     <v-card-item>
                      
                       <v-card-subtitle>관련인물</v-card-subtitle>
                     </v-card-item>                 
 
-                    <v-card-text >
+                    <v-card-text v-if="postDetailData.tagList!==null" >           
+                        <v-chip
+                          class="ma-2"
+                          color="blue"
+                          label
+                          v-for="(tag,index) in postDetailData.tagList"
+                          :key="index"
+                          >
+                           <v-icon icon="mdi-account-circle-outline" start></v-icon>
+                          {{ tag }}
+                        </v-chip>
+                  </v-card-text>
+
+                    <v-card-text v-if="postDetailData.tagList===null">
                      태그한 인물이 없습니다.
                     </v-card-text>
                   </v-card>
@@ -90,7 +114,7 @@
                 <v-divider style="color: aliceblue;"></v-divider>
                 <v-col cols="12" class="like-icon-col  to-blackMode">
                   <span ><v-icon size="40">mdi-heart</v-icon></span>
-                  <span style="margin-left: 20px;">1212명이 좋아합니다.</span>
+                  <span style="margin-left: 20px;">{{postDetailData.likeCount}}명이 좋아합니다.</span>
                  
                   <span style="margin-left: 213px;">
                     <v-btn class="ms-5" icon="mdi-pencil" size="30" color="black" @click="postEditOpen"></v-btn><!--수정 버튼-->
@@ -289,6 +313,30 @@ export default {
 .v-divider {
   margin: 16px 0;
 }
+.scroll-container {
 
+  overflow-y: auto; /* 세로 스크롤 추가 */
+}
+/* 스크롤바 전체 영역 */
+.scroll-container::-webkit-scrollbar {
+  width: 12px; /* 스크롤바의 너비 */
+}
+
+/* 스크롤바의 트랙 (스크롤바가 없을 때 배경 영역) */
+.scroll-container::-webkit-scrollbar-track {
+  background: #f1f1f1; /* 트랙의 배경색 */
+  border-radius: 10px; /* 트랙의 모서리 둥글기 */
+}
+
+/* 스크롤바의 막대 (드래그 가능한 부분) */
+.scroll-container::-webkit-scrollbar-thumb {
+  background: #888; /* 막대의 배경색 */
+  border-radius: 10px; /* 막대의 모서리 둥글기 */
+}
+
+/* 스크롤바의 막대가 호버될 때 */
+.scroll-container::-webkit-scrollbar-thumb:hover {
+  background: #555; /* 막대의 호버 배경색 */
+}
 
 </style>

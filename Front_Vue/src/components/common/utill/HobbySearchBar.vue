@@ -59,6 +59,7 @@ export default {
   watch: {
     keyword: {
       handler(newKeyword) {
+       
         if (newKeyword && this.isHashtag) {
           this.page = 1; // 페이지 1로 초기화
           this.results = []; // 결과 배열 초기화
@@ -80,7 +81,7 @@ export default {
   methods: {
     async fetchResults(keyword) {
       if (this.isFetching || !this.isHashtag || this.isNomoreData) return; // 이미 데이터 가져오는 중이거나 #이 아닌 경우 , 더이상 로드할 데이터가 없는경우
-      if (keyword.includes('#')) return;  // 아무 작업도 하지 않음
+     
       this.isFetching = true; // 데이터 가져오기 시작
 
        // 만약 첫 번째 로드이면 페이지를 증가시키지 않고 아니면 페이지를 증가시킴 

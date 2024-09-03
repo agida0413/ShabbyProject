@@ -592,8 +592,7 @@ removeImage(index) {//해당 인덱스를 받음
     
     //서버전송 true
     this.isLoading=true
-    console.log(this.hobbiesRequest)
-    console.log(this.followRequest)
+    
     //게시물 작성 api
     api.post('/post',formData,{
       headers: {
