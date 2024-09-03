@@ -1,5 +1,5 @@
 <template>
-    <div class="text-center pa-4 ">
+    <div class="text-center ">
       <v-dialog
         v-model="localDialog"
         transition="dialog-bottom-transition"

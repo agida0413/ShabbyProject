@@ -105,6 +105,7 @@ export default{
           //만약 더이상 추가할 데이터가 없다면 제어변수 true 로 변경하여 더이상 api 호출하지 않도록 
           if(res?.data?.reqData?.length===0){
             this.noMoreNeedData=true;
+            this.page--;
           }
         })
         .catch((err) => {
