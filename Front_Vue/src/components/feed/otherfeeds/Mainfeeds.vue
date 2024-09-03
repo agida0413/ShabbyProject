@@ -28,7 +28,7 @@
           aspect-ratio="1"
           class="image-container"
           cover
-          @click="openPostDetailDialog"
+          @click="openPostDetailDialog(post.postNum)"
         >
           <template v-slot:placeholder>
             <v-row
@@ -54,7 +54,11 @@
 
   <div ref="sentinel" class="sentinel" ></div>
 
-  <PostDetail v-model:value="postDetailDialog" @postDetailClose="closePostDetailDialog"></PostDetail>
+  <PostDetail 
+   :value="postDetailDialog"
+   :postNum="sendPostNum"
+   @postDetailClose="closePostDetailDialog"
+   ></PostDetail>
   
   </v-container>
   
@@ -74,7 +78,8 @@ export default {
       isLoading:false, // 로딩상태를 저장할  변수 
       observer:null, //intersection observer 객체
       noMoreNeedData:false, //더이상 로드할 데이터가 없다면 불필요한 api 호출을 방지하기 위한 변수 
-      firstCall:false //마운트시 첫번쨰 로드시 페이지 증가 x 위한 변수 
+      firstCall:false ,//마운트시 첫번쨰 로드시 페이지 증가 x 위한 변수 
+      sendPostNum:0// 상세보기 모달에 전달할 
     };
     
   },
@@ -99,10 +104,12 @@ export default {
     }
   },
   methods:{
-    openPostDetailDialog(){
+    openPostDetailDialog(postNum){
+      this.sendPostNum=postNum
       this.postDetailDialog=true;
     },
     closePostDetailDialog(){
+      this.sendPostNum=0;
       this.postDetailDialog=false;
     },
     //메인피드의 게시물 리스트 불러오기 메서드 

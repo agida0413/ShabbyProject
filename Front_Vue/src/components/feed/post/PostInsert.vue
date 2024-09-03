@@ -194,11 +194,11 @@
                 </v-col>
                 <v-divider></v-divider>
                 
-                <span >
-                  <v-checkbox v-model="canReplyCheck" label="댓글기능 해제" style="float: left;" :disabled="isLoading"></v-checkbox>
+                <span style="margin-left: 290px;">
+               
                   <v-checkbox v-model="onlymeCheck" label="나만보기" style="float:left;" :disabled="isLoading"></v-checkbox>
-                 <span style="margin-left:200px">
-                   <v-btn icon="mdi-pencil" size="50" color="black" @click="submitPost()" :disabled="isLoading" style="float:right;">
+                 <span style="margin-left: 30px;">
+                   <v-btn icon="mdi-pencil" size="50" color="black" @click="submitPost()" :disabled="isLoading" >
 
                    </v-btn>
                   </span>
@@ -241,7 +241,7 @@ data() {
     followRequest: [], // 사람 태그 목록
     isAt:false,//입력값이 @인지 확인 
     
-    canReplyCheck: false, // 댓글 기능 해제 체크박스
+  
     onlymeCheck: false, // 나만 보기 기능 체크박스
 
     isLoading:false //서버전송중 
@@ -447,12 +447,15 @@ removeImage(index) {//해당 인덱스를 받음
     if(this.searchHobby.endsWith(' ')&&this.searchHobby.startsWith('#')&&this.searchHobby.length>1&&this.searchHobby.replace(/#/g, '').trim().length>0){
       this.searchHobby=this.searchHobby.substring(1,this.searchHobby.lastIndexOf(' '))
       //현재 관심사 입력값 
-      const hobby=this.searchHobby
+      let  hobby=this.searchHobby.replace(/#/g, '').trim()
       // 이미 현재 검색값이 배열에 존재하는지 확인 
       const exists = this.hobbiesRequest.some(hb => hb === hobby);
       //존재하지않다면 
       if(!exists){
-        this.hobbiesRequest.push(hobby); // 인덱스 없이 배열에 추가
+        if(hobby!==''){
+          this.hobbiesRequest.push(hobby); // 인덱스 없이 배열에 추가
+        }
+        
       }
       //초기값으로 # 
       this.searchHobby = '#';
@@ -464,12 +467,14 @@ removeImage(index) {//해당 인덱스를 받음
     if(this.searchHobby.endsWith(',')&&this.searchHobby.startsWith('#')&&this.searchHobby.length>1&&this.searchHobby.replace(/#/g, '').trim().length>0){
       this.searchHobby=this.searchHobby.substring(1,this.searchHobby.lastIndexOf(','))
       //현재 관심사 입력값 
-       const hobby=this.searchHobby
+      let  hobby=this.searchHobby.replace(/#/g, '').trim()
       // 이미 현재 검색값이 배열에 존재하는지 확인 
       const exists = this.hobbiesRequest.some(hb => hb === hobby);
       //존재하지않다면 
       if(!exists){
-        this.hobbiesRequest.push(hobby); // 인덱스 없이 배열에 추가
+        if(hobby!==''){
+          this.hobbiesRequest.push(hobby); // 인덱스 없이 배열에 추가
+        }
       }
       //초기값으로 # 
       this.searchHobby = '#';
@@ -481,12 +486,14 @@ removeImage(index) {//해당 인덱스를 받음
     if(this.searchHobby.endsWith('#')&&this.searchHobby.startsWith('#')&&this.searchHobby.length>1&&this.searchHobby.replace(/#/g, '').trim().length>0){
       this.searchHobby=this.searchHobby.substring(1,this.searchHobby.lastIndexOf('#'))
       //현재 관심사 입력값 
-      const hobby=this.searchHobby
+      let  hobby=this.searchHobby.replace(/#/g, '').trim()
       // 이미 현재 검색값이 배열에 존재하는지 확인 
       const exists = this.hobbiesRequest.some(hb => hb === hobby);
       //존재하지않다면 
       if(!exists){
-        this.hobbiesRequest.push(hobby); // 인덱스 없이 배열에 추가
+        if(hobby!==''){
+          this.hobbiesRequest.push(hobby); // 인덱스 없이 배열에 추가
+        }
       }
       //초기값으로 # 
       this.searchHobby = '#';
@@ -502,10 +509,13 @@ removeImage(index) {//해당 인덱스를 받음
     //자식에서 해당항목 엔터를 누를시 호출한 메서드
     selectHobby(hobby) {
       //만약 현재 배열에 현재입력값이 존재하는지 확인
+       hobby=this.searchHobby.replace(/#/g, '').trim()
       const exists = this.hobbiesRequest.some(hb => hb === hobby);
       //배열에 현재값이 없다면 
       if(!exists){
-        this.hobbiesRequest.push(hobby); // 인덱스 없이 배열에 추가
+        if(hobby!==''){
+          this.hobbiesRequest.push(hobby); // 인덱스 없이 배열에 추가
+        }
       }
      
       this.searchHobby = '';//검색값은 초기값
@@ -520,12 +530,16 @@ removeImage(index) {//해당 인덱스를 받음
     //자식 컴포넌트에서 엔터시 자동완성 검색을 통한 태그입력이 아닌 본인이 원하는 태그입력 
     enterNoSearchHobby() {
       //#제거
-      const hobby = this.searchHobby.substring(1);
+      let hobby = this.searchHobby.replace(/#/g, '').trim();
       //현재 배열에 현재 관심사 입력값이 존재하는지 확인
       const exists = this.hobbiesRequest.some(hb => hb === hobby);
       //만약 배열에 현재값이 존재하지않다면 
       if(!exists){
-        this.hobbiesRequest.push(hobby); // 인덱스 없이 배열에 추가
+        hobby = hobby.replace(/#/g, '');
+        if(hobby!==''){
+          this.hobbiesRequest.push(hobby); // 인덱스 없이 배열에 추가
+        }
+       
       }
       this.searchHobby = '';//초기값 설정
       this.isHashtag = false;//검색창 닫음
@@ -573,13 +587,13 @@ removeImage(index) {//해당 인덱스를 받음
     });
     formData.append('hobbyList',this.hobbiesRequest)//관심사 태그 목록 
     formData.append('followTagList',this.followRequest)//인물 태그 목록
-    formData.append('content',this.content)//내용
-    formData.append('canReply',this.canReplyCheck)//댓글 사용여부 
+    formData.append('content',this.content)//내용 
     formData.append('onlyMe',this.onlymeCheck)//나만보기 여부
     
     //서버전송 true
     this.isLoading=true
-
+    console.log(this.hobbiesRequest)
+    console.log(this.followRequest)
     //게시물 작성 api
     api.post('/post',formData,{
       headers: {

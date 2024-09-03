@@ -80,7 +80,7 @@ export default {
   methods: {
     async fetchResults(keyword) {
       if (this.isFetching || !this.isHashtag || this.isNomoreData) return; // 이미 데이터 가져오는 중이거나 #이 아닌 경우 , 더이상 로드할 데이터가 없는경우
-      if (keyword === '#') return;  // 아무 작업도 하지 않음
+      if (keyword.includes('#')) return;  // 아무 작업도 하지 않음
       this.isFetching = true; // 데이터 가져오기 시작
 
        // 만약 첫 번째 로드이면 페이지를 증가시키지 않고 아니면 페이지를 증가시킴 
@@ -89,8 +89,9 @@ export default {
        }
        //통과 하면 , 이제 더이상 첫번째 페이지로드가 아님 
        this.firstCall=false;
-      // 보낼 키워드 @ 제거 
-      const sendKeyword = keyword.substring(1);
+      // 보낼 키워드 # 제거 
+      const sendKeyword = keyword.replace(/#/g, '');
+      
       //api 호출 
        api.get(`/hobby/${sendKeyword}/${this.page}`)
        .then((res)=>{
@@ -160,15 +161,18 @@ export default {
     },
     //부모로 부터 받은 엔터이벤트
     handleEnter() {
-      if (this.isAt) {
+      if (this.isHashtag) {
         if (this.selectedIndex >= 0 && this.selectedIndex < this.results.length) {
-          this.handleClick(this.results[this.selectedIndex].nickname); // 선택된 항목 클릭 처리
-        }
+          this.handleClick(this.results[this.selectedIndex].hobby); // 선택된 항목 클릭 처리
+        } else {
+          this.$emit('enterNoSearch');
       }
-    },
+    }
+  },
     //클릭이벤트
-    handleClick(follow) {
-      this.$emit('selectFollow', follow); // 선택된 팔로우인원 전달
+    handleClick(hobby) {
+     
+      this.$emit('selectHobby', hobby); // 선택된 관심사 전달
     },
     handleMouseOver(index) {
       this.previousIndex = this.selectedIndex; // 이전 인덱스 업데이트
