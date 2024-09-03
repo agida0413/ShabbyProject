@@ -1,10 +1,13 @@
 package com.sist.common.util;
 
+import java.util.List;
 import java.util.regex.Pattern;
 
 import javax.naming.spi.DirStateFactory.Result;
 
 import org.springframework.stereotype.Component;
+
+import com.sist.dto.hobby.HobbyDTO;
 
 //클라이언트에서 진행한 validation => @validation 어노테이션이 불가한 pathvariable 검증
 
@@ -12,8 +15,25 @@ public final class PathVariableValidation {
 
 
 	
-
+		public static boolean hobbyListValService(List<String> hobbyList) {
+			for (String hobby : hobbyList) {
+				if(hobby.contains("#")||hobby.contains(",")||hobby.equals("")||hobby==null) {
+					return false;
+				}
+			}
+			
+			return true;
+		}
 		
+		public static boolean tagListValService(List<String> tagList) {
+			for (String tag : tagList) {
+				if(tag.contains("@")||tag.contains(",")) {
+					return false;
+				}
+			}
+			
+			return true;
+		}
 
 		public static boolean nickNameValService(String nickname) {
 			

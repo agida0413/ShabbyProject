@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 
 import com.sist.dto.feed.GetUserFeedInformDTO;
+import com.sist.dto.post.PostDetailDTO;
 import com.sist.dto.post.PostListDTO;
 import com.sist.dto.post.WritePostDTO;
 @Mapper
@@ -20,4 +21,7 @@ public interface PostMapper {
 	public void postImgInsert(WritePostDTO dto);
 	//사용자  피드에서 게시물리스트 가져오기
 	public List<PostListDTO> postList(GetUserFeedInformDTO dto);
+	
+	//게시물 상세보기 
+	public PostDetailDTO postDetail(int postNum);
 }

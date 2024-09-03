@@ -51,7 +51,9 @@
     		<when test="feedState=='GLOBALFEED'">
     			p.id_num IN
     			(SELECT id_num FROM MEMBER
-    			WHERE locked='PUBLICID'    			
+    			WHERE locked='PUBLICID' 
+    			AND
+    			NOT (id_num=#{idNum})   			
     			)
     			AND
     			onlyMe='NOTONLYME' 
@@ -79,8 +81,8 @@
  
  <!--게시물 삽입과 동시에 pk를 반환받는다 .RequestDTO post_num 세팅-->
  <insert id="postInsert" parameterType="WritePostDTO" useGeneratedKeys="true" keyProperty="postNum">
- 	INSERT INTO POST (id_num,content,canReply,onlyME)
- 	VALUES(#{idNum},#{content},#{canReplyState},#{onlyMeState})
+ 	INSERT INTO POST (id_num,content,onlyME)
+ 	VALUES(#{idNum},#{content},#{onlyMeState})
  </insert>
  <!--게시물 삽입과 동시에 게시물에 입력된 관심사들도 관심사 테이블에 인서트 -->
  <insert id="hobbyInsert" parameterType="WritePostDTO">
@@ -122,8 +124,27 @@
      </if>
  </insert>
  
- 
- 
+ <select id="postDetail" parameterType="int" resultType="PostDetailDTO">
+  SELECT 
+    p.post_num,
+    p.id_num,
+    p.content,
+    p.create_date ,
+    p.edit_date ,
+    p.onlyMe ,
+    m.nickname,
+    GROUP_CONCAT(DISTINCT pi.post_img_url ORDER BY pi.post_img_num) AS strImgList,
+    GROUP_CONCAT(DISTINCT hb.hobby ORDER BY hb.hb_num) AS strHobbyList,
+    GROUP_CONCAT(DISTINCT member_tag.nickname ORDER BY mt.id_num) AS strTagList
+  FROM post p
+  LEFT JOIN MEMBER m ON p.id_num = m.id_num
+  LEFT JOIN POST_IMG pi ON p.post_num = pi.post_num
+  LEFT JOIN HOBBY hb ON p.post_num = hb.post_num
+  LEFT JOIN MEMBER_TAG mt ON p.post_num = mt.post_num
+  LEFT JOIN MEMBER member_tag ON mt.id_num = member_tag.id_num
+  WHERE p.post_num = #{postNum}
+  GROUP BY p.post_num
+</select>
  
  </mapper>
  
