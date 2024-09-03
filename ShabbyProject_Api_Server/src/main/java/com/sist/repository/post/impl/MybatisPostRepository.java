@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Repository;
 
 import com.sist.dto.feed.GetUserFeedInformDTO;
+import com.sist.dto.post.PostDetailDTO;
 import com.sist.dto.post.PostListDTO;
 import com.sist.dto.post.WritePostDTO;
 import com.sist.mapper.post.PostMapper;
@@ -47,6 +48,11 @@ public class MybatisPostRepository implements PostRepository {
 	public List<PostListDTO> postList(GetUserFeedInformDTO dto) {
 		// TODO Auto-generated method stub
 		return postMapper.postList(dto);
+	}
+	@Override
+	public PostDetailDTO postDetail(int postNum) {
+		// TODO Auto-generated method stub
+		return postMapper.postDetail(postNum);
 	}
 
 }
