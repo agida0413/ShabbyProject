@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 public class GetUserFeedInformDTO {
 
-
+private int idNum;
 private String nickname;
 private int rowSize;
 private int startRow;

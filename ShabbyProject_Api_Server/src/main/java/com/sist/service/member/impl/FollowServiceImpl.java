@@ -83,6 +83,9 @@ public class FollowServiceImpl implements FollowService {
 				if(!"FOLLOWING".equals(flwType) && !"FOLLOWER".equals(flwType)) {
 					throw new BadRequestException("유효하지 않은 입력입니다.");
 				}
+				if(!PathVariableValidation.nickNameValService(nickname)) {
+					throw new BadRequestException("유효하지 않은 입력입니다.");
+				}
 				//행의 개수 
 				int rowSize=10;
 				

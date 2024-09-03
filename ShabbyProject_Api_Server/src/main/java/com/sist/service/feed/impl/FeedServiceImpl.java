@@ -162,6 +162,11 @@ public class FeedServiceImpl implements FeedService{
 		int offSet=SimpleCodeGet.getOffset(rowSize, page);
 		//데이터베이스 전송 객체 생성
 		GetUserFeedInformDTO dto= new GetUserFeedInformDTO();
+		//내 피드이면 , itsMe true == > 나만 보기게시물을 볼수 있게 
+		if(nickname.equals(SimpleCodeGet.getNickname())) {
+			dto.setItsMe(true);
+		}
+		
 		//읽고자하는 피드가 유저 피드인지 세팅한다 ===> 동적쿼리를 통해 유저피드 ,메인피드, 글로벌 피드 나누기위함 		
 		dto.setFeedState("USERFEED");
 		
@@ -180,6 +185,66 @@ public class FeedServiceImpl implements FeedService{
 		(new ResponseDTO<List<PostListDTO>>(list),HttpStatus.OK); //성공 
 	}
 	
+	
+	//메인피드 게시물 리스트 
+	@Override
+	public ResponseEntity<ResponseDTO<List<PostListDTO>>> loadMainFeedPostList(int page) {
+		// TODO Auto-generated method stub
+		//validation
+		if(!PathVariableValidation.pageValidation(page)) {
+			throw new BadRequestException("유효하지 않은 페이지입니다.");
+		}
+		
+		int idNum=SimpleCodeGet.getIdNum();
+		
+		//행의 개수 
+		int rowSize=6;
+		//offset(시작위치)
+		int offSet=SimpleCodeGet.getOffset(rowSize, page);
+		//데이터베이스 전송 객체 생성
+		GetUserFeedInformDTO dto= new GetUserFeedInformDTO();
+		//메인피드 동적쿼리위해 전달
+		dto.setFeedState("MAINFEED");
+		dto.setIdNum(idNum);//아이디 고유번호 세팅
+		dto.setRowSize(rowSize);//행개수 세팅
+		dto.setStartRow(offSet);//offset 세팅 
+		
+		//닉네임 기반으로 게시물 정보를 읽어서 리스트에 담는다 .
+		List<PostListDTO> list  = postRepository.postList(dto);
+		
+		return new ResponseEntity<ResponseDTO<List<PostListDTO>>>
+		(new ResponseDTO<List<PostListDTO>>(list),HttpStatus.OK); //성공 
+	}
+	
+	//글로벌 피드 게시물 리스트 
+	@Override
+	public ResponseEntity<ResponseDTO<List<PostListDTO>>> loadGlobalFeedPostList(int page) {
+	// TODO Auto-generated method stub
+		//validation
+		if(!PathVariableValidation.pageValidation(page)) {
+			throw new BadRequestException("유효하지 않은 페이지입니다.");
+		}
+		
+		int idNum=SimpleCodeGet.getIdNum();
+		
+		//행의 개수 
+		int rowSize=6;
+		//offset(시작위치)
+		int offSet=SimpleCodeGet.getOffset(rowSize, page);
+		//데이터베이스 전송 객체 생성
+		GetUserFeedInformDTO dto= new GetUserFeedInformDTO();
+		//글로벌 피드 동적쿼리 위해 전달
+		dto.setFeedState("GLOBALFEED");
+		dto.setIdNum(idNum);//아이디 고유번호 세팅
+		dto.setRowSize(rowSize);//행개수 세팅
+		dto.setStartRow(offSet);//offset 세팅 
+		
+		//닉네임 기반으로 게시물 정보를 읽어서 리스트에 담는다 .
+		List<PostListDTO> list  = postRepository.postList(dto);
+		
+		return new ResponseEntity<ResponseDTO<List<PostListDTO>>>
+		(new ResponseDTO<List<PostListDTO>>(list),HttpStatus.OK); //성공 
+	}
 	
 	//프로필 이미지 변경 
 	@Override
@@ -282,6 +347,10 @@ public class FeedServiceImpl implements FeedService{
 		return new ResponseEntity<ResponseDTO<MemberDTO>>
 		(new ResponseDTO<MemberDTO>(dto),HttpStatus.OK); //성공 
 	}
+
+	
+
+	
 	
 	
 
