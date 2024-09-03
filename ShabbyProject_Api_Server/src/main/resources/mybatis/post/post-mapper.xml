@@ -135,7 +135,11 @@
     m.nickname,
     GROUP_CONCAT(DISTINCT pi.post_img_url ORDER BY pi.post_img_num) AS strImgList,
     GROUP_CONCAT(DISTINCT hb.hobby ORDER BY hb.hb_num) AS strHobbyList,
-    GROUP_CONCAT(DISTINCT member_tag.nickname ORDER BY mt.id_num) AS strTagList
+    GROUP_CONCAT(DISTINCT member_tag.nickname ORDER BY mt.id_num) AS strTagList,
+    (
+		SELECT COUNT(*) FROM POST_LIKE
+		WHERE post_num=p.post_num
+	) as likeCount
   FROM post p
   LEFT JOIN MEMBER m ON p.id_num = m.id_num
   LEFT JOIN POST_IMG pi ON p.post_num = pi.post_num
