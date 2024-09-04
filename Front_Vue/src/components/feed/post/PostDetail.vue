@@ -1,4 +1,4 @@
-<template>
+<template  >
   <!--게시물 상세 모달-->
   <v-dialog v-model="localDialog" max-width="1100" class="modal">
       <v-row v-if="isLoading" class="loading-overlay">
@@ -177,6 +177,7 @@
 import Alert from "@/components/common/utill/Alert.vue"
 import PostEdit from "./PostEdit.vue"
 import api from "@/api";
+import eventBus from "@/eventBus.js"
 export default {
   name: 'PostDetail',
 
@@ -199,7 +200,8 @@ export default {
       isLikeLoading:false, //좋아요 버튼 데이터 로딩상태 (스켈레톤요소 떄문에 따로 분리 )
       alertType:'', // 알림창을 띄울때 어떤 타입인지(게시물 삭제 타입 )
       isAlertOpen:false,//알림창모달의 띄움 여부 
-      alertMessage:'' ,//알림창모달에 전달할 메시지 
+      alertMessage:'' ,//알림창모달에 전달할 메시지
+     
       
     }
   },
@@ -224,6 +226,7 @@ export default {
     }
   },
   methods: {
+    
     //상세 데이터를 불러옴 
     callPostDetailData(newValue){
       //로딩중일때 는 return 
@@ -300,20 +303,23 @@ export default {
         
         //ok버튼을 클릭하였고 , 비공개 /공개 여부 변경 경고창 이면 (type에 따라)       
         if (isOk&&type==='postDel') {
-
+          if(this.isLoading)return
+          this.isLoading=true
           api.delete('/post',{
             data:{
               postNum:this.postNum
             }
           })
           .then(()=>{
+         
             alert('성공적으로 삭제가 완료되었습니다.')
+            eventBus.emit('resetPostList');
           })
           .catch((err)=>{
             alert(err?.response?.data?.message)
           })
           .finally(()=>{
-            this.isAlertOpen=false//경고창을 닫음 
+            this.isLoading=false
             this.closeDialog()
           })
        
@@ -328,8 +334,8 @@ export default {
 
         this.isAlertOpen=false//그외 no 버튼을 클릭 시 경고창을 닫음 
        },
-  //클릭시 해당 유저의 피드로 이동 
-  goOtherUserfeed(nickname) {//닉네임 매개변수 
+    //클릭시 해당 유저의 피드로 이동 
+    goOtherUserfeed(nickname) {//닉네임 매개변수 
 
       this.closeDialog(); // 모달 닫기 = > 팔로우/팔로잉 목록 모달 
       this.$nextTick(() => {
@@ -476,3 +482,4 @@ cursor: pointer;
   color:antiquewhite
 }
 </style>
+@/eventBus.js

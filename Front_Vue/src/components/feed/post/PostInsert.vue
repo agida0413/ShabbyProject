@@ -217,6 +217,7 @@
 import HobbySearchBar from "@/components/common/utill/HobbySearchBar.vue"
 import FollowSearchBar from "@/components/common/utill/FollowSearchBar.vue";
 import api from "@/api";
+import eventBus from "@/eventBus"
 export default {
 name: 'PostInsert',
 
@@ -602,7 +603,7 @@ removeImage(index) {//해당 인덱스를 받음
     .then(()=>{
       //성공시 alert 띄우고 컴포넌트 해제
       alert('게시물 등록이 완료되었습니다.')
-      this.closeDialog()
+      eventBus.emit('resetPostList');
     })
     .catch((err)=>{
       alert(err?.response?.data?.message);
@@ -610,6 +611,7 @@ removeImage(index) {//해당 인덱스를 받음
     .finally(()=>{
       //서버 전송끝
       this.isLoading=false
+      this.closeDialog()
     })
 
   },

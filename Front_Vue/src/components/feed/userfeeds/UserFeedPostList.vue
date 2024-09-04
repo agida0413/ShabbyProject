@@ -68,6 +68,7 @@
 <script>
 import api from "@/api"
 import PostDetail from '../post/PostDetail.vue';
+import eventBus from "@/eventBus"
 export default{
     name:'UserFeedPostList',
     //부모로 부터 받은 닉네임 값 
@@ -78,7 +79,7 @@ export default{
   data(){
     return{
       postData:[], //게시물 정보 데이터 
-      isLoading:true, // 로딩상태를 저장할  변수 
+      isLoading:false, // 로딩상태를 저장할  변수 
       page:1, // 페이지
       observer:null, //intersection observer 객체
       noMoreNeedData:false, //더이상 로드할 데이터가 없다면 불필요한 api 호출을 방지하기 위한 변수 
@@ -97,7 +98,7 @@ export default{
   },
     //마운트 시 게시물 정보 , intersection observer 초기화
     mounted(){
-  
+      eventBus.on('resetPostList',this.resetData);
     
      this.initObserver(); // IntersectionObserver 초기화
     },
@@ -130,6 +131,7 @@ export default{
     }
   },
     methods:{
+     
       changeType(type) {
         this.type=type;
       },
@@ -143,10 +145,11 @@ export default{
     },
       //게시물 정보 읽어오는 api
       loadPost(){ 
+        if(this.noMoreNeedData ||this.isLoading)return 
         //api 호출중 상태 
         this.isLoading=true
         //noMoreNeedData가 true 이면 리턴 ( 더이상 불러올 데이터가 없는경우)
-       if(this.noMoreNeedData)return 
+     
 
       api.get(`/feed/userfeed/post/${this.type}/${this.nickname}/${this.page}`)
         .then((res) => {
