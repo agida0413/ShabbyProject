@@ -32,11 +32,25 @@
     AND pi.post_img_num = subquery.min_img_num <!-- 그리고 인라인 뷰 이미지번호와 , 서브쿼리의 위에서 pk min값으로 가져온 하나의 url 조인 -->
     ) pi
     ON p.post_num = pi.post_num <!-- 게시물 테이블의 고유번호와 두번째 인라인뷰의 게시물 고유번호 조인 -->
-    WHERE 
+    <if test="feedState=='USERFEED'">
+    	<if test="type=='TAGGED'">
+    RIGHT JOIN 
+    (
+	SELECT post_num FROM MEMBER_TAG
+    WHERE id_num = (
+		SELECT id_num FROM MEMBER
+		WHERE nickname=#{nickname}
+	) 
+    ) mtSubQuery
+    ON p.post_num=mtSubQuery.post_num
+    	</if>
+    </if>
+    
   
    
     	<choose>
     		<when test="feedState=='MAINFEED'">
+    		WHERE 
     			p.id_num IN
     			(SELECT following_id FROM FOLLOW
     			WHERE id_num=#{idNum}
@@ -49,6 +63,7 @@
     		</when>
     		
     		<when test="feedState=='GLOBALFEED'">
+    		WHERE 
     			p.id_num IN
     			(SELECT id_num FROM MEMBER
     			WHERE locked='PUBLICID' 
@@ -61,16 +76,21 @@
     		</when>
     		
     		<when test="feedState=='USERFEED'">
+    		
+    			<if test="type=='NORMAL'">	
+    			WHERE 
     		    p.id_num= <!-- 게시물 테이블-->
 			    (
 			    SELECT id_num FROM MEMBER <!-- 회원테이블에서 -->
 			    WHERE nickname=#{nickname} <!-- 닉네임이 매개변수로 받은닉네임일 경우에-->
 			    )
-			    <if test="!itsMe">
-			    AND
-    		    onlyMe='NOTONLYME' 
-			    </if>
+			  </if>
+				    <if test="!itsMe">
+				    AND
+	    		    onlyMe='NOTONLYME' 
+				    </if>
 			     ORDER BY create_date DESC  <!-- 최신순 정렬 -->
+			   
     		</when>
     		<!-- itsMe에 따른 게시물 가져오기 -->
     	</choose>
@@ -123,8 +143,8 @@
         </foreach>
      </if>
  </insert>
- 
- <select id="postDetail" parameterType="int" resultType="PostDetailDTO">
+ <!-- 게시물 상세보기 정보-->
+ <select id="postDetail" parameterType="GetPostDetailDTO" resultType="PostDetailDTO">
   SELECT 
     p.post_num,
     p.id_num,
@@ -133,6 +153,8 @@
     p.edit_date ,
     p.onlyMe ,
     m.nickname,
+    m.profile,
+    pl.likeCheck,
     GROUP_CONCAT(DISTINCT pi.post_img_url ORDER BY pi.post_img_num) AS strImgList,
     GROUP_CONCAT(DISTINCT hb.hobby ORDER BY hb.hb_num) AS strHobbyList,
     GROUP_CONCAT(DISTINCT member_tag.nickname ORDER BY mt.id_num) AS strTagList,
@@ -146,10 +168,48 @@
   LEFT JOIN HOBBY hb ON p.post_num = hb.post_num
   LEFT JOIN MEMBER_TAG mt ON p.post_num = mt.post_num
   LEFT JOIN MEMBER member_tag ON mt.id_num = member_tag.id_num
+  LEFT JOIN (
+	SELECT post_num,id_num as likeCheck FROM POST_LIKE
+	WHERE id_num=#{idNum}
+  ) pl
+  ON p.post_num=pl.post_num
   WHERE p.post_num = #{postNum}
   GROUP BY p.post_num
 </select>
+
+<!-- 이미지리스트 s3이미지 삭제-->
+<select id="postImgListByPostNum" parameterType="int" resultType="String">
+SELECT post_img_url 
+FROM POST_IMG 
+WHERE post_num=#{postNum}
+</select>
+
  
+
+
+<!--게시물 삭제 -->
+<delete id="postDelete" parameterType="postDelDTO">
+DELETE FROM POST 
+WHERE post_num=#{postNum}
+AND
+id_num=#{idNum}
+</delete>
+ <!--좋아요 삽입-->
+<insert id="postLikeInsert" parameterType="DoPostLikeDTO">
+INSERT INTO POST_LIKE (id_num,post_num)
+VALUES(#{idNum},#{postNum})
+</insert> 
+<!--좋아요 삭제-->
+ <delete id="postLikeDelete" parameterType="DoPostLikeDTO">
+DELETE FROM POST_LIKE
+WHERE post_num=#{postNum}
+AND id_num=#{idNum}
+ </delete>
+ 
+ <select id="afterDoPostLike" parameterType="int" resultType="int">
+ select count(*) as likeCount FROM POST_LIKE
+ WHERE post_num=#{postNum}
+ </select>
  </mapper>
  
  

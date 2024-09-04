@@ -3,6 +3,9 @@ package com.sist.repository.post;
 import java.util.List;
 
 import com.sist.dto.feed.GetUserFeedInformDTO;
+import com.sist.dto.post.DoPostLikeDTO;
+import com.sist.dto.post.GetPostDetailDTO;
+import com.sist.dto.post.PostDelDTO;
 import com.sist.dto.post.PostDetailDTO;
 import com.sist.dto.post.PostListDTO;
 import com.sist.dto.post.WritePostDTO;
@@ -19,6 +22,16 @@ public interface PostRepository {
 		//사용자  피드에서 게시물리스트 가져오기
 		public List<PostListDTO> postList(GetUserFeedInformDTO dto);
 		//게시물 상세보기 
-		public PostDetailDTO postDetail(int postNum);
-	
+		public PostDetailDTO postDetail(GetPostDetailDTO dto);
+		
+		//crud 작업전 미리 이미지url백업
+		public List<String> postImgListByPostNum(int postNum);
+		//게시물 삭제 
+		public void postDelete(PostDelDTO dto);
+		//좋아요 삽입, 삭제
+		public void postLikeInsert(DoPostLikeDTO dto);
+		public void postLikeDelete(DoPostLikeDTO dto);
+		
+		//좋아요 작업 후 좋아요 카운트
+		public int afterDoPostLike(int postNum);
 }

@@ -122,6 +122,11 @@ public class FollowServiceImpl implements FollowService {
 	@Transactional
 	public ResponseEntity<ResponseDTO<String>> doFollow(DoFollowDTO dto) {
 		// TODO Auto-generated method stub
+		String myNickName=SimpleCodeGet.getNickname();
+		if(myNickName.equals(dto.getNickname())) {
+			throw new BadRequestException("본인을 팔로우 할 수 없습니다.");
+		}
+
 		//회원 고유번호 
 		int idNum=SimpleCodeGet.getIdNum();
 		dto.setIdNum(idNum);

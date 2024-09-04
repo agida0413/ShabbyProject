@@ -22,6 +22,7 @@ import com.sist.dto.feed.UpdateProfileDTO;
 import com.sist.dto.hobby.HobbyDTO;
 import com.sist.dto.hobby.SearchHobbyListDTO;
 import com.sist.dto.member.MemberDTO;
+import com.sist.dto.post.DoPostLikeDTO;
 import com.sist.dto.post.PostListDTO;
 import com.sist.repository.feed.FeedRepository;
 import com.sist.repository.hobby.HobbyRepository;
@@ -145,7 +146,7 @@ public class FeedServiceImpl implements FeedService{
 	
 	// 사용자 피드에서 게시물 정보를 읽어온다 . 
 	@Override
-	public ResponseEntity<ResponseDTO<List<PostListDTO>>> loadUserFeedPostList(String nickname,int page) {
+	public ResponseEntity<ResponseDTO<List<PostListDTO>>> loadUserFeedPostList(String type,String nickname,int page) {
 		// TODO Auto-generated method stub
 		
 		if(!PathVariableValidation.nickNameValService(nickname)) {
@@ -154,7 +155,9 @@ public class FeedServiceImpl implements FeedService{
 		if(!PathVariableValidation.pageValidation(page)) {
 			throw new BadRequestException("유효하지 않은 페이지입니다.");
 		}
-		
+		if(!(type.equals("NORMAL")||type.equals("TAGGED"))){
+			throw new BadRequestException("유효하지 않은 페이지입니다.");
+		}
 		
 		//행의 개수 
 		int rowSize=6;
@@ -170,7 +173,7 @@ public class FeedServiceImpl implements FeedService{
 		//읽고자하는 피드가 유저 피드인지 세팅한다 ===> 동적쿼리를 통해 유저피드 ,메인피드, 글로벌 피드 나누기위함 		
 		dto.setFeedState("USERFEED");
 		
-		
+		dto.setType(type);
 		dto.setNickname(nickname);//닉네임 세팅
 		dto.setRowSize(rowSize);//행개수 세팅
 		dto.setStartRow(offSet);//offset 세팅 
@@ -348,6 +351,7 @@ public class FeedServiceImpl implements FeedService{
 		(new ResponseDTO<MemberDTO>(dto),HttpStatus.OK); //성공 
 	}
 
+	
 	
 
 	

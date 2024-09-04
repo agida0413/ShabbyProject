@@ -49,10 +49,10 @@ public class FeedController {
 	}
 	
 	//유저피드 접근시 해당유저에 대한 정보 외 해당유저의 게시물정보를 불러오는 api
-	@GetMapping("/userfeed/{nickname}/{page}")
-	public ResponseEntity<ResponseDTO<List<PostListDTO>>> loadUserfeedPostList(@PathVariable String nickname,@PathVariable int page){
+	@GetMapping("/userfeed/post/{type}/{nickname}/{page}")
+	public ResponseEntity<ResponseDTO<List<PostListDTO>>> loadUserfeedPostList(@PathVariable String type, @PathVariable String nickname,@PathVariable int page){
 	
-		return feedService.loadUserFeedPostList(nickname, page);
+		return feedService.loadUserFeedPostList(type,nickname, page);
 	}
 	
 	//유저피드에서의 프로필 사진 변경 api
