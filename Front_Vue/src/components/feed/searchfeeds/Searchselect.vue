@@ -2,11 +2,11 @@
     <v-tabs
       class="to-blackMode"
       fixed-tabs
+      
     >
       <v-tab @click="transportSearchHobby()">관심사 검색</v-tab>
       <v-tab @click="transportSearchPeople()">사람 검색</v-tab>
-    </v-tabs>
-    <v-divider></v-divider>
+    </v-tabs>  
   </template>
   
   <script>

@@ -1,19 +1,15 @@
 <template>
   <!--게시물 상세 모달-->
   <v-dialog v-model="localDialog" max-width="1100" class="modal">
-    <v-row v-if="isLoading" class="loading-overlay">
-      <v-col class="d-flex justify-center align-center">
-        <v-progress-circular indeterminate color="primary"></v-progress-circular>
-      </v-col>
-    </v-row>
-    <v-card class="to-doubleBlack" v-if="!isLoading">
-      
-      
-      
+      <v-row v-if="isLoading" class="loading-overlay">
+        <v-col class="d-flex justify-center align-center">
+          <v-progress-circular indeterminate color="primary"></v-progress-circular>
+        </v-col>
+      </v-row>
+
+    <v-card class="to-doubleBlack" v-if="!isLoading">           
       <v-container fluid >
-        <v-row no-gutters >
-      
-          
+        <v-row no-gutters >         
           <v-col cols="6" class="image-section">
        
       <!-- 사진 목록-->
@@ -26,7 +22,6 @@
             :src="image"
             cover
           ></v-carousel-item>
-
         </div>
       </v-carousel>
           </v-col >
@@ -44,10 +39,30 @@
               <!-- Post Information Layout -->
               <v-row no-gutters >
                 <!-- Post Content (50%) -->
-                <v-col cols="12" style="height: 150px;" class="mt-1">
+                <v-row cols="12" class="ml-1">
+                  <v-col cols="1"  style="cursor:pointer" @click="goOtherUserfeed(postDetailData.nickname)">
+                    <v-avatar :image="postDetailData.profile" size="35" class="avatar"
+                    v-if="postDetailData.profile !== null" ></v-avatar>
+                    <v-avatar :image="require('@/assets/ikmyung.png')"  
+                     size="35" class="avatar" v-if="postDetailData.profile === null" ></v-avatar>
+                  </v-col>
+                  <v-col cols="5" class="mt-1 ml-1" >
+                    <span class="large-font " style="cursor:pointer" @click="goOtherUserfeed(postDetailData.nickname)">{{postDetailData.nickname }}</span>
+                  </v-col>
+                  <v-col cols="5" class="mt-2" v-if="postDetailData.editDate===null">
+                    <span  style="color: white; opacity: 0.7;">작성일:&nbsp;&nbsp;{{postDetailData.createDate }}</span>
+                  </v-col>
+
+                  <v-col cols="5" class="mt-2" v-if="postDetailData.editDate!==null">
+                    <span  style="color: white; opacity: 0.7;">수정일:&nbsp;&nbsp;{{postDetailData.editDate }}</span>
+                  </v-col>
+                </v-row>
+              <v-divider></v-divider>
+                <v-col cols="12" style="height: 100px;" class="mt-1">
                   <v-card class="to-blackMode"  elevation="1" max-width="100%" height="100%" >
    
                     <v-card-text v-if="postDetailData.content!==null">
+                  
                      {{ postDetailData.content }}
                     </v-card-text>
 
@@ -58,24 +73,24 @@
 
                 </v-col>
               
-                <v-col cols="12" class="mt-1" style="height: 150px;"  >
+                <v-col cols="12" class="mt-1" style="height: 130px;"  >
                   <v-card class="to-blackMode scroll-container" elevation="1" max-width="100%" height="100%" >
    
                     <v-card-item>
                      
                       <v-card-subtitle>관심사</v-card-subtitle>
                     </v-card-item>     
-                     <v-card-text v-if="postDetailData.hobbyList!==null" >           
+                     <v-card-text v-if="postDetailData.hobbyList!==null" >  
+                      <span   v-for="(hobby,index) in postDetailData.hobbyList" :key="index">
                         <v-chip
-                          class="ma-2"
+                          class="ma-2 clickcursor"
                           color="green"
-                          label
-                          v-for="(hobby,index) in postDetailData.hobbyList"
-                          :key="index"
+                          label                                                
                           >
-                           <v-icon icon="mdi-label" start></v-icon>
+                           <v-icon icon="mdi-label " start></v-icon>
                           {{ hobby }}
                         </v-chip>
+                      </span> 
                   </v-card-text>
                     <v-card-text v-if="postDetailData.hobbyList===null">
                       등록된 관심사가 없습니다.
@@ -93,16 +108,19 @@
                     </v-card-item>                 
 
                     <v-card-text v-if="postDetailData.tagList!==null" >           
+                      <span  v-for="(tag,index) in postDetailData.tagList" :key="index">  
+                  
                         <v-chip
-                          class="ma-2"
+                          class="ma-2 clickcursor"
                           color="blue"
-                          label
-                          v-for="(tag,index) in postDetailData.tagList"
-                          :key="index"
+                          label  
+                          @click="goOtherUserfeed(tag)"                        
                           >
-                           <v-icon icon="mdi-account-circle-outline" start></v-icon>
+                           <v-icon icon="mdi-account-circle-outline clickcursor" start></v-icon>
                           {{ tag }}
                         </v-chip>
+                    
+                      </span>
                   </v-card-text>
 
                     <v-card-text v-if="postDetailData.tagList===null">
@@ -113,15 +131,26 @@
                 </v-col>
                 <v-divider style="color: aliceblue;"></v-divider>
                 <v-col cols="12" class="like-icon-col  to-blackMode">
-                  <span ><v-icon size="40">mdi-heart</v-icon></span>
-                  <span style="margin-left: 20px;">{{postDetailData.likeCount}}명이 좋아합니다.</span>
+                  <v-icon
+                    style="cursor: pointer;"
+                    :class="{'red--text': postDetailData.liked, 'grey--text': !postDetailData.liked}"
+                    large
+                    size="30"
+                    :color="postDetailData.liked?'red':''"
+                    @click="doPostLike()"
+                  >
+                    {{ postDetailData.liked ? 'mdi-heart' : 'mdi-heart-outline' }}
+                  </v-icon>
+                  <span style="margin-left: 20px; font-size: 16px;">{{postDetailData.likeCount}}명이 좋아합니다.</span>
                  
-                  <span style="margin-left: 213px;">
+                  <span style="margin-left: 200px;" v-if="postDetailData.itsMe">
                     <v-btn class="ms-5" icon="mdi-pencil" size="30" color="black" @click="postEditOpen"></v-btn><!--수정 버튼-->
                   </span>
                   
-                  <span style="margin-left: 8px;">
-                  <v-btn icon="mdi-delete-outline"  color="red" size="30"></v-btn> <!--삭제 버튼-->
+                  <span style="margin-left: 8px;"  v-if="postDetailData.itsMe">
+                  <v-btn icon="mdi-delete-outline"  color="red" size="30"
+                  @click="openAlert('정말 이 게시물을 삭제하시겠습니까?','postDel')"
+                  ></v-btn> <!--삭제 버튼-->
                 </span>
                 </v-col>
                 
@@ -135,10 +164,17 @@
     </v-card>
   </v-dialog>
   <PostEdit v-model:value="postEditDialog" @postEditClose="postEditClose"></PostEdit>
+  <Alert
+      v-model:value="isAlertOpen"
+      v-model:altype="alertType"
+      v-model:message="alertMessage"
+      @closeAlertDialog="closeAlert"
+    >
+  </Alert>
 </template>
 
 <script>
-
+import Alert from "@/components/common/utill/Alert.vue"
 import PostEdit from "./PostEdit.vue"
 import api from "@/api";
 export default {
@@ -158,45 +194,88 @@ export default {
     return {
       postEditDialog:false, //게시물 수정
       postDetailData:{},//상세 데이터 
-      imgList:[],
-      isLoading:false
+      imgList:[], //사진 목록 
+      isLoading:false, //게시물 상세 데이터 로딩상태
+      isLikeLoading:false, //좋아요 버튼 데이터 로딩상태 (스켈레톤요소 떄문에 따로 분리 )
+      alertType:'', // 알림창을 띄울때 어떤 타입인지(게시물 삭제 타입 )
+      isAlertOpen:false,//알림창모달의 띄움 여부 
+      alertMessage:'' ,//알림창모달에 전달할 메시지 
+      
     }
   },
   computed: {
+    //모달 다이얼로그 open,close 
     localDialog: {
       get() {
         return this.value;
       }
     }
   },
+  //감지
   watch:{
-   
+    //게시물 번호 가 변경되면 
     postNum(newValue){
+      
       if(newValue!=0){
+        //새롭게 데이터 호출 
         this.callPostDetailData(newValue)
       }
      
     }
   },
   methods: {
-
+    //상세 데이터를 불러옴 
     callPostDetailData(newValue){
+      //로딩중일때 는 return 
       if(this.isLoading)return
-
+      //로딩중 true
       this.isLoading=true
+
       api.get(`post/${newValue}`)
       .then((res)=>{
-        
-        this.postDetailData=res?.data?.reqData
+        //이미지 목록 
         this.imgList=res?.data?.reqData?.imgList
+        //나머지 데이터  
+        this.postDetailData=res?.data?.reqData
+       
       
       })
       .catch((err)=>{
         alert(err?.response?.data?.message)
+        this.closeDialog()
       })
       .finally(()=>{
         this.isLoading=false
       })
+    },
+    //좋아요 작업 
+    doPostLike(){
+      //좋아요 작업중이면 return (중복호출 방지 )
+      if(this.isLikeLoading)return
+      //로딩상태 true
+      this.isLikeLoading=true
+      api.post('/post/like',{
+        //게시물 번호
+        postNum:this.postDetailData.postNum,
+        //현재 로그인한 회원기준 좋아요 상태(눌럿나 안눌럿나)
+        liked:this.postDetailData.liked
+
+      })
+      .then((res)=>{
+        //트랜잭션 완료 후 좋아요 상태 저장 = >  새롭게 dom업데이트 
+        const resLiked=res?.data?.reqData?.liked;
+        //트랜잭션 완료 후 좋아요 수 저장 
+        const resLikeCount= res?.data?.reqData?.likeCount;
+        this.postDetailData.liked=resLiked
+        this.postDetailData.likeCount=resLikeCount 
+
+      })
+      .catch((err)=>{
+        alert(err?.response?.data?.message)
+        })
+        .finally(()=>{
+          this.isLikeLoading=false
+        })
     },
     closeDialog() {
       this.$emit('postDetailClose', false); //상세보기 닫음 
@@ -207,10 +286,61 @@ export default {
     postEditClose(){
       this.postEditDialog=false;
       
+    },
+
+    openAlert(message,type){
+
+    this.alertMessage=message //매개변수 메시지 값을 담음 ,자식컴포넌트에 전달
+    this.alertType=type//매개변수 타입 값을 담음, 자식컴포넌트에 전달
+
+    this.isAlertOpen=true //경고창 띄우는 변수 
+  },
+
+  closeAlert(isOk,type){//ok or no 변수 , 띄운 경고창의 타입 (비공개여부변경, 회원탈퇴 등)
+        
+        //ok버튼을 클릭하였고 , 비공개 /공개 여부 변경 경고창 이면 (type에 따라)       
+        if (isOk&&type==='postDel') {
+
+          api.delete('/post',{
+            data:{
+              postNum:this.postNum
+            }
+          })
+          .then(()=>{
+            alert('성공적으로 삭제가 완료되었습니다.')
+          })
+          .catch((err)=>{
+            alert(err?.response?.data?.message)
+          })
+          .finally(()=>{
+            this.isAlertOpen=false//경고창을 닫음 
+            this.closeDialog()
+          })
+       
+        }
+
+        //ok를 클릭하였고 , 회원탈퇴 경고 이면 
+        if(!isOk&&type==="postDel"){
+           
+          this.isAlertOpen=false//경고창을 닫음 
+
+        }
+
+        this.isAlertOpen=false//그외 no 버튼을 클릭 시 경고창을 닫음 
+       },
+  //클릭시 해당 유저의 피드로 이동 
+  goOtherUserfeed(nickname) {//닉네임 매개변수 
+
+      this.closeDialog(); // 모달 닫기 = > 팔로우/팔로잉 목록 모달 
+      this.$nextTick(() => {
+        this.$router.push({ name: 'userfeed', params: { nickname: nickname } }); // 페이지 이동 ( 닉네임 param)
+      });
     }
+  
   },
   components: {
-    PostEdit
+    PostEdit,
+    Alert
   }
 }
 </script>
@@ -338,5 +468,11 @@ export default {
 .scroll-container::-webkit-scrollbar-thumb:hover {
   background: #555; /* 막대의 호버 배경색 */
 }
-
+.clickcursor{
+cursor: pointer;
+}
+.large-font {
+  font-size: 18px; /* 원하는 폰트 사이즈로 조정 */
+  color:antiquewhite
+}
 </style>

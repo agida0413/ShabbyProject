@@ -12,18 +12,20 @@
         >
  
             <template v-slot:actions>
-              
               <v-btn
-                color="warning"
+                color="gray"
+                style="opacity: 0.7;"
                 text="NO"
                 @click="closeDialog(false,this.altype)"
               ></v-btn>
-
               <v-btn
-                color="primary"
+                color="red"
                 text="Ok"
                 @click="closeDialog(true,this.altype)"
               ></v-btn>
+             
+
+            
             
             </template>
             

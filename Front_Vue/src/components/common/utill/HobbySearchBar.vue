@@ -81,7 +81,7 @@ export default {
   methods: {
     async fetchResults(keyword) {
       if (this.isFetching || !this.isHashtag || this.isNomoreData) return; // 이미 데이터 가져오는 중이거나 #이 아닌 경우 , 더이상 로드할 데이터가 없는경우
-     
+    
       this.isFetching = true; // 데이터 가져오기 시작
 
        // 만약 첫 번째 로드이면 페이지를 증가시키지 않고 아니면 페이지를 증가시킴 
@@ -91,8 +91,9 @@ export default {
        //통과 하면 , 이제 더이상 첫번째 페이지로드가 아님 
        this.firstCall=false;
       // 보낼 키워드 # 제거 
-      const sendKeyword = keyword.replace(/#/g, '');
-      
+      const sendKeyword = keyword.replace(/#/g, '').trim();
+      console.log(sendKeyword)
+      if(sendKeyword===''||sendKeyword===null)return
       //api 호출 
        api.get(`/hobby/${sendKeyword}/${this.page}`)
        .then((res)=>{

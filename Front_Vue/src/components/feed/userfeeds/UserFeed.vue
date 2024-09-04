@@ -169,6 +169,7 @@
       <UserFeedPostList
         v-if="userFeedData.itsMe || userFeedData.locked ==='PUBLICID'|| userFeedData.followState==='alreadyFollow'"
         @childLoadingComplete="childLoadingComplete"
+       
         :nickname="nickname"
         
       ></UserFeedPostList>

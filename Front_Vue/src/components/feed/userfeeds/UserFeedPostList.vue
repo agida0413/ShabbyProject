@@ -4,14 +4,30 @@
 
 
   <v-container >
-   
-    <v-row v-if="!postData.length">
+
+    <v-tabs
+      class="to-blackMode"
+      fixed-tabs
+      v-model="type"
+    >
+      <v-tab value="NORMAL" @click="changeType('NORMAL')" ><span style="color:floralwhite">{{nickname}}님</span>의 게시물</v-tab>
+      <v-tab value="TAGGED" @click="changeType('TAGGED')"><span style="color:floralwhite">{{ nickname }}님</span>을 태그한 게시물</v-tab>
+    
+    </v-tabs>
+    <v-divider></v-divider>
+    <v-progress-linear
+          color="white"
+          indeterminate
+          v-if="isLoading"
+         ></v-progress-linear>
+
+    <v-row v-if="!postData.length && !isLoading" style="margin-top: 5px;">
       <v-col class="d-flex child-flex justify-center align-center" cols="12">
         아직 등록된 게시물이 없습니다.
       </v-col>
     </v-row>
 
-    <v-row v-if="postData.length">
+    <v-row v-if="postData.length " style="margin-top: 1px;" >
       <v-col
         v-for="(post, index) in postData"
         :key="index"
@@ -19,6 +35,7 @@
         cols="4"
       >
         <v-img
+        v-if="!isLoading"
           :src="post.postImgUrl"
           aspect-ratio="1"
           class="image-container"
@@ -35,6 +52,7 @@
             {{ post.likeCount }}
           </div>
         </v-img>
+   
       </v-col>
     
     </v-row>
@@ -64,7 +82,8 @@ export default{
       page:1, // 페이지
       observer:null, //intersection observer 객체
       noMoreNeedData:false, //더이상 로드할 데이터가 없다면 불필요한 api 호출을 방지하기 위한 변수 
-      sendPostNum:0
+      sendPostNum:0,
+      type:'NORMAL'
     }
   },
   // intersection observer 참조할 태그 ref
@@ -88,8 +107,18 @@ export default{
       handler(newNickname, oldNickname) {
         // nickname이 변경될 때 호출
         if (newNickname !== oldNickname) {
+           this.type='NORMAL'
           this.resetData();
         }
+      }
+    },
+    type: {
+      handler(newType,oldType) {
+       if(newType!==oldType){
+        this.resetData();
+       }
+         
+        
       }
     }
   },
@@ -101,6 +130,9 @@ export default{
     }
   },
     methods:{
+      changeType(type) {
+        this.type=type;
+      },
       openPostDetailDialog(postNum){
       this.sendPostNum=postNum
       this.postDetailDialog=true;
@@ -116,7 +148,7 @@ export default{
         //noMoreNeedData가 true 이면 리턴 ( 더이상 불러올 데이터가 없는경우)
        if(this.noMoreNeedData)return 
 
-      api.get(`/feed/userfeed/${this.nickname}/${this.page}`)
+      api.get(`/feed/userfeed/post/${this.type}/${this.nickname}/${this.page}`)
         .then((res) => {
             //무한스크롤 기존 배열에 데이터 추가 
          this.postData=[...this.postData,...res.data.reqData]
@@ -143,6 +175,7 @@ export default{
       this.page = 1;
       this.postData = [];
       this.noMoreNeedData = false;
+     
       this.loadPost();
     },
       //intersectionobserver 초기화 메서드
