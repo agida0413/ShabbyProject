@@ -126,6 +126,7 @@ export default{
 
     // 컴포넌트 언마운트 시 옵저버 해제
     beforeUnmount() {
+      eventBus.off('resetPostList',this.resetData);
     if (this.observer) {
       this.observer.disconnect(); 
     }
