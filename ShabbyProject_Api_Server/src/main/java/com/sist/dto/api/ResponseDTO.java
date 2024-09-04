@@ -15,6 +15,8 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
 // api 응답 포멧 = > 에러 응답과 ,성공응답 형식을 일정하게 유지하기 위해
+//프로젝트 dto validation 규칙: 최대한 dto에서 validation을 진행하되 ,불가한 부분은 common-> util- > validationService에서 
+//메소드를 만들어 validation을 서비스에서 진행하거나 직접 서비스에서 진행한다.
 @Data
 public class ResponseDTO<T> {
 	

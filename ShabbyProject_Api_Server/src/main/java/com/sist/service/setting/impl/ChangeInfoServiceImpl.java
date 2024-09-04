@@ -190,6 +190,7 @@ public class ChangeInfoServiceImpl implements ChangeInfoService{
 		 
 		MemberDTO findDto = memberAccountRepository.findByIdNum(idNum);//데이터 베이스에서 고유번호 기반 정보 같고옴 
 		
+		
 		if(!bCryptPasswordEncoder.matches(dto.getPassword(), findDto.getPassword())) {//입력받은 비밀번호와 ,데이터베이스 패스워드가 다를시 
 			
 			throw new BadRequestException("비밀번호가 일치 하지않습니다.");//사용자 정의400에러 발생

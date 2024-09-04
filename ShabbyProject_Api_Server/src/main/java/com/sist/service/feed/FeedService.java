@@ -11,13 +11,14 @@ import com.sist.dto.follow.FollowListDTO;
 import com.sist.dto.follow.FollowSearchDTO;
 import com.sist.dto.feed.UpdateProfileDTO;
 import com.sist.dto.member.MemberDTO;
+import com.sist.dto.post.DoPostLikeDTO;
 import com.sist.dto.post.PostListDTO;
 
 public interface FeedService {
 	//사용자 피드 정보 ==> 게시물 제외
 	public ResponseEntity<ResponseDTO<UserFeedInformDTO>> loadUserFeedInfo(String nickname);
 	//사용자 피드 정보 == >게시물
-	public ResponseEntity<ResponseDTO<List<PostListDTO>>> loadUserFeedPostList(String nickname,int page);
+	public ResponseEntity<ResponseDTO<List<PostListDTO>>> loadUserFeedPostList(String type,String nickname,int page);
 	//메인피드 게시물 리스트
 	public ResponseEntity<ResponseDTO<List<PostListDTO>>> loadMainFeedPostList(int page);
 	
@@ -32,5 +33,5 @@ public interface FeedService {
 	//클라이언트에게 자기소개 변경 컴포넌트에서 현재 자기소개 데이터를 전송
 	public ResponseEntity<ResponseDTO<MemberDTO>> getOriginalIntroduce();
 	
-	
+
 }

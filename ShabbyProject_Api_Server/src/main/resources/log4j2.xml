@@ -10,6 +10,9 @@
     <logger name="jdbc.sqltiming" level="DEBUG">
         <appender-ref ref="console"/>
     </logger>
+     <logger name="jdbc." level="DEBUG">
+        <appender-ref ref="console"/>
+    </logger>
 
     <root level="INFO">
         <appender-ref ref="console"/>
