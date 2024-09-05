@@ -28,6 +28,17 @@ public interface PostRepository {
 		public List<String> postImgListByPostNum(int postNum);
 		//게시물 삭제 
 		public void postDelete(PostDelDTO dto);
+		
+		//내용, 나만보기기능,수정일 업데이트 
+		public void postInformUpdate(WritePostDTO dto);
+		//기존 이미지 삭제 
+		public void deleteOriginalImg(WritePostDTO dto);
+		//기존 관심사 삭제
+		public void deleteOriginalHobby(WritePostDTO dto);
+		//기존 맴버태그 삭제
+		public void deleteOriginalMemTag(WritePostDTO dto);
+		//게시물 수정관련 종료
+		
 		//좋아요 삽입, 삭제
 		public void postLikeInsert(DoPostLikeDTO dto);
 		public void postLikeDelete(DoPostLikeDTO dto);

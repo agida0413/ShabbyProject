@@ -194,6 +194,45 @@ WHERE post_num=#{postNum}
 AND
 id_num=#{idNum}
 </delete>
+
+<!-- 게시물 수정관련 시작 -->
+
+<!--게시물 내용, 나만보기기능 , 수정일 업데이트 -->
+<update id="postInformUpdate" parameterType="WritePostDTO">
+UPDATE POST SET
+content=#{content},
+onlyME=#{onlyMeState},
+edit_date=CURRENT_TIMESTAMP
+WHERE post_num=#{postNum}
+AND id_num=#{idNum}
+</update>
+
+<!--기존 이미지 삭제 -->
+<delete id="deleteOriginalImg" parameterType="WritePostDTO">
+DELETE FROM POST_IMG
+WHERE post_num=#{postNum}
+AND
+post_img_url IN   (
+<foreach collection="removeImgList" item="imgUrl" separator=",">
+	#{imgUrl}
+ </foreach>
+   )
+</delete>
+
+<!--기존 관심사 삭제 -->
+<delete id="deleteOriginalHobby" parameterType="WritePostDTO">
+DELETE FROM HOBBY
+WHERE post_num=#{postNum}
+</delete>
+
+<!--기존 맴버태그 삭제-->
+<delete id="deleteOriginalMemTag" parameterType="WritePostDTO">
+DELETE FROM MEMBER_TAG
+WHERE post_num=#{postNum}
+</delete>
+
+<!--게시물 수정관련 종료 -->
+
  <!--좋아요 삽입-->
 <insert id="postLikeInsert" parameterType="DoPostLikeDTO">
 INSERT INTO POST_LIKE (id_num,post_num)
@@ -205,7 +244,7 @@ DELETE FROM POST_LIKE
 WHERE post_num=#{postNum}
 AND id_num=#{idNum}
  </delete>
- 
+ <!--좋아요 작업 후 변경된 좋아요 수 -->
  <select id="afterDoPostLike" parameterType="int" resultType="int">
  select count(*) as likeCount FROM POST_LIKE
  WHERE post_num=#{postNum}

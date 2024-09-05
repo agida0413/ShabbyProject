@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -41,6 +42,12 @@ public class PostController {
 	@DeleteMapping
 	public ResponseEntity<ResponseDTO<Void>> postDelete(@RequestBody @Valid PostDelDTO dto){
 		return postService.postDelete(dto);
+	}
+	//게시물 수정 api
+	@PutMapping
+	public ResponseEntity<ResponseDTO<Void>> postUpdata(@Valid WritePostDTO dto){
+		
+		return postService.postUpdate(dto);
 	}
 	
 	//게시물 좋아요 api
