@@ -6,6 +6,7 @@ import { loadFonts } from './plugins/webfontloader'
 import Footer from './components/common/layout/Footer.vue'
 import Header from './components/common/layout/Header.vue'
 import Sidemenu from './components/common/layout/Sidemenu.vue'
+import HobbySearchBar from './components/common/utill/HobbySearchBar.vue'
 
 /*
 문제 해결 기록 
@@ -29,6 +30,7 @@ createApp(App)
 .component('Footer', Footer)
 .component('Header', Header)
 .component('Sidemenu', Sidemenu)
+.component('HobbySearchBar',HobbySearchBar)
 .use(router)
 .use(vuetify)
 .mount('#app');

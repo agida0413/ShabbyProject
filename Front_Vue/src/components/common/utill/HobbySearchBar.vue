@@ -32,6 +32,8 @@ import api from "@/api";
 import debounce from 'lodash/debounce';
 
 export default {
+
+  name:'HobbySearchBar',
   props: {
     keyword: String,
     isHashtag: Boolean,
@@ -45,9 +47,11 @@ export default {
       page: 1, // 페이지 번호
       observer: null, // IntersectionObserver 인스턴스
       firstCall:true,// 첫번째 페이지 로드인지에 대한 변수 
-      isNomoreData:false//더이상 로드할 데이터가 있는지에 대한 변수
+      isNomoreData:false,//더이상 로드할 데이터가 있는지에 대한 변수.
+      mountLoading:false
     };
   },
+ 
   computed: {
     container() {
       return this.$refs.container;
@@ -58,8 +62,9 @@ export default {
   },
   watch: {
     keyword: {
+      
       handler(newKeyword) {
-       
+        console.log('실행')
         if (newKeyword && this.isHashtag) {
           this.page = 1; // 페이지 1로 초기화
           this.results = []; // 결과 배열 초기화
@@ -80,7 +85,10 @@ export default {
   },
   methods: {
     async fetchResults(keyword) {
-      if (this.isFetching || !this.isHashtag || this.isNomoreData) return; // 이미 데이터 가져오는 중이거나 #이 아닌 경우 , 더이상 로드할 데이터가 없는경우
+      if (this.isFetching || !this.isHashtag || this.isNomoreData) {
+       
+        return
+      } // 이미 데이터 가져오는 중이거나 #이 아닌 경우 , 더이상 로드할 데이터가 없는경우
     
       this.isFetching = true; // 데이터 가져오기 시작
 
@@ -92,8 +100,11 @@ export default {
        this.firstCall=false;
       // 보낼 키워드 # 제거 
       const sendKeyword = keyword.replace(/#/g, '').trim();
-      console.log(sendKeyword)
-      if(sendKeyword===''||sendKeyword===null)return
+      
+      if(sendKeyword===''||sendKeyword===null){
+        console.log(sendKeyword)
+        return
+      }
       //api 호출 
        api.get(`/hobby/${sendKeyword}/${this.page}`)
        .then((res)=>{
@@ -257,10 +268,13 @@ export default {
     }
   },
   mounted() {
+    console.log('서치바마운트')
     this.initObserver();
   },
   beforeUnmount() {
+    console.log('서치바언마운트')
     if (this.observer) {
+
       this.observer.disconnect();
     }
   }

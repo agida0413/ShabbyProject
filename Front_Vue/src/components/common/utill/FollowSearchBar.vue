@@ -254,6 +254,7 @@ export default {
     }
   },
   mounted() {
+    console.log('팔로우 서치바 마운트')
     this.initObserver(); // 컴포넌트가 마운트될 때 IntersectionObserver 초기화
   },
   beforeUnmount() {

@@ -244,7 +244,6 @@ data() {
     
   
     onlymeCheck: false, // 나만 보기 기능 체크박스
-
     isLoading:false //서버전송중 
   }
 },
@@ -316,7 +315,7 @@ methods: {
    //사진 한장씩 추가 하는 메서드
    handleSingleFileChange(event) {
     const file = event.target.files[0]; // 선택한 첫 번째 파일 가져오기
-    if (!file) return; // 파일이 선택되지 않았으면 리턴
+    if (file.length === 0) return; // 파일이 선택되지 않았으면 리턴
 
     // 파일 크기 제한 
     const MAX_SIZE_MB = 5;
@@ -442,7 +441,10 @@ removeImage(index) {//해당 인덱스를 받음
   checkIsHashTag(){
     //#으로 시작하면 HobbySearchBar가 열림 
     this.isHashtag = this.searchHobby.startsWith('#');
-   
+   if(this.searchHobby.replace(/#/g, '').replace(/\s+/g, '').length === 0){
+    this.isHashtag=false
+    return
+   }
     //#으로 시작해서 공백으로 끝나고,#만입력한 경우가 아니면 관심사 태그목록배열에 자동추가
     //요약= > #테스트 하고 스페이스를 누르면 등록
     if(this.searchHobby.endsWith(' ')&&this.searchHobby.startsWith('#')&&this.searchHobby.length>1&&this.searchHobby.replace(/#/g, '').trim().length>0){
@@ -509,8 +511,10 @@ removeImage(index) {//해당 인덱스를 받음
   },
     //자식에서 해당항목 엔터를 누를시 호출한 메서드
     selectHobby(hobby) {
+      
       //만약 현재 배열에 현재입력값이 존재하는지 확인
-       hobby=this.searchHobby.replace(/#/g, '').trim()
+       hobby=hobby.replace(/#/g, '').trim()
+     
       const exists = this.hobbiesRequest.some(hb => hb === hobby);
       //배열에 현재값이 없다면 
       if(!exists){
@@ -603,6 +607,7 @@ removeImage(index) {//해당 인덱스를 받음
     .then(()=>{
       //성공시 alert 띄우고 컴포넌트 해제
       alert('게시물 등록이 완료되었습니다.')
+      //이벤트 버스를 통한 데이터베이스 리로드
       eventBus.emit('resetPostList');
     })
     .catch((err)=>{

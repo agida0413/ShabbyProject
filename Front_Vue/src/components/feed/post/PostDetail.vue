@@ -1,6 +1,6 @@
 <template  >
   <!--게시물 상세 모달-->
-  <v-dialog v-model="localDialog" max-width="1100" class="modal">
+  <v-dialog v-model="localDialog" max-width="1100" class="modal" >
       <v-row v-if="isLoading" class="loading-overlay">
         <v-col class="d-flex justify-center align-center">
           <v-progress-circular indeterminate color="primary"></v-progress-circular>
@@ -163,7 +163,11 @@
       </v-container>
     </v-card>
   </v-dialog>
-  <PostEdit v-model:value="postEditDialog" @postEditClose="postEditClose"></PostEdit>
+  <PostEdit v-model:value="postEditDialog"
+   @postEditClose="postEditClose"
+   @updateComplete=" closeDialog" 
+   :postNum="postDetailData.postNum"
+     v-if="postNum!==0"></PostEdit>
   <Alert
       v-model:value="isAlertOpen"
       v-model:altype="alertType"
@@ -174,6 +178,7 @@
 </template>
 
 <script>
+
 import Alert from "@/components/common/utill/Alert.vue"
 import PostEdit from "./PostEdit.vue"
 import api from "@/api";
@@ -186,6 +191,7 @@ export default {
       type: Boolean,
       required: true
     },
+    //게시물 번호 
     postNum:{
       type:Number,
       required: true
@@ -201,8 +207,7 @@ export default {
       alertType:'', // 알림창을 띄울때 어떤 타입인지(게시물 삭제 타입 )
       isAlertOpen:false,//알림창모달의 띄움 여부 
       alertMessage:'' ,//알림창모달에 전달할 메시지
-     
-      
+          
     }
   },
   computed: {
@@ -215,9 +220,10 @@ export default {
   },
   //감지
   watch:{
-    //게시물 번호 가 변경되면 
+    //게시물 번호 가 변경되면
+     
     postNum(newValue){
-      
+     
       if(newValue!=0){
         //새롭게 데이터 호출 
         this.callPostDetailData(newValue)
@@ -280,17 +286,20 @@ export default {
           this.isLikeLoading=false
         })
     },
+    //상세보기 닫음 
     closeDialog() {
-      this.$emit('postDetailClose', false); //상세보기 닫음 
+      this.$emit('postDetailClose', false); 
     },
+    //게시물 수정 컴포넌트를 열음 
     postEditOpen(){
       this.postEditDialog=true;
     },
+    //게시물 수정 컴포넌트를 닫음 
     postEditClose(){
       this.postEditDialog=false;
       
     },
-
+    //경고창 컴포넌트를 열음 
     openAlert(message,type){
 
     this.alertMessage=message //매개변수 메시지 값을 담음 ,자식컴포넌트에 전달
@@ -301,17 +310,20 @@ export default {
 
   closeAlert(isOk,type){//ok or no 변수 , 띄운 경고창의 타입 (비공개여부변경, 회원탈퇴 등)
         
-        //ok버튼을 클릭하였고 , 비공개 /공개 여부 변경 경고창 이면 (type에 따라)       
+        //ok버튼을 클릭하였고 , 타입이 게시글 삭제 타입이면      
         if (isOk&&type==='postDel') {
+          //로딩중이면 리턴 
           if(this.isLoading)return
           this.isLoading=true
+          //게시글 삭제 api 호출 
           api.delete('/post',{
             data:{
+              //게시물 번호 
               postNum:this.postNum
             }
           })
           .then(()=>{
-         
+            //삭제후 이벤트 버스를 통해 이벤트 전파 ==> 유저피드 포스트리스트 데이터 리로드
             alert('성공적으로 삭제가 완료되었습니다.')
             eventBus.emit('resetPostList');
           })
@@ -482,4 +494,3 @@ cursor: pointer;
   color:antiquewhite
 }
 </style>
-@/eventBus.js
