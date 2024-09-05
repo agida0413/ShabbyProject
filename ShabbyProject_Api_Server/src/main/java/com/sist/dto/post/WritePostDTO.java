@@ -20,4 +20,10 @@ public String onlyMeState;  //나만보기 상태
 private int idNum; //회원고유번호 
 private int postNum; //게시물 고유번호
 
+
+//삭제작업시 삭제이미지 배열 
+private List<String> removeImgList;
+//이미지가 아예없는 경우를 리턴시키기위해 url리스트를 받아옴 
+private List<String> checkimgNull;
+
 }

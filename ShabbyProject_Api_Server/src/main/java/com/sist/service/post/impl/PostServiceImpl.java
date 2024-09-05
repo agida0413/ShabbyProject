@@ -45,51 +45,17 @@ public class PostServiceImpl implements PostService {
     	}
     	
     	List<MultipartFile> imgList = dto.getImgList(); // 업로드할 이미지 리스트
-        List<String> imgUrList = new ArrayList<>(); // 업로드된 이미지의 URL을 저장할 리스트
-
-        // S3 업로드 시작
-        		
-        try {
-        	   for (MultipartFile image : imgList) {
-                 
-                   String imgUrl = imageService.upload(image); //하나씩 꺼내와서 이미지 업로드==>s3에서 반환받은 url 값 저장
-                   imgUrList.add(imgUrl); // 업로드된 이미지를 url리스트에 URL 추가
-               }
-        
-		} catch (BadRequestException e) {
-			// TODO: handle exception
-			 if (!imgUrList.isEmpty()) {
-			        // 업로드된 이미지가 있을 경우, 필요한 추가 처리 (이미지 삭제)
-			        removeImageToRollback(imgUrList);
-			    }
-			throw new BadRequestException(e.getMessage());
-		}
-        catch (InternerException e) {
-			// TODO: handle exception
-        	 if (!imgUrList.isEmpty()) {
-        	        // 업로드된 이미지가 있을 경우, 필요한 추가 처리 ( 이미지 삭제)
-        	        removeImageToRollback(imgUrList);
-        	    }
-        	throw new InternerException(e.getMessage(), e.getServerErrorMsg());
-		}
-        catch (Exception e) {
-			// TODO: handle exception
-        	 if (!imgUrList.isEmpty()) {
-        	        // 업로드된 이미지가 있을 경우, 필요한 추가 처리 (예: 이미지 삭제)
-        	        removeImageToRollback(imgUrList);
-        	    }
-        	 throw new InternerException("예기치 않은 오류 발생","이미지 ");
-        	
-		}
-        		
-        		// request로 받은 img파일 리스트
-         
-      
+       
+    	List<String> imgUrList = uploadImage(imgList); // 업로드된 이미지의 URL을 저장할 리스트
+     
+    	 
 
         // 데이터베이스 저장
         try {
             int idNum = SimpleCodeGet.getIdNum(); // 현재 세션의 ID 가져오기
             dto.setIdNum(idNum); // 게시물 DTO에 ID 설정
+            //만약 공백제거 ""면 null
+          
             setPostState(dto); // 게시물 상태 설정
 
             // 게시물 테이블에 데이터 저장
@@ -104,7 +70,7 @@ public class PostServiceImpl implements PostService {
             postRepository.postImgInsert(dto);
 
         } catch (Exception e) {
-            removeImageToRollback(imgUrList); // 데이터베이스 오류 발생 시 이미지 삭제 및 롤백
+            removeImage(imgUrList); // 데이터베이스 오류 발생 시 이미지 삭제 및 롤백
         }
 
         // 성공적으로 처리된 경우 HTTP 200 OK 응답 반환
@@ -204,20 +170,102 @@ public class PostServiceImpl implements PostService {
 		//현재 로그인 회원 고유번호 
 		int idNum=SimpleCodeGet.getIdNum();
 		dto.setIdNum(idNum);
-		//게시물 번
+		//게시물 번호
 		int postNum=dto.getPostNum();
+		//해당 게시물에 해당하는 사진 리스트를 가져옴
 		List<String> imgUrlList=postRepository.postImgListByPostNum(postNum);
-		postRepository.postDelete(dto);
+		//게시물 등록시 필히 사진을 1장이상 등록하기 때문에 만약 사진리스트가 비어있으면 예외처리
+		if(imgUrlList.size()==0) {
+			throw new InternerException("서버내부오류로 게시물삭제에 실패하였습니다.", "게시물 삭제중 이미지 리스트가 비어있음");
+		}
+		
 		//단순히 게시물 번호를 받아 레코드를 삭제할 수 있지만 , 혹시모를 위험에 대비하여 where절에 id넘버를 줘서 조건을 주면
 		//본인이 작성한 게시물만 삭제할 수 있게 제한을 둘수 있고 , 이상현상을 막을 수 있다 판단하여 회원고유번호를 준다.
+		postRepository.postDelete(dto);
+		
 		
 		//s3 이미지 삭제 == > 삭제 실패시 예외발생으로 어차피 데이터베이스는 롤백된다. 
-		removeImageToRollback(imgUrlList);
+		removeImage(imgUrlList);
 		
 		// 성공적으로 처리된 경우 HTTP 200 OK 응답 반환
         return new ResponseEntity<ResponseDTO<Void>>
         (new ResponseDTO<Void>(), HttpStatus.OK);
 	}
+	
+	//게시물 수정 서비스 
+	@Override
+	@Transactional
+	public ResponseEntity<ResponseDTO<Void>> postUpdate(WritePostDTO dto) {
+		// TODO Auto-generated method stub
+		
+	//수정할려는 작업에 사진이 없는경우 validation	
+	if(dto.getCheckimgNull()==null || dto.getCheckimgNull().size()==0) {
+		throw new BadRequestException("사진은 한장이상 첨부해야합니다.");
+	}
+	
+	//회원 고유번호 	
+	int idNum=SimpleCodeGet.getIdNum();
+	dto.setIdNum(idNum);
+	
+	//만약 수정작업시 삭제할 이미지 리스트가 존재하면==>클라이언트에서 기존 이미지를 x버튼을 통해 지운상태로 넘겼다 .
+	//removeImgList는 클라이언트에서 삭제한 이미지들의 리스트 
+	if(dto.getRemoveImgList().size()!=0) {
+		//기존 데이터베이스에서 해당하는 게시물번호와 URL 이름으로 삭제 (URL은 고유하다)
+		postRepository.deleteOriginalImg(dto);
+		//s3 이미지 삭제 
+		removeImage(dto.getRemoveImgList());
+	}
+	
+	//만약 수정시에 새롭게 추가한 이미지가 있다면 
+	if(dto.getImgList()!=null&&dto.getImgList().size()!=0) {
+		//변경,추가 된사진 s3 업로드 
+		List<MultipartFile> imgList = dto.getImgList(); // 업로드할 이미지 리스트
+    	List<String> imgUrList = uploadImage(imgList); // 업로드된 이미지의 URL을 저장할 리스트
+    	
+    	//반환받은 url 리스트 세팅 
+    	dto.setImgUrlList(imgUrList);
+    	
+    	try {
+    		//새롭게 추가된 이미지 데이터베이스 저장 
+			postRepository.postImgInsert(dto);
+		} catch (Exception e) {
+			// TODO: handle exception
+			//데이터베이스 저장중 예외 발생시 s3 다시 삭제 
+			removeImage(imgUrList);
+		}
+	}
+	
+	
+	//기존 관심사 삭제 
+	postRepository.deleteOriginalHobby(dto);
+	//기존 회원태그 삭제
+	postRepository.deleteOriginalMemTag(dto);
+	
+	//만약 클라이언트로부터 새롭게 받은 관심사리스트가 비어있지않다면
+	//새로운 관심사 인서트 
+	if(dto.getHobbyList().size()!=0) {
+		postRepository.hobbyInsert(dto);
+	}
+	//만약 클라이언트로부터 새롭게 받은 맴버태그 리스트가 비어있지않다면
+	//새로운 맴버태그 인서트 
+	if(dto.getFollowTagList().size()!=0) {
+		postRepository.followTagInsert(dto);
+	}
+	
+
+	//게시물 테이블을 업데이트 할 정보 세팅 
+	// 내용 null처리 , boolean값으로 받은(체크박스로 받은) 나만보기 여부 String타입으로 전환 
+	setPostState(dto);
+	
+	//게시물  테이블 업데이트 
+	postRepository.postInformUpdate(dto);
+	
+	
+		// 성공적으로 처리된 경우 HTTP 200 OK 응답 반환
+	    return new ResponseEntity<ResponseDTO<Void>>
+	    (new ResponseDTO<Void>(), HttpStatus.OK);
+	}
+
 	
 	//게시물 좋아요 작업 
 	@Override
@@ -261,7 +309,7 @@ public class PostServiceImpl implements PostService {
     private void setPostState(WritePostDTO dto) {
      
         dto.setOnlyMeState(dto.isOnlyMe() ? "ONLYME" : "NOTONLYME"); // 나만 보기 설정
-        if (dto.getContent().isEmpty()) {
+        if (dto.getContent().trim().isEmpty()) {
             dto.setContent(null); // 게시물 내용이 비어있으면 null로 설정
         }
     }
@@ -281,8 +329,8 @@ public class PostServiceImpl implements PostService {
   }
      
      
-  //데이터베이스 작업 중 오류 발생 시, 업로드된 이미지를 삭제하고 예외를 던짐
-    private void removeImageToRollback(List<String> imgUrList) {
+  //s3이미지 삭제
+    private void removeImage(List<String> imgUrList) {
     		
     	try {
     		 for (String imgUrl : imgUrList) {
@@ -301,7 +349,52 @@ public class PostServiceImpl implements PostService {
            
       
     }
+    
+    private List<String>  uploadImage(List<MultipartFile> imgList) {
+    	 List<String> imgUrList = new ArrayList<>(); // 업로드된 이미지의 URL을 저장할 리스트
+    	 
+    	  // S3 업로드 시작
+         try {
+         	   for (MultipartFile image : imgList) {
+                  
+                    String imgUrl = imageService.upload(image); //하나씩 꺼내와서 이미지 업로드==>s3에서 반환받은 url 값 저장
+                    imgUrList.add(imgUrl); // 업로드된 이미지를 url리스트에 URL 추가
+                }
+         
+ 		} catch (BadRequestException e) {
+ 			// TODO: handle exception
+ 			 if (!imgUrList.isEmpty()) {
+ 			        // 업로드된 이미지가 있을 경우, 필요한 추가 처리 (이미지 삭제)
+ 			        removeImage(imgUrList);
+ 			    }
+ 			throw new BadRequestException(e.getMessage());
+ 		}
+         catch (InternerException e) {
+ 			// TODO: handle exception
+         	 if (!imgUrList.isEmpty()) {
+         	        // 업로드된 이미지가 있을 경우, 필요한 추가 처리 ( 이미지 삭제)
+         	        removeImage(imgUrList);
+         	    }
+         	throw new InternerException(e.getMessage(), e.getServerErrorMsg());
+ 		}
+         catch (Exception e) {
+ 			// TODO: handle exception
+         	 if (!imgUrList.isEmpty()) {
+         	        // 업로드된 이미지가 있을 경우, 필요한 추가 처리 (예: 이미지 삭제)
+         	        removeImage(imgUrList);
+         	    }
+         	 throw new InternerException("예기치 않은 오류 발생","이미지 삭제중오류 ");
+         	
+ 		}
+        
+         
+         return imgUrList;
+    }
 
+
+
+
+	
 
 
 

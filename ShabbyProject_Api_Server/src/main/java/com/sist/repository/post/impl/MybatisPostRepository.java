@@ -77,16 +77,44 @@ public class MybatisPostRepository implements PostRepository {
 		// TODO Auto-generated method stub
 		return postMapper.afterDoPostLike(postNum);
 	}
+	//게시물 삭제 
 	@Override
 	public void postDelete(PostDelDTO dto) {
 		// TODO Auto-generated method stub
 		postMapper.postDelete(dto);
 	}
-
+	//게시물 번호 기반 이미지 리스트
 	@Override
 	public List<String> postImgListByPostNum(int postNum) {
 		// TODO Auto-generated method stub
 		return postMapper.postImgListByPostNum(postNum);
+	}
+	//게시물 수정관련 시작
+	
+	//내용,나만보기 기능 ,수정일 업데이트
+	@Override
+	public void postInformUpdate(WritePostDTO dto) {
+		// TODO Auto-generated method stub
+		postMapper.postInformUpdate(dto);
+		
+	}
+	//기존이미지 삭제
+	@Override
+	public void deleteOriginalImg(WritePostDTO dto) {
+		// TODO Auto-generated method stub
+		postMapper.deleteOriginalImg(dto);
+	}
+	//기존 관심사 삭제
+	@Override
+	public void deleteOriginalHobby(WritePostDTO dto) {
+		// TODO Auto-generated method stub
+		postMapper.deleteOriginalHobby(dto);
+	}
+	//기존 맴버태그 삭제
+	@Override
+	public void deleteOriginalMemTag(WritePostDTO dto) {
+		// TODO Auto-generated method stub
+		postMapper.deleteOriginalMemTag(dto);
 	}
 
 }

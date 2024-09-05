@@ -30,6 +30,17 @@ public interface PostMapper {
 	//게시물 삭제 
 	public void postDelete(PostDelDTO dto);
 	
+	//게시물 수정관련 시작 
+	
+	//내용, 나만보기기능,수정일 업데이트 
+	public void postInformUpdate(WritePostDTO dto);
+	//기존 이미지 삭제 
+	public void deleteOriginalImg(WritePostDTO dto);
+	//기존 관심사 삭제
+	public void deleteOriginalHobby(WritePostDTO dto);
+	//기존 맴버태그 삭제
+	public void deleteOriginalMemTag(WritePostDTO dto);
+	//게시물 수정관련 종료
 	
 	//postnum기반 이미지 리스트
 	public List<String> postImgListByPostNum(int postNum);
