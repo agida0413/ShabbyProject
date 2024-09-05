@@ -2,32 +2,19 @@
   <v-card-text>
     <div class="search-container">
       <v-text-field
-        :loading="loading"
+        
         append-inner-icon="mdi-magnify"
         density="compact"
         label="검색어를 입력하세요"
         variant="solo"
         hide-details
         single-line
-        @click:append="onClick"
-        @input="onInput"
-        v-model="query"
+
+        v-model="keyword"
       ></v-text-field>
 <v-divider></v-divider>
       <!-- 추천 목록이 검색바 아래에 자연스럽게 나타나도록 스타일 조정 -->
-      <v-list v-if="filteredSuggestions.length > 0" class="suggestions-list">
-        <v-list-item-group
-          v-for="(suggestion, index) in filteredSuggestions"
-          :key="index"
-          @click="selectSuggestion(suggestion)"
-        >
-          <v-list-item>
-            <v-list-item-content>
-              <v-list-item-title>{{ suggestion }}</v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-        </v-list-item-group>
-      </v-list>
+     <GlobalSearchBar :keyword="keyword" style="background-color: darkgrey;"></GlobalSearchBar>
     </div>
   </v-card-text>
 </template>
@@ -36,36 +23,17 @@
 export default {
   data() {
     return {
-      query: '',
-      loading: false,
-      suggestions: ['축구', '농구', '리그오브레전드', '카페', '공부'], // 추천 목록 예시
-      filteredSuggestions: [],
+      keyword:'',
+      loading: false
+      
     }
   },
 
   methods: {
-    onClick() {
-      this.loading = true;
-      setTimeout(() => {
-        this.loading = false;
-      }, 2000);
-    },
+    
 
-    onInput() {
-      const value = this.query; // v-model로 바인딩된 query 값을 사용합니다.
-      if (typeof value === 'string') {
-        this.filteredSuggestions = this.suggestions.filter(suggestion =>
-          suggestion.toLowerCase().includes(value.toLowerCase())
-        );
-      } else {
-        this.filteredSuggestions = [];
-      }
-    },
+    
 
-    selectSuggestion(suggestion) {
-      this.query = suggestion;
-      this.filteredSuggestions = [];
-    }
   }
 }
 </script>

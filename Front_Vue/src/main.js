@@ -7,7 +7,7 @@ import Footer from './components/common/layout/Footer.vue'
 import Header from './components/common/layout/Header.vue'
 import Sidemenu from './components/common/layout/Sidemenu.vue'
 import HobbySearchBar from './components/common/utill/HobbySearchBar.vue'
-
+import GlobalSearchBar from './components/common/utill/GlobalSearchBar.vue'
 /*
 문제 해결 기록 
 1. axios 를 이용해서 api를 호출하고 서버에서는 요청을 받아서 처리하고 있는데 , 해당 컴포넌트를 닫아서 unmount 된 상태이므로 , catch 블록에서 err.response 가 undefined여서 에러구문이 뜸
@@ -31,6 +31,7 @@ createApp(App)
 .component('Header', Header)
 .component('Sidemenu', Sidemenu)
 .component('HobbySearchBar',HobbySearchBar)
+.component('GlobalSearchBar',GlobalSearchBar)
 .use(router)
 .use(vuetify)
 .mount('#app');
