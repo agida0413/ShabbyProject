@@ -132,6 +132,7 @@
                     @selectHobby="selectHobby"
                     @enterNoSearch="enterNoSearchHobby"
                     @HbsearchLoading="hbsearchLoading"
+                      @closeSearch="closeSearch"
                     class="autocomplete-list"             
                   >
                   </HobbySearchBar>
@@ -171,6 +172,7 @@
                     :isAt="isAt"
                     @selectFollow="selectFollow"
                     @enterNoSearch="enterNoSearchFollow"
+                     @closeSearchFl="closeSearchFl"
                     class="fow-autocomplete-list"             
                   >
                   </FollowSearchBar>
@@ -196,7 +198,6 @@
 </template>
 
 <script>
-import FollowSearchBar from "@/components/common/utill/FollowSearchBar.vue";
 import api from "@/api";
 import eventBus from "@/eventBus"
 
@@ -300,6 +301,15 @@ watch:{
 },
 
 methods: {
+  closeSearch(){
+    this.searchHobby=''
+    this.isHashtag=false
+  },
+  closeSearchFl(){
+
+    this.searchFollow=''
+    this.isAt=false
+  },
   //부모요소(현재 컴포넌트) 에서 키다운이벤트 발생시 관심사 검색 컴포넌트에게 이벤트를 전달하기위함 
   
   handleHobbyKeyDown(event) {
@@ -498,6 +508,7 @@ removeImage(index) {//해당 인덱스를 받음
   },
     //자식에서 해당항목 엔터를 누를시 호출한 메서드
     selectHobby(hobby) {
+      console.log(hobby)
       //만약 현재 배열에 현재입력값이 존재하는지 확인
       hobby=hobby.replace(/#/g, '').trim()
       const exists = this.hobbiesRequest.some(hb => hb === hobby);
@@ -651,7 +662,7 @@ removeImage(index) {//해당 인덱스를 받음
 },
 components: {
   
-  FollowSearchBar
+  
 }
 }
 </script>

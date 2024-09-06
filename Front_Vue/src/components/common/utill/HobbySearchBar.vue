@@ -13,7 +13,7 @@
         :key="index"
         class="result-item"
         :class="{ selected: index === selectedIndex }"
-        @click="handleClick(result.hobby)"
+        @click.stop="handleClick(result.hobby)"
         @mouseover="handleMouseOver(index)"
         :ref="index === selectedIndex ? 'selectedItem' : null"
       >
@@ -64,8 +64,10 @@ export default {
     keyword: {
       
       handler(newKeyword) {
-        console.log('실행')
+      
+      
         if (newKeyword && this.isHashtag) {
+          
           this.page = 1; // 페이지 1로 초기화
           this.results = []; // 결과 배열 초기화
           this.selectedIndex = -1; // 선택된 인덱스 초기화
@@ -85,6 +87,7 @@ export default {
   },
   methods: {
     async fetchResults(keyword) {
+      console.log(keyword)
       if (this.isFetching || !this.isHashtag || this.isNomoreData) {
        
         return
@@ -102,10 +105,11 @@ export default {
       const sendKeyword = keyword.replace(/#/g, '').trim();
       
       if(sendKeyword===''||sendKeyword===null){
-        console.log(sendKeyword)
+        this.isFetching=false;
         return
       }
       //api 호출 
+     
        api.get(`/hobby/${sendKeyword}/${this.page}`)
        .then((res)=>{
         //성공시 
@@ -185,9 +189,11 @@ export default {
     //클릭이벤트
     handleClick(hobby) {
      
+     console.log(event)
       this.$emit('selectHobby', hobby); // 선택된 관심사 전달
     },
     handleMouseOver(index) {
+     
       this.previousIndex = this.selectedIndex; // 이전 인덱스 업데이트
       this.selectedIndex = index; // 현재 인덱스 업데이트
       this.scrollToSelectedItem(); // 선택된 항목으로 스크롤 이동
@@ -265,14 +271,21 @@ export default {
           }
         });
       }
+    },
+    handleClickOutside(event) {
+     
+     if (this.$refs.container && !this.$refs.container.contains(event.target)) {
+    
+      this.$emit('closeSearch')
+     }
     }
   },
   mounted() {
-    console.log('서치바마운트')
+    document.addEventListener('click', this.handleClickOutside.bind(this)); // bind(this) 추가
     this.initObserver();
   },
   beforeUnmount() {
-    console.log('서치바언마운트')
+    document.removeEventListener('click', this.handleClickOutside.bind(this)); // bind(this) 추가
     if (this.observer) {
 
       this.observer.disconnect();

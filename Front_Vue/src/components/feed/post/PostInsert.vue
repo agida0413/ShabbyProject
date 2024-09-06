@@ -128,12 +128,11 @@
                 <v-col cols="12" class="autocomplete-container">
                   <v-textarea
                     label="관심사 (#을 통해 태그할 수 있습니다.)"
-             
                     rows="1"
                     variant="filled"
                     auto-grow
                     shaped
-                    @input=" checkIsHashTag"
+                    @input="checkIsHashTag"
                     @keydown=" handleHobbyKeyDown"
                     v-model="searchHobby"
                     class="autocomplete-input"
@@ -149,6 +148,7 @@
                     :isHashtag="isHashtag"
                     @selectHobby="selectHobby"
                     @enterNoSearch="enterNoSearchHobby"
+                    @closeSearch="closeSearch"
                     class="autocomplete-list"             
                   >
                   </HobbySearchBar>
@@ -186,8 +186,10 @@
                     ref="followSearchBar"
                     :keyword="searchFollow"
                     :isAt="isAt"
+                    @closeSearchFl="closeSearchFl"
                     @selectFollow="selectFollow"
                     @enterNoSearch="enterNoSearchFollow"
+
                     class="fow-autocomplete-list"             
                   >
                   </FollowSearchBar>
@@ -214,8 +216,7 @@
 
 <script>
 
-import HobbySearchBar from "@/components/common/utill/HobbySearchBar.vue"
-import FollowSearchBar from "@/components/common/utill/FollowSearchBar.vue";
+
 import api from "@/api";
 import eventBus from "@/eventBus"
 export default {
@@ -256,6 +257,15 @@ computed: {
   }
 },
 methods: {
+  closeSearch(){
+    this.searchHobby=''
+    this.isHashtag=false
+  },
+  closeSearchFl(){
+
+    this.searchFollow=''
+    this.isAt=false
+  },
   //부모요소(현재 컴포넌트) 에서 키다운이벤트 발생시 관심사 검색 컴포넌트에게 이벤트를 전달하기위함 
   handleHobbyKeyDown(event) {
 
@@ -438,13 +448,18 @@ removeImage(index) {//해당 인덱스를 받음
     this.currentPage = this.images.length - 1; 
   }
 },
-  checkIsHashTag(){
+checkIsHashTag(){
     //#으로 시작하면 HobbySearchBar가 열림 
     this.isHashtag = this.searchHobby.startsWith('#');
-   if(this.searchHobby.replace(/#/g, '').replace(/\s+/g, '').length === 0){
+    
+   if(this.searchHobby.replace(/#/g, '').replace(/\s+/g, '').length === 0&&this.searchHobby!=='#'){
     this.isHashtag=false
     return
    }
+   if(this.searchHobby.replace(/#/g, '').replace(/\s+/g, '')==='#'){
+    return
+   }
+   
     //#으로 시작해서 공백으로 끝나고,#만입력한 경우가 아니면 관심사 태그목록배열에 자동추가
     //요약= > #테스트 하고 스페이스를 누르면 등록
     if(this.searchHobby.endsWith(' ')&&this.searchHobby.startsWith('#')&&this.searchHobby.length>1&&this.searchHobby.replace(/#/g, '').trim().length>0){
@@ -511,7 +526,6 @@ removeImage(index) {//해당 인덱스를 받음
   },
     //자식에서 해당항목 엔터를 누를시 호출한 메서드
     selectHobby(hobby) {
-      
       //만약 현재 배열에 현재입력값이 존재하는지 확인
        hobby=hobby.replace(/#/g, '').trim()
      
@@ -651,8 +665,7 @@ removeImage(index) {//해당 인덱스를 받음
  
 },
 components: {
-  HobbySearchBar,
-  FollowSearchBar
+  
 }
 }
 </script>

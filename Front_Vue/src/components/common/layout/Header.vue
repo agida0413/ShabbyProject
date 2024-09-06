@@ -8,13 +8,21 @@
         label="검색어를 입력하세요"
         variant="solo"
         hide-details
+        
         single-line
-
-        v-model="keyword"
+        @keydown="handleSearchKeyDown"
+       v-model="keyword"
+      
+       
       ></v-text-field>
 <v-divider></v-divider>
       <!-- 추천 목록이 검색바 아래에 자연스럽게 나타나도록 스타일 조정 -->
-     <GlobalSearchBar :keyword="keyword" style="background-color: darkgrey;"></GlobalSearchBar>
+     <GlobalSearchBar 
+     v-show="isSearchBarOpen"
+     @closeSearch="closeSearch"
+     :keyword="keyword"
+      style="background-color: white;"
+       ref="globalSearchBar"></GlobalSearchBar>
     </div>
   </v-card-text>
 </template>
@@ -24,14 +32,74 @@ export default {
   data() {
     return {
       keyword:'',
-      loading: false
+      loading: false,
+      isSearchBarOpen:false
       
     }
   },
-
+watch:{
+  keyword(keyword){
+   
+    if(keyword!==''){
+      console.log(keyword)
+      this.isSearchBarOpen=true
+    }
+  }
+},
   methods: {
-    
+    updateKeyword(value){
+      this.keyword=value
+    },
+    handleHobbyKeyDown(event) {
 
+switch(event.key) {
+  case 'ArrowDown'://아래방향키
+    this.handleHobbyArrowDown();
+    break;
+  case 'ArrowUp'://위방향키
+    this.handleHobbyArrowUp();
+    break;
+  case 'Enter'://엔터
+  event.preventDefault(); //기본 textarea시 줄바꿈되는 현상막기 위함  
+    this.handleHobbyEnter();
+    break;
+  default:
+    break;
+}
+},
+//부모요소(현재 컴포넌트) 에서 키다운이벤트 발생시 팔로우검색 컴포넌트에게 이벤트를 전달하기위함 
+handleSearchKeyDown(event) {
+switch(event.key) {
+  case 'ArrowDown'://아래 방향키 
+    this.handleSearchArrowDown();
+    break;
+  case 'ArrowUp'://위방향키
+    this.handleSearchArrowUp();
+    break;
+  case 'Enter'://엔터
+  event.preventDefault(); //기본 textarea시 줄바꿈되는 현상막기 위함  
+    this.handleSearchEnter();
+    break;
+  default:
+    break;
+}
+},
+//자식컴포넌트에게 ref(참조값) 에 해당하는 메소드로 전달 
+handleSearchArrowDown(){
+
+this.$refs.globalSearchBar.handleArrowDown();
+},
+handleSearchArrowUp(){
+this.$refs.globalSearchBar.handleArrowUp();
+},
+handleSearchEnter(){
+this.$refs.globalSearchBar.handleEnter();
+},
+
+closeSearch(){
+ this.keyword=''
+this.isSearchBarOpen=false
+}
     
 
   }

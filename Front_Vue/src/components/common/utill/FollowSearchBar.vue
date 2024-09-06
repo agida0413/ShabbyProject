@@ -32,6 +32,7 @@ import api from "@/api";
 import debounce from 'lodash/debounce';
 
 export default {
+  name:'FollowSearchBar',
   props: {
     keyword: String,
     isAt: Boolean,
@@ -180,6 +181,7 @@ export default {
     //인덱스를통한 스크롤 조정
     scrollToSelectedItem() {
       const selectedItem = this.container?.querySelector('.selected'); // 선택된 항목 찾기
+      console.log(selectedItem)
       if (selectedItem && this.container) {
         const itemHeight = selectedItem.offsetHeight; // 항목의 높이
         const containerHeight = this.container.clientHeight; // 컨테이너의 높이
@@ -251,16 +253,25 @@ export default {
           }
         });
       }
+    },
+    handleClickOutside(event) {
+      
+     if (this.$refs.container && !this.$refs.container.contains(event.target)) {
+      console.log('컨테이너 외부 클릭')
+      this.$emit('closeSearchFl')
+     }
     }
+   
   },
   mounted() {
-    console.log('팔로우 서치바 마운트')
+    document.addEventListener('click', this.handleClickOutside.bind(this)); // bind(this) 추가
     this.initObserver(); // 컴포넌트가 마운트될 때 IntersectionObserver 초기화
   },
-  beforeUnmount() {
-    if (this.observer) {
+  beforeUnmount() { document.removeEventListener('click', this.handleClickOutside.bind(this)); // bind(this) 추가
+    if (this.observer) { 
       this.observer.unobserve(this.sentinel); // 컴포넌트 언마운트 시 IntersectionObserver 중지
     }
+    
   }
 };
 
