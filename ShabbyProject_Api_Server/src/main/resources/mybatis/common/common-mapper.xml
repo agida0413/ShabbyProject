@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- 피드관련-->
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+ <mapper namespace="com.sist.mapper.common.CommonMapper">
+ <select id="globalSearchList" parameterType="GlobalSearchDTO" resultType="GlobalSearchResultDTO">
+	SELECT nickname as result, 'member' as type,profile
+	FROM MEMBER 
+	WHERE nickname LIKE CONCAT('%',#{keyword},'%')
+	
+	UNION ALL
+	
+	SELECT hobby as result, 'hobby' as type,null as profile
+	FROM HOBBY
+	WHERE hobby LIKE CONCAT('%',#{keyword},'%') 
+	LIMIT #{rowSize} OFFSET #{startRow}
+ </select>
+ </mapper>
