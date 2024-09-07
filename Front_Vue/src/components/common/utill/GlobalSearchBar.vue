@@ -9,13 +9,13 @@
       @keydown.enter="handleEnter"
       tabindex="0"
     >
-      <ul  class="results-list" v-show="results.length" style="color: black;" >
+      <ul  class="results-list" v-show="results.length" style="color: black; " >
         <li
           v-for="(item, index) in results"
           :key="index"
           class="result-item"
           :class="{ selected: index === selectedIndex }"
-          @click="handleClick(item.result)"
+          @click.stop="handleClick(item.result)"
           @mouseover="handleMouseOver(index)"
           :ref="index === selectedIndex ? 'selectedItem' : null"
         >

@@ -402,8 +402,8 @@ methods: {
       img.onload = () => { // 이미지 로드 완료 시 실행되는 콜백
           const canvas = document.createElement('canvas'); // 캔버스 생성
           const ctx = canvas.getContext('2d'); // 2D 컨텍스트 가져옴
-          const width = 550; // 캔버스 너비 설정
-          const height = 500; // 캔버스 높이 설정
+          const width = 1024; // 캔버스 너비 설정
+          const height = 1024; // 캔버스 높이 설정
 
           canvas.width = width; // 캔버스 너비 설정
           canvas.height = height; // 캔버스 높이 설정

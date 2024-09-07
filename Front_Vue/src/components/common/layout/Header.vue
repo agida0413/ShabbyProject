@@ -1,27 +1,27 @@
 <template>
-  <v-card-text>
+  <v-card-text >
     <div class="search-container">
-      <v-text-field
-        
+      <v-text-field       
         append-inner-icon="mdi-magnify"
         density="compact"
         label="검색어를 입력하세요"
         variant="solo"
-        hide-details
-        
+        hide-details       
         single-line
         @keydown="handleSearchKeyDown"
-       v-model="keyword"
-      
-       
+        
+        v-model="keyword"     
+
       ></v-text-field>
+
+     
 <v-divider></v-divider>
       <!-- 추천 목록이 검색바 아래에 자연스럽게 나타나도록 스타일 조정 -->
      <GlobalSearchBar 
      v-show="isSearchBarOpen"
      @closeSearch="closeSearch"
      :keyword="keyword"
-      style="background-color: white;"
+        style="background-color: white; z-index: 1000000; pointer-events: auto;"
        ref="globalSearchBar"></GlobalSearchBar>
     </div>
   </v-card-text>
@@ -47,9 +47,7 @@ watch:{
   }
 },
   methods: {
-    updateKeyword(value){
-      this.keyword=value
-    },
+   
     handleHobbyKeyDown(event) {
 
 switch(event.key) {
@@ -114,20 +112,10 @@ this.isSearchBarOpen=false
 .v-text-field {
   width: 100%; /* 검색바가 컨테이너의 전체 너비를 차지하도록 설정 */
 }
-
-.suggestions-list {
-  
-  max-height: 200px;
-  overflow-y: auto; /* 세로 스크롤바가 필요할 때만 표시 */
-  background-color: white;
-  border: 1px solid #ccc; /* 추천 목록의 경계선 색상 */
-  border-top: none; /* 검색바와 추천 목록 사이의 경계선 제거 */
-  position: absolute;
-  top: 100%; /* 검색바 아래쪽에 위치하도록 설정 */
-  left: 0;
-  width: 100%; /* 검색바와 같은 너비를 가지도록 설정 */
-  z-index: 11; /* 검색바 위에 표시되도록 설정 */
+.test{
+  pointer-events: none;
 }
+
 
 .v-list-item {
   cursor: pointer;
