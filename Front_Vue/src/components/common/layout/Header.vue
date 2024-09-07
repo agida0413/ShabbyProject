@@ -1,12 +1,15 @@
 <template>
   <v-card-text >
-    <div class="search-container">
-      <v-text-field       
+    
+      
+      
+      <v-text-field    
+        :class="isSearchBarOpen?' globalaBarInSearch':''"
         append-inner-icon="mdi-magnify"
         density="compact"
         label="검색어를 입력하세요"
-        variant="solo"
-        hide-details       
+        hide-details
+       variant="solo"
         single-line
         @keydown="handleSearchKeyDown"
         
@@ -15,7 +18,7 @@
       ></v-text-field>
 
      
-<v-divider></v-divider>
+
       <!-- 추천 목록이 검색바 아래에 자연스럽게 나타나도록 스타일 조정 -->
      <GlobalSearchBar 
      v-show="isSearchBarOpen"
@@ -23,7 +26,7 @@
      :keyword="keyword"
         style="background-color: white; z-index: 1000000; pointer-events: auto;"
        ref="globalSearchBar"></GlobalSearchBar>
-    </div>
+   
   </v-card-text>
 </template>
 
@@ -105,10 +108,15 @@ this.isSearchBarOpen=false
 </script>
 
 <style scoped>
-.search-container {
-  position: relative; /* 검색바와 추천 목록이 서로 겹치지 않도록 위치 설정 */
+.globalaBar{
+  background-color: aliceblue;
+  
+  border-radius: 8px 8px 8px 8px 
 }
-
+.globalaBarInSearch{
+  background-color: aliceblue;
+  border-radius: 8px 8px 0 0
+}
 .v-text-field {
   width: 100%; /* 검색바가 컨테이너의 전체 너비를 차지하도록 설정 */
 }
@@ -124,4 +132,6 @@ this.isSearchBarOpen=false
 .v-list-item:hover {
   background-color: #f0f0f0; /* 추천 목록 아이템의 hover 색상 */
 }
+
+
 </style>

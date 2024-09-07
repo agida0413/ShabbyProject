@@ -1,13 +1,14 @@
-<template>
+<template >
   <div
     class="autocomplete-container"
+    style="border-radius: 0px 0px 8px 8px;"
     ref="container"
     @keydown.arrow-down="handleArrowDown"
     @keydown.arrow-up="handleArrowUp"
     @keydown.enter="handleEnter"
     tabindex="0"
   >
-    <ul v-show="results.length" class="results-list">
+    <ul v-show="results.length" class="results-list"  >
       <li
         v-for="(result, index) in results"
         :key="index"
@@ -46,7 +47,8 @@ export default {
       page: 1, // 페이지 번호
       observer: null, // IntersectionObserver 인스턴스
       firstCall:true,// 첫번째 페이지 로드인지에 대한 변수 
-      isNomoreData:false//더이상 로드할 데이터가 있는지에 대한 변수
+      isNomoreData:false,//더이상 로드할 데이터가 있는지에 대한 변수
+      previousKeyword:''
       
     };
   },
@@ -62,7 +64,7 @@ export default {
     keyword: {
       handler(newKeyword) {
       
-        if (newKeyword && this.isAt) {
+        if (newKeyword && this.isAt &&newKeyword!==this.previousKeyword) {
           this.page = 1; // 페이지 1로 초기화
           this.results = []; // 결과 배열 초기화
           this.selectedIndex = -1; // 선택된 인덱스 초기화
@@ -103,6 +105,7 @@ export default {
       //결과가 있으면 
       if (newFollows?.length) {
         this.results = [...this.results, ...newFollows]; // 기존 결과에 새로운 결과 추가
+        this.previousKeyword=this.keyword
       }
       else{ //결과가 없으면
         //페이지를 다시 원복시키고

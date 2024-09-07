@@ -6,6 +6,7 @@
     @keydown.arrow-up="handleArrowUp"
     @keydown.enter="handleEnter"
     tabindex="0"
+    style="border-radius: 0px 0px 8px 8px;"
   >
     <ul v-show="results.length" class="results-list">
       <li
@@ -48,7 +49,7 @@ export default {
       observer: null, // IntersectionObserver 인스턴스
       firstCall:true,// 첫번째 페이지 로드인지에 대한 변수 
       isNomoreData:false,//더이상 로드할 데이터가 있는지에 대한 변수.
-      mountLoading:false
+      previousKeyword:''
     };
   },
  
@@ -66,7 +67,7 @@ export default {
       handler(newKeyword) {
       
       
-        if (newKeyword && this.isHashtag) {
+        if (newKeyword && this.isHashtag && newKeyword!==this.previousKeyword) {
           
           this.page = 1; // 페이지 1로 초기화
           this.results = []; // 결과 배열 초기화
@@ -117,6 +118,7 @@ export default {
         //만약 결과값이 있으면 기존배열에 추가 
         if (newHobbies?.length) {
           this.results = [...this.results, ...newHobbies];
+          this.previousKeyword=this.keyword
         } else {
           //결과값이 없으면 증가시켰던 페이지를 원복시키고 , 로드할데이터가 없다는 변수 true
           this.page--;
