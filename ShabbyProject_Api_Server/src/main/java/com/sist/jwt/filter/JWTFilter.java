@@ -65,7 +65,7 @@ public class JWTFilter extends OncePerRequestFilter{
 	         			 HttpStatus.GONE.value(),
 	                      "만료된 인증입니다."
 	                  );
-	          	responseApi.set410esponse(response, responseApi, objectMapper);
+	          	responseApi.set410Response(response, responseApi, objectMapper);
 	          	return;
 	    	}
 	
@@ -78,7 +78,7 @@ public class JWTFilter extends OncePerRequestFilter{
 	         			 HttpStatus.UNAUTHORIZED.value(),
 	                      "비정상적인 접근입니다"
 	                  );
-	          	responseApi.set401esponse(response, responseApi, objectMapper);
+	          	responseApi.set401Response(response, responseApi, objectMapper);
 	          	return;
 	    	}
 	
