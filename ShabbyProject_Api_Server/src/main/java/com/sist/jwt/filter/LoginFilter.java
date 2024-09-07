@@ -17,11 +17,12 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.task.DelegatingSecurityContextAsyncTaskExecutor;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.util.StreamUtils;
+import org.springframework.util.StreamUtils;import org.springframework.web.bind.annotation.PathVariable;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sist.common.util.CookieUtil;
+import com.sist.common.util.PathVariableValidation;
 import com.sist.common.util.SimpleCodeGet;
 import com.sist.dto.api.ResponseDTO;
 import com.sist.jwt.JWTUtil;
@@ -66,6 +67,22 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
       String email=obtainUsername(request); //프론트엔드에서 username으로 formdata로 준값 읽기
       String password=obtainPassword(request); //프론트엔드에서 password로 formdata로 준값 읽기
       
+      //이메일 형식 VALIDATION
+      if(!PathVariableValidation.emailValService(email)) {
+    		ResponseDTO<Void> responseApi = new ResponseDTO<Void>(
+ 	       			 HttpStatus.METHOD_NOT_ALLOWED.value(),
+ 	                    "이메일 형식이 아닙니다."
+ 	                );
+ 	        	
+					try {
+						responseApi.set405Response(response, responseApi, objectMapper);
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				
+ 	       
+      }
 
       	//로그인을 위해  UsernamePasswordAuthenticationToken 에 정보를 담고 authenticate= > userdetailservice = > 인가 
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(email, password, Collections.emptyList());
@@ -111,7 +128,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         
         //성공시 응답
         ResponseDTO<Void> succesResponseApi = new ResponseDTO<Void>();
-    	succesResponseApi.setOkesponse(response, succesResponseApi, objectMapper);
+    	succesResponseApi.setOkResponse(response, succesResponseApi, objectMapper);
         return;
     	
        

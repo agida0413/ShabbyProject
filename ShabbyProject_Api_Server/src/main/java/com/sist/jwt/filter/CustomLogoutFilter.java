@@ -73,7 +73,7 @@ public class CustomLogoutFilter extends GenericFilterBean {
 	      	       			 HttpStatus.INTERNAL_SERVER_ERROR.value(),
 	      	                    "서버 내부오류입니다. 잠시 뒤 이용해주세요."
 	      	                );
-	      	        	responseApi.set401esponse(response, responseApi, objectMapper);
+	      	        	responseApi.set401Response(response, responseApi, objectMapper);
 	      	        	return;
 	      		}
 	        //만약 refresh토큰이 없을 경우 
@@ -85,7 +85,7 @@ public class CustomLogoutFilter extends GenericFilterBean {
 	       			 HttpStatus.UNAUTHORIZED.value(),
 	                    "비정상적인 접근입니다."
 	                );
-	        	responseApi.set401esponse(response, responseApi, objectMapper);
+	        	responseApi.set401Response(response, responseApi, objectMapper);
 	        	return;
 	        }
 	
@@ -102,7 +102,7 @@ public class CustomLogoutFilter extends GenericFilterBean {
 	          			 HttpStatus.UNAUTHORIZED.value(),
 	                       "만료된 인증입니다."
 	                   );
-	           	responseApi.set401esponse(response, responseApi, objectMapper);
+	           	responseApi.set401Response(response, responseApi, objectMapper);
 	        	return;
 	        }
 	
@@ -115,7 +115,7 @@ public class CustomLogoutFilter extends GenericFilterBean {
 	          			 HttpStatus.UNAUTHORIZED.value(),
 	                       "비정상적인 접근입니다."
 	                   );
-	           	responseApi.set401esponse(response, responseApi, objectMapper);
+	           	responseApi.set401Response(response, responseApi, objectMapper);
 	        	return;
 	        	
 	        }
@@ -130,7 +130,7 @@ public class CustomLogoutFilter extends GenericFilterBean {
 	          			 HttpStatus.UNAUTHORIZED.value(),
 	                       "비정상적인 접근입니다"
 	                   );
-	           	responseApi.set401esponse(response, responseApi, objectMapper);
+	           	responseApi.set401Response(response, responseApi, objectMapper);
 	           	return;
 	        }
 	
@@ -146,7 +146,7 @@ public class CustomLogoutFilter extends GenericFilterBean {
 	        
 	        //성공 응답값 
 	    	ResponseDTO<Void> succesResponseApi = new ResponseDTO<Void>();
-	    	succesResponseApi.setOkesponse(response, succesResponseApi, objectMapper);
+	    	succesResponseApi.setOkResponse(response, succesResponseApi, objectMapper);
 	        return;
     }
 }

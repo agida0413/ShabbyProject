@@ -76,7 +76,7 @@ public class ResponseDTO<T> {
            response.getWriter().write(objectMapper.writeValueAsString(responseApi));
          
     }
-    public void set401esponse(HttpServletResponse response,ResponseDTO<Void> responseApi,ObjectMapper objectMapper) throws JsonProcessingException, IOException {
+    public void set401Response(HttpServletResponse response,ResponseDTO<Void> responseApi,ObjectMapper objectMapper) throws JsonProcessingException, IOException {
   	  
     	
  	   response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);//401 응답코드 
@@ -85,7 +85,7 @@ public class ResponseDTO<T> {
       
     }
     
-    public void set403esponse(HttpServletResponse response,ResponseDTO<Void> responseApi,ObjectMapper objectMapper) throws JsonProcessingException, IOException {
+    public void set403Response(HttpServletResponse response,ResponseDTO<Void> responseApi,ObjectMapper objectMapper) throws JsonProcessingException, IOException {
     	  
     	
   	   response.setStatus(HttpServletResponse.SC_FORBIDDEN);//403 응답코드 
@@ -95,7 +95,7 @@ public class ResponseDTO<T> {
     }
     
     
-    public void set410esponse(HttpServletResponse response,ResponseDTO<Void> responseApi,ObjectMapper objectMapper) throws JsonProcessingException, IOException {
+    public void set410Response(HttpServletResponse response,ResponseDTO<Void> responseApi,ObjectMapper objectMapper) throws JsonProcessingException, IOException {
   	  
     	
    	   response.setStatus(HttpServletResponse.SC_GONE);//410 응답코드 ==> 리프레시 토큰 재발행시에만 사용예정
@@ -105,7 +105,7 @@ public class ResponseDTO<T> {
 		
         
    }
-    public void setOkesponse(HttpServletResponse response,ResponseDTO<Void> responseApi,ObjectMapper objectMapper) throws JsonProcessingException, IOException {
+    public void setOkResponse(HttpServletResponse response,ResponseDTO<Void> responseApi,ObjectMapper objectMapper) throws JsonProcessingException, IOException {
     	  
     	
     	   response.setStatus(HttpServletResponse.SC_OK);//200 응답코드 ==> 리프레시 토큰 재발행시에만 사용예정

@@ -38,7 +38,7 @@ public class S3ImageService implements ImageService{
 	
 	
 	 // 최대 파일 크기 5MB 변수
-    private static final long MAX_FILE_SIZE = 5* 1024 * 1024; 
+    private static final long MAX_FILE_SIZE = 4* 1024 * 1024; 
     private final S3Client s3Client;
 
     @Value("${s3.bucket}")
@@ -54,7 +54,12 @@ public class S3ImageService implements ImageService{
         if (image == null || image.isEmpty() || image.getOriginalFilename() == null) {
             throw new BadRequestException("파일이 비어있거나 이름이 없습니다.");
         }
-        validateFileSize(image);
+       
+        	validateFileSize(image);
+		
+		
+		
+        
         // 이미지 업로드 메서드 호출
         try {
             return uploadImageToS3(image);
@@ -101,6 +106,7 @@ public class S3ImageService implements ImageService{
 
     //파일크기 서버측 검증 (한번더 ) 1차 : 클라이언트 , 2차 : 게시물서비스 
     private void validateFileSize(MultipartFile file) {
+    	System.out.println(file.getSize());
         if (file.getSize() > MAX_FILE_SIZE) {
         	
             throw new BadRequestException("사진 파일의 용량이 너무 큽니다."); // 파일 크기 초과 오류 처리
