@@ -11,5 +11,5 @@ public class SearchResultMemberDTO {
 	private int followerAmount;
 	private int followingAmount;
 	private String hobby;
-	
+
 }

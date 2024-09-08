@@ -29,6 +29,12 @@ public class MybatisCommonRepository implements CommonRepository{
 		// TODO Auto-generated method stub
 		return commonMapper.globalSearchMember(dto);
 	}
+
+	@Override
+	public int searchMemberTotalPage(GlobalSearchDTO dto) {
+		// TODO Auto-generated method stub
+		return commonMapper.searchMemberTotalPage(dto);
+	}
 	
 	
 	

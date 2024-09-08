@@ -13,6 +13,7 @@ import com.sist.dto.api.ResponseDTO;
 import com.sist.dto.common.GlobalSearchDTO;
 import com.sist.dto.common.GlobalSearchResultDTO;
 import com.sist.dto.common.SearchResultMemberDTO;
+import com.sist.dto.common.SearchResultMemberListDTO;
 import com.sist.repository.common.CommonRepository;
 import com.sist.service.common.GlobalSearchService;
 
@@ -51,7 +52,7 @@ public class GlobalSearchServiceImpl implements GlobalSearchService{
 	}
 
 	@Override
-	public ResponseEntity<ResponseDTO<List<SearchResultMemberDTO>>> globalSearchMemberList(String keyword, int page) {
+	public ResponseEntity<ResponseDTO<SearchResultMemberListDTO>> globalSearchMemberList(String keyword, int page) {
 		// TODO Auto-generated method stub
 		if(!PathVariableValidation.keyWordValService(keyword)
 			||!PathVariableValidation.pageValidation(page)	)
@@ -61,16 +62,21 @@ public class GlobalSearchServiceImpl implements GlobalSearchService{
 		GlobalSearchDTO reqDto= new GlobalSearchDTO();
 		reqDto.setKeyword(keyword);
 		int idNum=SimpleCodeGet.getIdNum();
-		int rowSize=5;
+		int rowSize=10;
 		int offSet=SimpleCodeGet.getOffset(rowSize, page);
 		reqDto.setIdNum(idNum);
 		reqDto.setStartRow(offSet);
 		reqDto.setRowSize(rowSize);
 		
+		
+		SearchResultMemberListDTO resDto= new SearchResultMemberListDTO();
+		int totalPage=commonRepository.searchMemberTotalPage(reqDto);
 		List<SearchResultMemberDTO> list = commonRepository.globalSearchMember(reqDto);
 		
-		return new ResponseEntity<ResponseDTO<List<SearchResultMemberDTO>>>
-		(new ResponseDTO<List<SearchResultMemberDTO>>(list),HttpStatus.OK); //성공 
+		resDto.setList(list);
+		resDto.setTotalPage(totalPage);
+		return new ResponseEntity<ResponseDTO<SearchResultMemberListDTO>>
+		(new ResponseDTO<SearchResultMemberListDTO>(resDto),HttpStatus.OK); //성공 
 	}
 
 }

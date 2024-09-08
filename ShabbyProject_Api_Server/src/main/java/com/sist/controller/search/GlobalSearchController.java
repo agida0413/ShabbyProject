@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.sist.dto.api.ResponseDTO;
 import com.sist.dto.common.GlobalSearchResultDTO;
 import com.sist.dto.common.SearchResultMemberDTO;
+import com.sist.dto.common.SearchResultMemberListDTO;
 import com.sist.service.common.GlobalSearchService;
 
 import lombok.RequiredArgsConstructor;
@@ -31,7 +32,7 @@ public class GlobalSearchController {
 	}
 	
 	@GetMapping("/member/{page}")
-	public ResponseEntity<ResponseDTO<List<SearchResultMemberDTO>>> globalSearchMemberList(@RequestParam String keyword,@PathVariable int page){
+	public ResponseEntity<ResponseDTO<SearchResultMemberListDTO>> globalSearchMemberList(@RequestParam String keyword,@PathVariable int page){
 		//_ 키워드 데이터베이스 변환 필요
 		keyword=keyword.replace("_", "\\_");
 		return globalSearchService.globalSearchMemberList(keyword, page);
