@@ -1,8 +1,14 @@
 <template lang="">
 
-
-
-     <v-row>
+    <v-row v-if="!memberData.length&&!isLoading">
+        <v-col class="d-flex child-flex justify-center align-center" cols="12">
+        '{{ this.keyword }}' 에 해당하는 회원이 없습니다.
+        </v-col>
+      </v-row>
+      <v-row v-if="memberData.length">
+        <v-col style="opacity: 0.8;">'{{this.keyword}}'' &nbsp;와 관련된 회원</v-col>
+      </v-row>
+     <v-row v-if="memberData.length">
      <!--팔로잉 추천 목록-->
      <v-col cols="12" >
 
@@ -13,36 +19,39 @@
         <v-divider></v-divider>
       
     
-        <v-row  class="mt-1 mb-1 pa-2">
+        <v-row  class="mt-1 mb-1 pa-2" v-for="(member,index) in memberData" :key="index" >
            <v-col cols="2" style="text-align:center;">
         
-               <v-avatar
-                  image="https://tse2.mm.bing.net/th?id=OIP.kKqmVQKQfggQbuEborDDAAHaFa&pid=Api&P=0&h=220"
-                  size="80"
-                  class="avatar"
-               ></v-avatar>
+                  <v-avatar :image="member.profile" size="80" class="avatar"
+                    v-if="member.profile !== null" ></v-avatar>
+
+                    <v-avatar :image="require('@/assets/ikmyung.png')"  
+                     size="80" class="avatar" v-if="member.profile === null" ></v-avatar>
                             
 
           </v-col>
 
           <v-col cols="2" class="mt-5" >
-            <span class=" large-font" >agida0413ㄴㄴㄴㄴ</span>
+            <span class=" large-font" >{{member.nickname}}</span>
           </v-col>
           <v-col cols="2"  class="mt-5" style="text-align:center;">
-          <span class=" large-font">게시물 100</span>
+          <span class=" large-font">게시물 &nbsp;{{member.postCount}}</span>
           </v-col>
           <v-col cols="2"  class="mt-5" style="text-align:center;">
-          <span class=" large-font">팔로우 100</span>
+          <span class=" large-font">팔로우 {{member.followingAmount}}</span>
           </v-col>
           <v-col cols="2" class="mt-5" style="text-align:center;">
-          <span class=" large-font">팔로워 100 </span>
+          <span class=" large-font">팔로워 {{member.followerAmount}}</span>
           </v-col>
           <v-col cols="2" class="mt-5"  style="text-align:center;"> 
-            <span class=" large-font">
-            <v-chip >
-            #관심사
-            </v-chip>
-           
+            <span class=" large-font" v-if="member.hobby!==null">
+              <v-chip style="background-color: floralwhite;">
+              <span style="color:black;">  #{{member.hobby}}</span>
+              </v-chip>
+            
+          </span>
+          <span style="opacity:0.7;" v-if="member.hobby===null">
+            아직 관심사 없음
           </span>
           </v-col>
         
@@ -54,8 +63,9 @@
          <div class="text-center">
     <v-pagination
       v-model="page"
-      :length="15"
-      :total-visible="7"
+        :length="totalPage"
+      :total-visible=totalPage
+    
     ></v-pagination>
   </div>
       </v-list-item-content>
@@ -86,6 +96,9 @@ export default {
     type(){
     
       this.callMemberList()
+    },
+    page(){
+    this.callMemberList()
     }
   },
   mounted(){
@@ -95,7 +108,8 @@ export default {
         return{
            
            memberData:[],
-            page:1
+            page:1,
+            totalPage:1
         }
     },components:{
        
@@ -109,7 +123,9 @@ export default {
           }
         })
         .then((res)=>{
-          console.log(res?.data)
+        this.memberData=res?.data?.reqData?.list
+        this.totalPage=res?.data?.reqData?.totalPage
+        console.log(this.totalPage)
         })
         .catch((err)=>{
           alert(err?.response?.data?.message)

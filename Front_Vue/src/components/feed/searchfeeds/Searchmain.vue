@@ -3,10 +3,10 @@
       <v-tabs
       class="to-blackMode"
       fixed-tabs
-      
+      v-model="selectedTab"
     >
-      <v-tab @click="changeType('hobby')" >관심사 검색</v-tab>
-      <v-tab @click="changeType('member')" >사람 검색</v-tab>
+      <v-tab value="hobby" @click="changeType('hobby')" >관심사 검색</v-tab>
+      <v-tab value="member" @click="changeType('member')" >사람 검색</v-tab>
     </v-tabs>  
    
     </div>
@@ -34,10 +34,15 @@ export default {
     type:String,
     keyword:String
   },
-  
+  watch: {
+    type(newType) {
+      this.selectedTab = newType; // prop 변경 시 탭 업데이트
+    }
+  },
   data(){
 return{
-childType:''
+childType:'',
+selectedTab: this.type 
 }
   },
   methods:{
