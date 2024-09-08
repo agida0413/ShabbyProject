@@ -45,7 +45,14 @@
     ON p.post_num=mtSubQuery.post_num
     	</if>
     </if>
-    
+    <if test="feedState=='SEARCHFEED'">
+    INNER JOIN 
+    (
+		SELECT post_num FROM HOBBY
+		WHERE hobby LIKE  CONCAT('%',#{keyword},'%')
+	) searchSubQuery
+	ON p.post_num= searchSubQuery.post_num
+    </if>
   
    
     	<choose>
@@ -62,7 +69,7 @@
     			ORDER BY create_date DESC
     		</when>
     		
-    		<when test="feedState=='GLOBALFEED'">
+    		<when test="feedState=='GLOBALFEED'||feedState=='SEARCHFEED'">
     		WHERE 
     			p.id_num IN
     			(SELECT id_num FROM MEMBER
@@ -72,8 +79,11 @@
     			)
     			AND
     			onlyMe='NOTONLYME' 
+    			
     			ORDER BY create_date DESC
     		</when>
+    		
+    		
     		
     		<when test="feedState=='USERFEED'">
     		

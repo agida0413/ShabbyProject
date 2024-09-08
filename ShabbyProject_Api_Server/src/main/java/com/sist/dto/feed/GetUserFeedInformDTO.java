@@ -14,4 +14,5 @@ private boolean itsMe;//본인 확인 여부
 private String feedState;//글로벌 피드 or 메인피드
 private int sessionIdNum;//현재 로그인한 회원의 고유번호 
 private String type; //유저피드의 내 게시물(일반)인지  해당 유저가 태그당한 게시물인지
+private String keyword; //검색시 키워드
 }

@@ -14,26 +14,36 @@ import com.sist.dto.hobby.HobbyDTO;
 public final class PathVariableValidation {
 
 
-	
-		public static boolean hobbyListValService(List<String> hobbyList) {
-			for (String hobby : hobbyList) {
-				if(hobby.contains("#")||hobby.contains(",")||hobby.equals("")||hobby==null) {
-					return false;
-				}
-			}
-			
-			return true;
-		}
+	// `_`를 제외한 모든 특수 문자를 검증하는 메소드
+    public static boolean keyWordValService(String keyword) {
+        // 허용할 문자: 알파벳, 숫자, `_` 만
+    	   Pattern pattern = Pattern.compile("[^a-zA-Z0-9_가-힣]");
+
+     
+            // 특수 문자가 포함된 경우 false 반환
+            if (pattern.matcher(keyword).find()) {
+                return false;
+            }
+        
+
+        return true; // 모든 태그가 유효한 경우
+    }
 		
-		public static boolean tagListValService(List<String> tagList) {
-			for (String tag : tagList) {
-				if(tag.contains("@")||tag.contains(",")) {
-					return false;
-				}
-			}
-			
-			return true;
-		}
+		
+		// `_`를 제외한 모든 특수 문자를 검증하는 메소드
+	    public static boolean keyWordValService(List<String> keywordList) {
+	        // 허용할 문자: 알파벳, 숫자, `_` 만
+	        Pattern pattern = Pattern.compile("[^a-zA-Z0-9_가-힣]");
+
+	        for (String keyword : keywordList) {
+	            // 특수 문자가 포함된 경우 false 반환
+	            if (pattern.matcher(keyword).find()) {
+	                return false;
+	            }
+	        }
+
+	        return true; // 모든 태그가 유효한 경우
+	    }
 
 		public static boolean nickNameValService(String nickname) {
 			

@@ -9,13 +9,51 @@
  <select id="globalSearchList" parameterType="GlobalSearchDTO" resultType="GlobalSearchResultDTO">
 	SELECT nickname as result, 'member' as type,profile
 	FROM MEMBER 
-	WHERE nickname LIKE CONCAT('%',#{keyword},'%')
-	
+	WHERE (nickname LIKE CONCAT('%',#{keyword},'%')
+	OR phone =#{keyword})
+	AND NOT id_num=#{idNum}
 	UNION ALL
 	
-	SELECT hobby as result, 'hobby' as type,null as profile
+	SELECT DISTINCT hobby as result, 'hobby' as type,null as profile
 	FROM HOBBY
 	WHERE hobby LIKE CONCAT('%',#{keyword},'%') 
 	LIMIT #{rowSize} OFFSET #{startRow}
  </select>
+ 
+ 
+ 	<!-- 글로벌 검색을통한 회원 검색 -->
+<select id="globalSearchMember" parameterType="GlobalSearchDTO" resultType="SearchResultMemberDTO">
+	SELECT profile,nickname,
+	(
+	SELECT COUNT(*) FROM post
+	WHERE id_num=m.id_num
+		
+	)as postCount
+	,
+	(
+	SELECT COUNT(*) FROM FOLLOW 
+	WHERE following_id= m.id_num
+	AND 
+	approve='FOLLOWOK'
+	) as followerAmount,  <!-- 팔로워 수 -->
+	(
+	SELECT COUNT(*) FROM FOLLOW  
+	WHERE id_num= m.id_num
+	AND 
+	approve='FOLLOWOK'
+	) as followingAmount,  <!-- 팔로잉 수 -->
+	(
+     SELECT hobby 
+     FROM HOBBY
+     WHERE id_num = m.id_num
+     ORDER BY hb_num DESC
+     LIMIT 1
+    ) AS hobby  <!-- 가장 큰 hb_num을 가진 hobby를 가져옴 -->
+	FROM MEMBER m
+	WHERE m.nickname LIKE CONCAT('%',#{keyword},'%')
+	AND 
+	m.id_num != #{idNum}
+	LIMIT #{rowSize} OFFSET #{startRow}
+</select>
+ 
  </mapper>

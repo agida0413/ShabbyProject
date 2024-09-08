@@ -81,4 +81,7 @@
 		password=#{password}
 		where email=#{email}
 	</update>
+	
+	
+
  </mapper>

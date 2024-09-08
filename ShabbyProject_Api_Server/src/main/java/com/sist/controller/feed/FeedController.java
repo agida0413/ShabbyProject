@@ -112,5 +112,10 @@ public class FeedController {
 		
 		return feedService.loadGlobalFeedPostList(page);
 	}
+	@GetMapping("/search/{page}")
+	public ResponseEntity<ResponseDTO<List<PostListDTO>>> loadSearchPostList(@PathVariable int page,@RequestParam String keyword){
+		
+		return feedService.loadSearchFeedPostList(keyword, page);
+	}
 	
 }

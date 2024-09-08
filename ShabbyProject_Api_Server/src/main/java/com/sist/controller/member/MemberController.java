@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.sist.common.exception.BadRequestException;
+import com.sist.common.util.PathVariableValidation;
 import com.sist.dto.api.ResponseDTO;
 import com.sist.dto.follow.FollowSearchResultDTO;
 import com.sist.dto.member.EmailAuthDTO;
@@ -76,11 +78,20 @@ private final FollowService followService;
 	}
 	
 	
-	//키워드 ,페이지 , 행개수 를 pathvariable로 받아 현재 세션(로그인한 아이디) 기반 팔로잉 리스트 
-	@GetMapping("/following/{keyword}/{page}/{rowSize}")
-	public ResponseEntity<ResponseDTO<FollowSearchResultDTO>> followingByKeyword(@PathVariable String keyword,
+	//페이지 , 행개수 를 pathvariable로 받아 현재 세션(로그인한 아이디) 기반 팔로잉 리스트 
+	//키워드 -- 파람
+	@GetMapping("/following/{page}/{rowSize}")
+	public ResponseEntity<ResponseDTO<FollowSearchResultDTO>> followingByKeyword(@RequestParam String keyword,
 	@PathVariable int page,@PathVariable int rowSize){
-	
+		
+		//페이지, 행개수에 대한 validation 
+				if(!PathVariableValidation.pageValidation(page)
+				  ||!PathVariableValidation.pageValidation(rowSize)
+				  ||!PathVariableValidation.keyWordValService(keyword)
+				) {
+					throw new BadRequestException("유효하지 않은 입력입니다.");
+				}
+		
 		return  followService.followingBykeyword(keyword, page, rowSize);
 	}
 	
