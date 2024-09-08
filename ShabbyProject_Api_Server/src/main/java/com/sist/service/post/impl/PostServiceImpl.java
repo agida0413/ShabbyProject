@@ -39,8 +39,8 @@ public class PostServiceImpl implements PostService {
     @Transactional
     public ResponseEntity<ResponseDTO<Void>> postInsertTransaction(WritePostDTO dto)  {
     	//태그리스트 validation
-    	if(!PathVariableValidation.hobbyListValService(dto.getHobbyList()) ||
-    	   !PathVariableValidation.hobbyListValService(dto.getFollowTagList())) {
+    	if(!PathVariableValidation.keyWordValService(dto.getHobbyList()) ||
+    	   !PathVariableValidation.keyWordValService(dto.getFollowTagList())) {
     		throw new BadRequestException("태그에 포함되면 안되는 문자가 포함되어있습니다.('#','@',',')");
     	}
     	

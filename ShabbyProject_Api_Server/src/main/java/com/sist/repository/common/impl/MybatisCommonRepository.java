@@ -6,6 +6,8 @@ import org.springframework.stereotype.Repository;
 
 import com.sist.dto.common.GlobalSearchDTO;
 import com.sist.dto.common.GlobalSearchResultDTO;
+
+import com.sist.dto.common.SearchResultMemberDTO;
 import com.sist.mapper.common.CommonMapper;
 import com.sist.repository.common.CommonRepository;
 
@@ -21,5 +23,13 @@ public class MybatisCommonRepository implements CommonRepository{
 		// TODO Auto-generated method stub
 		return commonMapper.globalSearchList(dto);
 	}
+
+	@Override
+	public List<SearchResultMemberDTO> globalSearchMember(GlobalSearchDTO dto) {
+		// TODO Auto-generated method stub
+		return commonMapper.globalSearchMember(dto);
+	}
+	
+	
 	
 }

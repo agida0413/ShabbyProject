@@ -97,4 +97,5 @@ SELECT approve FROM FOLLOW
 WHERE follow_num=#{followNum}
 </select>
 
+
  </mapper>

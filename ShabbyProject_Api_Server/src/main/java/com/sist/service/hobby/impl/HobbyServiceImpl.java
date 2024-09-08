@@ -37,9 +37,7 @@ public class HobbyServiceImpl implements HobbyService {
 	public ResponseEntity<ResponseDTO<SearchHobbyListDTO>> findHobby(String keyword,int page) {
 		// TODO Auto-generated method stub
 		//데이터베이스에 보낼 객체 생성
-		if(!PathVariableValidation.pageValidation(page)) {
-			throw new BadRequestException("유효하지 않은 페이지 입니다.");
-		}
+		
 		
 		SearchHobbyDTO dto = new SearchHobbyDTO();
 		//offset 설정 - > 계산로직은 항상 동일하여 공통함수에서 계산
