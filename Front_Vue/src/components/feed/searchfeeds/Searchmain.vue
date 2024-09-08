@@ -1,49 +1,58 @@
 <template lang="">
     <div class="fixed-tabs" >
-       <Searchselect @hobby="selectSearchHobby()"
-                     @people="selectSearchpeople()"
-       ></Searchselect>
+      <v-tabs
+      class="to-blackMode"
+      fixed-tabs
+      
+    >
+      <v-tab @click="changeType('hobby')" >관심사 검색</v-tab>
+      <v-tab @click="changeType('member')" >사람 검색</v-tab>
+    </v-tabs>  
+   
     </div>
-    <SearchHobby v-show="isSearchHobby"></SearchHobby>
-    <Searchpeople v-show="isSearchPeople"></Searchpeople>
+   
+    <div style="margin-top:30px;">
+     
+      
+    <SearchHobby v-if="childType==='hobby'"
+    :keyword="keyword"
+    ></SearchHobby>
+    <Searchpeople v-if="childType==='member'"
+    :keyword="keyword"
+    :type="childType"
+    ></Searchpeople>
+    </div>
 </template>
 <script>
-import Searchselect from './Searchselect.vue'; //관심사 or 사람 검색 선택 컴포넌트
+
 import SearchHobby from './SearchHobby.vue';  //관심사 검색 컴포넌트
 import Searchpeople from './Searchpeople.vue'; //사람검색 컴포넌트 
 
 export default {
+  props:{
+    type:String,
+    keyword:String
+  },
+  
   data(){
 return{
-  isSearchHobby:true, //관심사
-  isSearchPeople:false //사람
+childType:''
 }
   },
   methods:{
-    selectSearchHobby(){ //관심사 검색을 여는 메소드
-      this.isSearchHobby=true;
-      this.isSearchPeople=false;
-    },
-    selectSearchpeople(){ //사람 검색을 여는 메소드 
-      this.isSearchHobby=false;
-      this.isSearchPeople=true;
-    }
+ changeType(type){
+  this.childType = type;
+ }
   },
     components:{
-        Searchselect,
+     
         SearchHobby,
         Searchpeople
     }
 }
 </script>
 <style scoped>
-.fixed-tabs {
-  position: fixed;
-  top:70px;
-  left: 257px;
-  right: 0;
 
-}
 
 .content {
   margin-top: 56px; /* 탭의 높이만큼 여백을 주어 콘텐츠가 겹치지 않도록 합니다. */

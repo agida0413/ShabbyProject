@@ -154,7 +154,7 @@ export default {
       this.$nextTick(() => {
        //ref sentinel을 참조
         const sentinel = this.$refs.sentinel;
-       console.log(sentinel)
+  
         if (sentinel) {
           this.observer = new IntersectionObserver((entries) => {
             //감지시

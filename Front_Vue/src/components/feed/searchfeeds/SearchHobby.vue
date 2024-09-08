@@ -1,53 +1,212 @@
 <template>
+    
+  <v-container>
+   
+        <v-progress-linear
+          color="cyan"
+          indeterminate
+          v-if="isLoading"
+         ></v-progress-linear>
+  
+      <v-row v-if="!postData.length&&!isLoading">
+        <v-col class="d-flex child-flex justify-center align-center" cols="12">
+        '{{ this.keyword }}' 와 관련된 게시물이 아직 없습니다.
+        </v-col>
+      </v-row>
+<v-row v-if="postData.length">
+  <v-col style="opacity: 0.8;">'{{this.keyword}}'' &nbsp;와 관련된 게시물</v-col>
+</v-row>
 
-<!--관심사 검색 피드-->
-<v-row style="margin-top: 10px;">
-    <!--게시글 순회시작-->
-    <v-col
-      v-for="n in 9"
-      :key="n"
-      class="d-flex child-flex"
-      cols="4"
-    >
-      <v-img
-        :lazy-src="`https://picsum.photos/10/6?image=${n * 5 + 10}`"
-        :src="`https://picsum.photos/500/300?image=${n * 5 + 10}`"
-        aspect-ratio="1"
-        class="image-container"
-        cover
+    <v-row v-if="postData.length">
+    
+      <!--게시글 순회시작-->
+      <v-col
+        v-for="(post,index) in postData" :key="index"
+        class="d-flex child-flex"
+        cols="4"
+      
       >
-        <template v-slot:placeholder>
-          <v-row
-            align="center"
-            class="fill-height ma-0"
-            justify="center"
-          >
-            <v-progress-circular
-              color="grey-lighten-5"
-              indeterminate
-            ></v-progress-circular>
-          </v-row>
-        </template>
-        <div class="overlay">
-          <v-icon class="overlay-icon">mdi-heart</v-icon>
-          123
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-          <v-icon class="overlay-icon">mdi-comment</v-icon>
-          123
-        </div>
-      </v-img>
-    </v-col>
+        <v-img 
+          :lazy-src="`https://picsum.photos/10/6?image=${n * 5 + 10}`"
+          :src="post.postImgUrl"
+          aspect-ratio="1"
+          class="image-container"
+          cover
+          @click="openPostDetailDialog(post.postNum)"
+        >
+          <template v-slot:placeholder>
+            <v-row
+              align="center"
+              class="fill-height ma-0"
+              justify="center"
+            >
+              <v-progress-circular
+                color="grey-lighten-5"
+                indeterminate
+              ></v-progress-circular>
+            </v-row>
+          </template>
+          
+          <div class="overlay">
+            <v-icon class="overlay-icon">mdi-heart</v-icon>
+            {{ post.likeCount }}
+          </div>
+        </v-img>
+      </v-col>
+      <!--순회 종료-->
+    </v-row>
 
-    <!--순회 종료-->
-  </v-row>
-  </template>
+  <div ref="sentinel" class="sentinel" ></div>
+
+  <PostDetail 
+   :value="postDetailDialog"
+   :postNum="sendPostNum"
+   @postDetailClose="closePostDetailDialog"
+   ></PostDetail>
+  
+  </v-container>
+  
+
+
+</template>
+
 <script>
-export default{
-  name:'SearchHobby'
+import api from '@/api';
+import PostDetail from '../post/PostDetail.vue';
+export default {
+  props:{
+    keyword:String
+  },
+  watch:{
+    keyword(newKeyword){
+      this.hobbyKeyword=newKeyword
+      this.postDetailDialog=false;
+      this.page=1
+      this.postData=[]
+      this.isLoading=false
+      this.observer=null
+      this.noMoreNeedData=false
+      this.firstCall=false
+      this.sendPostNum=0
+      this.callMainPostList()
+    }
+  },
+  data() {
+    return {
+      postDetailDialog:false, //게시물 상세 다이얼로그 
+      page:1, //페이지 
+      postData:[], //서버로부터 받을 게시물 데이터 
+      isLoading:false, // 로딩상태를 저장할  변수 
+      observer:null, //intersection observer 객체
+      noMoreNeedData:false, //더이상 로드할 데이터가 없다면 불필요한 api 호출을 방지하기 위한 변수 
+      firstCall:false ,//마운트시 첫번쨰 로드시 페이지 증가 x 위한 변수 
+      sendPostNum:0,// 상세보기 모달에 전달할 
+      hobbyKeyword:this.keyword
+    };
+    
+  },
+   // intersection observer 참조할 태그 ref
+   computed:{
+    sentinel() {
+      return this.$refs.sentinel;
+    }
+  },
+  components:{
+    PostDetail
+  },
+  //마운트시 
+  mounted(){
+    this.initObserver(); // IntersectionObserver 초기화
+   
+  },
+   // 컴포넌트 언마운트 시 옵저버 해제
+   beforeUnmount() {
+    if (this.observer) {
+      this.observer.disconnect(); 
+    }
+  },
+  methods:{
+    openPostDetailDialog(postNum){
+      this.sendPostNum=postNum
+      this.postDetailDialog=true;
+    },
+    closePostDetailDialog(){
+      this.sendPostNum=0;
+      this.postDetailDialog=false;
+    },
+    //메인피드의 게시물 리스트 불러오기 메서드 
+    callMainPostList(){
+      //만약 로딩중이거나 , 더이상 불러올 데이터가 없으면 리턴 
+      if(this.isLoading || this.noMoreNeedData)return
+      //데이터 불러오기 시작 
+      this.isLoading=true
+      //만약 첫번째 콜이라면 페이지 증가x 그외엔 증가 
+      if(this.firstCall){
+        this.page++;//페이지 증가
+      }
+      //처음 콜 이후엔 페이지 증가 위해 상태 변경 
+      this.firstCall=true
+      //게시물 정보 불러오기 api
+      console.log(this.hobbyKeyword)
+     api.get(`/feed/search/${this.page}`,{
+      params:{
+        keyword:this.hobbyKeyword
+      }
+     }) 
+     .then((res)=>{
+        //서버로 부터 받은 데이터 
+        const resData=res?.data?.reqData
+        //만약 데이터가 있다면 
+        if(resData.length){
+          //기존 데이터에 추가 
+          this.postData=[...this.postData,...resData]
+        }
+        else{
+          //데이터가 없다면 이제 더이상 데이터를 안불러와도 된다는 변수 및 페이지 원복 
+          this.noMoreNeedData=true;
+          this.page--;
+        }
 
+     })
+     .catch((err)=>{
+      alert(err?.response?.data?.message)
+     })
+     .finally(()=>{
+      //데이터 로딩 끝 
+      this.isLoading=false
+     })
+    },
+     //intersectionobserver 초기화 메서드
+     initObserver() {
+      this.$nextTick(() => {
+       //ref sentinel을 참조
+        const sentinel = this.$refs.sentinel;
+  
+        if (sentinel) {
+          this.observer = new IntersectionObserver((entries) => {
+            //감지시
+            entries.forEach(entry => {
+              if (entry.isIntersecting) {
+               
+                this.callMainPostList() // Sentinel이 뷰포트에 들어올 때 데이터 로드
+              }
+            });
+          }, {
+            root:null, // viewport를 root로 설정
+            rootMargin: '100px',
+            threshold: 0.1 
+          });
+          this.observer.observe(sentinel); // Sentinel 관찰 시작
+        }
+      });
+    }
+  }
 }
 </script>
-  <style>
+
+<style scoped>
+
+
 .image-container {
   position: relative;
   overflow: hidden;
@@ -83,4 +242,6 @@ export default{
   margin: 0 10px;
   cursor: default; /* 아이콘에 기본 커서 적용 */
 }
+
+
 </style>

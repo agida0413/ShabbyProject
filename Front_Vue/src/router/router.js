@@ -41,9 +41,13 @@ const routes = [
   }
   ,
   {
-    path: '/searchfeed',
+    path: '/searchfeed/:type/:keyword',
     name: 'searchfeed',
     component:Searchmain,
+    props: route => ({
+      type: route.params.type,
+      keyword: route.params.keyword
+    }), // URL 파라미터를 props로 전달
     meta: { requiresAuth: true }, // 인증이 필요한 라우터
    
   }

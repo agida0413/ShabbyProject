@@ -88,7 +88,14 @@ export default {
   },
   methods: {
     async fetchResults(keyword) {
-      console.log(keyword)
+      const sendKeyword = keyword.substring(1); // '@' 제거
+      if (sendKeyword.includes('#') ) return; // 아무 작업도 하지 않음
+         // 정규 표현식: `_`, 알파벳, 숫자, 한글만 허용
+         const forbiddenChars = /[^a-zA-Z0-9가-힣]/;
+
+          if (forbiddenChars.test(sendKeyword)) {
+            return
+          }
       if (this.isFetching || !this.isHashtag || this.isNomoreData) {
        
         return
@@ -102,8 +109,8 @@ export default {
        }
        //통과 하면 , 이제 더이상 첫번째 페이지로드가 아님 
        this.firstCall=false;
-      // 보낼 키워드 # 제거 
-      const sendKeyword = keyword.replace(/#/g, '').trim();
+     
+      
       
       if(sendKeyword===''||sendKeyword===null){
         this.isFetching=false;
@@ -111,7 +118,9 @@ export default {
       }
       //api 호출 
      
-       api.get(`/hobby/${sendKeyword}/${this.page}`)
+       api.get(`/hobby/${this.page}`,{
+        params:{keyword:sendKeyword}
+       })
        .then((res)=>{
         //성공시 
         const newHobbies = res?.data?.reqData?.findList;
@@ -137,7 +146,7 @@ export default {
     },//디바운싱
     debouncedFetchResults: debounce(function (keyword ) {
       this.fetchResults(keyword);// 디바운스 처리 후 fetchResults 호출
-    }, 150),
+    }, 300),
     // intersection observer에따른 무한스크롤 데이터 호출
     handleIntersection(entries) {
       entries.forEach((entry) => {
@@ -191,7 +200,7 @@ export default {
     //클릭이벤트
     handleClick(hobby) {
      
-     console.log(event)
+
       this.$emit('selectHobby', hobby); // 선택된 관심사 전달
     },
     handleMouseOver(index) {
@@ -298,7 +307,7 @@ export default {
 
 <style scoped>
 .selected {
-  background-color: black;
+  background-color: #888;
 }
 .results-list {
   margin: 0;
