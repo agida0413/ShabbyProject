@@ -116,6 +116,7 @@ export default {
   },
   //마운트시 
   mounted(){
+   
     this.initObserver(); // IntersectionObserver 초기화
    
   },

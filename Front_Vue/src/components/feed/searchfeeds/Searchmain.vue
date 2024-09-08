@@ -14,12 +14,13 @@
     <div style="margin-top:30px;">
      
       
-    <SearchHobby v-if="childType==='hobby'"
+    <SearchHobby v-if="type==='hobby'"
     :keyword="keyword"
+      :type="type"
     ></SearchHobby>
-    <Searchpeople v-if="childType==='member'"
+    <Searchpeople v-if="type==='member'"
     :keyword="keyword"
-    :type="childType"
+      :type="type"
     ></Searchpeople>
     </div>
 </template>
@@ -40,8 +41,11 @@ childType:''
 }
   },
   methods:{
- changeType(type){
-  this.childType = type;
+ changeType(newtype){
+  this.$router.push({
+      name: 'searchfeed',
+      params: { type: newtype, keyword: this.keyword }
+    });
  }
   },
     components:{
