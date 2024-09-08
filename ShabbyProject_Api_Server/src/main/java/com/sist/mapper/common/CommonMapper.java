@@ -14,4 +14,6 @@ public interface CommonMapper {
 	public List<GlobalSearchResultDTO> globalSearchList(GlobalSearchDTO dto);
 	
 	public List<SearchResultMemberDTO> globalSearchMember(GlobalSearchDTO dto);
+	
+	public int searchMemberTotalPage(GlobalSearchDTO dto);
 }

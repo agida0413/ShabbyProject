@@ -56,4 +56,10 @@
 	LIMIT #{rowSize} OFFSET #{startRow}
 </select>
  
+ <select id="searchMemberTotalPage" parameterType="GlobalSearchDTO" resultType="int">
+  SELECT CEIL(COUNT(*) / #{rowSize}) AS totalPage
+  FROM MEMBER
+  WHERE nickname LIKE CONCAT('%', #{keyword}, '%')
+  AND id_num != #{idNum};
+ </select>
  </mapper>
