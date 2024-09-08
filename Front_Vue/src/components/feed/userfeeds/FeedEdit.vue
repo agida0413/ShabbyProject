@@ -123,8 +123,7 @@ mounted() {
     .then((res)=>{
       this.introduce=res?.data?.reqData?.introduce
       this.originalIntroduce=res?.data?.reqData?.introduce
-      console.log(this.introduce)
-      console.log(this.originalIntroduce)
+    
 
     })
     .catch((err)=>{

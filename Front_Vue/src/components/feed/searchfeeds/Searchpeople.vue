@@ -1,37 +1,20 @@
 <template lang="">
+
+
+
      <v-row>
      <!--팔로잉 추천 목록-->
-     <v-col cols="6" style="border-right:2px white solid;">
+     <v-col cols="12" >
 
         <v-list lines="three"  class="to-blackMode">
     <v-list-item>
                                 
       <v-list-item-content>
         <v-divider></v-divider>
-        <v-row class="mt-1 mb-1">
-           <v-col cols="2">
-        
-               <v-avatar
-                  image="https://tse2.mm.bing.net/th?id=OIP.kKqmVQKQfggQbuEborDDAAHaFa&pid=Api&P=0&h=220"
-                  size="80"
-                  class="avatar"
-               ></v-avatar>
-                            
-
-          </v-col>
-
-          <v-col cols="6" class="mt-5">
-            <span class="large-font ">agida0413</span>
-          </v-col>
-          <v-col cols="4">
-            <v-btn color="primary" class="mt-5">FOLLOW</v-btn>
-          </v-col>
-        </v-row>
       
-        <!-- 순회부분 -->
-        <v-divider></v-divider>
-        <v-row  class="mt-1 mb-1">
-           <v-col cols="2">
+    
+        <v-row  class="mt-1 mb-1 pa-2">
+           <v-col cols="2" style="text-align:center;">
         
                <v-avatar
                   image="https://tse2.mm.bing.net/th?id=OIP.kKqmVQKQfggQbuEborDDAAHaFa&pid=Api&P=0&h=220"
@@ -42,93 +25,27 @@
 
           </v-col>
 
-          <v-col cols="6" class="mt-5" >
-            <span class=" large-font" >agida0413</span>
+          <v-col cols="2" class="mt-5" >
+            <span class=" large-font" >agida0413ㄴㄴㄴㄴ</span>
           </v-col>
-          <v-col cols="4">
-            <v-btn color="primary" class="mt-5">FOLLOW</v-btn>
+          <v-col cols="2"  class="mt-5" style="text-align:center;">
+          <span class=" large-font">게시물 100</span>
           </v-col>
-        </v-row>
+          <v-col cols="2"  class="mt-5" style="text-align:center;">
+          <span class=" large-font">팔로우 100</span>
+          </v-col>
+          <v-col cols="2" class="mt-5" style="text-align:center;">
+          <span class=" large-font">팔로워 100 </span>
+          </v-col>
+          <v-col cols="2" class="mt-5"  style="text-align:center;"> 
+            <span class=" large-font">
+            <v-chip >
+            #관심사
+            </v-chip>
+           
+          </span>
+          </v-col>
         
-        <v-divider></v-divider>
-        <v-row  class="mt-1 mb-1">
-           <v-col cols="2">
-        
-               <v-avatar
-                  image="https://tse2.mm.bing.net/th?id=OIP.kKqmVQKQfggQbuEborDDAAHaFa&pid=Api&P=0&h=220"
-                  size="80"
-                  class="avatar"
-               ></v-avatar>
-                            
-
-          </v-col>
-
-          <v-col cols="6" class="mt-5" >
-            <span class=" large-font" >agida0413</span>
-          </v-col>
-          <v-col cols="4">
-            <v-btn color="primary" class="mt-5">FOLLOW</v-btn>
-          </v-col>
-        </v-row>
-        <v-divider></v-divider>
-        <v-row  class="mt-1 mb-1">
-           <v-col cols="2">
-        
-               <v-avatar
-                  image="https://tse2.mm.bing.net/th?id=OIP.kKqmVQKQfggQbuEborDDAAHaFa&pid=Api&P=0&h=220"
-                  size="80"
-                  class="avatar"
-               ></v-avatar>
-                            
-
-          </v-col>
-
-          <v-col cols="6" class="mt-5" >
-            <span class=" large-font" >agida0413</span>
-          </v-col>
-          <v-col cols="4">
-            <v-btn color="primary" class="mt-5">FOLLOW</v-btn>
-          </v-col>
-        </v-row>
-        <v-divider></v-divider>
-        <v-row  class="mt-1 mb-1">
-           <v-col cols="2">
-        
-               <v-avatar
-                  image="https://tse2.mm.bing.net/th?id=OIP.kKqmVQKQfggQbuEborDDAAHaFa&pid=Api&P=0&h=220"
-                  size="80"
-                  class="avatar"
-               ></v-avatar>
-                            
-
-          </v-col>
-
-          <v-col cols="6" class="mt-5" >
-            <span class=" large-font" >agida0413</span>
-          </v-col>
-          <v-col cols="4">
-            <v-btn color="primary" class="mt-5">FOLLOW</v-btn>
-          </v-col>
-        </v-row>
-        <v-divider></v-divider>
-        <v-row  class="mt-1 mb-1">
-           <v-col cols="2">
-        
-               <v-avatar
-                  image="https://tse2.mm.bing.net/th?id=OIP.kKqmVQKQfggQbuEborDDAAHaFa&pid=Api&P=0&h=220"
-                  size="80"
-                  class="avatar"
-               ></v-avatar>
-                            
-
-          </v-col>
-
-          <v-col cols="6" class="mt-5" >
-            <span class=" large-font" >agida0413</span>
-          </v-col>
-          <v-col cols="4">
-            <v-btn color="primary" class="mt-5">FOLLOW</v-btn>
-          </v-col>
         </v-row>
 
 
@@ -147,122 +64,58 @@
         
      </v-col>
     
-     <!--미리보기-->
-     <v-col cols="6"   >
-        <!--프로필사진 -->
-        <v-row> 
-            
-            <div class="avatar-wrapper ">
-                         <v-avatar
-                               image="https://tse2.mm.bing.net/th?id=OIP.kKqmVQKQfggQbuEborDDAAHaFa&pid=Api&P=0&h=220"
-                               size="300"
-                               class="avatar"
-                         ></v-avatar>
-              
-               </div>
-                      
-                           
-          </v-row>
-          <v-row>
-            <v-col cols="2" class="mt-16" style="margin-left:225px">
-                                게시물 0
-                            </v-col>    
-
-
-                            <v-col cols="2" class="isHover mt-16" @click="flwListDialogOpen('팔로워')">
-                                팔로워 0
-                            </v-col>      
-
-
-                            <v-col cols="2" class="isHover mt-16" @click="flwListDialogOpen('팔로잉')">
-                            팔로잉 0
-                            </v-col>   
-
-          </v-row>
-          <v-row >
-            <v-col style="margin-left:360px">
-            닉네임
-            </v-col>
-          
-        </v-row>
-
-        <v-row>
-            <v-card
-               class="mx-auto to-blackMode"
-               elevation="16"
-               style="width:600px; height:200px"
-                                 
-
-                 >
-                    <v-card-item>
-                     <v-card-title>
-                                자기소개
-                      </v-card-title>
-
-                         
-                     </v-card-item>
-
-                         <v-card-text>
-                           아직 작성된 소개글이 없습니다.
-                         </v-card-text>
-             </v-card>
-         </v-row>
-                         
-
-         <v-row>
-            <v-card
-               class="mx-auto to-blackMode mt-4"
-               elevation="16"
-               style="width:600px; height:100px"
-                                 
-
-                 >
-                    <v-card-item>
-                     <v-card-title>
-                                관심사
-                      </v-card-title>
-
-                         
-                     </v-card-item>
-
-                         <v-card-text>
-                           
-                         </v-card-text>
-             </v-card>
-         </v-row>
-                          
-
-     </v-col>
       
     </v-row>
 
-    <FlwListComponent v-model:value="flwListDialog"
-     v-bind:flwType="this.flwType"
-   @flwListClose="flwListDialogClose()"></FlwListComponent>
+   
          
 
 </template>
 <script>
-import FlwListComponent from "../userfeeds/Flwlist.vue"
+
+import api from '@/api';
 export default {
+  props:{
+    keyword:String,
+    type:String 
+  },
+  watch:{
+    keyword(){
+      this.callMemberList()
+    },
+    type(){
+    
+      this.callMemberList()
+    }
+  },
+  mounted(){
+    this.callMemberList()
+  },
     data(){
         return{
-            flwListDialog:false, //팔로우/팔로잉 목록 모달 제어값
-            flwType:'', //팔로우 ? 팔로잉? 
+           
+           memberData:[],
             page:1
         }
     },components:{
-        FlwListComponent
+       
     },
     methods:{
-        flwListDialogOpen(str){  //팔로워, 팔로잉 각각 버튼클릭시 str로 매개변수 받아와 flwType을 초기화 
-                              //= > flwList 컴포넌트 하나로 운영 (str 전달- > 팔로잉 목록 or 팔로우 목록)
-          this.flwType=str   
-          this.flwListDialog=true; //모달 열음 
-     },
-     flwListDialogClose(){   //팔로우,팔로잉 목록닫음
-          this.flwListDialog=false;
-     }
+      callMemberList(){
+        
+        api.get(`/search/member/${this.page}`,{
+          params:{
+          keyword:this.keyword
+          }
+        })
+        .then((res)=>{
+          console.log(res?.data)
+        })
+        .catch((err)=>{
+          alert(err?.response?.data?.message)
+        })
+        
+      }
     }
 }
 </script>

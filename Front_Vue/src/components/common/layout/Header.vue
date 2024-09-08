@@ -22,6 +22,8 @@
       <!-- 추천 목록이 검색바 아래에 자연스럽게 나타나도록 스타일 조정 -->
      <GlobalSearchBar 
      v-show="isSearchBarOpen"
+     @searchHobby="searchHobby"
+     @searchMember="searchMember"
      @closeSearch="closeSearch"
      :keyword="keyword"
         style="background-color: white; z-index: 1000000; pointer-events: auto;"
@@ -44,7 +46,7 @@ watch:{
   keyword(keyword){
    
     if(keyword!==''){
-      console.log(keyword)
+   
       this.isSearchBarOpen=true
     }
   }
@@ -96,7 +98,20 @@ this.$refs.globalSearchBar.handleArrowUp();
 handleSearchEnter(){
 this.$refs.globalSearchBar.handleEnter();
 },
-
+searchHobby(hobby){
+  this.isSearchBarOpen=false
+  this.$router.push({
+      name: 'searchfeed',
+      params: { type: 'hobby', keyword: hobby }
+    });
+},
+searchMember(member){
+  this.isSearchBarOpen=false
+  this.$router.push({
+      name: 'searchfeed',
+      params: { type: 'member', keyword: member }
+    });
+},
 closeSearch(){
  this.keyword=''
 this.isSearchBarOpen=false

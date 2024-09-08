@@ -85,11 +85,21 @@ export default {
   methods: {
     //실제 데이터 로드 작업 
     fetchResults(keyword) {
+      const sendKeyword = keyword.substring(1); // '@' 제거
+
+      if (sendKeyword.includes('@') ) return; // 아무 작업도 하지 않음
+         // 정규 표현식: `_`, 알파벳, 숫자, 한글만 허용
+         const forbiddenChars = /[^a-zA-Z0-9_가-힣]/;
+
+          if (forbiddenChars.test(sendKeyword)) {
+            return
+          }
+
   if (this.isFetching || !this.isAt||this.isNomoreData) return; // 이미 데이터 가져오는 중이거나 @가 아닌 경우 , 더이상 로드할 데이터가 없는경우
-  if (keyword === '@') return; // 아무 작업도 하지 않음
+ 
   this.isFetching = true; // 데이터 가져오기 시작
 
-  const sendKeyword = keyword.substring(1); // '@' 제거
+  
   const rowSize = 4; // 행개수 
         // 만약 첫 번째 로드이면 페이지를 증가시키지 않고 아니면 페이지를 증가시킴 
        if(!this.firstCall){
@@ -97,8 +107,15 @@ export default {
       }
       //통과 하면 , 이제 더이상 첫번째 페이지로드가 아님 
       this.firstCall=false;
-
-    api.get(`/members/following/${sendKeyword}/${this.page}/${rowSize}`) // API 호출
+      if(sendKeyword===''||sendKeyword===null){
+        this.isFetching=false;
+        return
+      }
+    api.get(`/members/following/${this.page}/${rowSize}`,{
+      params:{
+        keyword:sendKeyword
+      }
+    }) // API 호출
     .then((res) => {
    
       const newFollows = res?.data?.reqData?.followList; // 새로운 결과 리스트
@@ -125,7 +142,7 @@ export default {
 },  //디바운싱
     debouncedFetchResults: debounce(function (keyword) {
       this.fetchResults(keyword,); // 디바운스 처리 후 fetchResults 호출
-    }, 150)
+    }, 300)
     ,// intersection observer에따른 무한스크롤 데이터 호출
     handleIntersection(entries) {
       entries.forEach((entry) => {
@@ -184,7 +201,7 @@ export default {
     //인덱스를통한 스크롤 조정
     scrollToSelectedItem() {
       const selectedItem = this.container?.querySelector('.selected'); // 선택된 항목 찾기
-      console.log(selectedItem)
+    
       if (selectedItem && this.container) {
         const itemHeight = selectedItem.offsetHeight; // 항목의 높이
         const containerHeight = this.container.clientHeight; // 컨테이너의 높이
@@ -260,7 +277,7 @@ export default {
     handleClickOutside(event) {
       
      if (this.$refs.container && !this.$refs.container.contains(event.target)) {
-      console.log('컨테이너 외부 클릭')
+      
       this.$emit('closeSearchFl')
      }
     }

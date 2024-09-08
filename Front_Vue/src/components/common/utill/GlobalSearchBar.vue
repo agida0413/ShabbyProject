@@ -16,7 +16,7 @@
           :key="index"
           class="result-item"
           :class="{ selected: index === selectedIndex }"
-          @click.stop="handleClick(item.result)"
+          @click="handleClick(item.result,item.type)"
           @mouseover="handleMouseOver(index)"
           :ref="index === selectedIndex ? 'selectedItem' : null"
         >
@@ -104,7 +104,8 @@
          return
        
          }
-         
+         console.log(newKeyword)
+         console.log(this.previousKeyword)
           if (newKeyword && newKeyword!==this.previousKeyword ) {
             this.page = 1; // 페이지 1로 초기화
             this.results = []; // 결과 배열 초기화
@@ -126,6 +127,15 @@
     },
     methods: {
       async fetchResults(keyword) {
+       // 정규 표현식: `_`, 알파벳, 숫자, 한글만 허용
+      const forbiddenChars = /[^a-zA-Z0-9_가-힣]/;
+
+      if (forbiddenChars.test(keyword)) {
+        return
+      }
+
+   
+
         if (this.isFetching || this.isNomoreData) {
           return
         } // 이미 데이터 가져오는 중이거나 #이 아닌 경우 , 더이상 로드할 데이터가 없는경우
@@ -133,7 +143,7 @@
         if(keyword.trim()==='' || keyword.trim()===null){
           return
         }
-        this.isFetching = true; // 데이터 가져오기 시작
+        
         
          // 만약 첫 번째 로드이면 페이지를 증가시키지 않고 아니면 페이지를 증가시킴 
          if(!this.firstCall){
@@ -142,9 +152,23 @@
          //통과 하면 , 이제 더이상 첫번째 페이지로드가 아님 
          this.firstCall=false;
          
-         api.get(`/search/${keyword}/${this.page}`)
+
+         this.isFetching = true; // 데이터 가져오기 시작
+         api.get(`/search/${this.page}`,{
+          params:{
+            keyword:keyword
+          }
+         })
          .then((res)=>{
-          this.results=[...this.results,...res?.data?.reqData] 
+          const newResult=res?.data?.reqData
+          if(newResult.length){
+            this.results=[...this.results,...res?.data?.reqData] 
+          }
+          else{
+            this.page--;
+            this.isNomoreData = true;
+          }
+        
           this.previousKeyword=this.keyword
          })
          .catch((err)=>{
@@ -160,7 +184,7 @@
       },//디바운싱
       debouncedFetchResults: debounce(function (keyword ) {
         this.fetchResults(keyword);// 디바운스 처리 후 fetchResults 호출
-      }, 150),
+      }, 300),
       // intersection observer에따른 무한스크롤 데이터 호출
       handleIntersection(entries) {
        
@@ -208,17 +232,34 @@
       //부모로 부터 받은 엔터이벤트
       handleEnter() {
         
+
           if (this.selectedIndex >= 0 && this.selectedIndex < this.results.length) {
-            this.handleClick(this.results[this.selectedIndex].hobby); // 선택된 항목 클릭 처리
+           
+            this.handleClick(this.results[this.selectedIndex].result,this.results[this.selectedIndex].type); // 선택된 항목 클릭 처리
           } else {
-            this.$emit('enterNoSearch');
+            this.$emit('enterNoramlSearch');
         }
       
     },
-      //클릭이벤트
-      handleClick(hobby) {
+    //클릭제어 이벤트
+      handleClick(keyword,type){
+        
+        if(type==='member'){
+          this.handleMemberClick(keyword)
+        }
+        if(type==='hobby'){
+          this.handleHobbyClick(keyword)
+        }
+      },
+      //관심사 클릭이벤트
+      handleHobbyClick(hobby) {
        
-        this.$emit('selectHobby', hobby); // 선택된 관심사 전달
+        this.$emit('searchHobby', hobby); // 선택된 관심사 전달
+      },
+     
+      //사람 클릭이벤트
+      handleMemberClick(member){
+        this.$emit('searchMember', member); // 선택된 관심사 전달
       },
       handleMouseOver(index) {
         this.previousIndex = this.selectedIndex; // 이전 인덱스 업데이트
@@ -316,7 +357,7 @@
     }, 
    
     mounted() {
-      console.log('글로벌 마운트')
+  
       document.addEventListener('click', this.handleClickOutside.bind(this)); // bind(this) 추가
       this.initObserver();
     },

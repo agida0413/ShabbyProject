@@ -508,7 +508,7 @@ removeImage(index) {//해당 인덱스를 받음
   },
     //자식에서 해당항목 엔터를 누를시 호출한 메서드
     selectHobby(hobby) {
-      console.log(hobby)
+   
       //만약 현재 배열에 현재입력값이 존재하는지 확인
       hobby=hobby.replace(/#/g, '').trim()
       const exists = this.hobbiesRequest.some(hb => hb === hobby);
@@ -549,7 +549,7 @@ removeImage(index) {//해당 인덱스를 받음
     //자식컴포넌트에서 검색을 통한 항목에서 엔터이벤트시 수행
     selectFollow(follow) {
       //이미 인물태그배열에 존재하는 항목이면 
-     console.log(follow)
+     
       let exists =false;
       if(this.followRequest!==null){
       exists= this.followRequest.some(fw => fw === follow);

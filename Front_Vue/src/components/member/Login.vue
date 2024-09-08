@@ -200,7 +200,7 @@ export default {
       this.isLoading=true 
 
       //로그인 api 호출
-      console.log('로그인에서의 토큰:'+localStorage.getItem('access'))
+     
       api.post('/login', formdata)
       .then((res) => { 
           
