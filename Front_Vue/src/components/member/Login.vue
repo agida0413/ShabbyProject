@@ -107,7 +107,6 @@
                 </button>
             </router-link>
         </v-card-text>
-
     </v-card>
     <!--아이디(이메일) 찾기 컴포넌트-->
     <FindIdComponent v-model:value="findIdDialog" @findIdClose="closeFindIdDialog" />

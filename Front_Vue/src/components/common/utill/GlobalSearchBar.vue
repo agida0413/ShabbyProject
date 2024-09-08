@@ -9,22 +9,47 @@
       @keydown.enter="handleEnter"
       tabindex="0"
     >
-      <ul  class="results-list" v-show="results.length" style="color: black;" >
+      <ul  class="results-list" v-show="results.length" style="color: black; " >
+        
         <li
           v-for="(item, index) in results"
           :key="index"
           class="result-item"
           :class="{ selected: index === selectedIndex }"
-          @click="handleClick(item.result)"
+          @click.stop="handleClick(item.result)"
           @mouseover="handleMouseOver(index)"
           :ref="index === selectedIndex ? 'selectedItem' : null"
         >
+    
+
+        <span v-if="item.type==='hobby'" >
+          #
+          </span>
+        <span v-if="item.type==='member'" style="margin-right: 5px;">
+          <v-avatar :image="item.profile" size="20" class="avatar"
+                    v-if="item.profile !== null" ></v-avatar>
+                    <v-avatar :image="require('@/assets/ikmyung.png')"  
+                     size="20" class="avatar" v-if="item.profile === null" ></v-avatar>
+        </span>
        {{ item.result }}
+       <span style="float: right; color: gray; opacity: 0.7; font-size: 12px;" >
+        <span v-if="item.type==='member'">
+            인물
+          </span>
+          <span v-if="item.type==='hobby'">
+            관심사
+          </span>
+        <v-icon>
+            mdi-magnify
+          </v-icon>
+         
+        </span>
         </li>
+      
         <li ref="sentinel" class="result-item sentinel"></li>
       </ul>
       <ul v-show="!results.length" style="height: 40px;" >
-        <li>
+        <li style="color: black;">
           검색결과가 없습니다.
         </li>
       </ul>
@@ -56,7 +81,7 @@
         observer: null, // IntersectionObserver 인스턴스
         firstCall:true,// 첫번째 페이지 로드인지에 대한 변수 
         isNomoreData:false,//더이상 로드할 데이터가 있는지에 대한 변수.
-      
+        previousKeyword:''
        
       };
     },
@@ -77,9 +102,10 @@
       
          this.$emit('closeSearch')
          return
+       
          }
          
-          if (newKeyword) {
+          if (newKeyword && newKeyword!==this.previousKeyword ) {
             this.page = 1; // 페이지 1로 초기화
             this.results = []; // 결과 배열 초기화
             this.selectedIndex = -1; // 선택된 인덱스 초기화
@@ -119,6 +145,7 @@
          api.get(`/search/${keyword}/${this.page}`)
          .then((res)=>{
           this.results=[...this.results,...res?.data?.reqData] 
+          this.previousKeyword=this.keyword
          })
          .catch((err)=>{
           alert(err?.response?.data?.message)
@@ -310,10 +337,31 @@
   margin: 0;
   padding: 0;
   max-height: 545px; /* 필요에 따라 높이 조정 */
-  
+  /* 스크롤 바 커스텀 */
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: #888 transparent; /* Firefox */
 }
+
+
+.autocomplete-container::-webkit-scrollbar {
+  width: 5px; /* 스크롤 바의 너비 */
+}
+
+.autocomplete-container::-webkit-scrollbar-track {
+  background: transparent; /* 스크롤 바 트랙 배경색 */
+}
+
+.autocomplete-container::-webkit-scrollbar-thumb {
+  background-color: #888; /* 스크롤 바 색상 */
+  border-radius: 10px; /* 스크롤 바 모서리 둥글게 */
+}
+
+.autocomplete-container::-webkit-scrollbar-thumb:hover {
+  background-color: #555; /* 스크롤 바 색상 (호버 시) */
+}
+
   .selected {
-    background-color: gray;
+    background-color: #f5f5f5;
   }
   
   .result-item {
