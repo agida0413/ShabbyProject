@@ -227,10 +227,7 @@ public class ChangeInfoServiceImpl implements ChangeInfoService{
 	@Transactional
 	public ResponseEntity<ResponseDTO<MemberDTO>> updateLockedState(MemberDTO dto) 
 	{	
-		//검증
-		if(!dto.getLocked().equals("LOCKED") && !dto.getLocked().equals("PUBLICID")) {
-			throw new BadRequestException("유효하지 않은 입력입니다.");
-		}
+		
 		
 		// TODO Auto-generated method stub
 		String currentState=dto.getLocked();//현재 상태값 
@@ -265,12 +262,7 @@ public class ChangeInfoServiceImpl implements ChangeInfoService{
 	@Override
 	public ResponseEntity<ResponseDTO<Void>> deleteMember(MemberDTO dto) {
 		// TODO Auto-generated method stub
-		//검증
-		if(!PathVariableValidation.nameValSevice(dto.getName())
-			||!PathVariableValidation.emailValService(dto.getEmail())	)
-		{
-			throw new BadRequestException("유효하지 않은 입력입니다.");
-		}
+		
 		
 		String sessionEmail=SimpleCodeGet.getEmail();// 현재 토큰기반 인증된 임시유지세션에서 이메일 갖고옴 
 		int idNum=SimpleCodeGet.getIdNum();//토큰기반 인증된 임시유지세션에서 고유번호 갖고옴 

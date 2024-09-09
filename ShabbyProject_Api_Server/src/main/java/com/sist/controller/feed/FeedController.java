@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.sist.common.exception.BadRequestException;
+import com.sist.common.util.PathVariableValidation;
 import com.sist.dto.api.ResponseDTO;
 import com.sist.dto.feed.UserFeedInformDTO;
 import com.sist.dto.follow.DoFollowDTO;
@@ -44,15 +46,23 @@ public class FeedController {
 	// 유저피드 접근시 해당유저에 대한 정보를 불러오는 api
 	@GetMapping("/userfeed/{nickname}")
 	public ResponseEntity<ResponseDTO<UserFeedInformDTO>> loadUserfeedInfo(@PathVariable String nickname){
-		
+		//닉네임 validation
+		if (!PathVariableValidation.nickNameValService(nickname)) {
+
+			throw new BadRequestException("유효하지 않은 입력입니다.");
+		}
+
 		return feedService.loadUserFeedInfo(nickname);
 	}
 	
 	//유저피드 접근시 해당유저에 대한 정보 외 해당유저의 게시물정보를 불러오는 api
 	@GetMapping("/userfeed/post/{type}/{nickname}/{page}")
 	public ResponseEntity<ResponseDTO<List<PostListDTO>>> loadUserfeedPostList(@PathVariable String type, @PathVariable String nickname,@PathVariable int page){
-	
-		return feedService.loadUserFeedPostList(type,nickname, page);
+		
+		if(!PathVariableValidation.nickNameValService(nickname)||!PathVariableValidation.pageValidation(page)||!(type.equals("NORMAL")||type.equals("TAGGED"))) {
+			throw new BadRequestException("유효하지 않은 입력입니다.");
+		}
+		return feedService.loadUserFeedPostList(type, nickname, page);
 	}
 	
 	//유저피드에서의 프로필 사진 변경 api
@@ -72,7 +82,11 @@ public class FeedController {
 	//유저피드에서 팔로우,팔로잉 목록을 불러온다   /해당피드의 닉네임 / 팔로우인지 팔로워인지 / 페이지
 	@GetMapping("/userfeed/{nickname}/{flwType}/{page}")
 	public ResponseEntity<ResponseDTO<FollowListDTO>> getFollowInFeed(@PathVariable String nickname, @PathVariable String flwType, @PathVariable int page){
-	
+		//validation
+		if(!PathVariableValidation.pageValidation(page)||(!"FOLLOWING".equals(flwType) && !"FOLLOWER".equals(flwType))||!PathVariableValidation.nickNameValService(nickname)) {
+			throw new BadRequestException("유효하지 않은 입력입니다.");
+		}
+		
 		return followService.getFollowInFeed(nickname, flwType, page);
 	}
 	//팔로우 인서트 (팔로잉 작업) ==> 비공개 계정 or 공개 계정에 따라 다른작업 
@@ -100,6 +114,10 @@ public class FeedController {
 	
 	@GetMapping("/mainfeed/{page}")
 	public ResponseEntity<ResponseDTO<List<PostListDTO>>> loadMainFeedPostList(@PathVariable int page){
+		//validation
+		if (!PathVariableValidation.pageValidation(page)) {
+			throw new BadRequestException("유효하지 않은 입력입니다.");
+		}
 		
 		return feedService.loadMainFeedPostList(page);
 	}
@@ -110,11 +128,18 @@ public class FeedController {
 	@GetMapping("/globalfeed/{page}")
 	public ResponseEntity<ResponseDTO<List<PostListDTO>>> loadGlobalPostList(@PathVariable int page){
 		
+		// validation
+		if (!PathVariableValidation.pageValidation(page)) {
+			throw new BadRequestException("유효하지 않은 페이지입니다.");
+		}
 		return feedService.loadGlobalFeedPostList(page);
 	}
 	@GetMapping("/search/{page}")
 	public ResponseEntity<ResponseDTO<List<PostListDTO>>> loadSearchPostList(@PathVariable int page,@RequestParam String keyword){
-		
+		//validation
+		if (!PathVariableValidation.pageValidation(page) || !PathVariableValidation.keyWordValService(keyword)) {
+			throw new BadRequestException("유효하지 않은 입력입니다.");
+		}
 		return feedService.loadSearchFeedPostList(keyword, page);
 	}
 	

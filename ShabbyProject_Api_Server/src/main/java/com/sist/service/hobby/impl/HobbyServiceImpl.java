@@ -25,12 +25,6 @@ public class HobbyServiceImpl implements HobbyService {
 	private final int rowSize=5;//조회할 행 개수 
 	private final HobbyRepository hobbyRepository;
 
-	
-	@Override
-	public ResponseEntity<ResponseDTO<HobbyDTO>> allHobby() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	//키워드,페이지 기반 관심사 태그 조회 
 	@Override

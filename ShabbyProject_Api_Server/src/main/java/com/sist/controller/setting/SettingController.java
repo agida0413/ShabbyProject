@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.sist.common.exception.BadRequestException;
+import com.sist.common.util.PathVariableValidation;
 import com.sist.dto.api.ResponseDTO;
 import com.sist.dto.member.MemberDTO;
 import com.sist.dto.setting.ChangeNickNameDTO;
@@ -43,6 +45,11 @@ public class SettingController {
 	//서비스에서 검증 
 	@DeleteMapping
 	public ResponseEntity<ResponseDTO<Void>> memberDelete(@RequestBody MemberDTO dto){
+		//검증
+		if (!PathVariableValidation.nameValSevice(dto.getName())
+				|| !PathVariableValidation.emailValService(dto.getEmail())) {
+			throw new BadRequestException("유효하지 않은 입력입니다.");
+		}
 		return changeInfoService.deleteMember(dto);
 	}
 	
@@ -72,6 +79,10 @@ public class SettingController {
 	//서비스에서 검증
 	public ResponseEntity<ResponseDTO<MemberDTO>> lockStateChange(@RequestBody MemberDTO dto){
 		
+		//검증
+		if (!dto.getLocked().equals("LOCKED") && !dto.getLocked().equals("PUBLICID")) {
+			throw new BadRequestException("유효하지 않은 입력입니다.");
+		}
 		return changeInfoService.updateLockedState(dto);
 		
 	}

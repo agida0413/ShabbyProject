@@ -38,18 +38,12 @@ public class PostServiceImpl implements PostService {
     @Override
     @Transactional
     public ResponseEntity<ResponseDTO<Void>> postInsertTransaction(WritePostDTO dto)  {
-    	//태그리스트 validation
-    	if(!PathVariableValidation.keyWordValService(dto.getHobbyList()) ||
-    	   !PathVariableValidation.keyWordValService(dto.getFollowTagList())) {
-    		throw new BadRequestException("태그에 포함되면 안되는 문자가 포함되어있습니다.('#','@',',')");
-    	}
-    	
+    	    	
     	List<MultipartFile> imgList = dto.getImgList(); // 업로드할 이미지 리스트
        
     	List<String> imgUrList = uploadImage(imgList); // 업로드된 이미지의 URL을 저장할 리스트
      
     	 
-
         // 데이터베이스 저장
         try {
             int idNum = SimpleCodeGet.getIdNum(); // 현재 세션의 ID 가져오기
@@ -84,10 +78,7 @@ public class PostServiceImpl implements PostService {
 	@Override
 	public ResponseEntity<ResponseDTO<PostDetailDTO>> postDetail(int postNum) {
 		// TODO Auto-generated method stub
-		//정수가 아닐경우
-		if(!PathVariableValidation.pageValidation(postNum)) {
-			throw new BadRequestException("유효하지 않은 입력입니다.");
-		}
+		
 		//현재 로그인한 회원의 고유번호
 		int idNum=SimpleCodeGet.getIdNum();
 		
@@ -198,11 +189,7 @@ public class PostServiceImpl implements PostService {
 	public ResponseEntity<ResponseDTO<Void>> postUpdate(WritePostDTO dto) {
 		// TODO Auto-generated method stub
 		
-	//수정할려는 작업에 사진이 없는경우 validation	
-	if(dto.getCheckimgNull()==null || dto.getCheckimgNull().size()==0) {
-		throw new BadRequestException("사진은 한장이상 첨부해야합니다.");
-	}
-	
+		
 	//회원 고유번호 	
 	int idNum=SimpleCodeGet.getIdNum();
 	dto.setIdNum(idNum);

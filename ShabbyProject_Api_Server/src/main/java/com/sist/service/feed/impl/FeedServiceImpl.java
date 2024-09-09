@@ -52,12 +52,6 @@ public class FeedServiceImpl implements FeedService{
 		// TODO Auto-generated method stub
 		
 		
-		//닉네임 validation
-		if(!PathVariableValidation.nickNameValService(nickname)) {
-			
-			throw new BadRequestException("유효하지 않은 입력입니다.");
-		}
-		
 		//데이터베이스 매핑 객체 생성 
 		GetUserFeedInformDTO reqDTO = new GetUserFeedInformDTO();
 		//닉네임 세팅 
@@ -149,16 +143,7 @@ public class FeedServiceImpl implements FeedService{
 	public ResponseEntity<ResponseDTO<List<PostListDTO>>> loadUserFeedPostList(String type,String nickname,int page) {
 		// TODO Auto-generated method stub
 		
-		if(!PathVariableValidation.nickNameValService(nickname)) {
-			throw new BadRequestException("유효하지 않은 닉네임입니다.");
-		}
-		if(!PathVariableValidation.pageValidation(page)) {
-			throw new BadRequestException("유효하지 않은 페이지입니다.");
-		}
-		if(!(type.equals("NORMAL")||type.equals("TAGGED"))){
-			throw new BadRequestException("유효하지 않은 페이지입니다.");
-		}
-		
+			
 		//행의 개수 
 		int rowSize=6;
 		//offset(시작위치)
@@ -193,10 +178,7 @@ public class FeedServiceImpl implements FeedService{
 	@Override
 	public ResponseEntity<ResponseDTO<List<PostListDTO>>> loadMainFeedPostList(int page) {
 		// TODO Auto-generated method stub
-		//validation
-		if(!PathVariableValidation.pageValidation(page)) {
-			throw new BadRequestException("유효하지 않은 페이지입니다.");
-		}
+		
 		
 		int idNum=SimpleCodeGet.getIdNum();
 		
@@ -223,10 +205,7 @@ public class FeedServiceImpl implements FeedService{
 	@Override
 	public ResponseEntity<ResponseDTO<List<PostListDTO>>> loadGlobalFeedPostList(int page) {
 	// TODO Auto-generated method stub
-		//validation
-		if(!PathVariableValidation.pageValidation(page)) {
-			throw new BadRequestException("유효하지 않은 페이지입니다.");
-		}
+		
 		
 		int idNum=SimpleCodeGet.getIdNum();
 		
@@ -253,13 +232,8 @@ public class FeedServiceImpl implements FeedService{
 		@Override
 		public ResponseEntity<ResponseDTO<List<PostListDTO>>> loadSearchFeedPostList(String keyword,int page) {
 		// TODO Auto-generated method stub
-			//validation
-			if(!PathVariableValidation.pageValidation(page) ||
-			    !PathVariableValidation.keyWordValService(keyword)		) {
-				throw new BadRequestException("유효하지 않은 입력입니다.");
-			}
 			
-			
+						
 			int idNum=SimpleCodeGet.getIdNum();
 			
 			//행의 개수 
@@ -287,6 +261,7 @@ public class FeedServiceImpl implements FeedService{
 	@Transactional
 	public ResponseEntity<ResponseDTO<Void>> updateProfileImg(MultipartFile file) {
 		// TODO Auto-generated method stub
+		
 		//현재 세션 회원고유번호 갖고오기
 		int idNum=SimpleCodeGet.getIdNum();
 		//데이터베이스 전송객체

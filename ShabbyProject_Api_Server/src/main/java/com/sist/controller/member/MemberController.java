@@ -43,6 +43,9 @@ private final FollowService followService;
 	//서비스에서 검증
 	@PostMapping("/nickValidate")
 	public ResponseEntity<ResponseDTO<Void>> nickNameValidation(@RequestBody MemberDTO dto){
+		if(!PathVariableValidation.nickNameValService(dto.getNickname())) {
+			throw new BadRequestException("유효하지 않은 입력입니다.");
+		}
 		return joinService.nickNameValidation(dto.getNickname());
 	}
 
@@ -50,7 +53,10 @@ private final FollowService followService;
 	//서비스에서 검증 
 	@PostMapping("/emailAuth")
 	public ResponseEntity<ResponseDTO<Void>> emailAuth(@RequestBody MemberDTO dto){
-			
+		
+		if(!PathVariableValidation.emailValService(dto.getEmail())) {
+			new BadRequestException("유효하지 않은 입력입니다.");
+		}
 		return joinService.emailAuth(dto);
 		
 	}
@@ -58,6 +64,9 @@ private final FollowService followService;
 	//서비스에서 검증 
 	@PostMapping("/emailValidate")
 	public ResponseEntity<ResponseDTO<Void>> emailValidation(@RequestBody EmailAuthDTO dto){
+		if(!PathVariableValidation.authCodeValidation(dto.getCode())) {
+			throw new BadRequestException("유효하지 않은 입력입니다.");
+		}
 		return joinService.emailValidation(dto);
 	}
 	
@@ -66,6 +75,11 @@ private final FollowService followService;
 	@PostMapping("/findEmail")
 	public ResponseEntity<ResponseDTO<MemberDTO>> findId(@RequestBody MemberDTO dto){
 		
+		if (!PathVariableValidation.nameValSevice(dto.getName())|| !PathVariableValidation.nickNameValService(dto.getNickname())
+			||!PathVariableValidation.phoneValService(dto.getPhone())) {	
+				
+			throw new BadRequestException("유효하지 않은 입력입니다.");
+		}
 		return memberFindService.findEmail(dto);
 	}
 	
@@ -73,7 +87,11 @@ private final FollowService followService;
 	//서비스에서 검증
 	@PostMapping("/findPassword")
 	public ResponseEntity<ResponseDTO<Void>> findPassword(@RequestBody MemberDTO dto){
-		
+		// validation
+		if (!PathVariableValidation.nameValSevice(dto.getName())|| !PathVariableValidation.emailValService(dto.getEmail())
+			|| !PathVariableValidation.phoneValService(dto.getPhone())) {			
+			throw new BadRequestException("유효하지 않은 입력입니다.");
+		}
 		return memberFindService.passwordFind(dto);
 	}
 	
@@ -85,12 +103,11 @@ private final FollowService followService;
 	@PathVariable int page,@PathVariable int rowSize){
 		
 		//페이지, 행개수에 대한 validation 
-				if(!PathVariableValidation.pageValidation(page)
-				  ||!PathVariableValidation.pageValidation(rowSize)
-				  ||!PathVariableValidation.keyWordValService(keyword)
-				) {
-					throw new BadRequestException("유효하지 않은 입력입니다.");
-				}
+		if (!PathVariableValidation.pageValidation(page) || !PathVariableValidation.pageValidation(rowSize)
+			|| !PathVariableValidation.keyWordValService(keyword)) {
+
+			throw new BadRequestException("유효하지 않은 입력입니다.");
+		}
 		
 		return  followService.followingBykeyword(keyword, page, rowSize);
 	}
