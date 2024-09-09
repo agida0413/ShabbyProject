@@ -48,17 +48,17 @@ public class S3ImageService implements ImageService{
 
     
     public String upload(MultipartFile image) {
+    	 //버킷이름에 공백에 생기는 경우 방지 
     	 bucket=bucket.trim();
     	
         // 입력받은 이미지 파일이 빈 파일인지 검증
         if (image == null || image.isEmpty() || image.getOriginalFilename() == null) {
             throw new BadRequestException("파일이 비어있거나 이름이 없습니다.");
         }
-       
-        	validateFileSize(image);
+        //파일 사이즈 검증 
+        validateFileSize(image);
 		
-		
-		
+			
         
         // 이미지 업로드 메서드 호출
         try {
@@ -86,6 +86,7 @@ public class S3ImageService implements ImageService{
             throw new InternerException("서버 내부 오류입니다.","이미지 업로드 중 오류 발생");
         }
     }
+    //파일 확장자 검증 
     private void validateImageFileExtension(String filename) {
         if (filename == null || filename.isEmpty()) {
             throw new BadRequestException("파일 이름이 비어있거나 null입니다.");
@@ -106,18 +107,19 @@ public class S3ImageService implements ImageService{
 
     //파일크기 서버측 검증 (한번더 ) 1차 : 클라이언트 , 2차 : 게시물서비스 
     private void validateFileSize(MultipartFile file) {
-    	System.out.println(file.getSize());
+    	
         if (file.getSize() > MAX_FILE_SIZE) {
         	
             throw new BadRequestException("사진 파일의 용량이 너무 큽니다."); // 파일 크기 초과 오류 처리
         }
     }
-
+    //실제 업로드 
     private String uploadImageToS3(MultipartFile image) throws IOException {
         String originalFilename = image.getOriginalFilename();
         if (originalFilename == null) {
             throw new BadRequestException("파일 이름이 없습니다.");
         }
+        //확장자 검증 
         validateImageFileExtension(originalFilename);
 
         String extension = originalFilename.substring(originalFilename.lastIndexOf(".") + 1);
@@ -143,7 +145,7 @@ public class S3ImageService implements ImageService{
 
         return s3Client.utilities().getUrl(builder -> builder.bucket(bucket).key(s3FileName)).toExternalForm();
     }
-
+    //파일 삭제 
     public void deleteImage(String imageAddress) {
    	 bucket=bucket.trim();
         String key = getKeyFromImageAddress(imageAddress);
@@ -161,7 +163,7 @@ public class S3ImageService implements ImageService{
             throw new InternerException("서버 내부오류입니다.","이미지 삭제 중 오류 발생");
         }
     }
-
+    //파일 삭제시 키값 가져오기
     private String getKeyFromImageAddress(String imageAddress) {
         try {
             URL url = new URL(imageAddress);

@@ -73,16 +73,7 @@ public class FollowServiceImpl implements FollowService {
 			//현재 로그인한 유저의 닉네임 
 			String myNickname= SimpleCodeGet.getNickname();
 			
-				//validation
-				if(!PathVariableValidation.pageValidation(page)) {
-					throw new BadRequestException("유효하지 않은 입력입니다.");
-				}
-				if(!"FOLLOWING".equals(flwType) && !"FOLLOWER".equals(flwType)) {
-					throw new BadRequestException("유효하지 않은 입력입니다.");
-				}
-				if(!PathVariableValidation.nickNameValService(nickname)) {
-					throw new BadRequestException("유효하지 않은 입력입니다.");
-				}
+				
 				//행의 개수 
 				int rowSize=10;
 				
@@ -120,6 +111,7 @@ public class FollowServiceImpl implements FollowService {
 	public ResponseEntity<ResponseDTO<String>> doFollow(DoFollowDTO dto) {
 		// TODO Auto-generated method stub
 		String myNickName=SimpleCodeGet.getNickname();
+		
 		if(myNickName.equals(dto.getNickname())) {
 			throw new BadRequestException("본인을 팔로우 할 수 없습니다.");
 		}

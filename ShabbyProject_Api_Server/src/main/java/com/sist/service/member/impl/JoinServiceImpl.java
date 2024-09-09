@@ -71,9 +71,7 @@ private final BCryptPasswordEncoder bCryptPasswordEncoder;
 	
 	//닉네임 중복검증
 	public ResponseEntity<ResponseDTO<Void>> nickNameValidation(String nickName){
-		if(!PathVariableValidation.nickNameValService(nickName)) {
-			throw new BadRequestException("유효하지 않은 입력입니다.");
-		}
+		
 			//매개변수로 받은 닉네임 기반 회원찾기 
 			MemberDTO dto = memberAccountRepository.findByUserNickname(nickName);
 			
@@ -92,10 +90,6 @@ private final BCryptPasswordEncoder bCryptPasswordEncoder;
 	@Override
 	public ResponseEntity<ResponseDTO<Void>> emailAuth(MemberDTO dto) {//이메일 인증번호 전송 
 		// TODO Auto-generated method stub
-		
-		if(!PathVariableValidation.emailValService(dto.getEmail())) {
-			new BadRequestException("유효하지 않은 입력입니다.");
-		}
 	
 		return mailService.emailSend(dto.getEmail());
 	}
@@ -104,9 +98,7 @@ private final BCryptPasswordEncoder bCryptPasswordEncoder;
 	public ResponseEntity<ResponseDTO<Void>> emailValidation(EmailAuthDTO dto) {//이메일 인증번호 검증
 		// TODO Auto-generated method stub
 		
-		if(!PathVariableValidation.authCodeValidation(dto.getCode())) {
-			throw new BadRequestException("유효하지 않은 입력입니다.");
-		}
+		
 		return mailService.emailAuthValidation(dto.getEmail(), dto.getCode());
 	}
 

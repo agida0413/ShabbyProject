@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.sist.common.exception.BadRequestException;
+import com.sist.common.util.PathVariableValidation;
 import com.sist.dto.api.ResponseDTO;
 import com.sist.dto.common.GlobalSearchResultDTO;
 import com.sist.dto.common.SearchResultMemberDTO;
@@ -24,17 +26,30 @@ public class GlobalSearchController {
 	
 	private final GlobalSearchService globalSearchService;
 	
+	//자동완성 검색어 결과 
 	@GetMapping("/{page}")
 	public ResponseEntity<ResponseDTO<List<GlobalSearchResultDTO>>> globalSearchReult(@RequestParam String keyword,@PathVariable int page){
 		//_ 키워드 데이터베이스 변환 필요
 		keyword=keyword.replace("_", "\\_");
+		
+		//키워드 , 페이지에 대한 검증 
+		if (!PathVariableValidation.pageValidation(page) || !PathVariableValidation.keyWordValService(keyword)) {
+			throw new BadRequestException("유효하지 않은 입력입니다.");
+		}
+		
 		return globalSearchService.globalSearchResult(keyword, page);
 	}
-	
+	// 검색피드에서의 회원 정보 
 	@GetMapping("/member/{page}")
 	public ResponseEntity<ResponseDTO<SearchResultMemberListDTO>> globalSearchMemberList(@RequestParam String keyword,@PathVariable int page){
 		//_ 키워드 데이터베이스 변환 필요
 		keyword=keyword.replace("_", "\\_");
+		
+		//페이지와 , 키워드에 대한 검증 
+		if (!PathVariableValidation.pageValidation(page) || !PathVariableValidation.keyWordValService(keyword)) {
+
+			throw new BadRequestException("유효하지 않은 입력입니다.");
+		}
 		return globalSearchService.globalSearchMemberList(keyword, page);
 	}
 }

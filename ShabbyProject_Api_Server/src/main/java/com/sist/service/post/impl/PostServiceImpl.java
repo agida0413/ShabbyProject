@@ -18,6 +18,7 @@ import com.sist.dto.post.DoPostLikeDTO;
 import com.sist.dto.post.GetPostDetailDTO;
 import com.sist.dto.post.PostDelDTO;
 import com.sist.dto.post.PostDetailDTO;
+import com.sist.dto.post.TagInformDTO;
 import com.sist.dto.post.WritePostDTO;
 import com.sist.repository.post.PostRepository;
 import com.sist.service.image.ImageService;
@@ -38,18 +39,12 @@ public class PostServiceImpl implements PostService {
     @Override
     @Transactional
     public ResponseEntity<ResponseDTO<Void>> postInsertTransaction(WritePostDTO dto)  {
-    	//태그리스트 validation
-    	if(!PathVariableValidation.keyWordValService(dto.getHobbyList()) ||
-    	   !PathVariableValidation.keyWordValService(dto.getFollowTagList())) {
-    		throw new BadRequestException("태그에 포함되면 안되는 문자가 포함되어있습니다.('#','@',',')");
-    	}
-    	
+    	    	
     	List<MultipartFile> imgList = dto.getImgList(); // 업로드할 이미지 리스트
        
     	List<String> imgUrList = uploadImage(imgList); // 업로드된 이미지의 URL을 저장할 리스트
      
     	 
-
         // 데이터베이스 저장
         try {
             int idNum = SimpleCodeGet.getIdNum(); // 현재 세션의 ID 가져오기
@@ -84,10 +79,7 @@ public class PostServiceImpl implements PostService {
 	@Override
 	public ResponseEntity<ResponseDTO<PostDetailDTO>> postDetail(int postNum) {
 		// TODO Auto-generated method stub
-		//정수가 아닐경우
-		if(!PathVariableValidation.pageValidation(postNum)) {
-			throw new BadRequestException("유효하지 않은 입력입니다.");
-		}
+		
 		//현재 로그인한 회원의 고유번호
 		int idNum=SimpleCodeGet.getIdNum();
 		
@@ -117,10 +109,11 @@ public class PostServiceImpl implements PostService {
 		//관심사리스트 생성 
 		List<String> hbList = new ArrayList<>();
 		//사람태그 리스트 생성
-		List<String> tagList = new ArrayList<>();
+		List<TagInformDTO> tgList=new ArrayList<>();
 		//이미지 리스트 생성
 		List<String> imgList = new ArrayList<>();
 		
+		List<String> tagNickList=new ArrayList<>();
 		//관심사 리스트 배열로 변환 
 		if(dto.getStrHobbyList()!=null) {
 			String [] handleHobbyList=dto.getStrHobbyList().split(",");
@@ -143,15 +136,43 @@ public class PostServiceImpl implements PostService {
 			}
 			dto.setImgList(imgList);
 		}
+		
 		if(dto.getStrTagList()!=null) {
 			// 이미지 리스트 배열로 변환
 			String[] handleTagList = dto.getStrTagList().split(",");
 			// 리스트로 변환
 			for (String tag : handleTagList) {
 				// 하나씩 add
-				tagList.add(tag);
+				tagNickList.add(tag);
 			}
-			dto.setTagList(tagList);
+			dto.setTagNickList(tagNickList);
+		}
+		
+		if(dto.getStrTagList()!=null) {
+			// 이미지 리스트 배열로 변환
+			System.out.println("테스트"+dto.getStrTagProfiles());
+			String[] handleTagList = dto.getStrTagList().split(",");
+			String[] handleTagProfileList= dto.getStrTagProfiles().split(",");;
+			
+			
+			
+			// 리스트로 변환
+			for (int i=0; i<handleTagList.length;i++) {
+				// 하나씩 add
+				TagInformDTO handleDto = new TagInformDTO();
+				handleDto.setNickname(handleTagList[i]);
+				if(handleTagProfileList[i].equals("null")) {
+					handleDto.setProfile(null);
+				}else {
+					handleDto.setProfile(handleTagProfileList[i]);
+				}
+				
+				
+					
+				
+				tgList.add(handleDto);
+			}
+			dto.setTagList(tgList);;
 		}
 		
 		//클라이언트로 보낼때 회원고유번호 감추기 위함 
@@ -198,11 +219,7 @@ public class PostServiceImpl implements PostService {
 	public ResponseEntity<ResponseDTO<Void>> postUpdate(WritePostDTO dto) {
 		// TODO Auto-generated method stub
 		
-	//수정할려는 작업에 사진이 없는경우 validation	
-	if(dto.getCheckimgNull()==null || dto.getCheckimgNull().size()==0) {
-		throw new BadRequestException("사진은 한장이상 첨부해야합니다.");
-	}
-	
+		
 	//회원 고유번호 	
 	int idNum=SimpleCodeGet.getIdNum();
 	dto.setIdNum(idNum);

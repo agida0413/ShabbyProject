@@ -177,8 +177,6 @@ public final class PathVariableValidation {
 	//input 타입에서 공백만 보낼수 없음   
 	public static boolean cantFirstWhiteSapce(String value) {
 
-
-
 		if(value.startsWith(" ")) {
 
 			return false;
