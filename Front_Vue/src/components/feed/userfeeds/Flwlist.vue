@@ -20,16 +20,16 @@
 
         <span v-if="!isLoading" style="display: flex; font-size: 20px; align-items: center; justify-content: center;">
           {{ flwType }}
-
         </span>
 
         <v-col style="display: flex; align-items: center; justify-content: center;">
-          <v-divider></v-divider>
-         
+          <v-divider></v-divider>        
         </v-col>
-        <div v-if="!FollowData.length && !isLoading" class="no-data-message">
-          <span>아직 목록이 존재하지 않습니다.</span>
-        </div>
+
+          <div v-if="!FollowData.length && !isLoading" class="no-data-message">
+            <span>아직 목록이 존재하지 않습니다.</span>
+          </div>
+
         <div class="scroll-container" >
              
           <v-list  lines="three" class="to-blackMode pa-3">
@@ -87,18 +87,22 @@ export default {
   name: 'FlwListComponent',
 
   props: {
+    //컴포넌트가 열린상태인지
     value: {
       type: Boolean,
       required: true
     },
+    //팔로우 OR 팔로워 
     flwType: {
       type: String,
       required: true
     },
+    //닉네임 
     nickname: {
       type: String,
       required: true
     },
+    //해당 피드가 자신의 피드인지 
     itsMe: {
       type: Boolean,
       required: true
@@ -288,50 +292,50 @@ export default {
 
 <style>
 .large-font {
-  font-size: 18px; /* 원하는 폰트 사이즈로 조정 */
+  font-size: 18px;
 }
 
 .scroll-container {
-  max-height: 500px; /* 모달의 최대 높이 설정 */
-  overflow-y: auto; /* 세로 스크롤 추가 */
+  max-height: 500px;
+  overflow-y: auto;
 }
 
 .sentinel {
-  height: 20px; /* Sentinel 요소의 높이 설정 */
+  height: 20px;
 }
+
 .loading-indicator {
   text-align: center;
   padding: 10px;
   color: #888;
 }
-/* 스크롤바 전체 영역 */
+
 .scroll-container::-webkit-scrollbar {
-  width: 12px; /* 스크롤바의 너비 */
+  width: 12px;
 }
 
-/* 스크롤바의 트랙 (스크롤바가 없을 때 배경 영역) */
 .scroll-container::-webkit-scrollbar-track {
-  background: #f1f1f1; /* 트랙의 배경색 */
-  border-radius: 10px; /* 트랙의 모서리 둥글기 */
+  background: #f1f1f1;
+  border-radius: 10px;
 }
 
-/* 스크롤바의 막대 (드래그 가능한 부분) */
 .scroll-container::-webkit-scrollbar-thumb {
-  background: #888; /* 막대의 배경색 */
-  border-radius: 10px; /* 막대의 모서리 둥글기 */
+  background: #888;
+  border-radius: 10px;
 }
 
-/* 스크롤바의 막대가 호버될 때 */
 .scroll-container::-webkit-scrollbar-thumb:hover {
-  background: #555; /* 막대의 호버 배경색 */
+  background: #555;
 }
+
 .no-data-message {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 100%; /* 부모 요소의 높이와 맞추기 */
-  color: gray; /* 회색 텍스트 */
-  font-size: 16px; /* 폰트 사이즈 조정 */
-  text-align: center; /* 텍스트 가운데 정렬 */
+  height: 100%;
+  color: gray;
+  font-size: 16px;
+  text-align: center;
 }
+
 </style>

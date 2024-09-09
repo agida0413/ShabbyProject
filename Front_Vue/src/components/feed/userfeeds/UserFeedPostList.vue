@@ -1,8 +1,5 @@
 <template>
 
-  
-
-
   <v-container >
 
     <v-tabs
@@ -35,7 +32,7 @@
         cols="4"
       >
         <v-img
-        v-if="!isLoading"
+          
           :src="post.postImgUrl"
           aspect-ratio="1"
           class="image-container"
@@ -43,7 +40,7 @@
            @click="openPostDetailDialog(post.postNum)"
         >
           <template v-slot:placeholder>
-            <v-row align="center" class="fill-height ma-0" justify="center">
+            <v-row align="center" class="fill-height ma-0" justify="center" v-if="isLoading">
               <v-progress-circular color="grey-lighten-5" indeterminate></v-progress-circular>
             </v-row>
           </template>
@@ -71,7 +68,8 @@ import PostDetail from '../post/PostDetail.vue';
 import eventBus from "@/eventBus"
 export default{
     name:'UserFeedPostList',
-    //부모로 부터 받은 닉네임 값 
+
+  //부모로 부터 받은 닉네임 값 
   props:{
     nickname:String,
    
@@ -83,8 +81,9 @@ export default{
       page:1, // 페이지
       observer:null, //intersection observer 객체
       noMoreNeedData:false, //더이상 로드할 데이터가 없다면 불필요한 api 호출을 방지하기 위한 변수 
-      sendPostNum:0,
-      type:'NORMAL'
+      sendPostNum:0, //게시물 고유번ㅇ호 
+      type:'NORMAL', //내가 작성한 게시물인지 , 내가 태그를 당한 게시물인지 
+      isFirstLoad:true //첫번째 로드인지 
     }
   },
   // intersection observer 참조할 태그 ref
@@ -103,23 +102,25 @@ export default{
      this.initObserver(); // IntersectionObserver 초기화
     },
     watch: {
+    //닉네임 변경 감지 
     nickname: {
       immediate: true, // 컴포넌트가 마운트될 때도 실행
       handler(newNickname, oldNickname) {
         // nickname이 변경될 때 호출
         if (newNickname !== oldNickname) {
-           this.type='NORMAL'
+          //데이터 리셋후 재 로드 
+          this.type='NORMAL'
           this.resetData();
         }
       }
     },
+    //타입 변경 감지 (내가 작성한 게시물 OR 다른 회원이 해당피드유저를 태그한 게시물)
     type: {
       handler(newType,oldType) {
        if(newType!==oldType){
         this.resetData();
        }
-         
-        
+             
       }
     }
   },
@@ -132,14 +133,16 @@ export default{
     }
   },
     methods:{
-     
-      changeType(type) {
-        this.type=type;
-      },
-      openPostDetailDialog(postNum){
+     //타입을 변경 
+    changeType(type) {
+      this.type=type;
+    },
+    //상세보기를 열음 
+    openPostDetailDialog(postNum){
       this.sendPostNum=postNum
       this.postDetailDialog=true;
     },
+    //상세보기를 닫음 
     closePostDetailDialog(){
       this.sendPostNum=0;
       this.postDetailDialog=false;
@@ -150,11 +153,16 @@ export default{
         //api 호출중 상태 
         this.isLoading=true
         //noMoreNeedData가 true 이면 리턴 ( 더이상 불러올 데이터가 없는경우)
-     
+        if(!this.isFirstLoad){
+          this.page++;//페이지 증가
 
-      api.get(`/feed/userfeed/post/${this.type}/${this.nickname}/${this.page}`)
+        }
+        //첫 페이지 로드가 끝남 
+        this.isFirstLoad=false
+
+        api.get(`/feed/userfeed/post/${this.type}/${this.nickname}/${this.page}`)
         .then((res) => {
-            //무한스크롤 기존 배열에 데이터 추가 
+          //무한스크롤 기존 배열에 데이터 추가 
          this.postData=[...this.postData,...res.data.reqData]
           //만약 더이상 추가할 데이터가 없다면 제어변수 true 로 변경하여 더이상 api 호출하지 않도록 
           if(res?.data?.reqData?.length===0){
@@ -193,7 +201,7 @@ export default{
             //감지시
             entries.forEach(entry => {
               if (entry.isIntersecting) {
-                this.page++;//페이지 증가
+               
                 this.loadPost(); // Sentinel이 뷰포트에 들어올 때 데이터 로드
               }
             });

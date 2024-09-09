@@ -36,9 +36,9 @@
 
            
             <v-card-text  ><!-- 아닐시 게시물 내용 ,좋아요, 수정,삭제 , 댓글 하나만 보임 -->
-              <!-- Post Information Layout -->
+            
               <v-row no-gutters >
-                <!-- Post Content (50%) -->
+              
                 <v-row cols="12" class="ml-1">
                   <v-col cols="1"  style="cursor:pointer" @click="goOtherUserfeed(postDetailData.nickname)">
                     <v-avatar :image="postDetailData.profile" size="35" class="avatar"
@@ -85,7 +85,8 @@
                         <v-chip
                           class="ma-2 clickcursor"
                           color="green"
-                          label                                                
+                          label    
+                          @click="goSearchFeed(hobby)"                                            
                           >
                            <v-icon icon="mdi-label " start></v-icon>
                           {{ hobby }}
@@ -163,18 +164,22 @@
       </v-container>
     </v-card>
   </v-dialog>
-  <PostEdit v-model:value="postEditDialog"
-   @postEditClose="postEditClose"
-   @updateComplete=" closeDialog" 
-   :postNum="postDetailData.postNum"
-     v-if="postNum!==0"></PostEdit>
-  <Alert
-      v-model:value="isAlertOpen"
-      v-model:altype="alertType"
-      v-model:message="alertMessage"
-      @closeAlertDialog="closeAlert"
-    >
-  </Alert>
+
+  <!-- 수정 컴포넌트 -->
+    <PostEdit v-model:value="postEditDialog"
+      @postEditClose="postEditClose"
+      @updateComplete=" closeDialog" 
+      :postNum="postDetailData.postNum"
+      v-if="postNum!==0">
+    </PostEdit>
+<!--경고창 컴포넌트-->
+    <Alert
+        v-model:value="isAlertOpen"
+        v-model:altype="alertType"
+        v-model:message="alertMessage"
+        @closeAlertDialog="closeAlert"
+      >
+    </Alert>
 </template>
 
 <script>
@@ -220,11 +225,10 @@ export default {
   },
   //감지
   watch:{
-    //게시물 번호 가 변경되면
-     
+    //게시물 번호 가 변경되면  
     postNum(newValue){
      
-      if(newValue!=0){
+      if(newValue>=1){
         //새롭게 데이터 호출 
         this.callPostDetailData(newValue)
       }
@@ -275,6 +279,7 @@ export default {
         const resLiked=res?.data?.reqData?.liked;
         //트랜잭션 완료 후 좋아요 수 저장 
         const resLikeCount= res?.data?.reqData?.likeCount;
+
         this.postDetailData.liked=resLiked
         this.postDetailData.likeCount=resLikeCount 
 
@@ -353,7 +358,14 @@ export default {
       this.$nextTick(() => {
         this.$router.push({ name: 'userfeed', params: { nickname: nickname } }); // 페이지 이동 ( 닉네임 param)
       });
-    }
+    },
+    goSearchFeed(hobby){
+      this.closeDialog(); // 모달 닫기 = > 팔로우/팔로잉 목록 모달 
+        this.$router.push({
+          name: 'searchfeed',
+          params: { type:'hobby',keyword:hobby}
+        });
+      },
   
   },
   components: {
@@ -397,7 +409,7 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000; /* 스피너를 최상위에 표시 */
+  z-index: 1000; 
 }
 .overlay-text {
   position: absolute;
@@ -463,34 +475,34 @@ export default {
 }
 .scroll-container {
 
-  overflow-y: auto; /* 세로 스크롤 추가 */
+  overflow-y: auto;
 }
-/* 스크롤바 전체 영역 */
+
 .scroll-container::-webkit-scrollbar {
-  width: 12px; /* 스크롤바의 너비 */
+  width: 12px; 
 }
 
-/* 스크롤바의 트랙 (스크롤바가 없을 때 배경 영역) */
+
 .scroll-container::-webkit-scrollbar-track {
-  background: #f1f1f1; /* 트랙의 배경색 */
-  border-radius: 10px; /* 트랙의 모서리 둥글기 */
+  background: #f1f1f1; 
+  border-radius: 10px; 
 }
 
-/* 스크롤바의 막대 (드래그 가능한 부분) */
+
 .scroll-container::-webkit-scrollbar-thumb {
-  background: #888; /* 막대의 배경색 */
-  border-radius: 10px; /* 막대의 모서리 둥글기 */
+  background: #888; 
+  border-radius: 10px; 
 }
 
-/* 스크롤바의 막대가 호버될 때 */
+
 .scroll-container::-webkit-scrollbar-thumb:hover {
-  background: #555; /* 막대의 호버 배경색 */
+  background: #555; 
 }
 .clickcursor{
 cursor: pointer;
 }
 .large-font {
-  font-size: 18px; /* 원하는 폰트 사이즈로 조정 */
+  font-size: 18px; 
   color:antiquewhite
 }
 </style>

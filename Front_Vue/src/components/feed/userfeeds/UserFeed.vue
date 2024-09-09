@@ -156,7 +156,10 @@
           <v-chip-group selected-class="text-primary" mandatory>
             <v-chip style="background-color: floralwhite;"
               v-for="(hobby, index) in userFeedData.hobbies"
-              :key="index">
+              :key="index"
+              @click="goSearchFeed(hobby.hobby)"
+              >
+
               {{ hobby.hobby }}
             </v-chip>
           </v-chip-group>
@@ -321,7 +324,13 @@ export default {
     childLoadingComplete(){
       this.childIsLoading=false
     },
-    
+     //사용자 피드내에서 해당사용자의 관심사를 클릭시 해당 관심사 기반의 검색피드로 이동 
+      goSearchFeed(hobby){
+        this.$router.push({
+          name: 'searchfeed',
+          params: { type:'hobby',keyword:hobby}
+        });
+      },
     flwListDialogOpen(str) {  // 팔로워, 팔로잉 각각 버튼 클릭 시 str로 매개변수 받아와 flwType을 초기화 
                             // => flwList 컴포넌트 하나로 운영 (str 전달 -> 팔로잉 목록 or 팔로우 목록)
       if(!this.userFeedData.itsMe && this.userFeedData.locked !== 'PUBLICID' && this.userFeedData.followState !== 'alreadyFollow'){
@@ -363,8 +372,9 @@ html, body, #app, .v-application {
 }
 
 .v-container, .v-main, .v-row, .v-col {
-  background-color: transparent !important; /* 상속된 스타일이 덮어쓰지 않도록 설정 */
+  background-color: transparent !important;
 }
+
 .loading-overlay {
   position: fixed;
   top: 0;
@@ -375,16 +385,16 @@ html, body, #app, .v-application {
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000; /* 스피너를 최상위에 표시 */
+  z-index: 1000;
 }
 
 .avatar-wrapper {
   display: flex;
-  align-items: flex-start; /* 상단에 정렬 */
-  justify-content: center; /* 가운데 정렬 */
+  align-items: flex-start;
+  justify-content: center;
   position: relative;
-  width: 300px; /* 프로필 사진의 너비와 동일하게 설정 */
-  height: 300px; /* 프로필 사진의 높이와 동일하게 설정 */
+  width: 300px;
+  height: 300px;
 }
 
 .avatar {
@@ -399,12 +409,12 @@ html, body, #app, .v-application {
   background-color: floralwhite;
   border-radius: 50%;
   padding: 21px;
-  color: black; /* 아이콘 색상 조정 */
-  font-size: 24px; /* 아이콘 크기 조정 */
+  color: black;
+  font-size: 24px;
 }
 
 .isHover {
-  cursor: pointer; /* 커서를 손 모양으로 변경 */
+  cursor: pointer;
 }
 
 .image-container {
@@ -415,7 +425,7 @@ html, body, #app, .v-application {
 
 .image-container:hover {
   transform: scale(1.05);
-  cursor: pointer; /* 사진 호버 시 포인터 커서 */
+  cursor: pointer;
 }
 
 .overlay {
@@ -424,7 +434,7 @@ html, body, #app, .v-application {
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5); /* 사진 어두워지기 */
+  background: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -437,9 +447,10 @@ html, body, #app, .v-application {
 }
 
 .overlay-icon {
-  font-size: 48px; /* 아이콘 크기 조정 */
-  color: white; /* 아이콘 색상 */
+  font-size: 48px;
+  color: white;
   margin: 0 10px;
-  cursor: default; /* 아이콘에 기본 커서 적용 */
+  cursor: default;
 }
+
 </style>

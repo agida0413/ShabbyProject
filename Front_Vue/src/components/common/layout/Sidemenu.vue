@@ -3,24 +3,26 @@
   <v-card >
    
       <v-navigation-drawer
-     class="to-blackMode"
+       class="to-blackMode"
        style="border-right:floralwhite 1px solid"
       >
-        <template v-slot:prepend >
-          <v-list-item
-          >
-            <!--로고-->
-            <v-img
-              class="mx-auto"
-              max-width="60"
-              src="@/assets/logo2.png"
-          ></v-img> 
-        
-        </v-list-item>
-        </template>
+          <template v-slot:prepend >
+            <v-list-item
+            >
+              <!--로고-->
+              <v-img
+                class="mx-auto"
+                max-width="60"
+                src="@/assets/logo2.png"
+            ></v-img> 
+          
+          </v-list-item>
+
+          
+          </template>
 
         <v-divider></v-divider>
-
+          <!--사이드 메뉴 항목들-->
         <v-list density="compact" nav>
         
           <v-list-item prepend-icon="mdi-pencil" title="새 게시물" value="account" @click="postInsertDialogOpen"></v-list-item>
@@ -147,9 +149,7 @@ export default{
       //로그아웃 api 호출 
       api.post('/logout')
       .then(()=>{
-        //성공시 
-
-            
+        //성공시  로컬스토리지 제거 , 로그인 페이지로 푸시     
         localStorage.removeItem('access');
         this.$router.push('/login');
 

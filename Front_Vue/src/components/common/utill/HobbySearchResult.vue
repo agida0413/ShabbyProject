@@ -34,7 +34,7 @@ import debounce from 'lodash/debounce';
 
 export default {
 
-  name:'HobbySearchBar',
+  name:'HobbySearchResult',
   props: {
     keyword: String,
     isHashtag: Boolean,
@@ -49,7 +49,7 @@ export default {
       observer: null, // IntersectionObserver 인스턴스
       firstCall:true,// 첫번째 페이지 로드인지에 대한 변수 
       isNomoreData:false,//더이상 로드할 데이터가 있는지에 대한 변수.
-      previousKeyword:''
+      previousKeyword:'' //이전 키워드
     };
   },
  
@@ -82,6 +82,7 @@ export default {
           this.previousIndex = -1; // 이전 인덱스 초기화
           this.firstCall=true // 첫번째 페이지 로드인지에 대한 변수 
         }
+        this.previousKeyword=this.keyword //이전 키워드 저장
       },
       immediate: true, // 초기 렌더링 시에도 실행
     },
@@ -90,18 +91,20 @@ export default {
     async fetchResults(keyword) {
       const sendKeyword = keyword.substring(1); // '@' 제거
       if (sendKeyword.includes('#') ) return; // 아무 작업도 하지 않음
-         // 정규 표현식: `_`, 알파벳, 숫자, 한글만 허용
-         const forbiddenChars = /[^a-zA-Z0-9가-힣]/;
 
+         // 정규 표현식: `_`, 알파벳, 숫자, 한글만 허용
+         const forbiddenChars = /[^a-zA-Z0-9_ㄱ-ㅎㅏ-ㅣ가-힣]/;
+         //validation
           if (forbiddenChars.test(sendKeyword)) {
             return
           }
-      if (this.isFetching || !this.isHashtag || this.isNomoreData) {
-       
-        return
-      } // 이미 데이터 가져오는 중이거나 #이 아닌 경우 , 더이상 로드할 데이터가 없는경우
+          // 이미 데이터 가져오는 중이거나 #이 아닌 경우 , 더이상 로드할 데이터가 없는경우
+          if (this.isFetching || !this.isHashtag || this.isNomoreData) {
+          
+            return
+          } 
     
-      this.isFetching = true; // 데이터 가져오기 시작
+       this.isFetching = true; // 데이터 가져오기 시작
 
        // 만약 첫 번째 로드이면 페이지를 증가시키지 않고 아니면 페이지를 증가시킴 
        if(!this.firstCall){
@@ -111,7 +114,7 @@ export default {
        this.firstCall=false;
      
       
-      
+      //NULL 허용 X 
       if(sendKeyword===''||sendKeyword===null){
         this.isFetching=false;
         return
@@ -127,7 +130,7 @@ export default {
         //만약 결과값이 있으면 기존배열에 추가 
         if (newHobbies?.length) {
           this.results = [...this.results, ...newHobbies];
-          this.previousKeyword=this.keyword
+        
         } else {
           //결과값이 없으면 증가시켰던 페이지를 원복시키고 , 로드할데이터가 없다는 변수 true
           this.page--;
@@ -198,13 +201,10 @@ export default {
     }
   },
     //클릭이벤트
-    handleClick(hobby) {
-     
-
+    handleClick(hobby) {     
       this.$emit('selectHobby', hobby); // 선택된 관심사 전달
     },
-    handleMouseOver(index) {
-     
+    handleMouseOver(index) {    
       this.previousIndex = this.selectedIndex; // 이전 인덱스 업데이트
       this.selectedIndex = index; // 현재 인덱스 업데이트
       this.scrollToSelectedItem(); // 선택된 항목으로 스크롤 이동
@@ -269,6 +269,7 @@ export default {
         }
       }
     },
+    //observer 객체 생성
     initObserver() {
       if (this.container) {
         this.$nextTick(() => {
@@ -283,6 +284,7 @@ export default {
         });
       }
     },
+    //결과 리스트 외부를 클릭했을때 결과 컴포넌트를 닫기위한 이벤트 
     handleClickOutside(event) {
      
      if (this.$refs.container && !this.$refs.container.contains(event.target)) {
@@ -291,10 +293,12 @@ export default {
      }
     }
   },
+  //마운트 시 observer 객체 생성 , 이벤트 리스너 등록 
   mounted() {
     document.addEventListener('click', this.handleClickOutside.bind(this)); // bind(this) 추가
     this.initObserver();
   },
+  //마운트 해제 전 
   beforeUnmount() {
     document.removeEventListener('click', this.handleClickOutside.bind(this)); // bind(this) 추가
     if (this.observer) {

@@ -11,6 +11,7 @@
           indeterminate
           v-if="isLoading"
          ></v-progress-linear>
+
         <v-card
           prepend-icon="mdi-account"
           title="닉네임 변경"
@@ -113,9 +114,9 @@
 export default {
     name: 'ChangeNickname',
   
-
+   //세팅 컴포넌트로 부터 받은 모달 불리안값 
     props: {
-      value: {//세팅 컴포넌트로 부터 받은 모달 불리안값 
+      value: {
         type: Boolean,
         required: true
       }

@@ -141,13 +141,15 @@
     name: 'FindIdComponent',
   
 
-    props: {
-      value: {//로그인 컴포넌트로 부터 받은 모달 불리안값 
+ props: {
+      //현재 컴포넌트의 열리고 닫힘을 제어 
+      value: {
         type: Boolean,
         required: true
       }
     
-},data(){
+},
+data(){
     return{
         items:['010','011','016','017','019'],// 우리나라 앞번호 종류 리스트 
         firstPhoneNum:'010', // 초기값 010 
@@ -197,11 +199,11 @@
       closeDialog() {
         //초기화
         this.isAuth=false;//다시 로그인찾기를 해도 처음부터 입력할수 있도록  초기값 설정 
-        this.nickname='';
-        this.name='';
-        this.firstPhoneNum='010'
-        this.middlePhoneNum=''
-        this.lastPhoneNum=''
+        this.nickname='';//닉네임 
+        this.name=''; //실명 
+        this.firstPhoneNum='010' //핸드폰 번호 첫3자리 
+        this.middlePhoneNum='' //두번째
+        this.lastPhoneNum='' //세번째 
         this.$emit('findIdClose');// 로그인 컴포넌트로 닫는 이벤트 전송
       
       },

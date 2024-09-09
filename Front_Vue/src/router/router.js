@@ -55,7 +55,11 @@ const routes = [
 
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
-  routes
+  routes,
+  scrollBehavior() {
+    // 스크롤 위치를 상단으로 이동
+    return { top: 0 };
+  }
 })
 
 
