@@ -85,6 +85,7 @@
                         <v-chip
                           class="ma-2 clickcursor"
                           color="green"
+                          style="font-weight: bold;"
                           label    
                           @click="goSearchFeed(hobby)"                                            
                           >
@@ -114,17 +115,15 @@
                         <v-chip                         
                             class="ma-2 custom-chip"                       
                             label
+                            style="cursor: pointer;"
+                            @click=" goOtherUserfeed(tag.nickname)"
                           >
                           <v-avatar :image="tag.profile" size="20" class="avatar"
                               v-if="tag.profile !== null" ></v-avatar>
                               <v-avatar :image="require('@/assets/ikmyung.png')"  
                               size="20" class="avatar" v-if="tag.profile === null" ></v-avatar>
-                          <span style="margin-right:10px;margin-left: 5px;"> {{ tag.follow }}</span>
-                            <v-icon
-                              class="v-close-icon"
-                              @click.stop="removeFollow(index)"
-                              :class="{ 'icon-disabled': isLoading }" 
-                            >mdi-close</v-icon>
+                          <span style="margin-right:10px;margin-left: 5px; font-weight: bold;"> {{ tag.nickname }}</span>
+                          
                           </v-chip>
                     
                       </span>
