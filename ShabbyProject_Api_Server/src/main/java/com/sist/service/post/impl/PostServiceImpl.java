@@ -151,8 +151,20 @@ public class PostServiceImpl implements PostService {
 		if(dto.getStrTagList()!=null) {
 			// 이미지 리스트 배열로 변환
 			System.out.println("테스트"+dto.getStrTagProfiles());
+			System.out.println(dto.getStrTagList());
+			
 			String[] handleTagList = dto.getStrTagList().split(",");
-			String[] handleTagProfileList= dto.getStrTagProfiles().split(",");;
+			String[] handleTagProfileList=new String[handleTagList.length];
+			
+			if(dto.getStrTagProfiles()==null) {
+				for (int i=0; i<handleTagList.length;i++) {
+					handleTagProfileList[i]=null;
+				}
+			}else {
+				handleTagProfileList= dto.getStrTagProfiles().split(",");;
+			}
+			
+			
 			
 			
 			
@@ -161,14 +173,14 @@ public class PostServiceImpl implements PostService {
 				// 하나씩 add
 				TagInformDTO handleDto = new TagInformDTO();
 				handleDto.setNickname(handleTagList[i]);
-				if(handleTagProfileList[i].equals("null")) {
+				if(handleTagProfileList[i].equals("NOPROFILE")) {
 					handleDto.setProfile(null);
 				}else {
 					handleDto.setProfile(handleTagProfileList[i]);
 				}
+			
 				
-				
-					
+												
 				
 				tgList.add(handleDto);
 			}

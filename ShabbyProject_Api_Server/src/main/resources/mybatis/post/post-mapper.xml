@@ -169,7 +169,7 @@
     GROUP_CONCAT(DISTINCT pi.post_img_url ORDER BY pi.post_img_num) AS strImgList,
     GROUP_CONCAT(DISTINCT hb.hobby ORDER BY hb.hb_num) AS strHobbyList,
     GROUP_CONCAT(DISTINCT member_tag.nickname ORDER BY mt.id_num) AS strTagList,
-    GROUP_CONCAT(DISTINCT COALESCE(member_tag.profile,'null')  ORDER BY mt.id_num) AS strTagProfiles, 
+    GROUP_CONCAT( COALESCE(member_tag.profile,'NOPROFILE')  ORDER BY mt.id_num) AS strTagProfiles, 
     (
 		SELECT COUNT(*) FROM POST_LIKE
 		WHERE post_num=p.post_num
