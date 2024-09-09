@@ -17,7 +17,7 @@ public final class PathVariableValidation {
 	// `_`를 제외한 모든 특수 문자를 검증하는 메소드
     public static boolean keyWordValService(String keyword) {
         // 허용할 문자: 알파벳, 숫자, `_` 만
-    	   Pattern pattern = Pattern.compile("[^a-zA-Z0-9_가-힣]");
+    	  Pattern pattern = Pattern.compile("[^a-zA-Z0-9_ㄱ-ㅎㅏ-ㅣ가-힣]");
 
      
             // 특수 문자가 포함된 경우 false 반환
@@ -33,7 +33,7 @@ public final class PathVariableValidation {
 		// `_`를 제외한 모든 특수 문자를 검증하는 메소드
 	    public static boolean keyWordValService(List<String> keywordList) {
 	        // 허용할 문자: 알파벳, 숫자, `_` 만
-	        Pattern pattern = Pattern.compile("[^a-zA-Z0-9_가-힣]");
+	    	  Pattern pattern = Pattern.compile("[^a-zA-Z0-9_ㄱ-ㅎㅏ-ㅣ가-힣]");
 
 	        for (String keyword : keywordList) {
 	            // 특수 문자가 포함된 경우 false 반환

@@ -254,8 +254,9 @@ public class FeedServiceImpl implements FeedService{
 		public ResponseEntity<ResponseDTO<List<PostListDTO>>> loadSearchFeedPostList(String keyword,int page) {
 		// TODO Auto-generated method stub
 			//validation
-			if(!PathVariableValidation.pageValidation(page)) {
-				throw new BadRequestException("유효하지 않은 페이지입니다.");
+			if(!PathVariableValidation.pageValidation(page) ||
+			    !PathVariableValidation.keyWordValService(keyword)		) {
+				throw new BadRequestException("유효하지 않은 입력입니다.");
 			}
 			
 			

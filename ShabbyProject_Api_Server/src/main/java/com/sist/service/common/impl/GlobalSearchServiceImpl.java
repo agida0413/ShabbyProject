@@ -29,8 +29,9 @@ public class GlobalSearchServiceImpl implements GlobalSearchService{
 	public ResponseEntity<ResponseDTO<List<GlobalSearchResultDTO>>> globalSearchResult(String keyword,int page) {
 		// TODO Auto-generated method stub
 		
-		if(!PathVariableValidation.pageValidation(page)) {
-			throw new BadRequestException("잘못된 페이지 요청입니다.");
+		if(!PathVariableValidation.pageValidation(page)
+		 ||!PathVariableValidation.keyWordValService(keyword)) {
+			throw new BadRequestException("유효하지 않은 입력입니다.");
 		}
 		
 		
@@ -54,8 +55,10 @@ public class GlobalSearchServiceImpl implements GlobalSearchService{
 	@Override
 	public ResponseEntity<ResponseDTO<SearchResultMemberListDTO>> globalSearchMemberList(String keyword, int page) {
 		// TODO Auto-generated method stub
-		if(!PathVariableValidation.keyWordValService(keyword)
-			||!PathVariableValidation.pageValidation(page)	)
+		if(!PathVariableValidation.pageValidation(page)
+			||!PathVariableValidation.keyWordValService(keyword)
+				
+				)
 		{
 			throw new BadRequestException("유효하지 않은 입력입니다.");
 		}
