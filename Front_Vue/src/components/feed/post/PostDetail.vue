@@ -89,7 +89,7 @@
                           @click="goSearchFeed(hobby)"                                            
                           >
                            <v-icon icon="mdi-label " start></v-icon>
-                          {{ hobby }}
+                          #{{ hobby }}
                         </v-chip>
                       </span> 
                   </v-card-text>
@@ -111,15 +111,21 @@
                     <v-card-text v-if="postDetailData.tagList!==null" >           
                       <span  v-for="(tag,index) in postDetailData.tagList" :key="index">  
                   
-                        <v-chip
-                          class="ma-2 clickcursor"
-                          color="blue"
-                          label  
-                          @click="goOtherUserfeed(tag)"                        
+                        <v-chip                         
+                            class="ma-2 custom-chip"                       
+                            label
                           >
-                           <v-icon icon="mdi-account-circle-outline clickcursor" start></v-icon>
-                          {{ tag }}
-                        </v-chip>
+                          <v-avatar :image="tag.profile" size="20" class="avatar"
+                              v-if="tag.profile !== null" ></v-avatar>
+                              <v-avatar :image="require('@/assets/ikmyung.png')"  
+                              size="20" class="avatar" v-if="tag.profile === null" ></v-avatar>
+                          <span style="margin-right:10px;margin-left: 5px;"> {{ tag.follow }}</span>
+                            <v-icon
+                              class="v-close-icon"
+                              @click.stop="removeFollow(index)"
+                              :class="{ 'icon-disabled': isLoading }" 
+                            >mdi-close</v-icon>
+                          </v-chip>
                     
                       </span>
                   </v-card-text>
@@ -329,6 +335,7 @@ export default {
           })
           .then(()=>{
             //삭제후 이벤트 버스를 통해 이벤트 전파 ==> 유저피드 포스트리스트 데이터 리로드
+            this.closeDialog()
             alert('성공적으로 삭제가 완료되었습니다.')
             eventBus.emit('resetPostList');
           })

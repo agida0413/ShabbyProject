@@ -31,6 +31,7 @@
 </template>
 
 <script>
+
 export default {
   data() {
     return {
@@ -80,6 +81,7 @@ handleSearchArrowUp(){
 this.$refs.globalSearchResult.handleArrowUp();
 },
 handleSearchEnter(){
+  
 this.$refs.globalSearchResult.handleEnter();
 },
 //자식으로 부터 매개변수로 자동완성된 해당항목의 value를 받아 검색결과 라우터로 푸시

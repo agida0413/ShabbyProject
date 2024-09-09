@@ -159,8 +159,7 @@
               :key="index"
               @click="goSearchFeed(hobby.hobby)"
               >
-
-              {{ hobby.hobby }}
+              #{{ hobby.hobby }}
             </v-chip>
           </v-chip-group>
         </v-sheet>

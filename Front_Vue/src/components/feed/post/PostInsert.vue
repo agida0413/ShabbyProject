@@ -117,7 +117,7 @@
                   label
                 >
                   <v-icon icon="mdi-label" start></v-icon>
-                <span style="margin-right:10px"> {{ hobby }}</span>
+                <span style="margin-right:10px"> #{{ hobby }}</span>
                   <v-icon
                     class="v-close-icon"
                     @click.stop="removeHobby(index)"
@@ -155,13 +155,16 @@
                  
                 </v-col>
                 <v-chip
-                  v-for="(follow, index) in followRequest" :key="index"
+                  v-for="(follow, index) in followList" :key="index"
                   class="ma-2 custom-chip"
-                  color="green"
+              
                   label
                 >
-                  <v-icon icon="mdi-account" start></v-icon>
-                <span style="margin-right:10px"> {{ follow }}</span>
+                <v-avatar :image="follow.profile" size="20" class="avatar"
+                    v-if="follow.profile !== null" ></v-avatar>
+                    <v-avatar :image="require('@/assets/ikmyung.png')"  
+                     size="20" class="avatar" v-if="follow.profile === null" ></v-avatar>
+                <span style="margin-right:10px;margin-left: 5px;"> {{ follow.follow }}</span>
                   <v-icon
                     class="v-close-icon"
                     @click.stop="removeFollow(index)"
@@ -241,6 +244,7 @@ data() {
 
     searchFollow: '', // 사람 태그
     followRequest: [], // 사람 태그 목록
+    followList:[],
     isAt:false,//입력값이 @인지 확인 
     
   
@@ -566,13 +570,15 @@ checkIsHashTag(){
    
     },
     //자식컴포넌트에서 검색을 통한 항목에서 엔터이벤트시 수행
-    selectFollow(follow) {
+    selectFollow(follow,profile) {
       //이미 인물태그배열에 존재하는 항목이면 
       const exists = this.followRequest.some(fw => fw === follow);
 
   // 배열에 이미 존재하지 않으면 추가
   if (!exists) {
+    this.followList.push({follow:follow,profile:profile})
     this.followRequest.push(follow); // 인덱스 없이 배열에 추가
+    console.log(this.followList)
   }
       this.searchFollow = '';//초기값 설정 
       this.isAt = false;//검색창 닫음
@@ -580,6 +586,7 @@ checkIsHashTag(){
     },
     //배열에서 사람태그 제거
     removeFollow(index) {
+      this.followList.splice(index,1)
       this.followRequest.splice(index, 1); // 인덱스로 배열에서 제거
 
     },
@@ -658,7 +665,8 @@ checkIsHashTag(){
     this.followRequest=[],
     this.isAt=false,
     this.canReplyCheck=false,
-    this.onlymeCheck=false
+    this.onlymeCheck=false,
+    this.followList=[]
     // 게시물 작성 컴포넌트 닫기 이벤트 전송 
     this.$emit('postInsertClose', false); 
    

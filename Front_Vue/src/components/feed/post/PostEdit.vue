@@ -99,7 +99,7 @@
                   label
                 >
                   <v-icon icon="mdi-label" start></v-icon>
-                <span style="margin-right:10px"> {{ hobby }}</span>
+                <span style="margin-right:10px"> #{{ hobby }}</span>
                   <v-icon
                     class="v-close-icon"
                     @click.stop="removeHobby(index)"
@@ -120,10 +120,7 @@
                     v-model="searchHobby"
                     class="autocomplete-input"
                     :disabled="isLoading"
-                  ></v-textarea>
-                 
-                   
-                    
+                  ></v-textarea>                   
                
                   <HobbySearchResult
                     ref="hobbySearchResult"
@@ -139,13 +136,16 @@
                  
                 </v-col>
                 <v-chip
-                  v-for="(follow, index) in followRequest" :key="index"
+                  v-for="(follow, index) in followList" :key="index"
                   class="ma-2 custom-chip"
-                  color="green"
+              
                   label
                 >
-                  <v-icon icon="mdi-account" start></v-icon>
-                <span style="margin-right:10px"> {{ follow }}</span>
+                <v-avatar :image="follow.profile" size="20" class="avatar"
+                    v-if="follow.profile !== null" ></v-avatar>
+                    <v-avatar :image="require('@/assets/ikmyung.png')"  
+                     size="20" class="avatar" v-if="follow.profile === null" ></v-avatar>
+                <span style="margin-right:10px;margin-left: 5px;"> {{ follow.nickname }}</span>
                   <v-icon
                     class="v-close-icon"
                     @click.stop="removeFollow(index)"
@@ -167,11 +167,11 @@
                     :disabled="isLoading"
                   ></v-textarea>
                   <FollowSearchResult
-                    ref="followSearchResult"
-                    :keyword="searchFollow"
-                    :isAt="isAt"
-                    @selectFollow="selectFollow"
-                    @enterNoSearch="enterNoSearchFollow"
+                     ref="followSearchResult"
+                     :keyword="searchFollow"
+                     :isAt="isAt"
+                     @selectFollow="selectFollow"
+                     @enterNoSearch="enterNoSearchFollow"
                      @closeSearchFl="closeSearchFl"
                     class="fow-autocomplete-list"             
                   >
@@ -231,7 +231,7 @@ data() {
     searchFollow: '', // 사람 태그
     followRequest: [], // 사람 태그 목록
     isAt:false,//입력값이 @인지 확인 
-    
+    followList:[],
   
     onlymeCheck: false, // 나만 보기 기능 체크박스
     
@@ -272,8 +272,12 @@ watch:{
           this.hobbiesRequest=[]
         }
         //기존 맴버태그 리스트 
-        this.followRequest=res?.data?.reqData?.tagList
-     
+        this.followRequest=res?.data?.reqData?.tagNickList
+       
+        this.followList=res?.data?.reqData?.tagList
+        if(this.followList===null){
+          this.followList=[]
+        }
         if(this.followRequest===null){
           //기존값이 null이면 null전송 방지 
           this.followRequest=[]
@@ -549,17 +553,22 @@ removeImage(index) {//해당 인덱스를 받음
    
     },
     //자식컴포넌트에서 검색을 통한 항목에서 엔터이벤트시 수행
-    selectFollow(follow) {
+    selectFollow(follow,profile) {
       //이미 인물태그배열에 존재하는 항목이면 
-     
+      console.log(follow)
+     console.log(profile)
       let exists =false;
+      console.log(this.followRequest)
       if(this.followRequest!==null){
+        
       exists= this.followRequest.some(fw => fw === follow);
 
       }
      
   // 배열에 이미 존재하지 않으면 추가
   if (!exists) {
+    console.log(profile)
+    this.followList.push({nickname:follow,profile:profile})
     this.followRequest.push(follow); // 인덱스 없이 배열에 추가
   }
       this.searchFollow = '';//초기값 설정 
@@ -568,6 +577,7 @@ removeImage(index) {//해당 인덱스를 받음
     },
     //배열에서 사람태그 제거
     removeFollow(index) {
+      this.followList.splice(index,1)
       this.followRequest.splice(index, 1); // 인덱스로 배열에서 제거
 
     },

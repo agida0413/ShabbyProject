@@ -18,7 +18,7 @@
         @mouseover="handleMouseOver(index)"
         :ref="index === selectedIndex ? 'selectedItem' : null"
       >
-        {{ result.hobby }}
+       # {{ result.hobby }}
       </li>
       <li ref="sentinel" class="result-item sentinel"></li>
     </ul>
@@ -324,7 +324,7 @@ export default {
   cursor: pointer;
 }
 .result-item:hover {
-  background-color: #e0e0e0;
+  background-color:  #888;
 }
 .sentinel {
   height: 20px;

@@ -44,9 +44,10 @@
               <v-progress-circular color="grey-lighten-5" indeterminate></v-progress-circular>
             </v-row>
           </template>
-          <div class="overlay">
-            <v-icon class="overlay-icon">mdi-heart</v-icon>
+          <div class="overlay" >
+          <span >  <v-icon class="overlay-icon" >mdi-heart</v-icon>
             {{ post.likeCount }}
+          </span>
           </div>
         </v-img>
    
@@ -184,9 +185,15 @@ export default{
       
     // 데이터를 초기화하고 새로 로드
     resetData() {
+   
       this.page = 1;
       this.postData = [];
       this.noMoreNeedData = false;
+      this.isLoading=false;
+      this.observer=null;
+      this.sendPostNum=0;
+
+      this.isFirstLoad=true;
      
       this.loadPost();
     },

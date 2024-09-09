@@ -14,11 +14,16 @@
         :key="index"
         class="result-item"
         :class="{ selected: index === selectedIndex }"
-        @click="handleClick(result.nickname)"
+        @click="handleClick(result.nickname,result.profile)"
         @mouseover="handleMouseOver(index)"
         :ref="index === selectedIndex ? 'selectedItem' : null"
       >
-        {{ result.nickname }}
+      <v-avatar :image="result.profile" size="20" class="avatar"
+         v-if="result.profile !== null" ></v-avatar>
+      <v-avatar :image="require('@/assets/ikmyung.png')"  
+       size="20" class="avatar" v-if="result.profile === null" >
+      </v-avatar>  
+      <span style="margin-left: 5px;">{{ result.nickname }}</span>
       </li>
       <li ref="sentinel" class="result-item sentinel"></li>
     </ul>
@@ -188,13 +193,14 @@ export default {
     handleEnter() {
       if (this.isAt) {
         if (this.selectedIndex >= 0 && this.selectedIndex < this.results.length) {
-          this.handleClick(this.results[this.selectedIndex].nickname); // 선택된 항목 클릭 처리
+          this.handleClick(this.results[this.selectedIndex].nickname,this.results[this.selectedIndex].profile); // 선택된 항목 클릭 처리
         }
       }
     },
     //클릭이벤트
-    handleClick(follow) {
-      this.$emit('selectFollow', follow); // 선택된 팔로우인원 전달
+    handleClick(follow,profile) {
+     
+      this.$emit('selectFollow', follow,profile); // 선택된 팔로우인원 전달
     },
     handleMouseOver(index) {
       this.previousIndex = this.selectedIndex; // 이전 인덱스 업데이트
@@ -302,7 +308,7 @@ export default {
 
 <style scoped>
 .selected {
-  background-color: black; 
+  background-color: #888; 
 }
 .results-list {
   margin: 0;
@@ -315,7 +321,7 @@ export default {
   cursor: pointer; 
 }
 .result-item:hover {
-  background-color: #e0e0e0; 
+  background-color:#888;
 }
 .sentinel {
   height: 20px; 
