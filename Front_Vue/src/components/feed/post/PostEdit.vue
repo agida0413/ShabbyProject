@@ -125,17 +125,17 @@
                    
                     
                
-                  <HobbySearchBar
-                    ref="hobbySearchBar"
+                  <HobbySearchResult
+                    ref="hobbySearchResult"
                     :keyword="searchHobby"
                     :isHashtag="isHashtag"
                     @selectHobby="selectHobby"
                     @enterNoSearch="enterNoSearchHobby"
                     @HbsearchLoading="hbsearchLoading"
-                      @closeSearch="closeSearch"
+                    @closeSearch="closeSearch"
                     class="autocomplete-list"             
                   >
-                  </HobbySearchBar>
+                  </HobbySearchResult>
                  
                 </v-col>
                 <v-chip
@@ -166,8 +166,8 @@
                     v-model="searchFollow"
                     :disabled="isLoading"
                   ></v-textarea>
-                  <FollowSearchBar
-                    ref="followSearchBar"
+                  <FollowSearchResult
+                    ref="followSearchResult"
                     :keyword="searchFollow"
                     :isAt="isAt"
                     @selectFollow="selectFollow"
@@ -175,7 +175,7 @@
                      @closeSearchFl="closeSearchFl"
                     class="fow-autocomplete-list"             
                   >
-                  </FollowSearchBar>
+                  </FollowSearchResult>
                 </v-col>
                 <v-divider></v-divider>
                 
@@ -210,6 +210,7 @@ props: {
     type: Boolean,
     required: true
   },
+  //게시물 번호 
   postNum:{
     type :Number,
     required:  true
@@ -301,17 +302,18 @@ watch:{
 },
 
 methods: {
+  //관심사 자동검색 리스트 닫기 
   closeSearch(){
     this.searchHobby=''
     this.isHashtag=false
   },
+  //회원 태그 자동검색 리스트 닫기 
   closeSearchFl(){
 
     this.searchFollow=''
     this.isAt=false
   },
   //부모요소(현재 컴포넌트) 에서 키다운이벤트 발생시 관심사 검색 컴포넌트에게 이벤트를 전달하기위함 
-  
   handleHobbyKeyDown(event) {
 
       switch(event.key) {
@@ -349,24 +351,24 @@ methods: {
     //자식컴포넌트에게 ref(참조값) 에 해당하는 메소드로 전달 
     handleHobbyArrowDown(){
      
-      this.$refs.hobbySearchBar.handleArrowDown();
+      this.$refs.hobbySearchResult.handleArrowDown();
     },
     handleHobbyArrowUp(){
-      this.$refs.hobbySearchBar.handleArrowUp();
+      this.$refs.hobbySearchResult.handleArrowUp();
     },
     handleHobbyEnter(){
       
-      this.$refs.hobbySearchBar.handleEnter();
+      this.$refs.hobbySearchResult.handleEnter();
     },
     handleFollowArrowDown(){
      
-     this.$refs.followSearchBar.handleArrowDown();
+     this.$refs.followSearchResult.handleArrowDown();
    },
    handleFollowArrowUp(){
-     this.$refs.followSearchBar.handleArrowUp();
+     this.$refs.followSearchResult.handleArrowUp();
    },
    handleFollowEnter(){
-     this.$refs.followSearchBar.handleEnter();
+     this.$refs.followSearchResult.handleEnter();
    },
    //사진 한장씩 추가 하는 메서드
    handleSingleFileChange(event) {
@@ -655,14 +657,9 @@ removeImage(index) {//해당 인덱스를 받음
     this.onlymeCheck=false
     // 게시물 작성 컴포넌트 닫기 이벤트 전송 
     this.$emit('postEditClose', false); //게시물 수정 닫음 
-
    
   },
  
-},
-components: {
-  
-  
 }
 }
 </script>
@@ -671,7 +668,7 @@ components: {
 .modal {
   max-height: 90vh;
   overflow: hidden;
-  pointer-events: none; /* 부모는 클릭 불가능 */
+  pointer-events: none; 
   
   z-index:1;
   
@@ -774,15 +771,15 @@ components: {
   
   border-radius: 4px;
   width: calc(100% );
-  max-height: 180px; /* 높이를 지정하여 스크롤이 가능하게 함 */
-  overflow: auto; /* 스크롤 활성화 */
-  z-index: 1000; /* 충분히 높은 값 */
-  top: 67%; /* 입력 필드 바로 아래에 위치 */
-  pointer-events: auto; /* 클릭 이벤트 허용 */
+  max-height: 180px; 
+  overflow: auto;  
+  z-index: 1000; 
+  top: 67%; 
+  pointer-events: auto; 
   left: 0;
-   /* 스크롤 바 커스텀 */
-   scrollbar-width: thin; /* Firefox */
-  scrollbar-color: #888 transparent; /* Firefox */
+  
+   scrollbar-width: thin; 
+  scrollbar-color: #888 transparent;
 }
 .fow-autocomplete-list{
   position: absolute;
@@ -790,31 +787,30 @@ components: {
   
   border-radius: 4px;
   width: calc(100% );
-  max-height: 150px; /* 높이를 지정하여 스크롤이 가능하게 함 */
-  overflow: auto; /* 스크롤 활성화 */
-  z-index: 1001; /* 충분히 높은 값 */
-  top: 71%; /* 입력 필드 바로 아래에 위치 */
-  pointer-events: auto; /* 클릭 이벤트 허용 */
+  max-height: 150px;
+  overflow: auto; 
+  z-index: 1001; 
+  top: 71%; 
+  pointer-events: auto;
   left: 0;
-   /* 스크롤 바 커스텀 */
-   scrollbar-width: thin; /* Firefox */
-  scrollbar-color: #888 transparent; /* Firefox */
+  scrollbar-width: thin;
+  scrollbar-color: #888 transparent; 
 }
 .autocomplete-list::-webkit-scrollbar {
-  width: 5px; /* 스크롤 바의 너비 */
+  width: 5px; 
 }
 
 .autocomplete-list::-webkit-scrollbar-track {
-  background: transparent; /* 스크롤 바 트랙 배경색 */
+  background: transparent; 
 }
 
 .autocomplete-list::-webkit-scrollbar-thumb {
-  background-color: #888; /* 스크롤 바 색상 */
-  border-radius: 10px; /* 스크롤 바 모서리 둥글게 */
+  background-color: #888; 
+  border-radius: 10px;
 }
 
 .autocomplete-list::-webkit-scrollbar-thumb:hover {
-  background-color: #555; /* 스크롤 바 색상 (호버 시) */
+  background-color: #555; 
 }
 .autocomplete-item {
   padding: 8px;
@@ -825,58 +821,58 @@ components: {
 .autocomplete-item.selected {
   background: #f0f0f0;
 }
-/* v-chip 스타일 */
+
 .custom-chip {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 3px 12px;
-  position: relative; /* 아이콘 위치 조정을 위해 상대적으로 설정 */
-  background-color: white; /* 배경색을 하얀색으로 설정 */
-  color: black; /* 텍스트 색상 */
-  border-radius: 50px; /* 동그란 배경을 만들기 위한 설정 */
-  border: 1px solid #ddd; /* 연한 회색 테두리 추가 (필요시) */
+  position: relative; 
+  background-color: white; 
+  color: black; 
+  border-radius: 50px; 
+  border: 1px solid #ddd; 
 }
 
 .custom-chip .v-icon {
-  font-size: 15px; /* 아이콘 크기 조정 */
+  font-size: 15px; 
 }
 
 .v-close-icon {
   cursor: pointer;
-  margin-left: 8px; /* 닫기 아이콘과 텍스트 사이의 간격을 조정 */
-  font-size: 15px; /* 아이콘 크기 조정 (필요에 따라 조정) */
-  position: absolute; /* 아이콘을 칩의 우측에 위치시키기 위해 절대 위치 사용 */
-  right: 5px; /* 칩의 우측으로부터의 거리 조정 */
-  top: 50%; /* 칩의 세로 중앙에 위치시키기 위한 설정 */
-  transform: translateY(-50%); /* 세로 중앙 조정을 위한 변환 */
+  margin-left: 8px; 
+  font-size: 15px; 
+  position: absolute; 
+  right: 5px; 
+  top: 50%; 
+  transform: translateY(-50%); 
 }
 .remove-icon {
   position: absolute;
   top: 10px;
   right: 10px;
-  background-color: #ff4d4d; /* 밝은 빨강색 배경 */
-  color: white; /* 아이콘 색상을 흰색으로 변경 */
-  border-radius: 50%; /* 원형 배경 유지 */
-  font-size: 20px; /* 적당한 아이콘 크기 */
-  width: 30px; /* 아이콘의 너비 */
-  height: 30px; /* 아이콘의 높이 */
-  display: flex; /* 아이콘 중앙 정렬을 위해 flex 사용 */
-  align-items: center; /* 세로 중앙 정렬 */
-  justify-content: center; /* 가로 중앙 정렬 */
+  background-color: #ff4d4d; 
+  color: white; 
+  border-radius: 50%; 
+  font-size: 20px; 
+  width: 30px; 
+  height: 30px; 
+  display: flex; 
+  align-items: center; 
+  justify-content: center;
   cursor: pointer;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* 부드러운 그림자 효과 */
-  transition: background-color 0.3s, transform 0.2s; /* 배경색과 크기 변화에 애니메이션 추가 */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); 
+  transition: background-color 0.3s, transform 0.2s; 
 }
 
 .remove-icon:hover {
-  background-color: #e60000; /* 호버 시 더 어두운 빨강색 배경 */
-  transform: scale(1.1); /* 호버 시 아이콘 확대 효과 */
+  background-color: #e60000; 
+  transform: scale(1.1); 
 }
 
 .icon-disabled {
  
-  pointer-events: none; /* 클릭 불가능 */
-  cursor: not-allowed; /* 커서 모양 변경 */
+  pointer-events: none;
+  cursor: not-allowed;
 }
 </style>

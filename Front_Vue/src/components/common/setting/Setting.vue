@@ -25,8 +25,8 @@
             subheader
              class="to-blackMode"
           >
-            <v-list-subheader  class="to-blackMode">정보변경</v-list-subheader>
-
+            <v-list-subheader  class="to-blackMode" style="opacity: 0.7;">정보변경</v-list-subheader>
+         
             <!-- 각 버튼 클릭시 해당되는 메소드실행 후 변수값 true로 변경-->
                   <v-list-item
                     subtitle="change nickname"
@@ -49,7 +49,8 @@
                     @click="openPhoneChange"
                   ></v-list-item>
                   <v-divider></v-divider>
-                  <v-list-subheader  class="to-blackMode">계정관리</v-list-subheader>
+                  <v-list-subheader  class="to-blackMode" style="opacity: 0.7;">계정관리</v-list-subheader>
+                
                   <v-list-item
                   v-if="memberData.locked==='PUBLICID'"
                     :key="updateKey"
@@ -86,44 +87,7 @@
             <v-divider></v-divider>
 
 
-          <!--기타 설정-->
-            <v-list-subheader  class="to-blackMode">임시</v-list-subheader>
-  
-            <v-list-item
-              subtitle="Notify me about updates to apps or games that I downloaded"
-              title=""
-              @click="notifications = !notifications"
-            >
-              <template v-slot:prepend>
-                <v-list-item-action start>
-                  <v-checkbox-btn v-model="notifications" color="primary"></v-checkbox-btn>
-                </v-list-item-action>
-              </template>
-            </v-list-item>
-  
-            <v-list-item
-              subtitle="Auto-update apps at any time. Data charges may apply"
-              title="Sound"
-              @click="sound = !sound"
-            >
-              <template v-slot:prepend>
-                <v-list-item-action start>
-                  <v-checkbox-btn v-model="sound" color="primary"></v-checkbox-btn>
-                </v-list-item-action>
-              </template>
-            </v-list-item>
-  
-            <v-list-item
-              subtitle="Automatically add home screen widgets"
-              title="Auto-add widgets"
-              @click="widgets = !widgets"
-            >
-              <template v-slot:prepend>
-                <v-list-item-action start>
-                  <v-checkbox-btn v-model="widgets" color="primary"></v-checkbox-btn>
-                </v-list-item-action>
-              </template>
-            </v-list-item>
+      
           </v-list>
         </v-card>
       </v-dialog>

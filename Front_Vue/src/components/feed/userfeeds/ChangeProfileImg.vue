@@ -11,6 +11,7 @@
 
                 <v-card rounded="lg" class="to-blackMode">
                   <v-card-title class="d-flex justify-space-between align-center">
+
                     <div class="text-h5 text-medium-emphasis ps-2">
                      <span style="color: white;"> 프로필 사진 변경</span>
                     </div>
@@ -20,6 +21,7 @@
                       @click="isActive.value = false"
                       :disabled="isLoading"
                     ></v-btn>
+
                   </v-card-title>
     
                   <v-divider class="mb-4"></v-divider>
@@ -84,7 +86,7 @@ import api from '@/api';
       
     },data(){
       return{
-        profileImgFile:null,
+        profileImgFile:null, //파일 객체 
         isLoading:false     
       }
     }
@@ -97,12 +99,13 @@ import api from '@/api';
     }   
       ,
       methods: {
-        
+        // 해당 컴포넌트를 닫는 메소드 
         closeDialog() {
           this.profileImgFile=null,
           this.isLoading=false
-          this.$emit('changeProfileImgClose');// 로그인 컴포넌트로 닫는 이벤트 전송
+          this.$emit('changeProfileImgClose');
         },
+        //사진 업로드 핸들러 
          handleFileEvent(event){
           const file= event.target.files[0]
           if(!file)return;
@@ -120,20 +123,22 @@ import api from '@/api';
            this.profileImgFile = file;
     
        },
+       //사진 변경 API 
        changeProfile(){
-
+        //통신 중이면 리턴
         if(this.isLoading){
         return
-       }
-
+        }
+        //파일 객체 FORMDATA에 담음 
        const formData= new FormData()
        formData.append('profileImgFile',this.profileImgFile)
-       
+       //로딩중 
        this.isLoading=true;
+       //API 호출 
        api.put('/feed/userfeed',formData)
        .then(()=>{
-       alert('성공적으로 프로필 사진이 변경되었습니다.')
-        this.closeDialog()
+           alert('성공적으로 프로필 사진이 변경되었습니다.')
+           this.closeDialog()
        })
        .catch((err)=>{
         alert(err?.response?.data?.message)
@@ -146,13 +151,11 @@ import api from '@/api';
     }
     </script>
     
-    <style>
-    .info-text {
-    color: grey; /* 회색으로 변경 */
-    font-size: 0.875rem; /* 텍스트 크기 조정 (작게) */
-    margin-top: 8px; /* 상단 여백 조정 */
-    text-align: center;
+ <style>
+.info-text {
+  color: grey; 
+  font-size: 0.875rem; 
+  margin-top: 8px; 
+  text-align: center;
 }
-
-
-    </style>
+ </style>

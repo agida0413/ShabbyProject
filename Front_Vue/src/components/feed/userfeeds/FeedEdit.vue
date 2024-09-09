@@ -4,7 +4,7 @@
   
           <template v-slot:default="{ isActive }">
               
-            <v-progress-linear
+               <v-progress-linear
                   color="cyan"
                   indeterminate
                   v-if="isLoading"
@@ -29,16 +29,16 @@
              
                   <div class="mb-2">자기소개 수정</div>
 
-                <v-textarea
-                  maxlength="100"
-                  class="mb-2"
-                  rows="3"
-                  variant="outlined"
-                  persistent-counter
-                  no-resize
-                 :disabled="isLoading"
-                  v-model="introduce"
-                ></v-textarea>
+                    <v-textarea
+                      maxlength="100"
+                      class="mb-2"
+                      rows="3"
+                      variant="outlined"
+                      persistent-counter
+                      no-resize
+                    :disabled="isLoading"
+                      v-model="introduce"
+                    ></v-textarea>
 
                
 
@@ -85,9 +85,9 @@ export default {
   
 },data(){
   return{
-     originalIntroduce:'',
-     introduce:'',
-     isLoading:false 
+     originalIntroduce:'',//기존 자기소개 
+     introduce:'', // 변경될 자기소개 
+     isLoading:false  //데이터 로드 여부 
   }
 }
 ,computed:{
@@ -98,8 +98,11 @@ export default {
   }
 },
 watch: {
+  //모달 열림,닫힘 감지 
     value(newVal) {
+      //모달이 열렸으면 
       if(newVal===true){
+        //기존 자기소개를 가져옴 
         this.getOriginalIntroduce()
       }
       
@@ -112,18 +115,20 @@ mounted() {
     closeDialog() {
       this.$emit('feedEditClose');// 로그인 컴포넌트로 닫는 이벤트 전송
     },
-   getOriginalIntroduce(){
-    
+    //기존 자기소개를 가져오는 메소드 
+    getOriginalIntroduce(){
+    //데이터 로드중이면 리턴 
     if(this.isLoading===true){
       return
     }
-    
+    //데이터 로드 
     this.isLoading=true
+    // 기존 자기소개를 가져오는 API 
     api.get('/feed/introduce')
     .then((res)=>{
+      //결과값 저장 
       this.introduce=res?.data?.reqData?.introduce
-      this.originalIntroduce=res?.data?.reqData?.introduce
-    
+      this.originalIntroduce=res?.data?.reqData?.introduce    
 
     })
     .catch((err)=>{
@@ -135,24 +140,26 @@ mounted() {
       this.isLoading=false
     })
    },
+   //자기소개 변경 
    UpdateIntroduceSubmit(){
     
-    
+    // 기존 자기소개 와 동일하게 변경시도 시  리턴 
     if(this.introduce===this.originalIntroduce){
       alert('이전 자기소개와 동일합니다.')
       return
     }
-
+    //변경할 자기소개가 ''일시 NULL로 지정 
     if(this.introduce===''){
       this.introduce=null
     }
+      //전송중     
       this.isLoading=true;
+      
       api.put('/feed/introduce',{
        introduce:this.introduce
       })
       .then(()=>{
-        alert('성공적으로 변경되었습니다.')
-       
+        alert('성공적으로 변경되었습니다.') 
       })
       .catch((err)=>{
         alert(err?.response?.data?.message)

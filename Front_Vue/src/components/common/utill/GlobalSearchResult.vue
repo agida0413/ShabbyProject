@@ -48,8 +48,8 @@
       
         <li ref="sentinel" class="result-item sentinel"></li>
       </ul>
-      <ul v-show="!results.length" style="height: 40px;" >
-        <li style="color: black;">
+      <ul v-show="!results.length" style="padding: 10px;" >
+        <li style="color: black; opacity: 0.7;">
           검색결과가 없습니다.
         </li>
       </ul>
@@ -66,9 +66,9 @@
   import api from '../../../api';
   export default {
   
-    name:'GlobalSearchBar',
+    name:'GlobalSearchResult',
     props: {
-      keyword: String,
+      keyword: String, //키워드
      
     },
     data() {
@@ -81,7 +81,7 @@
         observer: null, // IntersectionObserver 인스턴스
         firstCall:true,// 첫번째 페이지 로드인지에 대한 변수 
         isNomoreData:false,//더이상 로드할 데이터가 있는지에 대한 변수.
-        previousKeyword:''
+        previousKeyword:'' //이전 키워드 
        
       };
     },
@@ -95,17 +95,17 @@
       },
     },
     watch: {
+      //변경된 키워드 감지 
       keyword: {
         handler(newKeyword) {
-
+          //공백제거시에도 '' 이면 검색결과를 닫고 리턴 
          if(newKeyword.trim()===''){
       
          this.$emit('closeSearch')
          return
        
          }
-         console.log(newKeyword)
-         console.log(this.previousKeyword)
+         
           if (newKeyword && newKeyword!==this.previousKeyword ) {
             this.page = 1; // 페이지 1로 초기화
             this.results = []; // 결과 배열 초기화
@@ -121,6 +121,8 @@
             this.firstCall=true // 첫번째 페이지 로드인지에 대한 변수 
             
           }
+          //이전키워드 저장
+          this.previousKeyword=this.keyword
         },
         immediate: true, // 초기 렌더링 시에도 실행
       },
@@ -128,7 +130,7 @@
     methods: {
       async fetchResults(keyword) {
        // 정규 표현식: `_`, 알파벳, 숫자, 한글만 허용
-      const forbiddenChars = /[^a-zA-Z0-9_가-힣]/;
+      const forbiddenChars = /[^a-zA-Z0-9_ㄱ-ㅎㅏ-ㅣ가-힣]/;
 
       if (forbiddenChars.test(keyword)) {
         return
@@ -154,22 +156,28 @@
          
 
          this.isFetching = true; // 데이터 가져오기 시작
+         // 전체 검색결과 가져옴 
          api.get(`/search/${this.page}`,{
           params:{
             keyword:keyword
           }
          })
          .then((res)=>{
+
           const newResult=res?.data?.reqData
+          //검색 배열 길이가 있으면 
           if(newResult.length){
+            //이전 배열+ 새로운 배열 
             this.results=[...this.results,...res?.data?.reqData] 
           }
           else{
+            //결과가없으면 페이지 원복
+            // nomoredata true
             this.page--;
             this.isNomoreData = true;
           }
         
-          this.previousKeyword=this.keyword
+        
          })
          .catch((err)=>{
           alert(err?.response?.data?.message)
@@ -232,12 +240,27 @@
       //부모로 부터 받은 엔터이벤트
       handleEnter() {
         
-
+          //자동검색완료 항목 클릭시 
           if (this.selectedIndex >= 0 && this.selectedIndex < this.results.length) {
            
             this.handleClick(this.results[this.selectedIndex].result,this.results[this.selectedIndex].type); // 선택된 항목 클릭 처리
-          } else {
-            this.$emit('enterNoramlSearch');
+          }
+          //자동검색항목이 아니라 순수 검색일경우  
+          else {
+            //validation
+            const forbiddenChars = /[^a-zA-Z0-9_ㄱ-ㅎㅏ-ㅣ가-힣]/;
+
+              if (forbiddenChars.test(this.keyword)) {
+                alert('검색어에 포함되면 안되는 문자가 있습니다.')
+                return
+              }
+              //검색리스트를 닫고 검색피드로 푸시
+
+            this.closeSearch()
+            this.$router.push({
+            name: 'searchfeed',
+            params: { type: 'hobby', keyword: this.keyword }
+            });
         }
       
     },
@@ -319,7 +342,7 @@
       const containerRect = containerElement.getBoundingClientRect();
       const itemRect = selectedItem.getBoundingClientRect();
 
-      // 선택된 항목이 컨테이너 하단에서 540픽셀 이내에 있을 때
+      // 선택된 항목이 컨테이너 하단에서 픽셀 이내에 있을 때
       if (itemRect.bottom > containerRect.bottom - 100) {
         if (!this.isFetching && !this.isNoMoreData) {
           this.debouncedFetchResults(this.keyword);
@@ -329,7 +352,7 @@
      
     }
   },
-
+    //observer 객체 생성
       initObserver() {
       
         if (this.container) {
@@ -338,16 +361,18 @@
               this.observer = new IntersectionObserver(this.handleIntersection, {
                 root: this.container,
                 rootMargin: '0px',
-                threshold: 0.1,
+                threshold: 1.0,
               });
               this.observer.observe(this.sentinel);
             }
           });
         }
       },
+      //결과리스트를 닫음 
       closeSearch(){
         this.$emit('closeSearch')
       },
+      //결과 외부클릭시 닫게하는 이벤트
       handleClickOutside(event) {
      
       if (this.$refs.container && !this.$refs.container.contains(event.target)) {
@@ -355,50 +380,51 @@
       }
      }
     }, 
-   
+    //마운트시 observer 생성, 이벤트 리스너 등록 
     mounted() {
   
-      document.addEventListener('click', this.handleClickOutside.bind(this)); // bind(this) 추가
+      document.addEventListener('click', this.handleClickOutside.bind(this)); 
       this.initObserver();
     },
+    //마운트 해제 전 observer 해제 , 이벤트 리스너 해제 
     beforeUnmount() {
      
       if (this.observer) {
   
         this.observer.disconnect();
       } 
-      document.removeEventListener('click', this.handleClickOutside.bind(this)); // bind(this) 추가
+      document.removeEventListener('click', this.handleClickOutside.bind(this)); 
     }
   };
   </script>
   
   <style scoped>
  .autocomplete-container{
-  overflow-y: auto; /* 스크롤 가능 */
+  overflow-y: auto; 
   margin: 0;
   padding: 0;
-  max-height: 545px; /* 필요에 따라 높이 조정 */
-  /* 스크롤 바 커스텀 */
-  scrollbar-width: thin; /* Firefox */
-  scrollbar-color: #888 transparent; /* Firefox */
+  max-height: 545px; 
+ 
+  scrollbar-width: thin; 
+  scrollbar-color: #888 transparent; 
 }
 
 
 .autocomplete-container::-webkit-scrollbar {
-  width: 5px; /* 스크롤 바의 너비 */
+  width: 5px; 
 }
 
 .autocomplete-container::-webkit-scrollbar-track {
-  background: transparent; /* 스크롤 바 트랙 배경색 */
+  background: transparent; 
 }
 
 .autocomplete-container::-webkit-scrollbar-thumb {
-  background-color: #888; /* 스크롤 바 색상 */
-  border-radius: 10px; /* 스크롤 바 모서리 둥글게 */
+  background-color: #888; 
+  border-radius: 10px; 
 }
 
 .autocomplete-container::-webkit-scrollbar-thumb:hover {
-  background-color: #555; /* 스크롤 바 색상 (호버 시) */
+  background-color: #555;
 }
 
   .selected {
@@ -414,7 +440,7 @@
     background-color: #e0e0e0;
   }
   .sentinel {
-    height: 20px;
+    height: 1px;
     background: transparent;
   }
   .loading-indicator {

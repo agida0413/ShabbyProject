@@ -33,10 +33,10 @@ import api from "@/api";
 import debounce from 'lodash/debounce';
 
 export default {
-  name:'FollowSearchBar',
+  name:'FollowSearchResult',
   props: {
-    keyword: String,
-    isAt: Boolean,
+    keyword: String, //키워드
+    isAt: Boolean, //@가 들어가 있는지 확인
   },
   data() {
     return {
@@ -48,7 +48,7 @@ export default {
       observer: null, // IntersectionObserver 인스턴스
       firstCall:true,// 첫번째 페이지 로드인지에 대한 변수 
       isNomoreData:false,//더이상 로드할 데이터가 있는지에 대한 변수
-      previousKeyword:''
+      previousKeyword:'' //이전 키워드 저장 
       
     };
   },
@@ -61,6 +61,7 @@ export default {
     },
   },
   watch: {
+    //검색어 변경을 감지 
     keyword: {
       handler(newKeyword) {
       
@@ -78,6 +79,7 @@ export default {
           this.previousIndex = -1; // 이전 인덱스 초기화
           this.firstCall=true // 첫번째 페이지 로드인지에 대한 변수 
         }
+        this.previousKeyword=this.keyword
       },
       immediate: true, // 초기 렌더링 시에도 실행
     },
@@ -89,7 +91,7 @@ export default {
 
       if (sendKeyword.includes('@') ) return; // 아무 작업도 하지 않음
          // 정규 표현식: `_`, 알파벳, 숫자, 한글만 허용
-         const forbiddenChars = /[^a-zA-Z0-9_가-힣]/;
+         const forbiddenChars = /[^a-zA-Z0-9_ㄱ-ㅎㅏ-ㅣ가-힣]/;
 
           if (forbiddenChars.test(sendKeyword)) {
             return
@@ -111,18 +113,19 @@ export default {
         this.isFetching=false;
         return
       }
+    // API 호출
     api.get(`/members/following/${this.page}/${rowSize}`,{
       params:{
         keyword:sendKeyword
       }
-    }) // API 호출
+    }) 
     .then((res) => {
    
       const newFollows = res?.data?.reqData?.followList; // 새로운 결과 리스트
       //결과가 있으면 
       if (newFollows?.length) {
         this.results = [...this.results, ...newFollows]; // 기존 결과에 새로운 결과 추가
-        this.previousKeyword=this.keyword
+       
       }
       else{ //결과가 없으면
         //페이지를 다시 원복시키고

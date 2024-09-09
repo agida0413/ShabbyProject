@@ -74,12 +74,16 @@
 import api from '@/api';
 import PostDetail from '../post/PostDetail.vue';
 export default {
+  //검색 키워드 
   props:{
     keyword:String
   },
   watch:{
+    //바뀐 검색어를 감지 
     keyword(newKeyword){
+      //새 키워드를 컴포넌트 변수에 바인딩 
       this.hobbyKeyword=newKeyword
+      //나머지 변수 초기화 
       this.postDetailDialog=false;
       this.page=1
       this.postData=[]
@@ -88,6 +92,7 @@ export default {
       this.noMoreNeedData=false
       this.firstCall=false
       this.sendPostNum=0
+      //새로운 데이터 로드 
       this.callMainPostList()
     }
   },
@@ -101,7 +106,7 @@ export default {
       noMoreNeedData:false, //더이상 로드할 데이터가 없다면 불필요한 api 호출을 방지하기 위한 변수 
       firstCall:false ,//마운트시 첫번쨰 로드시 페이지 증가 x 위한 변수 
       sendPostNum:0,// 상세보기 모달에 전달할 
-      hobbyKeyword:this.keyword
+      hobbyKeyword:this.keyword //props로 받은 키워드 
     };
     
   },
@@ -127,10 +132,12 @@ export default {
     }
   },
   methods:{
+    //상세보기 열기 
     openPostDetailDialog(postNum){
       this.sendPostNum=postNum
       this.postDetailDialog=true;
     },
+    //상세보기 닫기 
     closePostDetailDialog(){
       this.sendPostNum=0;
       this.postDetailDialog=false;
@@ -206,8 +213,6 @@ export default {
 </script>
 
 <style scoped>
-
-
 .image-container {
   position: relative;
   overflow: hidden;
@@ -216,7 +221,7 @@ export default {
 
 .image-container:hover {
   transform: scale(1.05);
-  cursor: pointer; /* 사진 호버 시 포인터 커서 */
+  cursor: pointer;
 }
 
 .overlay {
@@ -225,7 +230,7 @@ export default {
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5); /* 사진 어두워지기 */
+  background: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -238,10 +243,10 @@ export default {
 }
 
 .overlay-icon {
-  font-size: 48px; /* 아이콘 크기 조정 */
-  color: white; /* 아이콘 색상 */
+  font-size: 48px;
+  color: white;
   margin: 0 10px;
-  cursor: default; /* 아이콘에 기본 커서 적용 */
+  cursor: default;
 }
 
 

@@ -104,10 +104,12 @@ export default {
     }
   },
   methods:{
+    //상세보기 열기 
     openPostDetailDialog(postNum){
       this.sendPostNum=postNum
       this.postDetailDialog=true;
     },
+    //상세보기 닫기 
     closePostDetailDialog(){
       this.sendPostNum=0;
       this.postDetailDialog=false;
@@ -188,7 +190,7 @@ export default {
 
 .image-container:hover {
   transform: scale(1.05);
-  cursor: pointer; /* 사진 호버 시 포인터 커서 */
+  cursor: pointer; 
 }
 
 .overlay {
@@ -197,7 +199,7 @@ export default {
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5); /* 사진 어두워지기 */
+  background: rgba(0, 0, 0, 0.5); 
   display: flex;
   justify-content: center;
   align-items: center;
@@ -210,10 +212,10 @@ export default {
 }
 
 .overlay-icon {
-  font-size: 48px; /* 아이콘 크기 조정 */
-  color: white; /* 아이콘 색상 */
+  font-size: 48px; 
+  color: white;
   margin: 0 10px;
-  cursor: default; /* 아이콘에 기본 커서 적용 */
+  cursor: default;
 }
 
 
