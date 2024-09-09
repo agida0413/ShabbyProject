@@ -27,7 +27,7 @@
 	(
 	SELECT COUNT(*) FROM post
 	WHERE id_num=m.id_num
-		
+	AND ONLYME !='ONLYME'	
 	)as postCount
 	,
 	(

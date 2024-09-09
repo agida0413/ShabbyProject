@@ -12,6 +12,9 @@
 	(
 	SELECT COUNT(*) FROM POST     
 	WHERE id_num= m.id_num
+	<if test="!itsMe">
+	AND onlyME !='ONLYME'
+	</if>
 	) as postAmount, <!-- 게시글 개수-->
 	(
 	SELECT COUNT(*) FROM FOLLOW 

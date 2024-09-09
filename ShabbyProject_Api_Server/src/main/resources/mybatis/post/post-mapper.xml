@@ -39,10 +39,11 @@
 	SELECT post_num FROM MEMBER_TAG
     WHERE id_num = (
 		SELECT id_num FROM MEMBER
-		WHERE nickname=#{nickname}
+		WHERE nickname=#{nickname}	
 	) 
     ) mtSubQuery
     ON p.post_num=mtSubQuery.post_num
+    WHERE p.onlyME !='ONLYME'
     	</if>
     </if>
     <if test="feedState=='SEARCHFEED'">
@@ -94,7 +95,7 @@
 			    SELECT id_num FROM MEMBER <!-- 회원테이블에서 -->
 			    WHERE nickname=#{nickname} <!-- 닉네임이 매개변수로 받은닉네임일 경우에-->
 			    )
-			  </if>
+			   </if>
 				    <if test="!itsMe">
 				    AND
 	    		    onlyMe='NOTONLYME' 
@@ -139,7 +140,7 @@
        <foreach collection="followTagList" item="follow" open="(" separator="," close=")">
        #{follow}
        </foreach>
-        ;
+        
     </if>
  </insert>	
  
@@ -168,6 +169,7 @@
     GROUP_CONCAT(DISTINCT pi.post_img_url ORDER BY pi.post_img_num) AS strImgList,
     GROUP_CONCAT(DISTINCT hb.hobby ORDER BY hb.hb_num) AS strHobbyList,
     GROUP_CONCAT(DISTINCT member_tag.nickname ORDER BY mt.id_num) AS strTagList,
+    GROUP_CONCAT(DISTINCT COALESCE(member_tag.profile,'null')  ORDER BY mt.id_num) AS strTagProfiles, 
     (
 		SELECT COUNT(*) FROM POST_LIKE
 		WHERE post_num=p.post_num

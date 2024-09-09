@@ -9,7 +9,7 @@
  <mapper namespace="com.sist.mapper.member.FollowMapper">
  	<!--키워드 검색을 통한 자신이 팔로잉 하는 리스트 -->
  	<select id="followingByKeyword" parameterType="FollowSearchDTO" resultType="MemberDTO">
- 		SELECT nickname FROM MEMBER m
+ 		SELECT nickname,profile FROM MEMBER m
  		JOIN FOLLOW f ON m.id_num=f.following_id
  		WHERE f.id_num=#{idNum} AND
  		nickname LIKE CONCAT('%',#{keyword},'%')

@@ -18,6 +18,7 @@ import com.sist.dto.post.DoPostLikeDTO;
 import com.sist.dto.post.GetPostDetailDTO;
 import com.sist.dto.post.PostDelDTO;
 import com.sist.dto.post.PostDetailDTO;
+import com.sist.dto.post.TagInformDTO;
 import com.sist.dto.post.WritePostDTO;
 import com.sist.repository.post.PostRepository;
 import com.sist.service.image.ImageService;
@@ -108,10 +109,11 @@ public class PostServiceImpl implements PostService {
 		//관심사리스트 생성 
 		List<String> hbList = new ArrayList<>();
 		//사람태그 리스트 생성
-		List<String> tagList = new ArrayList<>();
+		List<TagInformDTO> tgList=new ArrayList<>();
 		//이미지 리스트 생성
 		List<String> imgList = new ArrayList<>();
 		
+		List<String> tagNickList=new ArrayList<>();
 		//관심사 리스트 배열로 변환 
 		if(dto.getStrHobbyList()!=null) {
 			String [] handleHobbyList=dto.getStrHobbyList().split(",");
@@ -134,15 +136,43 @@ public class PostServiceImpl implements PostService {
 			}
 			dto.setImgList(imgList);
 		}
+		
 		if(dto.getStrTagList()!=null) {
 			// 이미지 리스트 배열로 변환
 			String[] handleTagList = dto.getStrTagList().split(",");
 			// 리스트로 변환
 			for (String tag : handleTagList) {
 				// 하나씩 add
-				tagList.add(tag);
+				tagNickList.add(tag);
 			}
-			dto.setTagList(tagList);
+			dto.setTagNickList(tagNickList);
+		}
+		
+		if(dto.getStrTagList()!=null) {
+			// 이미지 리스트 배열로 변환
+			System.out.println("테스트"+dto.getStrTagProfiles());
+			String[] handleTagList = dto.getStrTagList().split(",");
+			String[] handleTagProfileList= dto.getStrTagProfiles().split(",");;
+			
+			
+			
+			// 리스트로 변환
+			for (int i=0; i<handleTagList.length;i++) {
+				// 하나씩 add
+				TagInformDTO handleDto = new TagInformDTO();
+				handleDto.setNickname(handleTagList[i]);
+				if(handleTagProfileList[i].equals("null")) {
+					handleDto.setProfile(null);
+				}else {
+					handleDto.setProfile(handleTagProfileList[i]);
+				}
+				
+				
+					
+				
+				tgList.add(handleDto);
+			}
+			dto.setTagList(tgList);;
 		}
 		
 		//클라이언트로 보낼때 회원고유번호 감추기 위함 
