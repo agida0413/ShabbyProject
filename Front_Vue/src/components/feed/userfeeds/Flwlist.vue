@@ -56,11 +56,11 @@
                   </v-col>
 
                   <v-col cols="4" v-if="follow.myApprove === 'FOLLOWOK' && follow.nickname !== myNickname" class="d-flex align-center justify-center">
-                    <v-btn  color="red" @click="unFollow(follow.nickname)">UNFOLLOW</v-btn>
+                    <v-btn  color="red" @click="unFollow(follow.nickname, follow.locked)">UNFOLLOW</v-btn>
                   </v-col>
 
                   <v-col cols="4" v-if="follow.myApprove === 'FOLLOWNO' && follow.nickname !== myNickname" class="d-flex align-center justify-center">
-                    <v-btn  color="grey"  @click="unFollow(follow.nickname)">Follow 요청취소</v-btn>
+                    <v-btn  color="grey"  @click="unFollow(follow.nickname, follow.locked)">Follow 요청취소</v-btn>
                   </v-col>
                 </v-row>
               </v-list-item-content>
@@ -240,12 +240,13 @@ export default {
         });
     },
     //언팔로우 
-    unFollow(nickname){
+    unFollow(nickname,locked){
       //데이터 로딩중 
       this.isLoading=true;
       api.delete("/feed/follow",{
         data:{
-          nickname:nickname //닉네임 
+          nickname:nickname, //닉네임
+          locked: locked  //비공개 공개여부  
         }
        
       })

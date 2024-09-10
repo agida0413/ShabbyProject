@@ -39,7 +39,7 @@
                 <template v-if="memberData.nickname">
                   <router-link :to="{ name: 'userfeed', params: {nickname:this.memberData.nickname }}" class="router-link" value="4"><v-list-item prepend-icon="mdi-home" title="내 피드" value="home"></v-list-item></router-link>
                 </template>
-              <v-list-item prepend-icon="mdi-heart-outline" title="활동"  value="5"></v-list-item>
+              <v-list-item prepend-icon="mdi-heart-outline" @click="AlarmDialogOpen()" title="활동"  value="5"></v-list-item>
                 <v-list-item prepend-icon="mdi-wrench" title="설정" value="6" @click="settingDialogOpen()"></v-list-item>
                 <v-list-item prepend-icon="mdi-lock" title="로그아웃" value="7" @click="logout()"></v-list-item>
         </v-list>
@@ -55,7 +55,11 @@
   @updateSideMenuInfo="reGetInfo"
   @settingClose="ifSettingClose">
  </SettingComponent> 
-
+ <AlarmList
+ v-model:value="AlarmDialog"
+ @closeAlarm="AlarmDialogClose"
+ >
+ </AlarmList>
 <!--새 게시물 작성 모달 컴포넌트-->
   <PostInsert v-model:value="postInsertDialog" @postInsertClose="postInsertDialogClose"></PostInsert>
 </template>
@@ -63,7 +67,9 @@
 <script>
 import PostInsert from "@/components/feed/post/PostInsert.vue";
 import SettingComponent from "../setting/Setting.vue"
+import AlarmList from "../utill/AlarmList.vue";
 import api from "@/api"
+
 
 export default{
 
@@ -73,13 +79,15 @@ export default{
       postInsertDialog:false, //새 게시물 작성 제어값 
       memberData:{}, //회원정보
       isLoading:false ,//로딩상태
+      AlarmDialog:false,//알람 리스트 모달 열고닫음 
       selectedValue:null
     }
   },
  
   components:{
     SettingComponent,//세팅 컴포넌트
-    PostInsert//게시물 작성 컴포넌트
+    PostInsert,//게시물 작성 컴포넌트
+    AlarmList
   },
  mounted(){
   
@@ -101,6 +109,7 @@ export default{
      
     },
   methods:{
+   
     resetValue(){
        console.log('ssss')
      this.selectedValue=10
@@ -154,6 +163,12 @@ export default{
     },
     postInsertDialogClose(){
       this.postInsertDialog=false
+    },
+    AlarmDialogOpen(){
+      this.AlarmDialog=true
+    },
+    AlarmDialogClose(){
+      this.AlarmDialog=false
     },
     //로그아웃 진행 
     logout(){

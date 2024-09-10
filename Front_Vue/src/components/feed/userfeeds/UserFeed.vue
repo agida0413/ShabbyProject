@@ -301,7 +301,8 @@ export default {
 
       api.delete("/feed/follow",{
         data:{
-          nickname:this.userFeedData.nickname //닉네임
+          nickname:this.userFeedData.nickname, //닉네임
+          locked:this.userFeedData.locked // 해당 계정의 공개/비공개  상태 여부 
         }
        
       })
