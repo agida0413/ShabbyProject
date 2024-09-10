@@ -55,11 +55,102 @@
 	m.id_num != #{idNum}
 	LIMIT #{rowSize} OFFSET #{startRow}
 </select>
- 
+ <!-- 글로벌 검색에서의 회원검색 관련 총 페이지 -->
  <select id="searchMemberTotalPage" parameterType="GlobalSearchDTO" resultType="int">
   SELECT CEIL(COUNT(*) / #{rowSize}) AS totalPage
   FROM MEMBER
   WHERE nickname LIKE CONCAT('%', #{keyword}, '%')
   AND id_num != #{idNum};
+ </select>
+ 
+ 
+ <!-- 알람 인서트 -->
+ <insert id="alarmInsert" parameterType="AlarmDTO" > 
+ INSERT INTO ALARM (sender,post_num,receiver,alarm_type)
+ VALUES
+ <if test="alarmType!='LIKE'">
+   <foreach collection="receivers" item="receiver" separator=",">
+     (#{sender},   
+      #{postNum},   
+		 (
+		 SELECT id_num FROM MEMBER
+		 WHERE nickname=#{receiver} 
+		 )
+ 	,#{alarmType}
+ 	)
+    </foreach>
+ </if>
+ <if test="alarmType=='LIKE'">
+ (#{sender},#{postNum},#{receiver},#{alarmType})
+ </if>
+ </insert>
+ 
+ <!--좋아요 알람 인서트 시 명시적으로 receiver를 인서트 해줘야하므로 정보받아옴 -->
+ <select id="chooseReceiver" parameterType="int" resultType="int">
+ SELECT id_num FROM POST 
+ WHERE post_num=#{postNum}
+ </select>
+ 
+ <select id="originalMemberTag" parameterType="int" resultType="String">
+	SELECT m.nickname
+    FROM MEMBER m
+    INNER JOIN MEMBER_TAG mt
+    ON m.id_num = mt.id_num
+    WHERE mt.post_num = #{postNum}
+ </select>
+ 
+ <!-- 알람 삭제-->
+ <delete id="alarmDelete" parameterType="AlarmDTO">
+ DELETE FROM ALARM 
+ WHERE 
+ <if test="postNum==0">
+ sender =#{sender}
+ AND
+ receiver IN( 
+ 	<foreach collection="receivers" item="receiver" separator=",">         
+		 (
+		 SELECT id_num FROM MEMBER
+		 WHERE nickname=#{receiver} 
+		 )
+    </foreach>
+    )
+  </if>
+  <if test="postNum!=0">
+  post_num=#{postNum}
+  </if> 
+  <if test="isUpdate">
+  AND
+  receiver IN( 
+ 	<foreach collection="receivers" item="receiver" separator=",">         
+		 (
+		 SELECT id_num FROM MEMBER
+		 WHERE nickname=#{receiver} 
+		 )
+    </foreach>
+    )
+  </if>  
+
+ <if test="alarmType=='LIKE'">
+AND sender=#{sender}
+AND receiver=#{receiver} 
+ </if>
+ AND 
+ alarm_type=#{alarmType}
+ 
+ </delete>
+ 
+ 
+ 
+ <select id="getAlarm" parameterType="int" resultType="AlarmListDTO"> 
+ SELECT m.nickname as receiver,sm.nickname as sender,
+ sm.profile as senderProfile ,a.post_num,a.alarm_type,a.create_date
+ FROM ALARM a
+ LEFT JOIN MEMBER m
+ ON a.receiver=m.id_num
+ LEFT JOIN MEMBER sm
+ ON a.sender=sm.id_num
+ WHERE m.id_num=#{idNum}
+ AND isread =0
+ ORDER BY create_date DESC 
  </select>
  </mapper>

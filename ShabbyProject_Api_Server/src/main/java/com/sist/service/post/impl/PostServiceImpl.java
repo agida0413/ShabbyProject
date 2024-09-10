@@ -1,8 +1,11 @@
 package com.sist.service.post.impl;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import org.apache.ibatis.javassist.expr.NewArray;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -14,12 +17,15 @@ import com.sist.common.exception.InternerException;
 import com.sist.common.util.PathVariableValidation;
 import com.sist.common.util.SimpleCodeGet;
 import com.sist.dto.api.ResponseDTO;
+import com.sist.dto.common.AlarmDTO;
+import com.sist.dto.follow.UnFollowDTO;
 import com.sist.dto.post.DoPostLikeDTO;
 import com.sist.dto.post.GetPostDetailDTO;
 import com.sist.dto.post.PostDelDTO;
 import com.sist.dto.post.PostDetailDTO;
 import com.sist.dto.post.TagInformDTO;
 import com.sist.dto.post.WritePostDTO;
+import com.sist.repository.common.CommonRepository;
 import com.sist.repository.post.PostRepository;
 import com.sist.service.image.ImageService;
 import com.sist.service.post.PostService;
@@ -33,7 +39,7 @@ public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
     //이미지업로드 서비스
     private final ImageService imageService;
-
+    private final CommonRepository commonRepository;
 
     //게시물 업로드 서비스 
     @Override
@@ -59,13 +65,28 @@ public class PostServiceImpl implements PostService {
             // 관심사 및 인물 태그 인서트 //postnum+hobby  유니크키 
            insertHobbies(dto);
            insertFollowTags(dto);
+           
+           //태그한 멤버에게 알람 전송위해 알람삽입 ==> 태그한 멤버가 있다면 
+            if(dto.getFollowTagList().size()!=0) {
+            		//알람 객체 생성 
+            		AlarmDTO alarmDTO= new AlarmDTO();
+                	//알람 객체 가공 및 세팅 
+            		alarmSetting(alarmDTO, dto, idNum,"TAG",false);
+            		//알람 삽입 
+                	commonRepository.alarmInsert(alarmDTO);             	        			
+            
+            }
 
             // 게시물 이미지 URL 리스트를 DTO에 설정하고 이미지 테이블에 저장
             dto.setImgUrlList(imgUrList);
             postRepository.postImgInsert(dto);
 
-        } catch (Exception e) {
+        } 
+       
+        catch (Exception e) {
+        	
             removeImage(imgUrList); // 데이터베이스 오류 발생 시 이미지 삭제 및 롤백
+            throw new InternerException("서버 내부오류입니다. 잠시 뒤 이용해 주세요.", "게시물 삽입중 에러발생");
         }
 
         // 성공적으로 처리된 경우 HTTP 200 OK 응답 반환
@@ -112,10 +133,12 @@ public class PostServiceImpl implements PostService {
 		List<TagInformDTO> tgList=new ArrayList<>();
 		//이미지 리스트 생성
 		List<String> imgList = new ArrayList<>();
-		
+		//태그한 멤버 닉네임 리스트
 		List<String> tagNickList=new ArrayList<>();
-		//관심사 리스트 배열로 변환 
+		
+		//데이터베이스에서 가져온 관심사정보가 null이 아닐시 
 		if(dto.getStrHobbyList()!=null) {
+			//관심사 리스트 배열로 변환 
 			String [] handleHobbyList=dto.getStrHobbyList().split(",");
 			//리스트로 변환 
 			for (String hobby : handleHobbyList) {
@@ -125,7 +148,7 @@ public class PostServiceImpl implements PostService {
 			//객체에 담기 
 			dto.setHobbyList(hbList);
 		}
-		
+		//데이터베이스에서 가져온 이미지 정보가 null이 아닐시 
 		if(dto.getStrImgList()!=null) {
 			// 이미지 리스트 배열로 변환
 			String[] handleImgList = dto.getStrImgList().split(",");
@@ -136,9 +159,9 @@ public class PostServiceImpl implements PostService {
 			}
 			dto.setImgList(imgList);
 		}
-		
+		//데이터베이스에서 가져온 회원 태그정보가 null이 아닐시 
 		if(dto.getStrTagList()!=null) {
-			// 이미지 리스트 배열로 변환
+			// 태그 리스트 배열로 변환
 			String[] handleTagList = dto.getStrTagList().split(",");
 			// 리스트로 변환
 			for (String tag : handleTagList) {
@@ -147,43 +170,48 @@ public class PostServiceImpl implements PostService {
 			}
 			dto.setTagNickList(tagNickList);
 		}
-		
+		//데이터베이스에서 가져온 회원 태그닉네임 정보가 null이 아닐시 
 		if(dto.getStrTagList()!=null) {
-			// 이미지 리스트 배열로 변환
-			System.out.println("테스트"+dto.getStrTagProfiles());
-			System.out.println(dto.getStrTagList());
 			
+			
+			//태그 닉네임 정보 배열로변환  
 			String[] handleTagList = dto.getStrTagList().split(",");
+			// 프로필이미지 정보 닉네임 수만큼 크기의 배열 생성 
 			String[] handleTagProfileList=new String[handleTagList.length];
 			
+			//만약 조회한 회원태그들의 프로필이미지가 전부 null일경우 데이터베이스는 null을반환 
 			if(dto.getStrTagProfiles()==null) {
+				//전송할 배열에 닉네임 수만큼 for문을 순회하며 null을 대입 
 				for (int i=0; i<handleTagList.length;i++) {
 					handleTagProfileList[i]=null;
 				}
-			}else {
+			}//프로필 이미지가 하나라도 존재하면 "예시이미지,NOPROFILE,NOPROFILE" 형태 
+			else {
+				//,로 잘라서 배열로 변환 
 				handleTagProfileList= dto.getStrTagProfiles().split(",");;
 			}
+					
 			
-			
-			
-			
-			
-			// 리스트로 변환
+			// 닉네임 배열의 길이만큼 순회
 			for (int i=0; i<handleTagList.length;i++) {
-				// 하나씩 add
+				// 닉네임,프로필 이미지를 가진 객체 생성 -->리스트로 담아전송 
 				TagInformDTO handleDto = new TagInformDTO();
+				//닉네임 세팅
 				handleDto.setNickname(handleTagList[i]);
+				//만약 프로필이 없는 상태이면 데이터베이스에서 NOPROFILE로 반환 
+				//만약 해당배열 인덱스 밸류가 NOPROFILE이면
 				if(handleTagProfileList[i].equals("NOPROFILE")) {
+					//null을 세팅 
 					handleDto.setProfile(null);
 				}else {
+					//아니라면 기존 값 세팅 
 					handleDto.setProfile(handleTagProfileList[i]);
 				}
 			
-				
-												
-				
+				//클라이언트에 전송할 리스트에 객체 하나씩 add			
 				tgList.add(handleDto);
 			}
+			//최종적으로 전송할 객체에 리스트를 세팅 
 			dto.setTagList(tgList);;
 		}
 		
@@ -216,6 +244,13 @@ public class PostServiceImpl implements PostService {
 		//본인이 작성한 게시물만 삭제할 수 있게 제한을 둘수 있고 , 이상현상을 막을 수 있다 판단하여 회원고유번호를 준다.
 		postRepository.postDelete(dto);
 		
+		//게시물 삭제 시 관련 회원 알람 삭제 
+		//알람 객체 생성 
+		AlarmDTO alarmDTO=new AlarmDTO();
+		//알람 객체 가공 및 세팅 
+		alarmSetting(alarmDTO, dto, idNum, "TAG",false);
+		//해당 게시물과 관련된 알람 삭제 
+		commonRepository.alarmDelete(alarmDTO);
 		
 		//s3 이미지 삭제 == > 삭제 실패시 예외발생으로 어차피 데이터베이스는 롤백된다. 
 		removeImage(imgUrlList);
@@ -261,14 +296,58 @@ public class PostServiceImpl implements PostService {
 			// TODO: handle exception
 			//데이터베이스 저장중 예외 발생시 s3 다시 삭제 
 			removeImage(imgUrList);
+			 throw new InternerException("서버 내부오류입니다. 잠시 뒤 이용해 주세요.", "게시물 삭제도중 이미지 재 삭제중 에러발생");
 		}
 	}
-	
+	//기존 회원 태그 리스트를 갖고옴 
+	List<String> originalMemList=
+			commonRepository.originalMemberTag(dto.getPostNum());
 	
 	//기존 관심사 삭제 
 	postRepository.deleteOriginalHobby(dto);
 	//기존 회원태그 삭제
 	postRepository.deleteOriginalMemTag(dto);
+
+	
+	//새로운 태그 리스트 
+    List<String> newMemList=dto.getFollowTagList();
+
+	//중복 제거후 알람 삭제,삽입 과정을 위해 
+	 Set<String> originalSet = new HashSet<>(originalMemList);
+     Set<String> newSet = new HashSet<>(newMemList);
+
+     // 제거할 태그 리스트 (originalSet - newSet)
+     List<String> removeList = new ArrayList<>();
+     for (String mem : originalSet) {
+         if (!newSet.contains(mem)) {
+             removeList.add(mem);
+         }
+     }
+     
+
+     // 추가할 태그 리스트 (newSet - originalSet)
+     List<String> addList = new ArrayList<>();
+     for (String mem : newSet) {
+         if (!originalSet.contains(mem)) {
+             addList.add(mem);
+         }
+     }
+    
+	
+	
+	// 태그 회원 수정 발생시 ---> 태그 관련 알람 재설정 필요 
+	//알람 객체 생성 
+	AlarmDTO alarmDTO= new AlarmDTO();
+	//알람 객체 가공 및 세팅 
+	alarmSetting(alarmDTO, dto, idNum,"TAG",true);
+	
+	//제거할 태그리스트 가 있으면 
+	if(removeList.size()!=0) {
+		//기존 태그관련 알람 삭제 
+		alarmDTO.setReceivers(removeList);
+		commonRepository.alarmDelete(alarmDTO);
+	}
+	
 	
 	//만약 클라이언트로부터 새롭게 받은 관심사리스트가 비어있지않다면
 	//새로운 관심사 인서트 
@@ -276,9 +355,17 @@ public class PostServiceImpl implements PostService {
 		postRepository.hobbyInsert(dto);
 	}
 	//만약 클라이언트로부터 새롭게 받은 맴버태그 리스트가 비어있지않다면
+	
 	//새로운 맴버태그 인서트 
 	if(dto.getFollowTagList().size()!=0) {
-		postRepository.followTagInsert(dto);
+		postRepository.followTagInsert(dto);	
+		//만약 새로운 맴버태그가 있으면 
+		if(addList.size()!=0) {
+			//알람 삽입 
+			alarmDTO.setReceivers(addList);
+			commonRepository.alarmInsert(alarmDTO);           
+		}  	      
+		
 	}
 	
 
@@ -307,17 +394,36 @@ public class PostServiceImpl implements PostService {
 		//dto에 세팅 
 		dto.setIdNum(idNum);
 		
+		//알람 객체 생성 
+		AlarmDTO alarmDTO= new AlarmDTO();
+		//알람 객체 가공 및 세팅 
+		alarmSetting(alarmDTO, dto, idNum, "LIKE",false);
+		//좋아요 알람 데이터 가공을 위한 게시물의 주인 아이디 고유번호를 갖고와 receiver에 세팅 
+		int receiver=commonRepository.chooseReceiver(dto.getPostNum());
+		alarmDTO.setReceiver(receiver);
+		
 		//만약 클라이언트로 부터 받은 현재 특정 게시물에 대한 내 좋아요 상태가 
 		//true라면 (누른 상태라면)
 		if(dto.isLiked()) {
 			//좋아요 테이블에서 제거작업 
 			postRepository.postLikeDelete(dto);
+			//만약 내 게시물에 대한 좋아요 작업이 아니라면 
+			if(alarmDTO.getReceiver()!=idNum) 
+			{   //기존 좋아요 알람 제거 
+				commonRepository.alarmDelete(alarmDTO);
+			}
 			//클라이언트에게 보낼 바뀐 상태값
 			dto.setLiked(false);
 		}//false라면 
 		else {
 			//좋아요 테이블에 삽입 작업 
 			postRepository.postLikeInsert(dto);
+			//만약 내 게시물에 대한 좋아요 작업이 아니라면 
+			if(alarmDTO.getReceiver()!=idNum) {
+				//알람 삽입 
+				commonRepository.alarmInsert(alarmDTO);
+			}
+			
 			//클라이언트에게 보낼 바뀐 상태값
 		    dto.setLiked(true);
 		}
@@ -421,8 +527,27 @@ public class PostServiceImpl implements PostService {
     }
 
 
-
-
+    //알람 객체 가공 및 세팅 , 오버라이딩 
+    private void alarmSetting(AlarmDTO alarmDTO,WritePostDTO dto, int idNum ,String type,boolean isUpdate) {
+		alarmDTO.setUpdate(isUpdate);
+		alarmDTO.setSender(idNum); //보내는이를 현 로그인 회원으로 
+		alarmDTO.setAlarmType(type); //매개변수로 알람 타입 받음 
+		alarmDTO.setReceivers(dto.getFollowTagList()); //receivers라는 리스트 형태에 회원 태그 리스트 세팅 
+		alarmDTO.setPostNum(dto.getPostNum()); //게시물 번호 
+	}
+    
+    private void alarmSetting(AlarmDTO alarmDTO,DoPostLikeDTO dto, int idNum ,String type,boolean isUpdate) {
+    	alarmDTO.setUpdate(isUpdate);
+		alarmDTO.setSender(idNum);//보내는이를 현 로그인 회원으로 
+		alarmDTO.setAlarmType(type);//매개변수로 알람 타입 받음 
+		alarmDTO.setPostNum(dto.getPostNum());//게시물 번호 
+	}
+    
+    private void alarmSetting(AlarmDTO alarmDTO,PostDelDTO dto, int idNum,String type ,boolean isUpdate) {
+    	alarmDTO.setUpdate(isUpdate);
+		alarmDTO.setAlarmType(type);//매개변수로 알람 타입 받음		
+		alarmDTO.setPostNum(dto.getPostNum());//게시물 번호 
+	}
 	
 
 
