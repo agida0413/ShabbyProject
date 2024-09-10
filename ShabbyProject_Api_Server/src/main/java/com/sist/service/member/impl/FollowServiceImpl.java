@@ -14,6 +14,7 @@ import com.sist.common.exception.BadRequestException;
 import com.sist.common.util.PathVariableValidation;
 import com.sist.common.util.SimpleCodeGet;
 import com.sist.dto.api.ResponseDTO;
+import com.sist.dto.common.AlarmDTO;
 import com.sist.dto.follow.DoFollowDTO;
 import com.sist.dto.follow.FollowInFeedDTO;
 import com.sist.dto.follow.FollowInformDTO;
@@ -22,6 +23,7 @@ import com.sist.dto.follow.FollowSearchDTO;
 import com.sist.dto.follow.FollowSearchResultDTO;
 import com.sist.dto.follow.UnFollowDTO;
 import com.sist.dto.member.MemberDTO;
+import com.sist.repository.common.CommonRepository;
 import com.sist.repository.member.FollowRepository;
 import com.sist.service.member.FollowService;
 
@@ -32,7 +34,7 @@ public class FollowServiceImpl implements FollowService {
 	
 	
 	private final FollowRepository followRepository;
-	
+	private final CommonRepository commonRepository;
 	
 	
 	//검색어,행개수, 페이지 기반 현재 본인의 팔로잉 리스트를 가져옴 
@@ -121,6 +123,14 @@ public class FollowServiceImpl implements FollowService {
 		dto.setIdNum(idNum);
 		//dto엔 팔로우할 유저의 정보가 들어있다 ===> 현재 로그인한 유저 기반 팔로우 인서트 진행 
 		followRepository.doFollow(dto);
+		
+		//알람 관련 객체 생성 
+		AlarmDTO alarmDTO= new AlarmDTO();
+		//데이터베이스에 보내기 전 알람 객체를 가공하여 세팅
+		alarmSetting(alarmDTO, dto, idNum);
+		
+		//알람을 데이터베이스에 인서트
+		commonRepository.alarmInsert(alarmDTO);
 		//반환값으로 generatekey를 통해 생성된 팔로우 고유번호에서 approve 컬럼을 가져온다 .==> 팔로우상태정보
 		String changeState= followRepository.afterFollow(dto.getFollowNum());
 		
@@ -139,11 +149,53 @@ public class FollowServiceImpl implements FollowService {
 		// unfollow상태는 단순 행의개수가 없는것으로 판단이 가능하기 때문에 (팔로우는 비공개,공개 여부에 따라 요청승인대기중인지 팔로우상태인지 나뉜다.)
 		//상태값을 클라이언트쪽에서 바꾼다.
 		
+		//알람 관련 객체 생성 
+		AlarmDTO alarmDTO= new AlarmDTO();
+		//unfollowdto 기준 알람 객체 가공후 세팅 
+		alarmSetting(alarmDTO, dto, idNum);
+		//데이터 베이스에서 관련 알람 레코드 삭제 
+		commonRepository.alarmDelete(alarmDTO);
+		
 		return new ResponseEntity<ResponseDTO<Void>>
 		(new ResponseDTO<Void>(),HttpStatus.OK); //성공 
 	}
 	
-	
+	private void alarmSetting(AlarmDTO alarmDTO,DoFollowDTO dto,int idNum ) {
+		//팔로우 하고자 하는 멤버가 비공개 계정일시 
+		if(dto.getLocked().equals("LOCKED")) {
+			//알람타입 세팅  FOLLOWREQ
+			alarmDTO.setAlarmType("FOLLOWREQ");						
+		}//팔로우 하고자 하는 멤버가 공개 계정일시 
+		else if(dto.getLocked().equals("PUBLICID")) {
+			//알람타입 세팅  FOLLOW
+			alarmDTO.setAlarmType("FOLLOW");				
+		}
+		//보내는 사람을 현 아이디로 세팅 
+		alarmDTO.setSender(idNum);
+		//데이터베이스 인서트 작업시 list를 순회 하며 인서트하므로 하나의 값이더라도 리스트 생성후  add
+		List<String> list= new ArrayList<>();
+		list.add(dto.getNickname());
+		//객체에 세팅 
+		alarmDTO.setReceivers(list);	
+	}
+	private void alarmSetting(AlarmDTO alarmDTO,UnFollowDTO dto,int idNum ) {
+		//팔로우 하고자 하는 멤버가 비공개 계정일시 
+		if(dto.getLocked().equals("LOCKED")) {
+			//알람타입 세팅  FOLLOWREQ
+			alarmDTO.setAlarmType("FOLLOWREQ");						
+		}//팔로우 하고자 하는 멤버가 공개 계정일시 
+		else if(dto.getLocked().equals("PUBLICID")) {
+			//알람타입 세팅  FOLLOW
+			alarmDTO.setAlarmType("FOLLOW");				
+		}
+		//보내는 사람을 현 아이디로 세팅 
+		alarmDTO.setSender(idNum);
+		//데이터베이스 인서트 작업시 list를 순회 하며 인서트하므로 하나의 값이더라도 리스트 생성후  add
+		List<String> list= new ArrayList<>();
+		list.add(dto.getNickname());
+		//객체에 세팅 
+		alarmDTO.setReceivers(list);
+	}
 	
 
 }

@@ -14,5 +14,7 @@ public class UnFollowDTO {
 	@Size(max = 14, message = "닉네임은 15자리 이상 불가")
 	private String nickname; //닉네임 
 	private int idNum; //회원 고유번호
+	@Pattern(regexp = "^(PUBLICID|LOCKED)$", message = "locked 필드는 'PUBLICID' 또는 'LOCKED'만 허용됩니다.")
+	private String locked;//공개, 비공개 여부 
 
 }
