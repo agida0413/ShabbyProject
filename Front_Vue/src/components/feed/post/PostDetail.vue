@@ -361,12 +361,14 @@ export default {
     goOtherUserfeed(nickname) {//닉네임 매개변수 
 
       this.closeDialog(); // 모달 닫기 = > 팔로우/팔로잉 목록 모달 
+      this.$emit('closeAlarm')
       this.$nextTick(() => {
         this.$router.push({ name: 'userfeed', params: { nickname: nickname } }); // 페이지 이동 ( 닉네임 param)
       });
     },
     goSearchFeed(hobby){
-      this.closeDialog(); // 모달 닫기 = > 팔로우/팔로잉 목록 모달 
+      this.closeDialog(); // 모달 닫기 = > 팔로우/팔로잉 목록 모달
+      this.$emit('closeAlarm') 
         this.$router.push({
           name: 'searchfeed',
           params: { type:'hobby',keyword:hobby}

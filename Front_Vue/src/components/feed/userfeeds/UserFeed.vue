@@ -279,7 +279,7 @@ export default {
       //인서트 팔로우 api
         api.post("/feed/follow",{
           nickname:this.userFeedData.nickname, //팔로우할 닉네임
-          locked:this.userFeedData.locked // 해당 계정의 공개/비공개  상태 여부 
+        
         })
         .then(()=>{
           //성공시 데이터 리로드 
@@ -301,8 +301,8 @@ export default {
 
       api.delete("/feed/follow",{
         data:{
-          nickname:this.userFeedData.nickname, //닉네임
-          locked:this.userFeedData.locked // 해당 계정의 공개/비공개  상태 여부 
+          nickname:this.userFeedData.nickname //닉네임
+        
         }
        
       })

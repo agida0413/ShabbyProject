@@ -52,15 +52,15 @@
                   </v-col>
 
                   <v-col cols="4" v-if="follow.myApprove === null && follow.nickname !== myNickname" class="d-flex align-center justify-center">
-                    <v-btn  color="primary"  @click="doFollow(follow.nickname, follow.locked)"> FOLLOW </v-btn>
+                    <v-btn  color="primary"  @click="doFollow(follow.nickname)"> FOLLOW </v-btn>
                   </v-col>
 
                   <v-col cols="4" v-if="follow.myApprove === 'FOLLOWOK' && follow.nickname !== myNickname" class="d-flex align-center justify-center">
-                    <v-btn  color="red" @click="unFollow(follow.nickname, follow.locked)">UNFOLLOW</v-btn>
+                    <v-btn  color="red" @click="unFollow(follow.nickname)">UNFOLLOW</v-btn>
                   </v-col>
 
                   <v-col cols="4" v-if="follow.myApprove === 'FOLLOWNO' && follow.nickname !== myNickname" class="d-flex align-center justify-center">
-                    <v-btn  color="grey"  @click="unFollow(follow.nickname, follow.locked)">Follow 요청취소</v-btn>
+                    <v-btn  color="grey"  @click="unFollow(follow.nickname)">Follow 요청취소</v-btn>
                   </v-col>
                 </v-row>
               </v-list-item-content>
@@ -220,13 +220,12 @@ export default {
         });
     },
     //팔로우 하기 (닉네임 , 비공개/공개  여부 )
-    doFollow(nickname, locked) {
+    doFollow(nickname) {
       //로딩 상태 true 
       this.isLoading = true;
       //api 호출
       api.post("/feed/follow", {
-        nickname: nickname, //닉네임 
-        locked: locked  //비공개 공개여부 
+        nickname: nickname, //닉네임      
       })
         .then((res) => {
           //성공시 현재 데이터를 업데이트 하기 위한 함수 호출 ( dom 업데이트 위해 )
@@ -240,13 +239,12 @@ export default {
         });
     },
     //언팔로우 
-    unFollow(nickname,locked){
+    unFollow(nickname){
       //데이터 로딩중 
       this.isLoading=true;
       api.delete("/feed/follow",{
         data:{
-          nickname:nickname, //닉네임
-          locked: locked  //비공개 공개여부  
+          nickname:nickname //닉네임   
         }
        
       })

@@ -111,7 +111,7 @@ export default{
   methods:{
    
     resetValue(){
-       console.log('ssss')
+     
      this.selectedValue=10
     },
     //자식에서 받은 변한 상태값 매개변수로 받음 
