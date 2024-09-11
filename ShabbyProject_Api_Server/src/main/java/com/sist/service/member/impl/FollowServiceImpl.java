@@ -14,6 +14,7 @@ import com.sist.common.exception.BadRequestException;
 import com.sist.common.util.PathVariableValidation;
 import com.sist.common.util.SimpleCodeGet;
 import com.sist.dto.api.ResponseDTO;
+import com.sist.dto.common.AlarmChangeDTO;
 import com.sist.dto.common.AlarmDTO;
 import com.sist.dto.follow.DoFollowDTO;
 import com.sist.dto.follow.FollowInFeedDTO;
@@ -21,10 +22,12 @@ import com.sist.dto.follow.FollowInformDTO;
 import com.sist.dto.follow.FollowListDTO;
 import com.sist.dto.follow.FollowSearchDTO;
 import com.sist.dto.follow.FollowSearchResultDTO;
+import com.sist.dto.follow.HandleFollowReqDTO;
 import com.sist.dto.follow.UnFollowDTO;
 import com.sist.dto.member.MemberDTO;
 import com.sist.repository.common.CommonRepository;
 import com.sist.repository.member.FollowRepository;
+import com.sist.repository.member.MemberAccountRepository;
 import com.sist.service.member.FollowService;
 
 import lombok.RequiredArgsConstructor;
@@ -35,7 +38,7 @@ public class FollowServiceImpl implements FollowService {
 	
 	private final FollowRepository followRepository;
 	private final CommonRepository commonRepository;
-	
+	private final MemberAccountRepository memberAccountRepository;
 	
 	//검색어,행개수, 페이지 기반 현재 본인의 팔로잉 리스트를 가져옴 
 	@Override
@@ -120,7 +123,11 @@ public class FollowServiceImpl implements FollowService {
 
 		//회원 고유번호 
 		int idNum=SimpleCodeGet.getIdNum();
+		//현재 팔로우하고자 하는 회원의 공개,비공개 상태를 가져옴
+		String lock=memberAccountRepository.getLock(dto.getNickname());
+		//값세팅 
 		dto.setIdNum(idNum);
+		dto.setLocked(lock);
 		//dto엔 팔로우할 유저의 정보가 들어있다 ===> 현재 로그인한 유저 기반 팔로우 인서트 진행 
 		followRepository.doFollow(dto);
 		
@@ -143,7 +150,12 @@ public class FollowServiceImpl implements FollowService {
 		// TODO Auto-generated method stub
 		//회원 고유정보 
 		int idNum=SimpleCodeGet.getIdNum();
+		//현재 팔로우하고자 하는 회원의 공개,비공개 상태를 가져옴
+		String lock = memberAccountRepository.getLock(dto.getNickname());
+		// 값세팅
 		dto.setIdNum(idNum);
+		dto.setLocked(lock);
+		
 		//현재 로그인 유저기반 전달받은 회원을 언팔로우한다 . = > 레코드 삭제 
 		followRepository.unFollow(dto);
 		// unfollow상태는 단순 행의개수가 없는것으로 판단이 가능하기 때문에 (팔로우는 비공개,공개 여부에 따라 요청승인대기중인지 팔로우상태인지 나뉜다.)
@@ -195,6 +207,41 @@ public class FollowServiceImpl implements FollowService {
 		list.add(dto.getNickname());
 		//객체에 세팅 
 		alarmDTO.setReceivers(list);
+	}
+	
+	//팔로우 요청 수락 or 거절 
+	@Override
+	@Transactional
+	public ResponseEntity<ResponseDTO<Void>> handleFollowRequest(HandleFollowReqDTO dto) {
+		// TODO Auto-generated method stub
+		
+		int idNum=SimpleCodeGet.getIdNum();
+		dto.setIdNum(idNum);
+		
+		if(dto.getType().equals("ACCEPT")) {
+			followRepository.acceptFollow(dto);
+			
+			AlarmChangeDTO alcDTO= new AlarmChangeDTO();
+			alcDTO.setIdNum(idNum);
+			alcDTO.setSenderNickname(dto.getNickname());
+			alcDTO.setType(dto.getType());
+			
+			commonRepository.changeAlarmStatus(alcDTO);
+		}
+		else if(dto.getType().equals("REFUSE")) {
+			followRepository.refuseFollow(dto);
+			
+			AlarmChangeDTO alcDTO= new AlarmChangeDTO();
+			alcDTO.setIdNum(idNum);
+			alcDTO.setSenderNickname(dto.getNickname());
+			
+			commonRepository.refuseReqAlarmStatus(alcDTO);
+		}
+		else {
+			throw new BadRequestException("유효하지 않은 요청입니다.");
+		}
+		return new ResponseEntity<ResponseDTO<Void>>
+		(new ResponseDTO<Void>(),HttpStatus.OK); //성공 
 	}
 	
 

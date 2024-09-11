@@ -29,7 +29,10 @@
 	 
 	Select * from member where nickname=#{nickname}
 	</select>
-	
+	<select id="getLock" parameterType="String" resultType="String"> 
+	SELECT locked FROM MEMBER
+	WHERE nickname=#{nickname}
+	</select>
 	<!--핸드폰 번호 중복검증-->
 	<select id="findByUserPhone" parameterType="String" resultType="MemberDTO">
 	Select * from member where phone=#{phone}

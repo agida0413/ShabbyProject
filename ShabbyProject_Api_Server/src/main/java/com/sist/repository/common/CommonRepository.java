@@ -2,6 +2,7 @@ package com.sist.repository.common;
 
 import java.util.List;
 
+import com.sist.dto.common.AlarmChangeDTO;
 import com.sist.dto.common.AlarmDTO;
 import com.sist.dto.common.AlarmListDTO;
 import com.sist.dto.common.GlobalSearchDTO;
@@ -25,5 +26,15 @@ public interface CommonRepository {
 		//알람 삭제 
 		public void alarmDelete(AlarmDTO dto);
 		//알람 조회
-		public List<AlarmListDTO> getAlarm(int idNum);
+		public List<AlarmListDTO> getAlarm(AlarmDTO dto);
+		//알람 총 페이지
+		public int getAlarmTotalPage(AlarmDTO dto);
+		//비공개 계정에 대한 팔로우 요청이 존재하고 , 아직 받지않은 상태에서 공개전환 시 기존 요청들을 수락상태로 변경 
+		//and 팔로우 요청 수락시 알람 상태변경
+		public void changeAlarmStatus(AlarmChangeDTO dto);
+		public void changeFollowStatus(int idNum);
+		//읽음 상태 변경
+		public void updateIsread(List<AlarmListDTO> list);
+		//팔로우 요청 거절시 알람 상태 변경 
+		public void refuseReqAlarmStatus(AlarmChangeDTO dto);
 }

@@ -16,11 +16,13 @@ import com.sist.common.util.CookieUtil;
 import com.sist.common.util.PathVariableValidation;
 import com.sist.common.util.SimpleCodeGet;
 import com.sist.dto.api.ResponseDTO;
+import com.sist.dto.common.AlarmChangeDTO;
 import com.sist.dto.member.MemberDTO;
 import com.sist.dto.setting.ChangeNickNameDTO;
 import com.sist.dto.setting.ChangePasswordDTO;
 import com.sist.dto.setting.ChangePhoneDTO;
 import com.sist.jwt.JWTUtil;
+import com.sist.repository.common.CommonRepository;
 import com.sist.repository.member.MemberAccountRepository;
 import com.sist.repository.member.MemberSettingRepository;
 import com.sist.service.security.RefreshService;
@@ -39,7 +41,7 @@ public class ChangeInfoServiceImpl implements ChangeInfoService{
 	private final BCryptPasswordEncoder bCryptPasswordEncoder;
 	private final JWTUtil jwtUtil;
 	private final RefreshService refreshService;
-	
+	private final CommonRepository commonRepository;
 	//회원 정보 리턴
 	//2024.08.19 수정 = > 회원정보 전체를 넘기면 위험할 수 있음 ., 필요한 정보만 넘기게
 	@Override
@@ -228,7 +230,7 @@ public class ChangeInfoServiceImpl implements ChangeInfoService{
 	public ResponseEntity<ResponseDTO<MemberDTO>> updateLockedState(MemberDTO dto) 
 	{	
 		
-		
+		int idNum=SimpleCodeGet.getIdNum();//회원 고유 아이디갖고오기 
 		// TODO Auto-generated method stub
 		String currentState=dto.getLocked();//현재 상태값 
 		String changeState=""; //변경할 공개/비공개 모드 상태값 초기화
@@ -238,6 +240,11 @@ public class ChangeInfoServiceImpl implements ChangeInfoService{
 		}
 		else if(currentState.equals("LOCKED")) {//만약 현재 상태값이 비공개모드이면
 			changeState="PUBLICID";//비공개모드 상태에서의 요청이라면 공개모드로 
+			//공개 모드로 변경시 그동안 수락하지 않았던 팔로우 요청을 모두 수락으로 변경 , 알람 테이블 또한 ~가 요청합니다 --> ~가 팔로우합니다.
+			AlarmChangeDTO alcDTO=new AlarmChangeDTO();
+			alcDTO.setIdNum(idNum);
+			commonRepository.changeAlarmStatus(alcDTO);
+			commonRepository.changeFollowStatus(idNum);
 		}
 		else {//나머지는 정의된 값이 없으므로 예외 
 			
@@ -245,7 +252,7 @@ public class ChangeInfoServiceImpl implements ChangeInfoService{
 			
 		}
 		
-		int idNum=SimpleCodeGet.getIdNum();//회원 고유 아이디갖고오기 
+	
 		
 		
 		dto.setIdNum(idNum);//고유번호 세팅

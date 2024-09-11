@@ -30,26 +30,27 @@ public class GlobalSearchController {
 	@GetMapping("/{page}")
 	public ResponseEntity<ResponseDTO<List<GlobalSearchResultDTO>>> globalSearchReult(@RequestParam String keyword,@PathVariable int page){
 		//_ 키워드 데이터베이스 변환 필요
-		keyword=keyword.replace("_", "\\_");
+		
 		
 		//키워드 , 페이지에 대한 검증 
 		if (!PathVariableValidation.pageValidation(page) || !PathVariableValidation.keyWordValService(keyword)) {
 			throw new BadRequestException("유효하지 않은 입력입니다.");
 		}
-		
+		keyword=keyword.replace("_", "\\_");
 		return globalSearchService.globalSearchResult(keyword, page);
 	}
 	// 검색피드에서의 회원 정보 
 	@GetMapping("/member/{page}")
 	public ResponseEntity<ResponseDTO<SearchResultMemberListDTO>> globalSearchMemberList(@RequestParam String keyword,@PathVariable int page){
-		//_ 키워드 데이터베이스 변환 필요
-		keyword=keyword.replace("_", "\\_");
+	
 		
 		//페이지와 , 키워드에 대한 검증 
 		if (!PathVariableValidation.pageValidation(page) || !PathVariableValidation.keyWordValService(keyword)) {
 
 			throw new BadRequestException("유효하지 않은 입력입니다.");
 		}
+		//_ 키워드 데이터베이스 변환 필요
+		keyword=keyword.replace("_", "\\_");
 		return globalSearchService.globalSearchMemberList(keyword, page);
 	}
 }

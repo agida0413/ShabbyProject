@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
+import com.sist.dto.common.AlarmChangeDTO;
 import com.sist.dto.common.AlarmDTO;
 import com.sist.dto.common.AlarmListDTO;
 import com.sist.dto.common.GlobalSearchDTO;
@@ -64,9 +65,34 @@ public class MybatisCommonRepository implements CommonRepository{
 		return commonMapper.originalMemberTag(postNum);
 	}
 	@Override
-	public List<AlarmListDTO> getAlarm(int idNum) {
+	public List<AlarmListDTO> getAlarm(AlarmDTO dto) {
 		// TODO Auto-generated method stub
-		return commonMapper.getAlarm(idNum);
+		return commonMapper.getAlarm(dto);
+	}
+	@Override
+	public int getAlarmTotalPage(AlarmDTO dto) {
+		// TODO Auto-generated method stub
+		return commonMapper.getAlarmTotalPage(dto);
+	}
+	@Override
+	public void changeAlarmStatus(AlarmChangeDTO dto) {
+		// TODO Auto-generated method stub
+		commonMapper.changeAlarmStatus(dto);
+	}
+	@Override
+	public void changeFollowStatus(int idNum) {
+		// TODO Auto-generated method stub
+		commonMapper.changeFollowStatus(idNum);
+	}
+	@Override
+	public void refuseReqAlarmStatus(AlarmChangeDTO dto) {
+		// TODO Auto-generated method stub
+		commonMapper.refuseReqAlarmStatus(dto);
+	}
+	@Override
+	public void updateIsread(List<AlarmListDTO> list) {
+		// TODO Auto-generated method stub
+		commonMapper.updateIsread(list);
 	}
 	
 	

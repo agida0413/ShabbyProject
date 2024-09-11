@@ -16,6 +16,7 @@ import com.sist.common.exception.BadRequestException;
 import com.sist.common.util.PathVariableValidation;
 import com.sist.dto.api.ResponseDTO;
 import com.sist.dto.follow.FollowSearchResultDTO;
+import com.sist.dto.follow.HandleFollowReqDTO;
 import com.sist.dto.member.EmailAuthDTO;
 import com.sist.dto.member.MemberDTO;
 import com.sist.service.mail.impl.MailServiceImpl;
@@ -110,6 +111,12 @@ private final FollowService followService;
 		}
 		
 		return  followService.followingBykeyword(keyword, page, rowSize);
+	}
+	
+	//팔로우 수락, 거절
+	@PostMapping("/following")
+	public ResponseEntity<ResponseDTO<Void>> handleFollowRequest(@RequestBody HandleFollowReqDTO dto){
+		return followService.handleFollowRequest(dto);
 	}
 	
 	

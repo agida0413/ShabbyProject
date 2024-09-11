@@ -1,6 +1,9 @@
 package com.sist.common.handler;
 
 
+import java.sql.SQLException;
+import java.sql.SQLSyntaxErrorException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -89,7 +92,7 @@ public class GlobalExceptionHandler {
 
         return new ResponseEntity<>(responseApi, HttpStatus.INTERNAL_SERVER_ERROR);
     }
-
+  
     // 기타 예기치 못한 예외 처리
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ResponseDTO<Void>> handleGenericException(Exception ex) {

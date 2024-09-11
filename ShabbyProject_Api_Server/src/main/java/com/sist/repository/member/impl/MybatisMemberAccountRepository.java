@@ -72,6 +72,12 @@ private final MemberAccountMapper mapper;
 		mapper.tempPasswordUpdate(dto);
 	}
 	
+	@Override
+	public String getLock(String nickname) {
+		// TODO Auto-generated method stub
+		return mapper.getLock(nickname);
+	}
+	
 
 
 
