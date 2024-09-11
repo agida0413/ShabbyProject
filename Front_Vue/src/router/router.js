@@ -6,6 +6,7 @@ import globalfeed from '@/components/feed/otherfeeds/Globalfeeds.vue'
 import Mainfeed from '@/components/feed/otherfeeds/Mainfeeds.vue'
 import Searchmain from '@/components/feed/searchfeeds/Searchmain.vue'
 import axios from 'axios'
+import Error from '../components/common/layout/Error.vue'
 const routes = [
   {
     path: '/login',
@@ -49,6 +50,12 @@ const routes = [
       keyword: route.params.keyword
     }), // URL 파라미터를 props로 전달
     meta: { requiresAuth: true }, // 인증이 필요한 라우터
+   
+  },
+  {
+    path: '/:pathMatch(.*)*',
+    name: 'error',
+    component:Error,
    
   }
 ]

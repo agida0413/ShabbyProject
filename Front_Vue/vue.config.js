@@ -6,7 +6,8 @@ module.exports = defineConfig({
       '/api': { 
         target: 'http://localhost:8080',
         changeOrigin: true,
-        ws:false
+        ws:false,
+        
       }, 
     },
   },

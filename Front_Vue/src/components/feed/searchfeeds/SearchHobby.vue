@@ -178,6 +178,7 @@ export default {
      })
      .catch((err)=>{
       alert(err?.response?.data?.message)
+      
      })
      .finally(()=>{
       //데이터 로딩 끝 
