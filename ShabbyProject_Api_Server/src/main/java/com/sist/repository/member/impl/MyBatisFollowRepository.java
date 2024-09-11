@@ -10,6 +10,7 @@ import com.sist.dto.follow.FollowInFeedDTO;
 import com.sist.dto.follow.FollowInformDTO;
 import com.sist.dto.follow.FollowListDTO;
 import com.sist.dto.follow.FollowSearchDTO;
+import com.sist.dto.follow.HandleFollowReqDTO;
 import com.sist.dto.follow.UnFollowDTO;
 import com.sist.mapper.member.FollowMapper;
 import com.sist.repository.member.FollowRepository;
@@ -61,6 +62,18 @@ public class MyBatisFollowRepository implements FollowRepository{
 		// TODO Auto-generated method stub
 		
 		followMapper.unFollow(dto);
+	}
+
+	@Override
+	public void acceptFollow(HandleFollowReqDTO dto) {
+		// TODO Auto-generated method stub
+		followMapper.acceptFollow(dto);
+	}
+
+	@Override
+	public void refuseFollow(HandleFollowReqDTO dto) {
+		// TODO Auto-generated method stub
+		followMapper.refuseFollow(dto);
 	}
 
 }

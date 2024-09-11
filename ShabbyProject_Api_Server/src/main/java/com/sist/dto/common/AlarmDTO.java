@@ -16,5 +16,7 @@ private boolean isread; //읽음 여부
 
 private int receiver;//받는사람 ---> 좋아요 에서 작업시
 private boolean isUpdate;//게시물 업데이트 임을 동적쿼리에게 알리기위함
-
+private int idNum;
+private int startRow;
+private int rowSize;
 }

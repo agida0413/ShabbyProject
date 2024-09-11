@@ -28,4 +28,6 @@ public interface MemberAccountRepository {
 		public MemberDTO findEmail(MemberDTO dto);
 		//임시패스워드발급 = > 데이터베이스 저장 
 		public void tempPasswordUpdate(MemberDTO dto);
+		//공개.비공개 상태획득
+		public String getLock(String nickname);
 }

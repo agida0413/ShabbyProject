@@ -30,4 +30,6 @@ public interface MemberAccountMapper {
 	public MemberDTO findEmail(MemberDTO dto);
 	//	<!--임시패스워드 발급 후 저장-->
 	public void tempPasswordUpdate(MemberDTO dto);
+	//공개.비공개 상태획득
+	public String getLock(String nickname);
 }

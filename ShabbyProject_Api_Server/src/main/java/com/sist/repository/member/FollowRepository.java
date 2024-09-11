@@ -8,6 +8,7 @@ import com.sist.dto.follow.FollowInFeedDTO;
 import com.sist.dto.follow.FollowInformDTO;
 import com.sist.dto.follow.FollowListDTO;
 import com.sist.dto.follow.FollowSearchDTO;
+import com.sist.dto.follow.HandleFollowReqDTO;
 import com.sist.dto.follow.UnFollowDTO;
 
 public interface FollowRepository {
@@ -23,4 +24,8 @@ public interface FollowRepository {
 		public String afterFollow(int followNum);
 		//팔로우 delete (언팔로우)
 		public void unFollow(UnFollowDTO dto);
+		//팔로우 요청 수락
+		public void acceptFollow(HandleFollowReqDTO dto);
+		//팔로우 요청 거절 
+		public void refuseFollow(HandleFollowReqDTO dto);
 }

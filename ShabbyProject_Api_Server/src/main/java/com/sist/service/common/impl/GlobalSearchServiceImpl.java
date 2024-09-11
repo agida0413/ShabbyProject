@@ -60,7 +60,7 @@ public class GlobalSearchServiceImpl implements GlobalSearchService{
 					
 		//데이터 베이스 전송 객체 생성 
 		GlobalSearchDTO reqDto= new GlobalSearchDTO();
-		
+	
 		//회원 고유번호
 		int idNum=SimpleCodeGet.getIdNum();
 		//행 개수 

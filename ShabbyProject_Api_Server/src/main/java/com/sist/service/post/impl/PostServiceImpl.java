@@ -66,8 +66,8 @@ public class PostServiceImpl implements PostService {
            insertHobbies(dto);
            insertFollowTags(dto);
            
-           //태그한 멤버에게 알람 전송위해 알람삽입 ==> 태그한 멤버가 있다면 
-            if(dto.getFollowTagList().size()!=0) {
+           //태그한 멤버에게 알람 전송위해 알람삽입 ==> 태그한 멤버가 있다면 , 나만보기가 아니라면 
+            if(dto.getFollowTagList().size()!=0&&!dto.isOnlyMe()) {
             		//알람 객체 생성 
             		AlarmDTO alarmDTO= new AlarmDTO();
                 	//알람 객체 가공 및 세팅 
@@ -315,7 +315,7 @@ public class PostServiceImpl implements PostService {
 	//중복 제거후 알람 삭제,삽입 과정을 위해 
 	 Set<String> originalSet = new HashSet<>(originalMemList);
      Set<String> newSet = new HashSet<>(newMemList);
-
+     
      // 제거할 태그 리스트 (originalSet - newSet)
      List<String> removeList = new ArrayList<>();
      for (String mem : originalSet) {
@@ -355,18 +355,20 @@ public class PostServiceImpl implements PostService {
 		postRepository.hobbyInsert(dto);
 	}
 	//만약 클라이언트로부터 새롭게 받은 맴버태그 리스트가 비어있지않다면
-	
+		
 	//새로운 맴버태그 인서트 
 	if(dto.getFollowTagList().size()!=0) {
 		postRepository.followTagInsert(dto);	
 		//만약 새로운 맴버태그가 있으면 
-		if(addList.size()!=0) {
+		if(addList.size()!=0 ) {
 			//알람 삽입 
 			alarmDTO.setReceivers(addList);
 			commonRepository.alarmInsert(alarmDTO);           
-		}  	      
+		} 
+	
 		
 	}
+
 	
 
 	//게시물 테이블을 업데이트 할 정보 세팅 
