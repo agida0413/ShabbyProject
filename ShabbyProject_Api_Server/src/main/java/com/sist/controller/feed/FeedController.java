@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.sist.common.exception.BadRequestException;
+import com.sist.common.exception.InternerException;
 import com.sist.common.util.PathVariableValidation;
 import com.sist.dto.api.ResponseDTO;
 import com.sist.dto.feed.UserFeedInformDTO;
@@ -49,7 +50,7 @@ public class FeedController {
 		//닉네임 validation
 		if (!PathVariableValidation.nickNameValService(nickname)) {
 
-			throw new BadRequestException("유효하지 않은 입력입니다.");
+			throw new InternerException("유효하지 않은 입력입니다.","validation 실패");
 		}
 
 		return feedService.loadUserFeedInfo(nickname);
@@ -60,7 +61,7 @@ public class FeedController {
 	public ResponseEntity<ResponseDTO<List<PostListDTO>>> loadUserfeedPostList(@PathVariable String type, @PathVariable String nickname,@PathVariable int page){
 		
 		if(!PathVariableValidation.nickNameValService(nickname)||!PathVariableValidation.pageValidation(page)||!(type.equals("NORMAL")||type.equals("TAGGED"))) {
-			throw new BadRequestException("유효하지 않은 입력입니다.");
+			throw new InternerException("유효하지 않은 입력입니다.","validation 실패");
 		}
 		return feedService.loadUserFeedPostList(type, nickname, page);
 	}
@@ -84,7 +85,7 @@ public class FeedController {
 	public ResponseEntity<ResponseDTO<FollowListDTO>> getFollowInFeed(@PathVariable String nickname, @PathVariable String flwType, @PathVariable int page){
 		//validation
 		if(!PathVariableValidation.pageValidation(page)||(!"FOLLOWING".equals(flwType) && !"FOLLOWER".equals(flwType))||!PathVariableValidation.nickNameValService(nickname)) {
-			throw new BadRequestException("유효하지 않은 입력입니다.");
+			throw new InternerException("유효하지 않은 입력입니다.","validation 실패");
 		}
 		
 		return followService.getFollowInFeed(nickname, flwType, page);
@@ -116,7 +117,7 @@ public class FeedController {
 	public ResponseEntity<ResponseDTO<List<PostListDTO>>> loadMainFeedPostList(@PathVariable int page){
 		//validation
 		if (!PathVariableValidation.pageValidation(page)) {
-			throw new BadRequestException("유효하지 않은 입력입니다.");
+			throw new InternerException("유효하지 않은 입력입니다.","validation 실패");
 		}
 		
 		return feedService.loadMainFeedPostList(page);
@@ -130,7 +131,7 @@ public class FeedController {
 		
 		// validation
 		if (!PathVariableValidation.pageValidation(page)) {
-			throw new BadRequestException("유효하지 않은 페이지입니다.");
+			throw new InternerException("유효하지 않은 입력입니다.","validation 실패");
 		}
 		return feedService.loadGlobalFeedPostList(page);
 	}
@@ -138,7 +139,7 @@ public class FeedController {
 	public ResponseEntity<ResponseDTO<List<PostListDTO>>> loadSearchPostList(@PathVariable int page,@RequestParam String keyword){
 		//validation
 		if (!PathVariableValidation.pageValidation(page) || !PathVariableValidation.keyWordValService(keyword)) {
-			throw new BadRequestException("유효하지 않은 입력입니다.");
+			throw new InternerException("유효하지 않은 입력입니다.","validation 실패");
 		}
 		return feedService.loadSearchFeedPostList(keyword, page);
 	}

@@ -57,7 +57,7 @@ public class ChangeInfoServiceImpl implements ChangeInfoService{
 		//만약 회원이 없다면 	
 		if(dto==null) {
 			
-		throw new BadRequestException("비정상적인 접근입니다.");//사용자 정의400에러 발생
+		throw new InternerException("비정상적인 접근입니다.","비정상적인 접근입니다.");//사용자 정의400에러 발생
 		
 		}
 		//비공개/공개 상태여부를 가져옴 

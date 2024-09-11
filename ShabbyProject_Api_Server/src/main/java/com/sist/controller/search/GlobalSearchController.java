@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.sist.common.exception.BadRequestException;
+import com.sist.common.exception.InternerException;
 import com.sist.common.util.PathVariableValidation;
 import com.sist.dto.api.ResponseDTO;
 import com.sist.dto.common.GlobalSearchResultDTO;
@@ -34,7 +35,7 @@ public class GlobalSearchController {
 		
 		//키워드 , 페이지에 대한 검증 
 		if (!PathVariableValidation.pageValidation(page) || !PathVariableValidation.keyWordValService(keyword)) {
-			throw new BadRequestException("유효하지 않은 입력입니다.");
+			throw new InternerException("유효하지 않은 입력입니다.","validation 실패");
 		}
 		keyword=keyword.replace("_", "\\_");
 		return globalSearchService.globalSearchResult(keyword, page);
@@ -47,7 +48,7 @@ public class GlobalSearchController {
 		//페이지와 , 키워드에 대한 검증 
 		if (!PathVariableValidation.pageValidation(page) || !PathVariableValidation.keyWordValService(keyword)) {
 
-			throw new BadRequestException("유효하지 않은 입력입니다.");
+			throw new InternerException("유효하지 않은 입력입니다.","validation 실패");
 		}
 		//_ 키워드 데이터베이스 변환 필요
 		keyword=keyword.replace("_", "\\_");

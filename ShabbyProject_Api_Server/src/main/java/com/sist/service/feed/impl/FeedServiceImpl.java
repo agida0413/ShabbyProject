@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.sist.common.exception.BadRequestException;
@@ -13,6 +14,7 @@ import com.sist.common.exception.InternerException;
 import com.sist.common.util.PathVariableValidation;
 import com.sist.common.util.SimpleCodeGet;
 import com.sist.dto.api.ResponseDTO;
+import com.sist.dto.common.AlarmDTO;
 import com.sist.dto.feed.GetUserFeedInformDTO;
 import com.sist.dto.feed.UserFeedInformDTO;
 import com.sist.dto.follow.FollowInFeedDTO;
@@ -75,7 +77,7 @@ public class FeedServiceImpl implements FeedService{
 		
 		//클라이언트에게 전송할 객체에 데이터베이스에서 조회한 값을 넣는다.
 		UserFeedInformDTO dto = feedRepository.userFeedInfoFromMember(reqDTO);
-		
+	
 		//만약 매개변수로 받은 닉네임과 현재 세션정보에 담긴 닉네임과 일치한다면 
 		//itsMe 변수를 true로 ( 자신의 피드인지 다른 회원의 피드인지 확인하기 위함) 세팅한다. ==== > 여기서 세팅은 클라이언트에게 보낼객체에 대한 세팅이다.
 		if(nickname.equals(SimpleCodeGet.getNickname())) {
@@ -294,6 +296,7 @@ public class FeedServiceImpl implements FeedService{
 		//만약 파일이 null 이면 null인상태로 저장 ==> 기본이미지 
 		//데이터베이스 변경로직 시작 
 		try {
+			
 			//프로필 이미지 url 데이터베이스 업데이트 시도 
 			feedRepository.profileImgUpdate(dto);
 		} catch (Exception e) {
@@ -310,10 +313,12 @@ public class FeedServiceImpl implements FeedService{
 			
 			try {
 				//프로필 null로 업데이트 시도
+			
 				feedRepository.profileImgUpdate(dto);
 			} catch (Exception e2) {
 				// TODO: handle exception
 				//에러시 예외 서버내부오류 던짐 
+			
 				throw new InternerException("서버내부 오류입니다. 잠시 뒤 이용해주세요.", "프로필 사진변경중 오류발생하여 롤백 후 기본이미지 변경중 오류발생");
 			}
 			//롤백후 기본이미지로 변경 성공

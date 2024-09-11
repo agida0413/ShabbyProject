@@ -113,7 +113,7 @@ public class PostServiceImpl implements PostService {
 		PostDetailDTO dto = postRepository.postDetail(reqDto);
 		//정보가 없을 시
 		if(dto==null) {
-			throw new BadRequestException("존재하지 않는 게시물 입니다.");
+			throw new InternerException("존재하지 않는 게시물 입니다.","존재하지 않는 게시물 접근");
 		}
 		//현재 로그인한 회원 기반 , 현재 조회하려는 게시물의 좋아요 상태 체크 
 		if(dto.getLikeCheck()!=0) {
@@ -497,7 +497,7 @@ public class PostServiceImpl implements PostService {
                     String imgUrl = imageService.upload(image); //하나씩 꺼내와서 이미지 업로드==>s3에서 반환받은 url 값 저장
                     imgUrList.add(imgUrl); // 업로드된 이미지를 url리스트에 URL 추가
                 }
-         
+         	  
  		} catch (BadRequestException e) {
  			// TODO: handle exception
  			 if (!imgUrList.isEmpty()) {

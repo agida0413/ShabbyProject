@@ -68,6 +68,15 @@ public class ResponseDTO<T> {
     
     //시큐리티 필터에서 발생한 예외는 컨트롤러에 전달되지 못하기 때문에 전역 예외 핸들러에서 처리를 하지못한다 = > 따라서 시큐리티에서 발생할 
     //예외를 정의하여 ResponseApi를 생성하고 매개변수로 받아 , objectMapper로 json 형식으로 데이터를 내보낸다 ( 일정한 형식을 유지하고 싶기 떄문 ) 
+    
+    public void set500Response(HttpServletResponse response,ResponseDTO<Void> responseApi,ObjectMapper objectMapper) throws JsonProcessingException, IOException {
+  	  
+		
+ 	   response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);//405 응답코드
+        response.setContentType("application/json");
+        response.getWriter().write(objectMapper.writeValueAsString(responseApi));
+      
+    }
     public void set405Response(HttpServletResponse response,ResponseDTO<Void> responseApi,ObjectMapper objectMapper) throws JsonProcessingException, IOException {
     	  
     		

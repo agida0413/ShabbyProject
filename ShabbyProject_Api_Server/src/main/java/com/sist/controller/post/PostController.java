@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.sist.common.exception.BadRequestException;
+import com.sist.common.exception.InternerException;
 import com.sist.common.util.PathVariableValidation;
 import com.sist.dto.api.ResponseDTO;
 import com.sist.dto.post.DoPostLikeDTO;
@@ -35,6 +36,7 @@ public class PostController {
 		//태그리스트 validation
 		if (!PathVariableValidation.keyWordValService(dto.getHobbyList())
 			|| !PathVariableValidation.keyWordValService(dto.getFollowTagList())) {
+			
 			throw new BadRequestException("태그에 포함되면 안되는 문자가 포함되어있습니다.('#','@',',')");
 		}
 		return postService.postInsertTransaction(dto);
@@ -44,7 +46,7 @@ public class PostController {
 	public ResponseEntity<ResponseDTO<PostDetailDTO>> postDetail(@PathVariable int postNum){
 		//정수가 아닐경우
 		if (!PathVariableValidation.pageValidation(postNum)) {
-			throw new BadRequestException("유효하지 않은 입력입니다.");
+			throw new InternerException("유효하지 않은 입력입니다.","validation 실패");
 		}
 		return postService.postDetail(postNum);
 	}

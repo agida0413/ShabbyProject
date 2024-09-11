@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.sist.common.exception.BadRequestException;
+import com.sist.common.exception.InternerException;
 import com.sist.common.util.PathVariableValidation;
 import com.sist.dto.api.ResponseDTO;
 import com.sist.dto.hobby.HobbyDTO;
@@ -31,7 +32,7 @@ public class HobbyController {
 		
 		if(!PathVariableValidation.pageValidation(page)
 			||!PathVariableValidation.keyWordValService(keyword)	) {
-			throw new BadRequestException("유효하지 않은 페이지 입니다.");
+			throw new InternerException("유효하지 않은 입력입니다.","validation 실패");
 		}
 		
 		return hobbyService.findHobby(keyword,page);
