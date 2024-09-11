@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.sist.common.exception.BadRequestException;
+import com.sist.common.exception.InternerException;
 import com.sist.common.util.PathVariableValidation;
 import com.sist.dto.api.ResponseDTO;
 import com.sist.dto.follow.FollowSearchResultDTO;
@@ -45,7 +46,7 @@ private final FollowService followService;
 	@PostMapping("/nickValidate")
 	public ResponseEntity<ResponseDTO<Void>> nickNameValidation(@RequestBody MemberDTO dto){
 		if(!PathVariableValidation.nickNameValService(dto.getNickname())) {
-			throw new BadRequestException("유효하지 않은 입력입니다.");
+			throw new InternerException("유효하지 않은 입력입니다.","validation 실패");
 		}
 		return joinService.nickNameValidation(dto.getNickname());
 	}
@@ -56,7 +57,7 @@ private final FollowService followService;
 	public ResponseEntity<ResponseDTO<Void>> emailAuth(@RequestBody MemberDTO dto){
 		
 		if(!PathVariableValidation.emailValService(dto.getEmail())) {
-			new BadRequestException("유효하지 않은 입력입니다.");
+			throw new InternerException("유효하지 않은 입력입니다.","validation 실패");
 		}
 		return joinService.emailAuth(dto);
 		
@@ -66,7 +67,7 @@ private final FollowService followService;
 	@PostMapping("/emailValidate")
 	public ResponseEntity<ResponseDTO<Void>> emailValidation(@RequestBody EmailAuthDTO dto){
 		if(!PathVariableValidation.authCodeValidation(dto.getCode())) {
-			throw new BadRequestException("유효하지 않은 입력입니다.");
+			throw new InternerException("유효하지 않은 입력입니다.","validation 실패");
 		}
 		return joinService.emailValidation(dto);
 	}
@@ -79,7 +80,7 @@ private final FollowService followService;
 		if (!PathVariableValidation.nameValSevice(dto.getName())|| !PathVariableValidation.nickNameValService(dto.getNickname())
 			||!PathVariableValidation.phoneValService(dto.getPhone())) {	
 				
-			throw new BadRequestException("유효하지 않은 입력입니다.");
+			throw new InternerException("유효하지 않은 입력입니다.","validation 실패");
 		}
 		return memberFindService.findEmail(dto);
 	}
@@ -91,7 +92,7 @@ private final FollowService followService;
 		// validation
 		if (!PathVariableValidation.nameValSevice(dto.getName())|| !PathVariableValidation.emailValService(dto.getEmail())
 			|| !PathVariableValidation.phoneValService(dto.getPhone())) {			
-			throw new BadRequestException("유효하지 않은 입력입니다.");
+			throw new InternerException("유효하지 않은 입력입니다.","validation 실패");
 		}
 		return memberFindService.passwordFind(dto);
 	}
@@ -107,7 +108,7 @@ private final FollowService followService;
 		if (!PathVariableValidation.pageValidation(page) || !PathVariableValidation.pageValidation(rowSize)
 			|| !PathVariableValidation.keyWordValService(keyword)) {
 
-			throw new BadRequestException("유효하지 않은 입력입니다.");
+			throw new InternerException("유효하지 않은 입력입니다.","validation 실패");
 		}
 		
 		return  followService.followingBykeyword(keyword, page, rowSize);

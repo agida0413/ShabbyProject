@@ -75,10 +75,10 @@ public class JWTFilter extends OncePerRequestFilter{
 	    	if (!category.equals("access")) {
 	    		//액세스토큰이 아닐시 
 	    		ResponseDTO<Void> responseApi = new ResponseDTO<Void>(
-	         			 HttpStatus.UNAUTHORIZED.value(),
+	         			 HttpStatus.INTERNAL_SERVER_ERROR.value(),
 	                      "비정상적인 접근입니다"
 	                  );
-	          	responseApi.set401Response(response, responseApi, objectMapper);
+	          	responseApi.set500Response(response, responseApi, objectMapper);
 	          	return;
 	    	}
 	

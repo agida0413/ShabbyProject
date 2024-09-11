@@ -73,7 +73,7 @@ public class CustomLogoutFilter extends GenericFilterBean {
 	      	       			 HttpStatus.INTERNAL_SERVER_ERROR.value(),
 	      	                    "서버 내부오류입니다. 잠시 뒤 이용해주세요."
 	      	                );
-	      	        	responseApi.set401Response(response, responseApi, objectMapper);
+	      	        	responseApi.set500Response(response, responseApi, objectMapper);
 	      	        	return;
 	      		}
 	        //만약 refresh토큰이 없을 경우 
@@ -82,10 +82,10 @@ public class CustomLogoutFilter extends GenericFilterBean {
 	        
 	        	
 	        	ResponseDTO<Void> responseApi = new ResponseDTO<Void>(
-	       			 HttpStatus.UNAUTHORIZED.value(),
+	       			 HttpStatus.INTERNAL_SERVER_ERROR.value(),
 	                    "비정상적인 접근입니다."
 	                );
-	        	responseApi.set401Response(response, responseApi, objectMapper);
+	        	responseApi.set500Response(response, responseApi, objectMapper);
 	        	return;
 	        }
 	
@@ -99,10 +99,10 @@ public class CustomLogoutFilter extends GenericFilterBean {
 	        	
 	            //만료됬을 경우 
 	        	ResponseDTO<Void> responseApi = new ResponseDTO<Void>(
-	          			 HttpStatus.UNAUTHORIZED.value(),
+	          			 HttpStatus.INTERNAL_SERVER_ERROR.value(),
 	                       "만료된 인증입니다."
 	                   );
-	           	responseApi.set401Response(response, responseApi, objectMapper);
+	           	responseApi.set500Response(response, responseApi, objectMapper);
 	        	return;
 	        }
 	
@@ -112,10 +112,10 @@ public class CustomLogoutFilter extends GenericFilterBean {
 	
 	           
 	        	ResponseDTO<Void> responseApi = new ResponseDTO<Void>(
-	          			 HttpStatus.UNAUTHORIZED.value(),
+	          			 HttpStatus.INTERNAL_SERVER_ERROR.value(),
 	                       "비정상적인 접근입니다."
 	                   );
-	           	responseApi.set401Response(response, responseApi, objectMapper);
+	           	responseApi.set500Response(response, responseApi, objectMapper);
 	        	return;
 	        	
 	        }
@@ -127,10 +127,10 @@ public class CustomLogoutFilter extends GenericFilterBean {
 	        	//refresh 쿠키제거메서드
 	        	response.addCookie(CookieUtil.deleteRefreshCookie());
 	        	ResponseDTO<Void> responseApi = new ResponseDTO<Void>(
-	          			 HttpStatus.UNAUTHORIZED.value(),
+	          			 HttpStatus.INTERNAL_SERVER_ERROR.value(),
 	                       "비정상적인 접근입니다"
 	                   );
-	           	responseApi.set401Response(response, responseApi, objectMapper);
+	           	responseApi.set500Response(response, responseApi, objectMapper);
 	           	return;
 	        }
 	
