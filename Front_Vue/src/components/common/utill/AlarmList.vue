@@ -2,7 +2,7 @@
     <div class="text-center ">
         <v-dialog v-model="localDialog">
    
-      <div class="mx-auto to-blackMode" style="width: 900px; height: 700px;" >
+      <div class="mx-auto to-blackMode" style="width: 900px; height: 800px;" >
         <v-toolbar  style="background-color: gray; color: aliceblue;">
               <v-toolbar-title >
                 <v-icon style="margin-right: 5px;">
@@ -24,7 +24,7 @@
          <div class="d-flex child-flex justify-center align-center" v-if="!alarmData.length && !this.isLoading">
           <span style="font-size: 20px; opacity: 0.7; margin-top: 200px;">아직 알람이 없습니다.</span>
           </div>
-        <div class="scroll-container" v-if="alarmData.length && !this.isLoading">
+        <div  v-if="alarmData.length && !this.isLoading">
              
           <v-list  lines="three" class="to-blackMode pa-3">
             <v-list-item>
