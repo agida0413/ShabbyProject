@@ -13,7 +13,7 @@
               <v-img
                 class="mx-auto"
                 max-width="60"
-                src="@/assets/logo2.png"
+                src="https://ta9termproject.s3.ap-northeast-2.amazonaws.com/logo2.png"
             ></v-img> 
           
           </v-list-item>
@@ -39,14 +39,22 @@
                 <template v-if="memberData.nickname">
                   <router-link :to="{ name: 'userfeed', params: {nickname:this.memberData.nickname }}" class="router-link" value="4"><v-list-item prepend-icon="mdi-home" title="내 피드" value="home"></v-list-item></router-link>
                 </template>
-              <v-list-item prepend-icon="mdi-heart-outline" @click="AlarmDialogOpen()" title="활동"  value="5"></v-list-item>
+               <v-list-item prepend-icon="mdi-heart-outline" @click="AlarmDialogOpen()" title="알람"  value="5" v-if="noreadAlarmCount===0"></v-list-item>
+               <v-list-item  @click="AlarmDialogOpen()" value="5" v-if="noreadAlarmCount>0">
+              <v-icon color="red">
+                mdi-heart
+              </v-icon>
+                <span style="font-size: 14px; margin-left: 32px; color: #FFCCCC;">알람</span>
+                <span style="font-size: 10px; opacity: 0.7; margin-left: 3px ;color: #FFCCCC;" >(새 알람 {{ noreadAlarmCount }}건)</span>
+
+               </v-list-item>
                 <v-list-item prepend-icon="mdi-wrench" title="설정" value="6" @click="settingDialogOpen()"></v-list-item>
                 <v-list-item prepend-icon="mdi-lock" title="로그아웃" value="7" @click="logout()"></v-list-item>
         </v-list>
 
       </v-navigation-drawer>
     
-    
+     
   </v-card>
   <!-- 세팅 모달 컴포넌트 -->
   <SettingComponent 
@@ -69,7 +77,7 @@ import PostInsert from "@/components/feed/post/PostInsert.vue";
 import SettingComponent from "../setting/Setting.vue"
 import AlarmList from "../utill/AlarmList.vue";
 import api from "@/api"
-
+import eventBus from "@/eventBus"
 
 export default{
 
@@ -80,7 +88,9 @@ export default{
       memberData:{}, //회원정보
       isLoading:false ,//로딩상태
       AlarmDialog:false,//알람 리스트 모달 열고닫음 
-      selectedValue:null
+      selectedValue:null,
+      noreadAlarmCount:0,
+
     }
   },
  
@@ -92,7 +102,10 @@ export default{
  mounted(){
   
   this.getInitInfo()
- 
+  eventBus.on('getAlarmData',this.alarmCountGet);
+ },
+ unmounted(){
+  eventBus.off('getAlarmData',this.alarmCountGet);
  },
  //변경추적
     watch:{
@@ -109,7 +122,22 @@ export default{
      
     },
   methods:{
-   
+   alarmCountGet(){
+    if(this.isLoading)return
+
+      this.isLoading=true;
+      api.get('/alarm')
+      .then((res)=>{
+        this.noreadAlarmCount=res?.data?.reqData
+        console.log(this.noreadAlarmCount)
+      })
+      .catch((err)=>{
+        alert(err?.data?.message)
+      })
+      .finally(()=>{
+        this.isLoading=false
+      })
+   },
     resetValue(){
      
      this.selectedValue=10
@@ -147,6 +175,7 @@ export default{
         })
         .finally(()=>{
           this.isLoading=false
+          this.alarmCountGet()
         })
       
        
@@ -209,4 +238,5 @@ export default{
   text-decoration: none; /* 링크의 기본 밑줄 제거 */
   color: inherit; /* 링크 색상을 상속 받아서 v-list-item의 색상에 영향을 주지 않도록 설정 */
 }
+
 </style>
