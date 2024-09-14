@@ -94,7 +94,11 @@ public class MybatisCommonRepository implements CommonRepository{
 		// TODO Auto-generated method stub
 		commonMapper.updateIsread(list);
 	}
-	
+	@Override
+	public int alarmCount(int idNum) {
+		// TODO Auto-generated method stub
+		return commonMapper.alarmCount(idNum);
+	}
 	
 	
 }
