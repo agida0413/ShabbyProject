@@ -124,7 +124,7 @@
 <script>
 import api from "@/api"
 import PostDetail from "@/components/feed/post/PostDetail.vue"
-
+import eventBus from "@/eventBus"
 export default {
     name:'AlarmList',
     components:{
@@ -185,6 +185,7 @@ export default {
         this.totalPage=0
         this.postDetailDialog=false
         this.sendPostNum=0
+        eventBus.emit('getAlarmData')
         this.$emit('closeAlarm');
     },
     //알람 리스트를 받아오는 메소드 

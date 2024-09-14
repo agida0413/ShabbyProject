@@ -7,6 +7,7 @@ import Mainfeed from '@/components/feed/otherfeeds/Mainfeeds.vue'
 import Searchmain from '@/components/feed/searchfeeds/Searchmain.vue'
 import axios from 'axios'
 import Error from '../components/common/layout/Error.vue'
+import eventBus from "@/eventBus.js"
 const routes = [
   {
     path: '/login',
@@ -106,6 +107,7 @@ router.beforeEach((to, from, next) => {
   } else if (to.matched.some(record => record.meta.requiresAuth)) {
     // 인증이 필요한 라우트인 경우
     if (token) {
+      eventBus.emit('getAlarmData');
       next();
     } else {
       
