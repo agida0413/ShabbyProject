@@ -73,10 +73,18 @@
     		<when test="feedState=='GLOBALFEED'||feedState=='SEARCHFEED'">
     		WHERE 
     			p.id_num IN
-    			(SELECT id_num FROM MEMBER
-    			WHERE locked='PUBLICID' 
-    			AND
-    			NOT (id_num=#{idNum})   			
+    			(
+					SELECT id_num FROM MEMBER
+    				WHERE 
+    				locked='PUBLICID' 
+    				AND
+    				NOT (id_num=#{idNum})   
+    				UNION
+    				SELECT following_id as id_num FROM FOLLOW
+	    			WHERE id_num=#{idNum}
+	    			AND
+	    			approve='FOLLOWOK'
+    		  			
     			)
     			AND
     			onlyMe='NOTONLYME' 
