@@ -27,5 +27,8 @@ public class AlarmController {
 	public ResponseEntity<ResponseDTO<AlarmResultDTO>> getAlarm(@PathVariable int page){
 		return alarmService.getAlarm(page);
 	}
-	
+	@GetMapping
+	public ResponseEntity<ResponseDTO<Integer>> alarmCount(){
+		return alarmService.alarmCount();
+	}
 }

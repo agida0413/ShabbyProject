@@ -37,4 +37,5 @@ public interface CommonRepository {
 		public void updateIsread(List<AlarmListDTO> list);
 		//팔로우 요청 거절시 알람 상태 변경 
 		public void refuseReqAlarmStatus(AlarmChangeDTO dto);
+		public int alarmCount(int idNum);
 }

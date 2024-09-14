@@ -259,4 +259,13 @@ OR <!--결합 -->
  AND alarm_type='FOLLOWREQ'
  
  </delete>
+ 
+ 
+ <!--안읽은 알람 개수 가져오기-->
+ 
+ <select id="alarmCount" parameterType="int" resultType="int">
+ select COUNT(*) from ALARM 
+ WHERE receiver=#{idNum}
+AND isread=0;
+ </select>
  </mapper>
