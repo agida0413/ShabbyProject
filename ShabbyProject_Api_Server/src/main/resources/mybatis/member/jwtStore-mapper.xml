@@ -19,8 +19,8 @@
 	</delete>
 	<!--리프레시 토큰을 데이터베이스에 저장함 ( 리프레시 토큰 발급시 (로그인성공, 재발급 )) -->
 	<insert id="save" parameterType="TokenStoreDTO">
-	Insert into token_store (id_num,refresh,expiration)
-	values(#{idNum},#{refresh},#{expiration})
+	Insert into token_store (id_num,refresh,expiration,browser)
+	values(#{idNum},#{refresh},#{expiration},#{browser})
 	</insert>
 	
 	

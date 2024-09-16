@@ -41,7 +41,8 @@ public class JWTFilter extends OncePerRequestFilter{
 
 	@Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, java.io.IOException {
-				
+			
+		System.out.println(request.getHeader("User-Agent"));
 	    	// 헤더에서 access키에 담긴 토큰을 꺼냄
 	    	String accessToken = request.getHeader("access");
 	
