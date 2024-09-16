@@ -38,12 +38,18 @@ public class MybatisRefreshService implements RefreshService{
 		}
 		
 		
-	public void addRefreshEntity(int idNum, String refresh, Long expiredMs) {// 리프레시토큰을 데이터베이스에 저장
+	public void addRefreshEntity(int idNum, String refresh, Long expiredMs,HttpServletRequest request) {// 리프레시토큰을 데이터베이스에 저장
 				
 		    Date date = new Date(System.currentTimeMillis() + expiredMs); //현재시간 + 매개변수로 받은 유효기간 
 		   
 		    TokenStoreDTO dto= new TokenStoreDTO();
-		 
+		    //클라이언트 ip
+		    String ip=request.getRemoteAddr();
+		    //클라이언트 브라우저 정보
+		    String browser=request.getHeader("User-Agent");
+		    
+		   
+		    dto.setBrowser(browser);//클라이언트 브라우저 정보
 		    dto.setIdNum(idNum); //매개변수로 받은 아이디고유번호
 		    dto.setRefresh(refresh); // 매개변수로 받은 토큰 
 		    dto.setExpiration(date.toString()); // 유효기간
@@ -117,7 +123,7 @@ public class MybatisRefreshService implements RefreshService{
 			String nickname=jwtUtil.getNickname(refresh);//닉네임 읽어옴
 	      
 	        //새로운 jwt 토큰 발급 
-	        String newAccess = jwtUtil.createJwt("access", username, strIdNum,nickname, 10000L);
+	        String newAccess = jwtUtil.createJwt("access", username, strIdNum,nickname, 300000L);
 	        String newRefresh = jwtUtil.createJwt("refresh", username, strIdNum,nickname, 86400000L);
 
 	        
@@ -125,7 +131,7 @@ public class MybatisRefreshService implements RefreshService{
 			deleteRefresh(refresh); //Refresh 토큰 저장 DB에 기존의 Refresh 토큰 삭제 후 새 Refresh 토큰 저장
 			
 			 
-			addRefreshEntity(idNum, newRefresh, 86400000L);//새 토큰 데이터에 저장
+			addRefreshEntity(idNum, newRefresh, 86400000L,request);//새 토큰 데이터에 저장
 	        
 	        response.setHeader("access", newAccess); //새로운 토큰을 헤더에 추가 
 	        

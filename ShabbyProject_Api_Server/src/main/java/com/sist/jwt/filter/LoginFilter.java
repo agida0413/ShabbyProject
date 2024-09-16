@@ -115,12 +115,12 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         String nickname=SimpleCodeGet.getNickname(authentication);
         
         //토큰 생성( 각토큰이름 + email+role+strIdNum + 유효기간 + 시크릿키(sha))
-        String access = jwtUtil.createJwt("access", email, strIdNuM,nickname, 10000L);//엑세스 토큰 
+        String access = jwtUtil.createJwt("access", email, strIdNuM,nickname, 300000L);//엑세스 토큰 
         String refresh = jwtUtil.createJwt("refresh", email, strIdNuM,nickname ,86400000L); //리프레시 토큰 
         
   
         //refresh토큰 데이터베이스에 저장 = > 서버에서 제어권을 가지려고 ( 나중에 탈취당했을때에 대비하여)
-        refreshService.addRefreshEntity(idNum, refresh, 86400000L);
+        refreshService.addRefreshEntity(idNum, refresh, 86400000L,request);
         
         //응답 설정
         response.setHeader("access", access);//엑세스 토큰은 헤더에 
