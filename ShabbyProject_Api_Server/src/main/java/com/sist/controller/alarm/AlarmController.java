@@ -22,6 +22,7 @@ public class AlarmController {
 
 	private final AlarmService alarmService;
 	
+	
 	//알람 획득
 	@GetMapping("/{page}")
 	public ResponseEntity<ResponseDTO<AlarmResultDTO>> getAlarm(@PathVariable int page){
