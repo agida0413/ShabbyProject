@@ -14,8 +14,7 @@ import com.sist.dto.follow.UnFollowDTO;
 public interface FollowRepository {
 	//<!--키워드 검색을 통한 자신이 팔로잉 하는 리스트 -->
 		public List<MemberDTO>followingByKeyword(FollowSearchDTO dto);
-		//<!--키워드 검색을 통한 자신을 팔로워 하는 리스트 -->
-		public List<MemberDTO>followerByKeyword();
+		
 		//사용자 피드에서 follow, follower 가져오기
 		public List<FollowInformDTO>getFollowInFeed(FollowInFeedDTO dto);
 		//팔로우 인서트(팔로잉)

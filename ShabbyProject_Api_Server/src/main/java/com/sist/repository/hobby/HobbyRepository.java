@@ -7,8 +7,7 @@ import java.util.*;
 
 public interface HobbyRepository {
 
-	//전체 관심사 조회	
-	public HobbyDTO allHobby();
+	
 	//특정 관심사 조회
 	public List<HobbyDTO> findHobby(SearchHobbyDTO dto);
 	//닉네임 기반 관심사 리스트

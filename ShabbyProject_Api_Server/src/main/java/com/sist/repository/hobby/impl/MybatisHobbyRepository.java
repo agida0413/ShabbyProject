@@ -15,11 +15,7 @@ public class MybatisHobbyRepository implements HobbyRepository{
 	
 	//전체 관심사 조회 
 	private final hobbyMapper hobbyMapper;
-	@Override
-	public HobbyDTO allHobby() {
-		// TODO Auto-generated method stub
-		return hobbyMapper.allHobby();
-	}
+	
 
 	//특정 관심사 조회
 	@Override

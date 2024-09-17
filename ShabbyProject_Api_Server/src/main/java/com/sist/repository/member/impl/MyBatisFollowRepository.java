@@ -29,12 +29,7 @@ public class MyBatisFollowRepository implements FollowRepository{
 		return followMapper.followingByKeyword(dto);
 	}
 
-	//<!--키워드 검색을 통한 자신을 팔로워 하는 리스트 -->
-	@Override
-	public List<MemberDTO> followerByKeyword() {
-		// TODO Auto-generated method stub
-		return followMapper.followerByKeyword();
-	}
+
 
 	//사용자 피드에서 follow, follower 가져오기
 	@Override

@@ -7,25 +7,25 @@
  
  <mapper namespace="com.sist.mapper.hobby.hobbyMapper">
 
-<!--전체 관심사 조회--> 
-<select id="allHobby" resultType="HobbyDTO">
-SELECT distinct hobby from hobby;
-</select>	
-
 <!--특정 매개변수에 의한 관심사 조회-->
 	
-<select id="findHobby" parameterType="SearchHobbyDTO" resultType="HobbyDTO">	
-SELECT distinct hobby from hobby
-WHERE hobby LIKE CONCAT('%',#{keyword},'%')
-LIMIT #{rowSize} OFFSET #{startRow} 
+<select id="findHobby" parameterType="SearchHobbyDTO" resultType="HobbyDTO">
+/*검색어를 통한 중복제거된 관심사 조회*/	
+SELECT  distinct hobby	/*중복 제거된 관심사*/
+FROM 	hobby		
+WHERE 	hobby LIKE CONCAT('%',#{keyword},'%')	/*관심사 검색조건(키워드)*/
+LIMIT 	#{rowSize} OFFSET #{startRow} 			/*페이징*/
 </select>
 
 <!--닉네임에 의한 관심사 리스트 -->
 <select id="findHobbyByNickname" parameterType="String" resultType="HobbyDTO">
-SELECT distinct hobby FROM hobby 
-WHERE id_num=
-(SELECT id_num FROM MEMBER
-WHERE nickname=#{nickname}
-)
+/*닉네임을 통한 중복제거된 관심사 조회*/
+SELECT 	distinct hobby		/*중복 제*/
+FROM 	hobby 
+WHERE   id_num = (		
+				  	SELECT 	 id_num
+				  	FROM 	 MEMBER
+				  	WHERE  	 nickname=#{nickname}	/*닉네임*/
+				 )	/*회원 고유번호 = 회원고유번호(서브쿼리를 통한) */
 </select>
  </mapper>
