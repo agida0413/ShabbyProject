@@ -21,6 +21,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import com.sist.common.util.CookieUtil;
 import com.sist.common.util.SimpleCodeGet;
 import com.sist.jwt.JWTUtil;
@@ -101,13 +102,19 @@ public class SecurityConfig {
 		        .httpBasic((auth) -> auth.disable());
 		
 		http
+		
 		        .authorizeHttpRequests((auth) -> auth
 		                .requestMatchers("/api/login", "/api/join","/api/reissue",
-		                		"/api/members/emailAuth","/api/members/emailValidate"
-		                		,"api/members/nickValidate","/api/members","/api/members/findEmail"
-		                		,"/api/members/findPassword","/api/post/**","/","/index.html","/css/**","/js/**","/images/**","/favicon.ico","/fonts/**").permitAll() //로그인 ,회원가입 , 토큰 재발급,이메일인증 api는 권한 필요없음 
+		                		"/api/members/**"
+		                		,"/"
+		                		,"/index.html","/css/**","/js/**","/images/**","/favicon.ico","/fonts/**").permitAll() //로그인 ,회원가입 , 토큰 재발급,이메일인증 api는 권한 필요없음 
 		       
 		                .anyRequest().authenticated());//나머지는 인증이 필요함 
+						
+						
+						
+						
+						
 				
 		//JWTFilter 등록 = > 로그인 필터 전에 수행 		
 		http
