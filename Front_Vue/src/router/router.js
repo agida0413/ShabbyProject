@@ -95,6 +95,7 @@ router.beforeEach((to, from, next) => {
       })
       .catch(() => {
         //실패하면 엑세스토큰 지우고 로그인 페이지로 라우팅
+        localStorage.removeItem('requestUrl');
        localStorage.removeItem('access')
        router.push('/login')
     

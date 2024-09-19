@@ -210,7 +210,8 @@ export default{
       //로그아웃 api 호출 
       api.post('/logout')
       .then(()=>{
-        //성공시  로컬스토리지 제거 , 로그인 페이지로 푸시     
+        //성공시  로컬스토리지 제거 , 로그인 페이지로 푸시 
+        localStorage.removeItem('requestUrl');   
         localStorage.removeItem('access');
         this.$router.push('/login');
 

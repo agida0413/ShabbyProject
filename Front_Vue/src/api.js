@@ -48,12 +48,12 @@ api.interceptors.response.use(response => {
     return response;
 }, error => {
   //만약 응답오류가 있다면 
-
+  console.log(error)
   const token = localStorage.getItem("access"); // 토큰이 있다면 
   const originalRequest = error.config;
 
   // 특정 URL에서 아무 것도 수행하지 않도록 설정
-  if(error?.response?.status===500){
+  if(error?.response?.status===500 ){
     router.push('/error'); // this 대신 router 사용
   }
   
