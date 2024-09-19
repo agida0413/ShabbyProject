@@ -12,15 +12,15 @@
 /* 이메일을 통한 회원 정보 */
 SELECT id_num      /* 회원 고유번호 */
      , email       /* 이메일 */
-	 , password	   /* 비밀번호 */
-	 , nickname	   /* 닉네임 */
-	 , name	       /* 성명 */
-	 , phone       /* 휴대폰 번호 */
-	 , profile     /* 프로필 사진 */
-	 , introduce   /* 자기소개 */
-	 , create_date /* 생성일 */
-	 , edit_date   /* 수정일 */
-	 , locked      /* 비공개,공개 여부 */
+     , password	   /* 비밀번호 */
+     , nickname	   /* 닉네임 */
+     , name	       /* 성명 */
+     , phone       /* 휴대폰 번호 */
+     , profile     /* 프로필 사진 */
+     , introduce   /* 자기소개 */
+     , create_date /* 생성일 */
+     , edit_date   /* 수정일 */
+     , locked      /* 비공개,공개 여부 */
   FROM member	
  WHERE email = #{email}
 </select>
@@ -29,16 +29,16 @@ SELECT id_num      /* 회원 고유번호 */
 <select id="findByUserIdNum" parameterType="int" resultType="MemberDTO">
 /* 회원 고유번호를 통한 회원 정보 */	 
 SELECT id_num       /* 회원 고유번호 */
-	 , email        /* 이메일 */
-	 , password     /* 비밀번호 */
-	 , nickname     /* 닉네임 */
-	 , name         /* 성명 */
-	 , phone        /* 휴대폰 번호 */
-	 , profile      /* 프로필 사진 */
-	 , introduce    /* 자기소개 */
-	 , create_date  /* 생성일 */
-	 , edit_date    /* 수정일 */
-	 , locked       /* 비공개,공개 여부 */
+     , email        /* 이메일 */
+     , password     /* 비밀번호 */
+     , nickname     /* 닉네임 */
+     , name         /* 성명 */
+     , phone        /* 휴대폰 번호 */
+     , profile      /* 프로필 사진 */
+     , introduce    /* 자기소개 */
+     , create_date  /* 생성일 */
+     , edit_date    /* 수정일 */
+     , locked       /* 비공개,공개 여부 */
   FROM member
  WHERE id_num = #{idNum}
 </select>
@@ -55,16 +55,16 @@ WHERE  id_num = #{idNum}
 <select id="findByUserNickname" parameterType="String" resultType="MemberDTO">
 /* 닉네임을 통한 회원정보 */	 
 SELECT id_num       /* 회원 고유번호 */
-	 , email        /* 이메일 */
-	 , password     /* 비밀번호 */
-	 , nickname     /* 닉네임 */
-	 , name         /* 성명 */
-	 , phone        /* 휴대폰 번호 */
-	 , profile      /* 프로필 사진 */
-	 , introduce    /* 자기소개 */
-	 , create_date  /* 생성일 */
-	 , edit_date    /* 수정일 */
-	 , locked       /* 비공개,공개 여부 */
+     , email        /* 이메일 */
+     , password     /* 비밀번호 */
+     , nickname     /* 닉네임 */
+     , name         /* 성명 */
+     , phone        /* 휴대폰 번호 */
+     , profile      /* 프로필 사진 */
+     , introduce    /* 자기소개 */
+     , create_date  /* 생성일 */
+     , edit_date    /* 수정일 */
+     , locked       /* 비공개,공개 여부 */
   FROM member 
  WHERE nickname = #{nickname}
 </select>
@@ -80,100 +80,103 @@ SELECT locked       /* 공개,비공개 여부 */
 <select id="findByUserPhone" parameterType="String" resultType="MemberDTO">\
 /* 핸드폰 번호를 통한 회원정보 */
 SELECT id_num       /* 회원 고유번호 */
-	 , email        /* 이메일 */
-	 , password     /* 비밀번호 */
-	 , nickname     /* 닉네임 */
-	 , name         /* 성명 */
-	 , phone        /* 휴대폰 번호 */
-	 , profile      /* 프로필 사진 */
-	 , introduce    /* 자기소개 */
-	 , create_date  /* 생성일 */
-	 , edit_date    /* 수정일 */
-	 , locked       /* 비공개,공개 여부 */ 
+     , email        /* 이메일 */
+     , password     /* 비밀번호 */
+     , nickname     /* 닉네임 */
+     , name         /* 성명 */
+     , phone        /* 휴대폰 번호 */
+     , profile      /* 프로필 사진 */
+     , introduce    /* 자기소개 */
+     , create_date  /* 생성일 */
+     , edit_date    /* 수정일 */
+     , locked       /* 비공개,공개 여부 */ 
   FROM member
  WHERE phone = #{phone}
 </select>
 	
 <!-- 회원가입-->
 <insert id="join" parameterType="MemberDTO">
-  /*회원가입*/
+  /* 회원가입 */
 INSERT INTO MEMBER (email,password,nickname,name,phone,introduce)
        VALUES(
-		       #{email}
-		      ,#{password}
-		      ,#{nickname}
-		      ,#{name}
-		      ,#{phone}
-		      ,#{introduce}
-		      )
+              #{email}
+             ,#{password}
+             ,#{nickname}
+             ,#{name}
+             ,#{phone}
+             ,#{introduce}
+             )
 </insert>
 	
 <!-- 이메일 인증이력 저장 -->
 <insert id="emailAuthSave" parameterType="EmailAuthDTO">
-/*이메일 인증이력 저장*/
-Insert 	Into email_auth (email,code,expiration,isauth)
-values	(#{email},#{code},#{expiration},isauth)
+/* 이메일 인증이력 저장 */
+INSERT INTO EMAIL_AUTH (email,code,expiration,isauth)
+       VALUES (
+               #{email}
+              ,#{code}
+              ,#{expiration}
+              ,isauth
+              )
 </insert>
 	
 <!--이메일 인증시 코드검증 셀렉트 여러 정보가 있을 수 있으니 가장최신것을 가져옴 -->
 <select id="emailAuthGetValidation" parameterType="String" resultType="EmailAuthDTO">
 /*이메일 인증시 코드검증 조회*/
-SELECT id_num,		/*회원 고유번호*/
-	   email,		/*이메일*/
-	   password,	/*비밀번호*/
-	   nickname,	/*닉네임*/
-	   name,		/*성명*/
-	   phone,		/*휴대폰 번호*/
-	   profile,		/*프로필 사진*/
-	   introduce,	/*자기소개*/
-	   create_date,	/*생성일*/
-	   edit_date,	/*수정일*/
-	   locked		/*비공개,공개 여부*/ 
-FROM   EMAIL_AUTH
-WHERE  EMAIL = #{email}
-AND    EMAILAUTH_NUM = (
-		    SELECT MAX(EMAILAUTH_NUM)
-			FROM EMAIL_AUTH
-			WHERE EMAIL = #{email}
-		)
-	
+SELECT id_num       /* 회원 고유번호 */
+     , email        /* 이메일 */
+     , password     /* 비밀번호 */
+     , nickname     /* 닉네임 */
+     , name         /* 성명 */
+     , phone        /* 휴대폰 번호 */
+     , profile      /* 프로필 사진 */
+     , introduce    /* 자기소개 */
+     , create_date  /* 생성일 */
+     , edit_date    /* 수정일 */
+     , locked       /*비공개,공개 여부*/ 
+  FROM EMAIL_AUTH
+ WHERE EMAIL         = #{email}
+   AND EMAILAUTH_NUM = (
+                         SELECT MAX(EMAILAUTH_NUM)
+                           FROM EMAIL_AUTH
+                          WHERE EMAIL = #{email}
+                       )
 </select>
 
 <!--이메일 인증 성공시 해당 로우 인증완료로 상태 업데이트-->
 <update id="emailAuthClear" parameterType="int">
 /*이메일 인증 성공시 해당 로우 인증완료로 상태 업데이트*/
-UPDATE	 email_auth set
-		 isauth='Y'			/*인증성공*/
-WHERE    emailauth_num=#{emailauthNum}	/*인증코드 테이블 고유번호*/
+UPDATE email_auth set
+       isauth = 'Y'                     /* 인증성공 */ 
+ WHERE emailauth_num = #{emailauthNum}	/* 인증코드 테이블 고유번호 */
 		
 </update>
 	
-	
 <!--이메일 찾기 닉네임, 이름  일치여부 -->
 <select id="findEmail" parameterType="MemberDTO" resultType="MemberDTO">
-/*이메일 찾기*/
-SELECT id_num,		/*회원 고유번호*/
-	   email,		/*이메일*/
-	   password,	/*비밀번호*/
-	   nickname,	/*닉네임*/
-	   name,		/*성명*/
-	   phone,		/*휴대폰 번호*/
-	   profile,		/*프로필 사진*/
-	   introduce,	/*자기소개*/
-	   create_date,	/*생성일*/
-	   edit_date,	/*수정일*/
-	   locked		/*비공개,공개 여부*/
-FROM   MEMBER 
-WHERE  nickname=#{nickname}
-AND    name=#{name}
+/* 이메일 찾기 */
+SELECT id_num       /*회원 고유번호*/
+     , email        /*이메일*/
+     , password     /*비밀번호*/
+     , nickname     /*닉네임*/
+     , name         /*성명*/
+     , phone        /*휴대폰 번호*/
+     , profile      /*프로필 사진*/
+     , introduce    /*자기소개*/
+     , create_date  /*생성일*/
+     , edit_date    /*수정일*/
+     , locked       /*비공개,공개 여부*/
+  FROM MEMBER 
+ WHERE nickname = #{nickname}
+   AND name     = #{name}
 </select>
 	
 <!--임시패스워드 발급 후 저장-->
 <update id="tempPasswordUpdate" parameterType="MemberDTO">
-/*임시패스워드 발급 후 비밀번호-> 임시비밀번호로 업데이트*/
-UPDATE  member SET
-		password=#{password}
-WHERE   email=#{email}
+/* 임시패스워드 발급 후 비밀번호-> 임시비밀번호로 업데이트 */
+UPDATE MEMBER SET
+     password = #{password}
+  WHERE email = #{email}
 </update>
 	
 	
