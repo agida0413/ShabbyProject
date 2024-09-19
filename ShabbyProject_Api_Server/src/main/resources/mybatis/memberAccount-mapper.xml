@@ -9,96 +9,103 @@
 <mapper namespace="com.sist.mapper.MemberAccountMapper">
  <!-- 이메일을 통한 회원 검증 -->
 <select id="findByUserEmail" parameterType="String" resultType="MemberDTO"> 
-/*이메일을 통한 회원 정보*/
-SELECT id_num,		/*회원 고유번호*/
-	   email,		/*이메일*/
-	   password,	/*비밀번호*/
-	   nickname,	/*닉네임*/
-	   name,		/*성명*/
-	   phone,		/*휴대폰 번호*/
-	   profile,		/*프로필 사진*/
-	   introduce,	/*자기소개*/
-	   create_date,	/*생성일*/
-	   edit_date,	/*수정일*/
-	   locked		/*비공개,공개 여부*/
-FROM   member	
-WHERE  email=#{email}
+/* 이메일을 통한 회원 정보 */
+SELECT id_num      /* 회원 고유번호 */
+     , email       /* 이메일 */
+	 , password	   /* 비밀번호 */
+	 , nickname	   /* 닉네임 */
+	 , name	       /* 성명 */
+	 , phone       /* 휴대폰 번호 */
+	 , profile     /* 프로필 사진 */
+	 , introduce   /* 자기소개 */
+	 , create_date /* 생성일 */
+	 , edit_date   /* 수정일 */
+	 , locked      /* 비공개,공개 여부 */
+  FROM member	
+ WHERE email = #{email}
 </select>
 	
 <!--회원 고유번호를 통한 회원 셀렉트 -->
 <select id="findByUserIdNum" parameterType="int" resultType="MemberDTO">
-/*회원 고유번호를 통한 회원 정보*/	 
-SELECT id_num,		/*회원 고유번호*/
-	   email,		/*이메일*/
-	   password,	/*비밀번호*/
-	   nickname,	/*닉네임*/
-	   name,		/*성명*/
-	   phone,		/*휴대폰 번호*/
-	   profile,		/*프로필 사진*/
-	   introduce,	/*자기소개*/
-	   create_date,	/*생성일*/
-	   edit_date,	/*수정일*/
-	   locked		/*비공개,공개 여부*/
-FROM   member
-WHERE  id_num=#{idNum}
+/* 회원 고유번호를 통한 회원 정보 */	 
+SELECT id_num       /* 회원 고유번호 */
+	 , email        /* 이메일 */
+	 , password     /* 비밀번호 */
+	 , nickname     /* 닉네임 */
+	 , name         /* 성명 */
+	 , phone        /* 휴대폰 번호 */
+	 , profile      /* 프로필 사진 */
+	 , introduce    /* 자기소개 */
+	 , create_date  /* 생성일 */
+	 , edit_date    /* 수정일 */
+	 , locked       /* 비공개,공개 여부 */
+  FROM member
+ WHERE id_num = #{idNum}
 </select>
 	
 <!--회원 고유번호를 통한 회원 자기소개 -->
 <select id="introduceByUserIdNum" parameterType="int" resultType="MemberDTO">	
-/*회원 고유번호를 통한 회원 자기소개 정보*/ 
+/* 회원 고유번호를 통한 회원 자기소개 정보 */ 
 SELECT introduce
 FROM   member
-WHERE  id_num=#{idNum}
+WHERE  id_num = #{idNum}
 </select>
 
 <!--닉네임을 통한 회원검증(중복 닉네임)-->
 <select id="findByUserNickname" parameterType="String" resultType="MemberDTO">
-/*닉네임을 통한 회원정보*/	 
-SELECT id_num,		/*회원 고유번호*/
-	   email,		/*이메일*/
-	   password,	/*비밀번호*/
-	   nickname,	/*닉네임*/
-	   name,		/*성명*/
-	   phone,		/*휴대폰 번호*/
-	   profile,		/*프로필 사진*/
-	   introduce,	/*자기소개*/
-	   create_date,	/*생성일*/
-	   edit_date,	/*수정일*/
-	   locked		/*비공개,공개 여부*/
-FROM   member 
-WHERE  nickname=#{nickname}
+/* 닉네임을 통한 회원정보 */	 
+SELECT id_num       /* 회원 고유번호 */
+	 , email        /* 이메일 */
+	 , password     /* 비밀번호 */
+	 , nickname     /* 닉네임 */
+	 , name         /* 성명 */
+	 , phone        /* 휴대폰 번호 */
+	 , profile      /* 프로필 사진 */
+	 , introduce    /* 자기소개 */
+	 , create_date  /* 생성일 */
+	 , edit_date    /* 수정일 */
+	 , locked       /* 비공개,공개 여부 */
+  FROM member 
+ WHERE nickname = #{nickname}
 </select>
 
 <select id="getLock" parameterType="String" resultType="String"> 
-/*닉네임 기반 비공개,공개 정보*/
-SELECT locked		/*공개,비공개 여부*/
-FROM MEMBER
-WHERE nickname=#{nickname}
+/* 닉네임 기반 비공개,공개 정보 */
+SELECT locked       /* 공개,비공개 여부 */
+  FROM MEMBER
+ WHERE nickname = #{nickname}
 </select>
 
 <!--핸드폰 번호 중복검증-->
 <select id="findByUserPhone" parameterType="String" resultType="MemberDTO">\
-/*핸드폰 번호를 통한 회원정보*/
-SELECT id_num,		/*회원 고유번호*/
-	   email,		/*이메일*/
-	   password,	/*비밀번호*/
-	   nickname,	/*닉네임*/
-	   name,		/*성명*/
-	   phone,		/*휴대폰 번호*/
-	   profile,		/*프로필 사진*/
-	   introduce,	/*자기소개*/
-	   create_date,	/*생성일*/
-	   edit_date,	/*수정일*/
-	   locked		/*비공개,공개 여부*/ 
-FROM   member
-WHERE  phone=#{phone}
+/* 핸드폰 번호를 통한 회원정보 */
+SELECT id_num       /* 회원 고유번호 */
+	 , email        /* 이메일 */
+	 , password     /* 비밀번호 */
+	 , nickname     /* 닉네임 */
+	 , name         /* 성명 */
+	 , phone        /* 휴대폰 번호 */
+	 , profile      /* 프로필 사진 */
+	 , introduce    /* 자기소개 */
+	 , create_date  /* 생성일 */
+	 , edit_date    /* 수정일 */
+	 , locked       /* 비공개,공개 여부 */ 
+  FROM member
+ WHERE phone = #{phone}
 </select>
 	
 <!-- 회원가입-->
 <insert id="join" parameterType="MemberDTO">
-/*회원가입*/
-Insert 	into member (email,password,nickname,name,phone,introduce)
-values	(#{email},#{password},#{nickname},#{name},#{phone},#{introduce})
+  /*회원가입*/
+INSERT INTO MEMBER (email,password,nickname,name,phone,introduce)
+       VALUES(
+		       #{email}
+		      ,#{password}
+		      ,#{nickname}
+		      ,#{name}
+		      ,#{phone}
+		      ,#{introduce}
+		      )
 </insert>
 	
 <!-- 이메일 인증이력 저장 -->
