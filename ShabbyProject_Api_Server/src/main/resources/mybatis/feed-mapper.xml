@@ -8,64 +8,64 @@
 <mapper namespace="com.sist.mapper.FeedMapper">
  <!-- 사용자 피드에서 게시물 리스트를 제외한 피드정보 가져오기 ( 닉네임,프로필사진 ,자기소개 , 비공개여부 , 게시물등록수 , 팔로잉수 , 팔로워 수 ) -->
 <select id="userFeedInfoFromMember" parameterType="GetUserFeedInformDTO" resultType="UserFeedInformDTO">
-/*피드 디테일 정보(게시물 리스트 제외)*/
-       SELECT profile           /*프로필 이미지*/
-            , nickname,         /*닉네임*/
-            , introduce	        /*자기소개 정보*/
-            , locked             /*공개,비공개 여부*/
+       /* 피드 디테일 정보(게시물 리스트 제외) */
+       SELECT profile            /* 프로필 이미지 */
+            , nickname,          /* 닉네임 */
+            , introduce	         /* 자기소개 정보 */
+            , locked             /* 공개,비공개 여부 */
             , (
                  SELECT COUNT(*)
                    FROM POST_DATA     
                   WHERE id_num   = m.id_num
                   <if test="!itsMe">	
-                    AND only_me != 'ONLYME'	      /*자신 게시물 제외*/	
+                    AND only_me != 'ONLYME'	      /* 자신 게시물 제외 */	
                   </if>
-              ) as postAmount                     /*게시물 개수 서브쿼리*/
+              ) as postAmount                     /* 게시물 개수 서브쿼리 */
             , (
                  SELECT COUNT(*)
                    FROM FOLLOW 
-                  WHERE following_id = m.id_num	      /*팔로우 id에 현 회원 존재*/
-                    AND approve      = 'FOLLOWOK'     /*팔로우 상태 OK*/		
-              ) as followerAmount                      /*팔로워 수 서브 쿼리*/
+                  WHERE following_id = m.id_num	       /* 팔로우 id에 현 회원 존재 */
+                    AND approve      = 'FOLLOWOK'      /* 팔로우 상태 OK */		
+              ) as followerAmount                      /* 팔로워 수 서브 쿼리 */
             , (
                  SELECT COUNT(*)
                    FROM FOLLOW  
-                  WHERE id_num  = m.id_num        /*팔로우하는 사람 id =현 회원 */
-                    AND approve = 'FOLLOWOK'      /*팔로우 상태 OK*/	
-              ) as followingAmount                /*팔로잉 수 서브쿼리*/
-              <if test="!itsMe">	                  /* 현재 조회할 피드가 현재 세션 유저가 아니라면 , (내 피드가 아닌 다른 유저피드라면) 셀렉트할 컬럼 추가*/
+                  WHERE id_num  = m.id_num             /* 팔로우하는 사람 id =현 회원 */
+                    AND approve = 'FOLLOWOK'           /* 팔로우 상태 OK */	
+              ) as followingAmount                     /* 팔로잉 수 서브쿼리 */
+              <if test="!itsMe">	                   /* 현재 조회할 피드가 현재 세션 유저가 아니라면 , (내 피드가 아닌 다른 유저피드라면) 셀렉트할 컬럼 추가 */
            , (
                  SELECT COALESCE(COUNT(*),0)	
-                   FROM FOLLOW                            /*팔로우 테이블에서 카운트 값을*/
-                  WHERE id_num = #{sessionIdNum}          /*회원 고유번호가 매개변수로 받은 현재 세션 회원번호*/		  					 
-                    AND following_id = (                  /*팔로우 테이블의 팔로우하는 아이디 고유번호가*/					
+                   FROM FOLLOW                            /* 팔로우 테이블에서 카운트 값을 */
+                  WHERE id_num = #{sessionIdNum}          /* 회원 고유번호가 매개변수로 받은 현재 세션 회원번호 */		  					 
+                    AND following_id = (                  /* 팔로우 테이블의 팔로우하는 아이디 고유번호가 */					
                                          SELECT id_num
                                            FROM MEMBER  			
-                                          WHERE nickname = #{nickname} /*닉네임 컬럼 = 매개변수로 받은  닉네임*/
+                                          WHERE nickname = #{nickname} /* 닉네임 컬럼 = 매개변수로 받은  닉네임 */
                                        ) 			
-                    AND approve='FOLLOWOK'                            /*승인상태가 팔로우 요청승인인 상태 */	
-               ) as followOKCount                                     /*현재 접속한 회원과 현 피드회훤 간의 팔로우 상관관계 파악을 위한 컬럼*/	
+                    AND approve='FOLLOWOK'                             /* 승인상태가 팔로우 요청승인인 상태 */	
+               ) as followOKCount                                      /* 현재 접속한 회원과 현 피드회훤 간의 팔로우 상관관계 파악을 위한 컬럼 */	
              , (
                  SELECT COALESCE(COUNT(*),0)
 				   FROM FOLLOW 							
-                  WHERE id_num       = #{sessionIdNum}                /*회원 고유번호가 매개변수로 받은 현재 세션 회원번호*/		 					  	
-                    AND following_id = (                              /*팔로우 테이블의 팔로우하는 아이디 고유번호가*/								
+                  WHERE id_num       = #{sessionIdNum}                 /* 회원 고유번호가 매개변수로 받은 현재 세션 회원번호 */		 					  	
+                    AND following_id = (                               /* 팔로우 테이블의 팔로우하는 아이디 고유번호가 */								
                                          SELECT id_num
                                            FROM MEMBER 
-                                          WHERE nickname = #{nickname} /*닉네임 컬럼 = 매개변수로 받은  닉네임*/
+                                          WHERE nickname = #{nickname} /* 닉네임 컬럼 = 매개변수로 받은  닉네임 */
                                        ) 	 
-                   AND approve='FOLLOWNO'                              /*승인상태가 팔로우 요청 대기중인 상태 */
-               ) as followNOCount                                      /*현재 접속한 회원과 현 피드회훤 간의 팔로우 상관관계 파악을 위한 컬럼*/	
+                   AND approve='FOLLOWNO'                              /* 승인상태가 팔로우 요청 대기중인 상태 */
+               ) as followNOCount                                      /* 현재 접속한 회원과 현 피드회훤 간의 팔로우 상관관계 파악을 위한 컬럼 */	
              , (
                  SELECT COALESCE(COUNT(*),0)
-                   FROM FOLLOW                                          /*팔로우 테이블에서 카운트 값을*/
-                  WHERE id_num       = #{sessionIdNum}                  /*팔로우 테이블의 팔로우하는 아이디 고유번호가*/			 	  	
-                    AND following_id = (                                /*회원 고유번호가 매개변수로 받은 현재 세션 회원번호*/					
+                   FROM FOLLOW                                          /* 팔로우 테이블에서 카운트 값을 */
+                  WHERE id_num       = #{sessionIdNum}                  /* 팔로우 테이블의 팔로우하는 아이디 고유번호가 */			 	  	
+                    AND following_id = (                                /* 회원 고유번호가 매개변수로 받은 현재 세션 회원번호 */					
                                          SELECT id_num
                                            FROM MEMBER 
-                                          WHERE nickname = #{nickname}  /*닉네임 컬럼 = 매개변수로 받은  닉네임*/
+                                          WHERE nickname = #{nickname}  /* 닉네임 컬럼 = 매개변수로 받은  닉네임 */
                                         ) 	  
-                ) as followAllCount                                     /*현재 접속한 회원과 현 피드회훤 간의 팔로우 상관관계 파악을 위한 컬럼*/	
+                ) as followAllCount                                     /* 현재 접속한 회원과 현 피드회훤 간의 팔로우 상관관계 파악을 위한 컬럼 */	
 			</if>
 			
            FROM MEMBER m 
@@ -76,26 +76,26 @@
  
 <!--현재 세션 회원 프로필 이미지 갖고오기-->
 <select id="profileImgGet" parameterType="int" resultType="String">
-/*아이디 고유번호 기반 프로필 사진 가져오기*/
-   SELECT profile                /*프로필 사진*/
+   /* 아이디 고유번호 기반 프로필 사진 가져오기 */
+   SELECT profile                /* 프로필 사진*/
      FROM MEMBER
     WHERE id_num = #{idNum}
 </select>
  
 <!--프로필 사진 업데이트-->
 <update id="profileImgUpdate" parameterType="UpdateProfileDTO">
-/*프로필 사진 변경*/
+/* 프로필 사진 변경 */
 UPDATE MEMBER SET
-       profile = #{profile}         /*프로필 사진*/
- WHERE id_num  = #{idNum}           /*아이디 고유번호*/
+       profile = #{profile}         /* 프로필 사진 */
+ WHERE id_num  = #{idNum}           /* 아이디 고유번호 */
 </update>
  
  
  <!-- 자기소개 변경 업데이트-->
 <update id="introduceUpdate" parameterType="UpdateProfileDTO">
-/*자기소개 업데이트*/
+/* 자기소개 업데이트 */
 UPDATE MEMBER SET 
-       introduce = #{introduce}     /*자기소개*/
- WHERE id_num    = #{idNum}         /*아이디 고유번호*/
+       introduce = #{introduce}     /* 자기소개 */
+ WHERE id_num    = #{idNum}         /* 아이디 고유번호 */
 </update>
  </mapper>
