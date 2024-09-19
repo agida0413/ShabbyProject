@@ -14,7 +14,7 @@
 		 , post_img_url                                         /* 게시물 이미지 */
 		 , onlyMe                                               /* 나만보기 여부 */
 		 , COALESCE(pl.likeCount,0) AS likeCount                /* 좋아요 수 */
-	  FROM POST p                                               /* 게시물 테이블 */
+      FROM POST p                                               /* 게시물 테이블 */
  LEFT JOIN (  
 			   SELECT post_num
 				    , COUNT(*) AS likeCount  
