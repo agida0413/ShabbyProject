@@ -16,14 +16,14 @@ VALUES
 <if test="alarmType!='LIKE'"> /*좋아요 타입이 아니면 */
 <foreach collection="receivers" item="receiver" separator=",">
 		(
-			  #{sender},   /*보내는 이*/
-		      #{postNum},  /*게시물 번호*/
-			  (
-				 SELECT id_num 
-				 FROM MEMBER	
-				 WHERE nickname=#{receiver} /*받는이 회원고유번호*/
-			  ),						
-		 	  #{alarmType} /*알람 타입*/
+			#{sender},   /*보내는 이*/
+			#{postNum},  /*게시물 번호*/
+		    (
+				SELECT id_num 
+				FROM MEMBER	
+				WHERE nickname=#{receiver} /*받는이 회원고유번호*/
+			),						
+			 #{alarmType} /*알람 타입*/
 		)
 </foreach>
 </if>
@@ -58,13 +58,13 @@ WHERE	   	    mt.post_num = #{postNum}	/*게시물번호 조건=#{매개변수}*
 <!-- 알람 삭제-->
 <delete id="alarmDelete" parameterType="AlarmDTO">
 DELETE 
-FROM 		ALARM 
+FROM 	ALARM 
 WHERE 
 <if test="postNum==0">
 			/*게시물 번호가 존재하지 않으면*/
-			sender=#{sender}		/*보내는 이 */
-AND			receiver IN				/*받는 이*/
-					 ( 
+		sender=#{sender}		/*보내는 이 */
+AND		receiver IN	 ( 			/*받는 이*/
+					
 					 <foreach collection="receivers" item="receiver" separator=",">         
 						 (
 							 SELECT	id_num

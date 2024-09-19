@@ -11,7 +11,7 @@ import com.sist.dto.post.DoPostLikeDTO;
 import com.sist.dto.post.PostDelDTO;
 import com.sist.dto.post.PostDetailDTO;
 import com.sist.dto.post.WritePostDTO;
-import com.sist.service.post.PostService;
+import com.sist.service.primary.PostService;
 @Component
 public class PostServiceTest implements PostService {
 

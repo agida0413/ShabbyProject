@@ -13,8 +13,8 @@ import com.sist.dto.api.ResponseDTO;
 import com.sist.dto.member.MemberDTO;
 import com.sist.repository.MemberAccountRepository;
 import com.sist.repository.impl.mybatis.MybatisMemberAccountRepository;
-import com.sist.service.mail.MailService;
 import com.sist.service.member.MemberFindService;
+import com.sist.service.util.MailService;
 
 import lombok.RequiredArgsConstructor;
 @Service

@@ -26,7 +26,7 @@ import com.sist.common.util.PathVariableValidation;
 import com.sist.common.util.SimpleCodeGet;
 import com.sist.dto.api.ResponseDTO;
 import com.sist.jwt.JWTUtil;
-import com.sist.service.security.RefreshService;
+import com.sist.service.member.RefreshService;
 
 import jakarta.servlet.FilterChain;
 

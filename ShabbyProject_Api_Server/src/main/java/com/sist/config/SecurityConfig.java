@@ -28,8 +28,8 @@ import com.sist.jwt.filter.CustomLogoutFilter;
 import com.sist.jwt.filter.JWTFilter;
 import com.sist.jwt.filter.LoginFilter;
 import com.sist.repository.MemberAccountRepository;
-import com.sist.service.security.RefreshService;
-import com.sist.service.security.impl.MybatisRefreshService;
+import com.sist.service.member.RefreshService;
+import com.sist.service.member.impl.MybatisRefreshService;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;

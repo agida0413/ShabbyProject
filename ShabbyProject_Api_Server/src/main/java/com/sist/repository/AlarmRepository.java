@@ -2,13 +2,12 @@ package com.sist.repository;
 
 import java.util.List;
 
-import com.sist.dto.common.AlarmChangeDTO;
-import com.sist.dto.common.AlarmDTO;
-import com.sist.dto.common.AlarmListDTO;
-import com.sist.dto.common.GlobalSearchDTO;
-import com.sist.dto.common.GlobalSearchResultDTO;
-
-import com.sist.dto.common.SearchResultMemberDTO;
+import com.sist.dto.util.AlarmChangeDTO;
+import com.sist.dto.util.AlarmDTO;
+import com.sist.dto.util.AlarmListDTO;
+import com.sist.dto.util.GlobalSearchDTO;
+import com.sist.dto.util.GlobalSearchResultDTO;
+import com.sist.dto.util.SearchResultMemberDTO;
 
 public interface AlarmRepository {
 	  

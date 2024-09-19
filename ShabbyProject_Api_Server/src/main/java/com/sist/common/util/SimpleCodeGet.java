@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 
 import com.sist.dto.member.MemberDTO;
 import com.sist.jwt.JWTUtil;
-import com.sist.service.security.impl.CustomUserDetails;
+import com.sist.service.member.impl.CustomUserDetails;
 
 import lombok.RequiredArgsConstructor;
 

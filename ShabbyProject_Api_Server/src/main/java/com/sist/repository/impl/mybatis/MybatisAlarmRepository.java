@@ -4,9 +4,9 @@ import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
-import com.sist.dto.common.AlarmChangeDTO;
-import com.sist.dto.common.AlarmDTO;
-import com.sist.dto.common.AlarmListDTO;
+import com.sist.dto.util.AlarmChangeDTO;
+import com.sist.dto.util.AlarmDTO;
+import com.sist.dto.util.AlarmListDTO;
 import com.sist.mapper.AlarmMapper;
 import com.sist.mapper.GlobalSearchMapper;
 import com.sist.repository.AlarmRepository;

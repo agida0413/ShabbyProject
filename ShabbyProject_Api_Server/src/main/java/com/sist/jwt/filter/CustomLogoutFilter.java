@@ -9,8 +9,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sist.common.util.CookieUtil;
 import com.sist.dto.api.ResponseDTO;
 import com.sist.jwt.JWTUtil;
-import com.sist.service.security.RefreshService;
-import com.sist.service.security.impl.MybatisRefreshService;
+import com.sist.service.member.RefreshService;
+import com.sist.service.member.impl.MybatisRefreshService;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;

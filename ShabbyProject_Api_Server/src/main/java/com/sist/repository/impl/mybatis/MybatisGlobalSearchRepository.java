@@ -4,10 +4,9 @@ import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
-
-import com.sist.dto.common.GlobalSearchDTO;
-import com.sist.dto.common.GlobalSearchResultDTO;
-import com.sist.dto.common.SearchResultMemberDTO;
+import com.sist.dto.util.GlobalSearchDTO;
+import com.sist.dto.util.GlobalSearchResultDTO;
+import com.sist.dto.util.SearchResultMemberDTO;
 import com.sist.mapper.GlobalSearchMapper;
 import com.sist.repository.GlobalSearchRepository;
 import lombok.RequiredArgsConstructor;
