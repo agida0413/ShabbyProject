@@ -42,9 +42,9 @@ RIGHT JOIN (
             SELECT post_num
               FROM MEMBER_TAG
              WHERE id_num = (
-                            SELECT id_num
-                              FROM MEMBER
-                             WHERE nickname = #{nickname}	
+                              SELECT id_num
+                                FROM MEMBER
+                               WHERE nickname = #{nickname}	
                             ) 
            ) mtSubQuery                                                      /* 매개변수로 받은 닉네임이 태그테이블에 존재하는 게시물 번호만 RIGHT JOIN */
         ON p.post_num = mtSubQuery.post_num
@@ -57,7 +57,7 @@ INNER JOIN (
              SELECT post_num
                FROM HOBBY
               WHERE hobby LIKE CONCAT('%',#{keyword},'%')
-		   ) searchSubQuery	                                                /*검색키워드가 관심사 테이블에 포함되는 게시물 번호만 조인*/ 
+           ) searchSubQuery	                                                /*검색키워드가 관심사 테이블에 포함되는 게시물 번호만 조인*/ 
         ON p.post_num= searchSubQuery.post_num
 </if> 
 /*조건 절 시작*/
@@ -126,7 +126,7 @@ INSERT INTO POST (id_num,content,onlyME)
         VALUES
         <foreach collection="hobbyList" item="hobby" separator=",">
             (
-			#{idNum}						/*회원고유번호*/
+            #{idNum}						/*회원고유번호*/
            ,#{postNum}                      /*게시물 번호*/
            ,#{hobby}                        /*관심사 이름*/
 			)
@@ -143,7 +143,7 @@ INSERT INTO POST (id_num,content,onlyME)
           FROM member		
          WHERE nickname IN 		   
 <foreach collection="followTagList" item="follow" open="(" separator="," close=")">
-                        #{follow}   /*태그하는 사람의 닉네임*/
+               #{follow}   /*태그하는 사람의 닉네임*/
 </foreach>        
 </if>
 </insert>	
@@ -200,7 +200,7 @@ INSERT INTO POST (id_num,content,onlyME)
                  FROM POST_LIKE	
                 WHERE id_num = #{idNum}
              ) pl                             /*좋아요 존재(눌림) 여부를 확인하기 위한 인라인 뷰조인*/
-          ON p.post_num=pl.post_num
+          ON p.post_num = pl.post_num
        WHERE p.post_num = #{postNum}
     GROUP BY p.post_num                       /*게시물 번호 별 그루핑*/
 </select>
@@ -219,8 +219,8 @@ SELECT post_img_url
 /*게시물 삭제*/
 DELETE 
   FROM POST 
- WHERE post_num=#{postNum}			/*게시물 번호*/
-   AND id_num=#{idNum}				/*회원 번호*/
+ WHERE post_num = #{postNum}			/*게시물 번호*/
+   AND id_num   = #{idNum}				/*회원 번호*/
 </delete>
 <!-- 게시물 수정관련 시작 -->
 
@@ -228,11 +228,11 @@ DELETE
 <update id="postInformUpdate" parameterType="WritePostDTO">
 /*게시물 수정(게시물 테이블)*/
 UPDATE POST SET
-       content=#{content},				/*게시물 상세내용*/
-       onlyME=#{onlyMeState},			/*나만보기 여부*/
-       edit_date=CURRENT_TIMESTAMP		/*수정일*/
- WHERE post_num=#{postNum}				/*게시물 번호*/
-   AND id_num=#{idNum}					/*회원번호*/
+       content   = #{content},				/*게시물 상세내용*/
+       onlyME    = #{onlyMeState},			/*나만보기 여부*/
+       edit_date = CURRENT_TIMESTAMP		/*수정일*/
+ WHERE post_num  = #{postNum}				/*게시물 번호*/
+   AND id_num    = #{idNum}					/*회원번호*/
 </update>
 
 <!--기존 이미지 삭제 -->
@@ -240,7 +240,7 @@ UPDATE POST SET
 /*이미지 삭제*/
 DELETE 
   FROM POST_IMG
- WHERE post_num=#{postNum}
+ WHERE post_num = #{postNum}
    AND post_img_url IN (
 <foreach collection="removeImgList" item="imgUrl" separator=",">
                        #{imgUrl}           /*매개변수로 받은 이미지URL*/
@@ -253,14 +253,14 @@ DELETE
 /*관심사 삭제*/
 DELETE 
   FROM HOBBY
- WHERE post_num=#{postNum} /*게시물 번호*/
+ WHERE post_num = #{postNum} /*게시물 번호*/
 </delete>
 <!--기존 맴버태그 삭제-->
 <delete id="deleteOriginalMemTag" parameterType="WritePostDTO">
 /*회원 태그 삭제*/
 DELETE 
   FROM MEMBER_TAG	
- WHERE post_num=#{postNum}			/*게시물 번호*/
+ WHERE post_num = #{postNum}			/*게시물 번호*/
 </delete>
 
 <!--게시물 수정관련 종료 -->
@@ -275,18 +275,17 @@ INSERT INTO POST_LIKE (id_num,post_num)
 <delete id="postLikeDelete" parameterType="DoPostLikeDTO">
 /*좋아요 삭제*/
 DELETE 
-FROM 	POST_LIKE
-WHERE 	post_num=#{postNum}			/*게시물 번호*/		
-AND 	id_num=#{idNum}				/*회원 번호*/
+  FROM POST_LIKE
+ WHERE post_num = #{postNum}			/*게시물 번호*/		
+   AND id_num   = #{idNum}				/*회원 번호*/
 </delete>
 
 <!--좋아요 작업 후 변경된 좋아요 수 -->
 <select id="afterDoPostLike" parameterType="int" resultType="int">
 /*좋아요 작업 후 변경된 좋아요 수*/
-select 	count(*) as likeCount		/*좋아요 수*/
-FROM 	POST_LIKE
-WHERE 	post_num=#{postNum}			/*게시물 번호*/
+select count(*) as likeCount		/*좋아요 수*/
+  FROM POST_LIKE
+ WHERE post_num=#{postNum}			/*게시물 번호*/
 </select>
 </mapper>
- 
  
