@@ -11,9 +11,9 @@
 <select id="postList" parameterType="GetUserFeedInformDTO" resultType="PostListDTO">
 	/* 게시물 리스트 */
     SELECT p.post_num                                           /* 게시물 번호 */
-		 , post_img_url                                         /* 게시물 이미지 */
-		 , onlyMe                                               /* 나만보기 여부 */
-		 , COALESCE(pl.likeCount,0) AS likeCount                /* 좋아요 수 */
+         , post_img_url                                         /* 게시물 이미지 */
+         , onlyMe                                               /* 나만보기 여부 */
+         , COALESCE(pl.likeCount,0) AS likeCount                /* 좋아요 수 */
       FROM POST p                                               /* 게시물 테이블 */
  LEFT JOIN (  
                SELECT post_num
