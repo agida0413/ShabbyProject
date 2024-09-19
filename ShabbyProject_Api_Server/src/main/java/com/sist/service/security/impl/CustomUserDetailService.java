@@ -16,8 +16,8 @@ import com.sist.common.exception.BadRequestException;
 import com.sist.common.util.PathVariableValidation;
 import com.sist.dto.api.ResponseDTO;
 import com.sist.dto.member.MemberDTO;
-import com.sist.repository.member.MemberAccountRepository;
-import com.sist.repository.member.impl.MybatisMemberAccountRepository;
+import com.sist.repository.MemberAccountRepository;
+import com.sist.repository.impl.mybatis.MybatisMemberAccountRepository;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

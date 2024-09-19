@@ -14,8 +14,8 @@ import com.sist.common.util.CookieUtil;
 import com.sist.dto.api.ResponseDTO;
 import com.sist.dto.security.TokenStoreDTO;
 import com.sist.jwt.JWTUtil;
-import com.sist.repository.member.JwtStoreRepository;
-import com.sist.repository.member.impl.MybatisJwtStoreRepository;
+import com.sist.repository.JwtStoreRepository;
+import com.sist.repository.impl.mybatis.MybatisJwtStoreRepository;
 import com.sist.service.security.RefreshService;
 
 import io.jsonwebtoken.ExpiredJwtException;

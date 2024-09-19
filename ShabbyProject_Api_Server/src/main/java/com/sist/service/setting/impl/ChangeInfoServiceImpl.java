@@ -9,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import com.sist.common.exception.BadRequestException;
 import com.sist.common.exception.InternerException;
 import com.sist.common.util.CookieUtil;
@@ -22,9 +21,10 @@ import com.sist.dto.setting.ChangeNickNameDTO;
 import com.sist.dto.setting.ChangePasswordDTO;
 import com.sist.dto.setting.ChangePhoneDTO;
 import com.sist.jwt.JWTUtil;
-import com.sist.repository.common.CommonRepository;
-import com.sist.repository.member.MemberAccountRepository;
-import com.sist.repository.member.MemberSettingRepository;
+import com.sist.mapper.FollowMapper;
+import com.sist.repository.AlarmRepository;
+import com.sist.repository.MemberAccountRepository;
+import com.sist.repository.MemberSettingRepository;
 import com.sist.service.security.RefreshService;
 import com.sist.service.setting.ChangeInfoService;
 
@@ -37,11 +37,13 @@ public class ChangeInfoServiceImpl implements ChangeInfoService{
 	
 	private final MemberAccountRepository memberAccountRepository;
 	private final MemberSettingRepository memberSettingRepository;
+	private final RefreshService refreshService;
+	private final AlarmRepository alarmRepository;
+	private final FollowMapper followMapper;
 	//패스워드 암호화
 	private final BCryptPasswordEncoder bCryptPasswordEncoder;
 	private final JWTUtil jwtUtil;
-	private final RefreshService refreshService;
-	private final CommonRepository commonRepository;
+	
 	//회원 정보 리턴
 	//2024.08.19 수정 = > 회원정보 전체를 넘기면 위험할 수 있음 ., 필요한 정보만 넘기게
 	@Override
@@ -243,8 +245,8 @@ public class ChangeInfoServiceImpl implements ChangeInfoService{
 			//공개 모드로 변경시 그동안 수락하지 않았던 팔로우 요청을 모두 수락으로 변경 , 알람 테이블 또한 ~가 요청합니다 --> ~가 팔로우합니다.
 			AlarmChangeDTO alcDTO=new AlarmChangeDTO();
 			alcDTO.setIdNum(idNum);
-			commonRepository.changeAlarmStatus(alcDTO);
-			commonRepository.changeFollowStatus(idNum);
+			alarmRepository.changeAlarmStatus(alcDTO);
+			followMapper.changeFollowStatus(idNum);
 		}
 		else {//나머지는 정의된 값이 없으므로 예외 
 			

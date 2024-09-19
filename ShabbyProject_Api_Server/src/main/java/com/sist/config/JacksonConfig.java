@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
 public class JacksonConfig {
 	
 	
-	// localtime 타입을 objectmapper가 json으로 변환하지못하는 과정 해결
+	// localtime 타입을 objectmapper가 json으로 변환하지못하는 과정 해결 ==> RESPONSEDTO에서의
     @Bean
     public ObjectMapper objectMapper() {
         ObjectMapper objectMapper = new ObjectMapper();

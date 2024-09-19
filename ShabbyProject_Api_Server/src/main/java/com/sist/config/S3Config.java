@@ -11,7 +11,8 @@ import software.amazon.awssdk.services.s3.S3Client;
 
 @Configuration
 public class S3Config {
-
+/*AWS S3 CONFIG*/
+	
     @Value("${s3.credentials.access-key}")
     private String accessKey;
 

@@ -13,8 +13,9 @@ import com.sist.common.util.SimpleCodeGet;
 import com.sist.dto.api.ResponseDTO;
 import com.sist.dto.hobby.HobbyDTO;
 import com.sist.dto.hobby.SearchHobbyDTO;
-import com.sist.dto.hobby.SearchHobbyListDTO;import com.sist.mapper.hobby.hobbyMapper;
-import com.sist.repository.hobby.HobbyRepository;
+import com.sist.dto.hobby.SearchHobbyListDTO;
+import com.sist.mapper.hobbyMapper;
+import com.sist.repository.HobbyRepository;
 import com.sist.service.hobby.HobbyService;
 
 import lombok.RequiredArgsConstructor;

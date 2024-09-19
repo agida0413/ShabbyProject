@@ -1,7 +1,5 @@
 package com.sist.common.exception;
 
-import org.springframework.http.HttpStatus;
-
 public class BadRequestException extends RuntimeException{
 	
 		private final String errorCode;

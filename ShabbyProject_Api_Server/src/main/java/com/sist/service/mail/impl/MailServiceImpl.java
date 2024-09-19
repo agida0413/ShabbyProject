@@ -21,8 +21,8 @@ import com.sist.common.util.SimpleCodeGet;
 import com.sist.dto.api.ResponseDTO;
 import com.sist.dto.member.EmailAuthDTO;
 import com.sist.dto.member.MemberDTO;
-import com.sist.repository.member.MemberAccountRepository;
-import com.sist.repository.member.impl.MybatisMemberAccountRepository;
+import com.sist.repository.MemberAccountRepository;
+import com.sist.repository.impl.mybatis.MybatisMemberAccountRepository;
 import com.sist.service.mail.MailService;
 
 import jakarta.mail.MessagingException;

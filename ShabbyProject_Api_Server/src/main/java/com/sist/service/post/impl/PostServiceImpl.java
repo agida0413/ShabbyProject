@@ -25,8 +25,9 @@ import com.sist.dto.post.PostDelDTO;
 import com.sist.dto.post.PostDetailDTO;
 import com.sist.dto.post.TagInformDTO;
 import com.sist.dto.post.WritePostDTO;
-import com.sist.repository.common.CommonRepository;
-import com.sist.repository.post.PostRepository;
+import com.sist.repository.AlarmRepository;
+
+import com.sist.repository.PostRepository;
 import com.sist.service.image.ImageService;
 import com.sist.service.post.PostService;
 
@@ -39,7 +40,7 @@ public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
     //이미지업로드 서비스
     private final ImageService imageService;
-    private final CommonRepository commonRepository;
+    private final AlarmRepository alarmRepository;
 
     //게시물 업로드 서비스 
     @Override
@@ -73,7 +74,7 @@ public class PostServiceImpl implements PostService {
                 	//알람 객체 가공 및 세팅 
             		alarmSetting(alarmDTO, dto, idNum,"TAG",false);
             		//알람 삽입 
-                	commonRepository.alarmInsert(alarmDTO);             	        			
+                	alarmRepository.alarmInsert(alarmDTO);             	        			
             
             }
 
@@ -250,7 +251,7 @@ public class PostServiceImpl implements PostService {
 		//알람 객체 가공 및 세팅 
 		alarmSetting(alarmDTO, dto, idNum, "TAG",false);
 		//해당 게시물과 관련된 알람 삭제 
-		commonRepository.alarmDelete(alarmDTO);
+		alarmRepository.alarmDelete(alarmDTO);
 		
 		//s3 이미지 삭제 == > 삭제 실패시 예외발생으로 어차피 데이터베이스는 롤백된다. 
 		removeImage(imgUrlList);
@@ -301,7 +302,7 @@ public class PostServiceImpl implements PostService {
 	}
 	//기존 회원 태그 리스트를 갖고옴 
 	List<String> originalMemList=
-			commonRepository.originalMemberTag(dto.getPostNum());
+			alarmRepository.originalMemberTag(dto.getPostNum());
 	
 	//기존 관심사 삭제 
 	postRepository.deleteOriginalHobby(dto);
@@ -345,7 +346,7 @@ public class PostServiceImpl implements PostService {
 	if(removeList.size()!=0) {
 		//기존 태그관련 알람 삭제 
 		alarmDTO.setReceivers(removeList);
-		commonRepository.alarmDelete(alarmDTO);
+		alarmRepository.alarmDelete(alarmDTO);
 	}
 	
 	
@@ -363,7 +364,7 @@ public class PostServiceImpl implements PostService {
 		if(addList.size()!=0 ) {
 			//알람 삽입 
 			alarmDTO.setReceivers(addList);
-			commonRepository.alarmInsert(alarmDTO);           
+			alarmRepository.alarmInsert(alarmDTO);           
 		} 
 	
 		
@@ -401,7 +402,7 @@ public class PostServiceImpl implements PostService {
 		//알람 객체 가공 및 세팅 
 		alarmSetting(alarmDTO, dto, idNum, "LIKE",false);
 		//좋아요 알람 데이터 가공을 위한 게시물의 주인 아이디 고유번호를 갖고와 receiver에 세팅 
-		int receiver=commonRepository.chooseReceiver(dto.getPostNum());
+		int receiver=alarmRepository.chooseReceiver(dto.getPostNum());
 		alarmDTO.setReceiver(receiver);
 		
 		//만약 클라이언트로 부터 받은 현재 특정 게시물에 대한 내 좋아요 상태가 
@@ -412,7 +413,7 @@ public class PostServiceImpl implements PostService {
 			//만약 내 게시물에 대한 좋아요 작업이 아니라면 
 			if(alarmDTO.getReceiver()!=idNum) 
 			{   //기존 좋아요 알람 제거 
-				commonRepository.alarmDelete(alarmDTO);
+				alarmRepository.alarmDelete(alarmDTO);
 			}
 			//클라이언트에게 보낼 바뀐 상태값
 			dto.setLiked(false);
@@ -423,7 +424,7 @@ public class PostServiceImpl implements PostService {
 			//만약 내 게시물에 대한 좋아요 작업이 아니라면 
 			if(alarmDTO.getReceiver()!=idNum) {
 				//알람 삽입 
-				commonRepository.alarmInsert(alarmDTO);
+				alarmRepository.alarmInsert(alarmDTO);
 			}
 			
 			//클라이언트에게 보낼 바뀐 상태값

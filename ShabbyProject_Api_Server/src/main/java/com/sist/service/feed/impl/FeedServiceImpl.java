@@ -26,11 +26,11 @@ import com.sist.dto.hobby.SearchHobbyListDTO;
 import com.sist.dto.member.MemberDTO;
 import com.sist.dto.post.DoPostLikeDTO;
 import com.sist.dto.post.PostListDTO;
-import com.sist.repository.feed.FeedRepository;
-import com.sist.repository.hobby.HobbyRepository;
-import com.sist.repository.member.FollowRepository;
-import com.sist.repository.member.MemberAccountRepository;
-import com.sist.repository.post.PostRepository;
+import com.sist.repository.FeedRepository;
+import com.sist.repository.FollowRepository;
+import com.sist.repository.HobbyRepository;
+import com.sist.repository.MemberAccountRepository;
+import com.sist.repository.PostRepository;
 import com.sist.service.feed.FeedService;
 import com.sist.service.image.ImageService;
 

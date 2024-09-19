@@ -14,7 +14,7 @@ import com.sist.dto.common.GlobalSearchDTO;
 import com.sist.dto.common.GlobalSearchResultDTO;
 import com.sist.dto.common.SearchResultMemberDTO;
 import com.sist.dto.common.SearchResultMemberListDTO;
-import com.sist.repository.common.CommonRepository;
+import com.sist.repository.GlobalSearchRepository;
 import com.sist.service.common.GlobalSearchService;
 
 import lombok.RequiredArgsConstructor;
@@ -23,7 +23,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class GlobalSearchServiceImpl implements GlobalSearchService{
 
-	private final CommonRepository commonRepository;
+	private final GlobalSearchRepository globalSearchRepository;
 	
 	//글로벌 서치 자동완성 검색결과 
 	@Override
@@ -46,7 +46,7 @@ public class GlobalSearchServiceImpl implements GlobalSearchService{
 		reqDto.setStartRow(offSet);
 		reqDto.setIdNum(idNum);
 		//데이터 베이스에서 결과값 LIST 타입으로 받음 
-		List<GlobalSearchResultDTO> list =commonRepository.globalSearchList(reqDto);
+		List<GlobalSearchResultDTO> list =globalSearchRepository.globalSearchList(reqDto);
 		
 		
 		return new ResponseEntity<ResponseDTO<List<GlobalSearchResultDTO>>>
@@ -76,9 +76,9 @@ public class GlobalSearchServiceImpl implements GlobalSearchService{
 		//클라이언트 전송 객체 생성 
 		SearchResultMemberListDTO resDto= new SearchResultMemberListDTO();
 		//총페이지 구하기 
-		int totalPage=commonRepository.searchMemberTotalPage(reqDto);
+		int totalPage=globalSearchRepository.searchMemberTotalPage(reqDto);
 		//회원 리스트 
-		List<SearchResultMemberDTO> list = commonRepository.globalSearchMember(reqDto);
+		List<SearchResultMemberDTO> list = globalSearchRepository.globalSearchMember(reqDto);
 		
 		//클라이언트 전송객체에 세팅 
 		resDto.setList(list);

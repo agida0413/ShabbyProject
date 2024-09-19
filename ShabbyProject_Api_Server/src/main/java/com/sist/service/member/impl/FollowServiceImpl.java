@@ -25,9 +25,9 @@ import com.sist.dto.follow.FollowSearchResultDTO;
 import com.sist.dto.follow.HandleFollowReqDTO;
 import com.sist.dto.follow.UnFollowDTO;
 import com.sist.dto.member.MemberDTO;
-import com.sist.repository.common.CommonRepository;
-import com.sist.repository.member.FollowRepository;
-import com.sist.repository.member.MemberAccountRepository;
+import com.sist.repository.AlarmRepository;
+import com.sist.repository.FollowRepository;
+import com.sist.repository.MemberAccountRepository;
 import com.sist.service.member.FollowService;
 
 import lombok.RequiredArgsConstructor;
@@ -37,7 +37,7 @@ public class FollowServiceImpl implements FollowService {
 	
 	
 	private final FollowRepository followRepository;
-	private final CommonRepository commonRepository;
+	private final AlarmRepository alarmRepository;
 	private final MemberAccountRepository memberAccountRepository;
 	
 	//검색어,행개수, 페이지 기반 현재 본인의 팔로잉 리스트를 가져옴 
@@ -137,7 +137,7 @@ public class FollowServiceImpl implements FollowService {
 		alarmSetting(alarmDTO, dto, idNum);
 		
 		//알람을 데이터베이스에 인서트
-		commonRepository.alarmInsert(alarmDTO);
+		alarmRepository.alarmInsert(alarmDTO);
 		//반환값으로 generatekey를 통해 생성된 팔로우 고유번호에서 approve 컬럼을 가져온다 .==> 팔로우상태정보
 		String changeState= followRepository.afterFollow(dto.getFollowNum());
 		
@@ -166,7 +166,7 @@ public class FollowServiceImpl implements FollowService {
 		//unfollowdto 기준 알람 객체 가공후 세팅 
 		alarmSetting(alarmDTO, dto, idNum);
 		//데이터 베이스에서 관련 알람 레코드 삭제 
-		commonRepository.alarmDelete(alarmDTO);
+		alarmRepository.alarmDelete(alarmDTO);
 		
 		return new ResponseEntity<ResponseDTO<Void>>
 		(new ResponseDTO<Void>(),HttpStatus.OK); //성공 
@@ -226,7 +226,7 @@ public class FollowServiceImpl implements FollowService {
 			alcDTO.setSenderNickname(dto.getNickname());
 			alcDTO.setType(dto.getType());
 			
-			commonRepository.changeAlarmStatus(alcDTO);
+			alarmRepository.changeAlarmStatus(alcDTO);
 		}
 		else if(dto.getType().equals("REFUSE")) {
 			followRepository.refuseFollow(dto);
@@ -235,7 +235,7 @@ public class FollowServiceImpl implements FollowService {
 			alcDTO.setIdNum(idNum);
 			alcDTO.setSenderNickname(dto.getNickname());
 			
-			commonRepository.refuseReqAlarmStatus(alcDTO);
+			alarmRepository.refuseReqAlarmStatus(alcDTO);
 		}
 		else {
 			throw new BadRequestException("유효하지 않은 요청입니다.");

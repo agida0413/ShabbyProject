@@ -27,7 +27,7 @@ import com.sist.jwt.JWTUtil;
 import com.sist.jwt.filter.CustomLogoutFilter;
 import com.sist.jwt.filter.JWTFilter;
 import com.sist.jwt.filter.LoginFilter;
-import com.sist.repository.member.MemberAccountRepository;
+import com.sist.repository.MemberAccountRepository;
 import com.sist.service.security.RefreshService;
 import com.sist.service.security.impl.MybatisRefreshService;
 
@@ -68,7 +68,7 @@ public class SecurityConfig {
 	    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
     
     	
-    	//cors 관련 설정 
+    	//분리 작업시 cors 관련 설정 
     	http
         .cors((corsCustomizer -> corsCustomizer.configurationSource(new CorsConfigurationSource() {
 

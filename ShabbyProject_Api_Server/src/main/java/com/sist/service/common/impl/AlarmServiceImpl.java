@@ -12,7 +12,7 @@ import com.sist.dto.api.ResponseDTO;
 import com.sist.dto.common.AlarmDTO;
 import com.sist.dto.common.AlarmListDTO;
 import com.sist.dto.common.AlarmResultDTO;
-import com.sist.repository.common.CommonRepository;
+import com.sist.repository.AlarmRepository;
 import com.sist.service.common.AlarmService;
 
 import lombok.RequiredArgsConstructor;
@@ -20,7 +20,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AlarmServiceImpl implements AlarmService{
 
-	private final CommonRepository commonRepository;
+	private final AlarmRepository alarmRepository;
 	//알람 획득 서비스 
 	@Override
 	@Transactional
@@ -40,18 +40,18 @@ public class AlarmServiceImpl implements AlarmService{
 		dto.setRowSize(rowSize);
 		
 		//조건에 해당하는 알람 리스트를 가져옴 
-		List<AlarmListDTO> list = commonRepository.getAlarm(dto);
+		List<AlarmListDTO> list = alarmRepository.getAlarm(dto);
 		//전송객체 생성 
 		AlarmResultDTO resultDTO=new AlarmResultDTO();
 		if(list.size()!=0) {
 			//조건에 해당하는 알람 리스트의 총페이지 
-			int totalPage=commonRepository.getAlarmTotalPage(dto);	
+			int totalPage=alarmRepository.getAlarmTotalPage(dto);	
 			//리스트 담기 
 			resultDTO.setList(list);
 			//총페이지 담기 
 			resultDTO.setTotalPage(totalPage);
 			//읽음 상태 업데이트
-			commonRepository.updateIsread(list);
+			alarmRepository.updateIsread(list);
 		}
 		
 		
@@ -65,7 +65,7 @@ public class AlarmServiceImpl implements AlarmService{
 	public ResponseEntity<ResponseDTO<Integer>> alarmCount() {
 		// TODO Auto-generated method stub
 		int idNum=SimpleCodeGet.getIdNum();
-		int alarmCount=commonRepository.alarmCount(idNum);
+		int alarmCount=alarmRepository.alarmCount(idNum);
 		return new ResponseEntity<ResponseDTO<Integer>>
 		(new ResponseDTO<Integer>(alarmCount),HttpStatus.OK); //성공 
 	}
