@@ -16,7 +16,7 @@
 		 , COALESCE(pl.likeCount,0) AS likeCount                /* 좋아요 수 */
       FROM POST p                                               /* 게시물 테이블 */
  LEFT JOIN (  
-			   SELECT post_num
+               SELECT post_num
                     , COUNT(*) AS likeCount  
 			     FROM post_like       
              GROUP BY post_num                                  /*각 게시물 별 좋아요 수 집계 서브쿼리 , 조인*/
