@@ -35,9 +35,9 @@ SELECT 		profile,							/*프로필 이미지*/
 	  		nickname,							/*닉네임*/
 	 	    (
 					SELECT   COUNT(*) 
-					FROM     post
+					FROM     POST_DATA
 					WHERE 	 id_num=m.id_num
-					AND 	 ONLYME !='ONLYME'	
+					AND 	 only_me !='ONLYME'	
 			) as postCount, 					/*게시물 개수*/
 		    (
 					SELECT 	 COUNT(*)

@@ -15,10 +15,10 @@ SELECT		 profile,			/*프로필 이미지*/
 			 locked,			/*공개,비공개 여부*/
 			 (
 				SELECT 	COUNT(*)
-				FROM 	POST     
+				FROM 	POST_DATA     
 				WHERE 	id_num= m.id_num
 				<if test="!itsMe">	
-				AND 	onlyME !='ONLYME'	/*자신 게시물 제외*/	
+				AND 	only_me !='ONLYME'	/*자신 게시물 제외*/	
 				</if>
 			 ) as postAmount, /*게시물 개수 서브쿼리*/
 			 (
