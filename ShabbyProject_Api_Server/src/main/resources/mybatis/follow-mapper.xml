@@ -9,131 +9,133 @@
  <mapper namespace="com.sist.mapper.FollowMapper">
  <!--키워드 검색을 통한 자신이 팔로잉 하는 리스트 -->
 <select id="followingByKeyword" parameterType="FollowSearchDTO" resultType="MemberDTO">
-/*키워드 기반 팔로잉 목록*/
-SELECT 		nickname,			/*닉네임*/
- 			profile				/*프로필 이미지*/
-FROM 		MEMBER m		
-JOIN 		FOLLOW f 		
-ON 			m.id_num=f.following_id
-WHERE 		f.id_num=#{idNum}
-AND			nickname 	LIKE CONCAT('%',#{keyword},'%') 
-LIMIT 		#{rowSize} OFFSET #{startRow}  
+/* 키워드 기반 팔로잉 목록 */
+   SELECT nickname             /* 닉네임 */
+        , profile              /* 프로필 이미지 */
+     FROM MEMBER m		
+     JOIN FOLLOW f 		
+       ON m.id_num  =   f.following_id
+    WHERE f.id_num  =   #{idNum}
+      AND nickname LIKE CONCAT('%',#{keyword},'%') 
+    LIMIT #{rowSize} OFFSET #{startRow}  
 </select>
  	
 <select id="getFollowInFeed" parameterType="FollowInFeedDTO" resultType="FollowInformDTO">
-SELECT 		nickname,		/*닉네임*/
-			profile,		/*프로필*/
-			approve,
-		 	(
-				 SELECT	 approve 
-			 	 FROM 	 FOLLOW
-			 	 WHERE 	 id_num=#{idNum}
-			 	 AND	 following_id=( 					 
-								SELECT 	id_num
-								FROM 	MEMBER							 
-								WHERE 	nickname=m.nickname
-				 		 )	
-		 	) as myApprove		/*현 회원과 매개변수의 회원의 팔로우 관계정보 서브쿼리*/
-FROM 		FOLLOW f
-LEFT JOIN 	MEMBER m 			/*회원 테이블 조인*/
-<if test="flwType=='FOLLOWING'">	/*팔로잉하는 사람들*/
-ON 			f.following_id=m.id_num
-WHERE 		f.id_num =(
-				SELECT 	id_num
-				FROM 	MEMBER
-				WHERE 	nickname=#{nickname}	
-			)					/*팔로우 테이블 주체자가 매개변수로 받은 회원의 회원번호*/
-AND 		approve='FOLLOWOK'	/*팔로우 상태가 OK*/
-</if>	
-<if test="flwType=='FOLLOWER'">	/*팔로우 하는 사람*/
-ON 			f.id_num=m.id_num
-WHERE 		f.following_id =(
-				SELECT 	id_num
-				FROM 	MEMBER
-				WHERE   nickname=#{nickname}	
-			)					/*팔로우 테이블 팔로우요청을받는 아이디가 매개변수로 받은 회원의 회원번호*/
-AND 		approve='FOLLOWOK'	/*팔로우 상태가 OK*/
-</if>
-ORDER BY 	follow_Date DESC
-LIMIT 		#{rowSize} OFFSET #{startRow}
+       /* 유저피드 내 팔로잉,팔로워 리스트 정보 */
+       SELECT nickname             /* 닉네임 */
+            , profile              /* 프로필 */
+            , approve
+            , (
+                 SELECT approve 
+                   FROM FOLLOW
+                  WHERE id_num       = #{idNum}
+                    AND following_id = ( 					 
+                                          SELECT id_num
+                                            FROM MEMBER							 
+                                           WHERE nickname = m.nickname
+                                       )	
+              ) as myApprove            /* 현 회원과 매개변수의 회원의 팔로우 관계정보 서브쿼리 */
+         FROM FOLLOW f
+    LEFT JOIN MEMBER m                  /* 회원 테이블 조인 */
+   <if test="flwType=='FOLLOWING'">     /* 팔로잉하는 사람들 */
+           ON f.following_id = m.id_num
+        WHERE f.id_num = (
+                          SELECT id_num
+                            FROM MEMBER
+                           WHERE nickname = #{nickname}	
+                         )                          /* 팔로우 테이블 주체자가 매개변수로 받은 회원의 회원번호 */
+          AND approve  =  'FOLLOWOK'	            /* 팔로우 상태가 OK */
+  </if>	
+  <if test="flwType=='FOLLOWER'">	                /* 팔로우 하는 사람 */
+           ON f.id_num = m.id_num
+        WHERE f.following_id = (
+                                SELECT id_num
+                                  FROM MEMBER
+                                 WHERE nickname = #{nickname}	
+                               )                      /* 팔로우 테이블 팔로우요청을받는 아이디가 매개변수로 받은 회원의 회원번호 */
+          AND approve        = 'FOLLOWOK'             /* 팔로우 상태가 OK */
+  </if>
+     ORDER BY follow_Date DESC
+        LIMIT #{rowSize} OFFSET #{startRow}
  </select>
  	
  <!--팔로잉 인서트 -->
  	
  <insert id="doFollow" parameterType="DoFollowDTO" keyProperty="followNum" useGeneratedKeys="true">
- /*인서트 팔로잉 */
+ /* 인서트 팔로잉 */
  INSERT INTO FOLLOW	(id_num, following_id, approve)
- VALUES		 (
-		        #{idNum},				/*팔로잉 회원 고유번호*/
-		        (
-					SELECT id_num
-					FROM MEMBER
-					WHERE nickname = #{nickname}
-				),						/*팔로잉 받는 사람 회원 고유번호*/
-		        <choose>
-		            <when test="locked == 'LOCKED'">	/*비공개 계정일 시 팔로우 상태*/
-		                'FOLLOWNO'						
-		            </when>
-		            <when test="locked == 'PUBLICID'">	/*공개 계정일 시 팔로우 상태*/
-		                'FOLLOWOK'
-		            </when>
-		        </choose>
-    		)
+ VALUES (
+         #{idNum}         /* 팔로잉 회원 고유번호 */
+        ,(
+            SELECT id_num
+              FROM MEMBER
+             WHERE nickname = #{nickname}
+         )
+        ,                 /* 팔로잉 받는 사람 회원 고유번호 */
+        <choose>
+          <when test="locked == 'LOCKED'">	/* 비공개 계정일 시 팔로우 상태 */
+          'FOLLOWNO'						
+          </when>
+          <when test="locked == 'PUBLICID'">	/* 공개 계정일 시 팔로우 상태 */
+          'FOLLOWOK'
+          </when>
+        </choose>
+         )
 </insert>
 
 <!--팔로우 delete (언팔로우)-->
 <delete id="unFollow" parameterType="UnFollowDTO">
-/*딜리트 팔로우(언팔로우)*/
+/* 딜리트 팔로우(언팔로우) */
 DELETE 
-FROM 	FOLLOW
-WHERE 	id_num=#{idNum}		/*팔로잉 주체자*/
-AND		following_id=(		/*팔로잉 받은 회원고유번호*/
-				SELECT 	id_num
-				FROM 	MEMBER 
-				WHERE	nickname=#{nickname}	/*닉네임*/
-		)
+  FROM FOLLOW
+ WHERE id_num = #{idNum}                             /* 팔로잉 주체자 */
+   AND following_id = (                              /* 팔로잉 받은 회원고유번호 */
+                        SELECT id_num
+                          FROM MEMBER 
+                         WHERE nickname = #{nickname} /* 닉네임 */
+                       )
 </delete> 
 
 <!--팔로우 요청 수락-->
 <update id="acceptFollow" parameterType="HandleFollowReqDTO">
 /*비공개 계정에 대한 팔로우 요청 수락*/
 UPDATE FOLLOW SET
-	   approve='FOLLOWOK'		/*팔로우 수락으로 상태 변경*/
-WHERE  following_id=#{idNum}	/*팔로우 받는 아이디*/
-AND    id_num = (				/*팔로우 하는 아이디*/
-			SELECT id_num
-			FROM   MEMBER 
-			WHERE  nickname=#{nickname}	
-		)
+       approve = 'FOLLOWOK'		/* 팔로우 수락으로 상태 변경 */
+ WHERE following_id=#{idNum}	/* 팔로우 받는 아이디 */
+   AND id_num = (				/* 팔로우 하는 아이디 */
+                  SELECT id_num
+                    FROM MEMBER 
+                   WHERE nickname = #{nickname}	
+                )
 </update>
 <!--팔로우 요청 거절 -->
 <delete id="refuseFollow" parameterType="HandleFollowReqDTO">
-/*팔로우 요청 거절*/
+/* 팔로우 요청 거절 */
 DELETE 
-FROM 	FOLLOW
-WHERE 	following_id=#{idNum}		/*팔로우 받는 아이디 회원 고유번호*/
-AND		id_num=(					/*팔로우 하는 아이디 회원 고유번호*/
-			SELECT  id_num
-			FROM 	MEMBER 			
-			WHERE   nickname=#{nickname}	
-		)
+  FROM FOLLOW
+ WHERE following_id = #{idNum}      /* 팔로우 받는 아이디 회원 고유번호 */
+   AND id_num = (                   /* 팔로우 하는 아이디 회원 고유번호 */
+                 SELECT id_num
+                   FROM MEMBER 			
+                  WHERE nickname = #{nickname}	
+                )
 </delete>
 
 <!-- 공개 계정 전환시 팔로우 테이블 팔로우 요청을 팔로우 함 으로 변경 -->
 <update id="changeFollowStatus" parameterType="int">
-/*공개계정 전환시 팔로우 테이블의 FOLLOWSTATE - > OK*/
-UPDATE 	follow SET			
- 		approve='FOLLOWOK'			/*팔로우 상태 -> 승인상태*/
-WHERE	following_id=#{idNum}		/*팔로우하는 아이디 고유번호*/
-AND 	approve='FOLLOWNO'			/*팔로우 상태가 대기중 상태*/
+/* 공개계정 전환시 팔로우 테이블의 FOLLOWSTATE - > OK */
+UPDATE follow SET			
+       approve = 'FOLLOWOK'         /* 팔로우 상태 -> 승인상태 */
+ WHERE following_id = #{idNum}      /* 팔로우하는 아이디 고유번호 */
+   AND approve      = 'FOLLOWNO'    /* 팔로우 상태가 대기중 상태 */
 </update>
 
 <!--팔로잉 cud 작업후 변한값 리턴 -->
 <select id="afterFollow" parameterType="int" resultType="String">
-/*팔로우 작업 후 변동 값*/
-SELECT 	approve		/*팔로우 상태 값*/
-FROM 	FOLLOW 
-WHERE 	follow_num=#{followNum}	/*팔로우 테이블 고유번호*/
+ /* 팔로우 작업 후 변동 값 */
+ SELECT approve                   /* 팔로우 상태 값 */
+   FROM FOLLOW 
+  WHERE follow_num = #{followNum} /* 팔로우 테이블 고유번호 */
 </select>
 
 </mapper>

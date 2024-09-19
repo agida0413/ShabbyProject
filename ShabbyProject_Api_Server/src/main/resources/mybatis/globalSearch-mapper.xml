@@ -8,68 +8,70 @@
 <mapper namespace="com.sist.mapper.GlobalSearchMapper">
 
 <select id="globalSearchList" parameterType="GlobalSearchDTO" resultType="GlobalSearchResultDTO">
-/*글로벌 서치 자동검색 결과 리스트*/
-SELECT 			nickname as result,		/*닉네임*/
-			    'member' as type,		/*타입(회원,관심사)*/
-			    profile					/*프로필 사진*/
-FROM		    MEMBER 					/*멤버 테이블*/
-WHERE 		    (
-					nickname LIKE CONCAT('%',#{keyword},'%') 
-					OR phone =#{keyword}  /*검색어*/						
-				)
-AND 			NOT id_num=#{idNum}		  /*나 제외*/
-UNION ALL
-SELECT		    DISTINCT hobby as result, /*관심사*/
-				'hobby' as type,		  /*타입(회원,관심사)*/
-				null as profile			  /*프로필 사진*/
-FROM		    HOBBY					  /*관심사 테이블*/
-WHERE 			hobby LIKE CONCAT('%',#{keyword},'%') 		/*검색어*/
-LIMIT 			#{rowSize} OFFSET #{startRow}				/*페이징*/
+         /* 글로벌 서치 자동검색 결과 리스트 */
+         SELECT nickname as result                           /* 닉네임 */
+              , 'member' as type                             /* 타입(회원,관심사) */
+              , profile                                      /* 프로필 사진 */
+           FROM MEMBER                                       /* 멤버 테이블 */
+          WHERE (
+                     nickname LIKE CONCAT('%',#{keyword},'%') 
+                  OR phone     =   #{keyword}                 /* 검색어 */						
+                )
+            AND NOT id_num = #{idNum}                         /* 나 제외 */
+            
+      UNION ALL
+      
+         SELECT DISTINCT hobby as result                     /* 관심사 */
+              , 'hobby' as type                              /* 타입(회원,관심사) */
+              , null as profile                              /* 프로필 사진 */
+           FROM HOBBY                                        /* 관심사 테이블 */
+          WHERE hobby LIKE CONCAT('%',#{keyword},'%')        /* 검색어 */
+          LIMIT #{rowSize} OFFSET #{startRow}                /* 페이징 */
 </select>
- 
  
 <!-- 글로벌 검색을통한 회원 검색 -->
 <select id="globalSearchMember" parameterType="GlobalSearchDTO" resultType="SearchResultMemberDTO">
-/*글로벌 서치 -> 회원검색피드 리스트*/
-SELECT 		profile,							/*프로필 이미지*/
-	  		nickname,							/*닉네임*/
-	 	    (
-					SELECT   COUNT(*) 
-					FROM     post
-					WHERE 	 id_num=m.id_num
-					AND 	 ONLYME !='ONLYME'	
-			) as postCount, 					/*게시물 개수*/
-		    (
-					SELECT 	 COUNT(*)
-					FROM	 FOLLOW 
-					WHERE 	 following_id=m.id_num
-					AND 	 approve='FOLLOWOK'				
-			 ) as followerAmount,  				/*팔로워 수*/
-			 (
-					SELECT	 COUNT(*) FROM FOLLOW  
-					WHERE 	 id_num= m.id_num
-					AND 	 approve='FOLLOWOK'				
-			 ) as followingAmount,  			/*팔로잉 수*/
-			 (
-			   	    SELECT 	 hobby 
-			        FROM 	 HOBBY
-			        WHERE 	 id_num = m.id_num
-			        ORDER BY hb_num DESC
-			        LIMIT 	 1
-		     ) AS hobby 						 /*가장 최신의 관심사 1개*/
-FROM 		 MEMBER m	
-WHERE	     m.nickname LIKE CONCAT('%',#{keyword},'%')			/*키워드 - > 닉네임 기반 검색*/
-AND 		 m.id_num != #{idNum}								/*회원고유번호가 내 고유번호가 아님*/
-LIMIT 		 #{rowSize} OFFSET #{startRow}						/*페이징*/
+/* 글로벌 서치 -> 회원검색피드 리스트 */
+            SELECT profile                     /* 프로필 이미지 */
+                 , nickname                    /* 닉네임 */
+                 , (
+                     SELECT COUNT(*) 
+                       FROM POST_DATA
+                      WHERE id_num   = m.id_num
+                        AND only_me !='ONLYME'	
+                   ) as postCount              /* 게시물 개수 */
+                 , (
+                     SELECT COUNT(*)
+                       FROM FOLLOW 
+                      WHERE following_id = m.id_num
+                        AND approve      = 'FOLLOWOK'				
+                   ) as followerAmount         /* 팔로워 수 */
+                 , (
+                     SELECT COUNT(*) 
+                       FROM FOLLOW  
+                      WHERE id_num  = m.id_num
+                        AND approve = 'FOLLOWOK'				
+                   ) as followingAmount       /* 팔로잉 수 */
+                 , (
+                     SELECT hobby 
+                       FROM HOBBY
+                      WHERE id_num = m.id_num
+                   ORDER BY hb_num DESC
+                      LIMIT 1
+                   ) as hobby                 /* 가장 최신의 관심사 1개 */
+              FROM MEMBER m	
+             WHERE m.nickname LIKE CONCAT('%',#{keyword},'%')       /* 키워드 - > 닉네임 기반 검색 */
+               AND m.id_num    !=  #{idNum}                         /* 회원고유번호가 내 고유번호가 아님 */
+             LIMIT #{rowSize} OFFSET #{startRow}                    /* 페이징 */
 </select>
 
  <!-- 글로벌 검색에서의 회원검색 관련 총 페이지 -->
 <select id="searchMemberTotalPage" parameterType="GlobalSearchDTO" resultType="int">
-/*글로벌 서치 -> 회원검색 리스트의 총페이지*/
-SELECT 		CEIL(COUNT(*) / #{rowSize}) AS totalPage			/*총 페이지*/
-FROM 		MEMBER												/*회원 테이블*/
-WHERE		nickname LIKE CONCAT('%', #{keyword}, '%')			/*닉네임 기반 검색*/
-AND 		id_num != #{idNum};									/*회원고유번호가 내 고유번호가 아님*/
+/* 글로벌 서치 -> 회원검색 리스트의 총페이지 */
+      SELECT CEIL(COUNT(*) / #{rowSize}) as totalPage           /* 총 페이지 */
+        FROM MEMBER	                                            /* 회원 테이블 */
+       WHERE nickname LIKE CONCAT('%', #{keyword}, '%')         /* 닉네임 기반 검색 */
+         AND id_num    !=  #{idNum};                            /* 회원고유번호가 내 고유번호가 아님 */
 </select>
 
 </mapper>

@@ -9,187 +9,187 @@
 
 <!-- 알람 인서트 -->
 <insert id="alarmInsert" parameterType="AlarmDTO" > 
-/*알람 삽입*/
+/* 알람 삽입 */
 INSERT 
-INTO 	ALARM (sender, post_num, receiver, alarm_type)
-VALUES
-<if test="alarmType!='LIKE'"> /*좋아요 타입이 아니면 */
+INTO ALARM (sender, post_num, receiver, alarm_type)
+     VALUES
+<if test="alarmType!='LIKE'"> /* 좋아요 타입이 아니면 */
 <foreach collection="receivers" item="receiver" separator=",">
-		(
-			#{sender},   /*보내는 이*/
-			#{postNum},  /*게시물 번호*/
-		    (
-				SELECT id_num 
-				FROM MEMBER	
-				WHERE nickname=#{receiver} /*받는이 회원고유번호*/
-			),						
-			 #{alarmType} /*알람 타입*/
-		)
+          (
+            #{sender}                      /* 보내는 이 */
+          , #{postNum}                     /* 게시물 번호 */
+          , (
+             SELECT id_num 
+               FROM MEMBER	
+              WHERE nickname = #{receiver} /* 받는이 회원고유번호 */
+            )
+          , #{alarmType}                   /* 알람 타입 */
+          )
 </foreach>
 </if>
 
-<if test="alarmType=='LIKE'">/*좋아요 타입이면*/
-		(
-			  #{sender},
-			  #{postNum},
-			  #{receiver},
-			  #{alarmType}
-		)	/*일반 삽입*/	
+<if test="alarmType=='LIKE'">             /* 좋아요 타입이면 */
+          (
+            #{sender}
+          , #{postNum}
+          , #{receiver}
+          , #{alarmType}
+          )	                              /* 일반 삽입 */	
 </if>
 </insert>
  
  <!--좋아요 알람 인서트 시 명시적으로 receiver를 인서트 해줘야하므로 정보받아옴 -->
 <select id="chooseReceiver" parameterType="int" resultType="int">
-/*회원고유번호 GET (FROM POST)*/
-SELECT 	id_num 				/*회원 고유번허*/
-FROM 	POST 				/*게시물 테이블*/
-WHERE	post_num=#{postNum}/*게시물 번호 조건*/
+    /* 회원고유번호 GET (FROM POST_DATA) */
+    SELECT id_num 				          /* 회원 고유번호 */
+      FROM POST_DATA 			          /* 게시물 테이블 */
+     WHERE post_num = #{postNum}          /* 게시물 번호 조건 */
 </select>
  
 <select id="originalMemberTag" parameterType="int" resultType="String">
-/*기존 회원태그 리스트 GET */
-SELECT	 		m.nickname					/*닉네임*/
-FROM 			MEMBER m					/*회원 테이블*/
-INNER JOIN  	MEMBER_TAG mt				/*회원 태그 테이블 조인*/
-ON		    	m.id_num = mt.id_num		/*회원 번호 기준*/
-WHERE	   	    mt.post_num = #{postNum}	/*게시물번호 조건=#{매개변수}*/
+    /* 기존 회원태그 리스트 GET */
+     SELECT m.nickname                    /* 닉네임 */
+       FROM MEMBER m                      /* 회원 테이블 */
+ INNER JOIN MEMBER_TAG mt                 /* 회원 태그 테이블 조인 */
+         ON m.id_num    = mt.id_num       /* 회원 번호 기준 */
+      WHERE mt.post_num = #{postNum}      /* 게시물번호 조건 */
 </select>
  
 <!-- 알람 삭제-->
 <delete id="alarmDelete" parameterType="AlarmDTO">
 DELETE 
-FROM 	ALARM 
-WHERE 
-<if test="postNum==0">
-			/*게시물 번호가 존재하지 않으면*/
-		sender=#{sender}		/*보내는 이 */
-AND		receiver IN	 ( 			/*받는 이*/
-					
-					 <foreach collection="receivers" item="receiver" separator=",">         
-						 (
-							 SELECT	id_num
-							 FROM 	MEMBER
-							 WHERE 	nickname=#{receiver} 
-						 )		/*받는이 리스트로 서브쿼리를 통해 회원 고유번호 */
-					 </foreach>
-					 )
+  FROM ALARM 
+ WHERE 
+<if test="postNum==0">                    /* 게시물 번호가 존재하지 않으면 */
+       sender = #{sender}	              /* 보내는 이 * /
+   AND receiver IN (                      / *받는 이 */
+                     <foreach collection="receivers" item="receiver" separator=",">         
+                     (
+                         SELECT id_num
+                           FROM MEMBER
+                          WHERE nickname = #{receiver} 
+                      )                   /* 받는이 리스트로 서브쿼리를 통해 회원 고유번호 */
+                     </foreach>
+                    )
 </if>
-<if test="postNum!=0">
-			/*게시물 번호가 존재하면*/
- 			post_num=#{postNum}  	/*게시물 번호*/
+<if test="postNum!=0">                     /* 게시물 번호가 존재하면 */
+       post_num = #{postNum}               /* 게시물 번호 */
 </if> 
-<if test="isUpdate">
-AND
-		    receiver IN
-		    		 ( 
-					 <foreach collection="receivers" item="receiver" separator=",">         
-						(
-							 SELECT	 id_num 
-							 FROM 	 MEMBER
-							 WHERE   nickname=#{receiver} 
-						) 
+<if test="isUpdate">                       /* 게시물 관련 알람 */
+   AND receiver IN ( 
+                     <foreach collection="receivers" item="receiver" separator=",">         
+                      (
+                         SELECT id_num 
+                           FROM MEMBER
+                          WHERE nickname = #{receiver} 
+                      ) 
 					 </foreach>
-		             )
+                    )
  </if>  
 <if test="alarmType=='LIKE'">
-AND		   sender=#{sender}			/*보내는 이*/
-AND 	   receiver=#{receiver} 	/*받는 이*/
+  AND sender   = #{sender}                 /*보내는 이*/
+  AND receiver = #{receiver}               /*받는 이*/
 </if>
 
 <if test="alarmType == 'FOLLOWREQ' or alarmType == 'FOLLOW'">
 /*알람 타입 조건*/
-AND 	   alarm_type  IN 
-						('FOLLOWREQ','FOLLOW')		  
+  AND alarm_type IN (
+                     'FOLLOWREQ'
+                    ,'FOLLOW'
+                    )		  
 </if>
 <!-- alarmType이 'FOLLOWREQ' 또는 'FOLLOW'이 아닌 경우 -->
 <if test="alarmType != 'FOLLOWREQ' and alarmType != 'FOLLOW'">
-/*알람 타입 조건*/
-AND 	   alarm_type = #{alarmType}
+  /*알람 타입 조건*/
+  AND alarm_type = #{alarmType}
 </if>
 </delete>
  
  
  
 <select id="getAlarm" parameterType="AlarmDTO" resultType="AlarmListDTO"> 
-SELECT		 m.nickname  AS receiver,				/*받는 이*/	
-        	 sm.nickname AS sender,					/*보내는 이*/
-        	 sm.profile  AS senderProfile,			/*보내는이 프로필 사진*/
-       		 a.post_num,							/*게시물 번호*/
-       		 a.alarm_type,							/*알람 유형*/
-       		 a.create_date,							/*생성일*/
-       		 a.alarm_num AS alarmNum				/*알람 고유번호*/
-FROM    	 alarm a
-LEFT JOIN	 member m
-ON 			 a.receiver = m.id_num					/*받는이- 회원테이블 조인*/
-LEFT JOIN 	 member sm
-ON 			 a.sender = sm.id_num					/*보내는이 회원테이블 조인*/
-LEFT JOIN	 follow fw
-ON			 m.id_num = fw.id_num					/*팔로우 테이블 조인*/
-AND 		 sm.id_num = fw.following_id		
-LEFT JOIN    post p									/*게시물 테이블 조인*/
-ON 			 a.post_num = p.post_num 
-WHERE
-			(    
-			    m.id_num=#{idNum}	            	/* 태그 알림의 경우 나만보기로 변경 혹은 , 비공개 계정으로 전환 후  팔로우를 끊었을때 알람을 통해 게시물을 열람할 수 있는 현상가능성 */	
-			    AND a.alarm_type !='TAG'       		/*알람 타입이 태그가아닌경우는 일반 조건*/
+      /* 알람 리스트 획득*/
+      SELECT m.nickname  AS receiver            /* 받는 이 */
+           , sm.nickname AS sender              /* 보내는 이 */
+           , sm.profile  AS senderProfile       /* 보내는이 프로필 사진 */
+           , a.post_num,                        /* 게시물 번호 */
+           , a.alarm_type                       /* 알람 유형 */
+           , a.create_date                      /* 생성일 */
+           , a.alarm_num AS alarmNum            /* 알람 고유번호 */
+        FROM alarm a
+   LEFT JOIN member m
+          ON a.receiver = m.id_num               /* 받는이- 회원테이블 조인 */
+   LEFT JOIN member sm
+          ON a.sender   = sm.id_num              /* 보내는이 회원테이블 조인 */
+   LEFT JOIN follow fw
+          ON m.id_num   = fw.id_num              /* 팔로우 테이블 조인 */
+         AND sm.id_num  = fw.following_id		
+   LEFT JOIN POST_DATA p                         /* 게시물 테이블 조인 */
+          ON a.post_num = p.post_num 
+   WHERE
+            (    
+                   m.id_num      = #{idNum}      /* 태그 알림의 경우 나만보기로 변경 혹은 , 비공개 계정으로 전환 후  팔로우를 끊었을때 알람을 통해 게시물을 열람할 수 있는 현상가능성 */	
+               AND a.alarm_type != 'TAG'         /* 알람 타입이 태그가아닌경우는 일반 조건 */
 			)
-OR 
-			(
-				m.id_num=#{idNum}
-				AND a.alarm_type ='TAG' 		 	/*알람 타입이 태그인 경우는 */
-		 		AND(
-						(
-							NOT	(sm.locked = 'LOCKED' AND fw.approve !='FOLLOWOK')  /* 보내는 사람의 계정이 비공개 계정 + 서로 팔로우 관계가 아닌경우의 반대 +(나만보기 게시물이 아닌 경우)*/
-							AND p.onlyMe !='ONLYME'
-						)
-					)
+      OR 
+            (
+                   m.id_num     = #{idNum}
+               AND a.alarm_type = 'TAG'          /* 알람 타입이 태그인 경우는 */
+               AND (
+                     (
+                       NOT (    sm.locked   = 'LOCKED' 
+                            AND fw.approve != 'FOLLOWOK'
+                            )  
+                       AND p.only_me !='ONLYME'
+                     )                           /* 보내는 사람의 계정이 비공개 계정 + 서로 팔로우 관계가 아닌경우의 반대 +(나만보기 게시물이 아닌 경우) */
+                    )
 		 	)			
-ORDER BY    create_date DESC
-LIMIT 		#{rowSize} OFFSET #{startRow}
+   ORDER BY create_date DESC
+      LIMIT #{rowSize} OFFSET #{startRow}
 </select>
  
  <!--알람조회-->
 <select id="getAlarmTotalPage" parameterType="AlarmDTO" resultType="int">
- /*알람 리스트 총 페이지*/
-SELECT 		Ceil(Count(*) / #{rowSize})			/*총 페이지*/
-FROM   		alarm a
-LEFT JOIN 	member m								/*회원 테이블 조인(받는 이)*/
-ON 			a.receiver = m.id_num
-LEFT JOIN   member sm
-ON 			a.sender = sm.id_num					/*회원 테이블 조인(보내는 이)*/
-LEFT JOIN   follow fw
-ON 			m.id_num = fw.id_num
-AND 		sm.id_num = fw.following_id				/*팔로우 테이블 조인*/
-LEFT JOIN   post p
-ON 			a.post_num = p.post_num   				/*게시물 테이블 조인*/
-WHERE		(    
-				 m.id_num=#{idNum}	                /* 태그 알림의 경우 나만보기로 변경 혹은 , 비공개 계정으로 전환 후  팔로우를 끊었을때 알람을 통해 게시물을 열람할 수 있는 현상가능성*/
-						
-				 AND a.alarm_type !='TAG'  			/*알람 타입이 태그가아닌경우는 일반 조건*/
-			)
-OR 			(
-
-				 m.id_num=#{idNum}
- 				 AND a.alarm_type ='TAG' /*알람 타입이 태그인 경우는*/
-				 AND(
-						(
-							NOT	(sm.locked = 'LOCKED' AND fw.approve !='FOLLOWOK')  /*( 보내는 사람의 계정이 비공개 계정 + 서로 팔로우 관계가 아닌경우의 반대 )+(나만보기 게시물이 아닌 경우)*/
-							AND p.onlyMe !='ONLYME'
-						)
+ /* 알람 리스트 총 페이지 */
+    SELECT CEIL(COUNT(*) / #{rowSize})  /* 총 페이지 */
+      FROM ALARM a
+ LEFT JOIN member m                     /* 회원 테이블 조인(받는 이) */
+        ON a.receiver = m.id_num
+ LEFT JOIN member sm
+        ON a.sender = sm.id_num	        /* 회원 테이블 조인(보내는 이) */
+ LEFT JOIN follow fw
+        ON m.id_num = fw.id_num
+       AND sm.id_num = fw.following_id  /* 팔로우 테이블 조인 */
+ LEFT JOIN POST_DATA p
+        ON a.post_num = p._num          /* 게시물 테이블 조인 */
+     WHERE (    
+                 m.id_num      = #{idNum}	        /* 태그 알림의 경우 나만보기로 변경 혹은 , 비공개 계정으로 전환 후  팔로우를 끊었을때 알람을 통해 게시물을 열람할 수 있는 현상가능성*/				
+             AND a.alarm_type != 'TAG'  			/* 알람 타입이 태그가아닌경우는 일반 조건 */
+           )
+        OR (
+                 m.id_num     = #{idNum}
+             AND a.alarm_type = 'TAG'   /* 알람 타입이 태그인 경우는 */
+             AND (
+                   (
+                     NOT (     sm.locked   = 'LOCKED'
+                           AND fw.approve != 'FOLLOWOK'
+                          )                         /* ( 보내는 사람의 계정이 비공개 계정 + 서로 팔로우 관계가 아닌경우의 반대 )+(나만보기 게시물이 아닌 경우) */
+                     AND p.only_me != 'ONLYME'
+                   )
 				 )
 			)
 </select>
  
 <!--알람 조회시 읽음 상태 업데이트-->
 <update id="updateIsread" parameterType="List">
-/*읽음으로 알람 업데이트*/
-UPDATE 	ALARM SET 
-		isread=1			/*읽음 표시*/
-WHERE 	alarm_num IN(		/*알람 고유번호 리스트*/
-				    <foreach collection="list" item="num"  separator=",">
-				    	#{num.alarmNum}
-				    </foreach>
-	 			    )
+/* 읽음으로 알람 업데이트 */
+UPDATE ALARM SET 
+       isread = 1         /* 읽음 표시 */
+ WHERE alarm_num IN (     /* 알람 고유번호 리스트 */
+                    <foreach collection="list" item="num"  separator=",">
+                     #{num.alarmNum}
+                    </foreach>
+                    )
 </update>
  
  
@@ -197,41 +197,41 @@ WHERE 	alarm_num IN(		/*알람 고유번호 리스트*/
  <!-- 공개 계정전환 시 팔로우 상태를 팔로우 요청에서 팔로우 ok로 변경-->
  <!--or 팔로우 요청 수락시 변경 \-->
 <update id="changeAlarmStatus" parameterType="AlarmChangeDTO">
-/*공개계정 전환시 알람 테이블의 FOLLOWSTATE - > OK*/
-UPDATE		 ALARM SET		
-			 alarm_type='FOLLOW'	/*팔로우 상태 -> 승인상태*/
-WHERE 		 receiver=#{idNum}		/*받는이*/
-AND 		 alarm_type='FOLLOWREQ'	/*팔로우 상태가 대기중 상태*/
+  /* 공개계정 전환시 알람 테이블의 FOLLOWSTATE - > OK */
+  UPDATE ALARM SET		
+         alarm_type = 'FOLLOW'	    /* 팔로우 상태 -> 승인상태 */
+   WHERE receiver   = #{idNum}      /* 받는이 */
+     AND alarm_type = 'FOLLOWREQ'   /* 팔로우 상태가 대기중 상태 */
 <if test="type=='ACCEPT'">
-/*타입이 알람리스트에서 수락버튼을 클릭한 것이라면 */
-AND 		 sender=(
-			 SELECT  id_num 
-			 FROM	 MEMBER
-			 WHERE   nickname=#{senderNickname}
-		     )						/*보내는이의 회원고유번호 조건 추가*/
+                                   /*타입이 알람리스트에서 수락버튼을 클릭한 것이라면 */
+     AND sender = (
+                    SELECT id_num 
+                      FROM MEMBER
+                     WHERE nickname = #{senderNickname}
+                  )                /* 보내는이의 회원고유번호 조건 추가 */
 </if>
 </update>
  
 <delete id="refuseReqAlarmStatus" parameterType="AlarmChangeDTO">
-/*알람 리스트에서 팔로우 요청 거절 후 알람 STATUS 업데이트*/
+/* 알람 리스트에서 팔로우 요청 거절 후 알람 STATUS 업데이트 */
 DELETE 
-FROM 		ALARM
-WHERE 		receiver=#{idNum}		/*받는이 */
-AND 		sender=(
-					SELECT id_num FROM MEMBER
-					WHERE nickname=#{senderNickname}
-			)						/*보내는 이 조건 */
-AND 		alarm_type='FOLLOWREQ'  /*알람 타입이 요청 수락 대기중인 조건*/
+  FROM ALARM
+ WHERE receiver = #{idNum}		/* 받는이 */
+   AND     sender = (
+                 SELECT id_num 
+                   FROM MEMBER
+                  WHERE nickname = #{senderNickname}
+           )                    /* 보내는 이 조건 */
+   AND alarm_type = 'FOLLOWREQ' /* 알람 타입이 요청 수락 대기중인 조건 */
 </delete>
- 
  
  <!--안읽은 알람 개수 가져오기--> 
 <select id="alarmCount" parameterType="int" resultType="int">
-/*안 읽은 알람 수*/
-SELECT 	COUNT(*)			/*개수*/ 
-FROM 	ALARM 		
-WHERE 	receiver=#{idNum}	/*받는이 회원 고유번호*/
-AND 	isread=0;			/*읽지않음 조건*/
+/* 안 읽은 알람 수 */
+SELECT COUNT(*)              /* 개수 */ 
+  FROM ALARM 		
+ WHERE receiver = #{idNum}   /* 받는이 회원 고유번호 */
+   AND isread=0;             /* 읽지않음 조건 */
 </select>
 
 </mapper>

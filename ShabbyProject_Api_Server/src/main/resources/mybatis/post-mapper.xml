@@ -9,115 +9,114 @@
  
  <!-- 게시물리스트 가져오기-->
 <select id="postList" parameterType="GetUserFeedInformDTO" resultType="PostListDTO">
-/*게시물 리스트*/
-SELECT 		p.post_num,											/*게시물 번호*/
-			post_img_url,										/*게시물 이미지 */
-			onlyMe,												/*나만보기 여부*/
-			COALESCE(pl.likeCount,0) AS likeCount 				/*좋아요 수*/
-FROM 		POST p 												/*게시물 테이블*/
-LEFT JOIN	(  
-				SELECT 	 post_num,
-					   	 COUNT(*) AS likeCount  
-				FROM   	 post_like       
-				GROUP BY post_num    							/*각 게시물 별 좋아요 수 집계 서브쿼리 , 조인*/
- 			) pl
-ON 			p.post_num=pl.post_num 
-LEFT JOIN   (
-			    SELECT 	   pi.post_num,
-			    		   pi.post_img_url 						/*하나의 이미지*/
-			    FROM 	   post_img pi 							/*게시물 이미지 테이블*/
-			    INNER JOIN ( 		  	 												/*조인 내 이미지 하나만 가져오기 위한 서브쿼리*/
-							    SELECT   post_num,					
-							    	     MIN(post_img_num) AS min_img_num 				/*이미지 테이블 고유번호의 최솟값 하나만*/
-							    FROM 	 post_img 		
-							    GROUP BY post_num 
-   						   ) subquery 																											
-  			    ON 		   pi.post_num = subquery.post_num 
-  			    AND 	   pi.post_img_num = subquery.min_img_num 						
-    		) pi
-ON 			p.post_num = pi.post_num 													/*각 게시물 별 가장먼저 등록한 이미지 서브쿼리 조인 */
-<if test="feedState=='USERFEED'">														/*피드타입이 유저피드*/
-   <if test="type=='TAGGED'">															/*타입이 태그당한 게시물조건*/
+	/* 게시물 리스트 */
+    SELECT p.post_num                                           /* 게시물 번호 */
+         , post_img_url                                         /* 게시물 이미지 */
+         , only_me                                              /* 나만보기 여부 */
+         , COALESCE(pl.likeCount,0) AS likeCount                /* 좋아요 수 */
+      FROM POST_DATA p                                               /* 게시물 테이블 */
+ LEFT JOIN (  
+               SELECT post_num
+                    , COUNT(*) AS likeCount
+                 FROM post_like       
+             GROUP BY post_num                                  /* 각 게시물 별 좋아요 수 집계 서브쿼리 , 조인 */
+           ) pl
+          ON  p.post_num=pl.post_num 
+ LEFT JOIN (
+                 SELECT pi.post_num
+                      , pi.post_img_url                                     /* 하나의 이미지 */
+                   FROM post_img pi                                         /* 게시물 이미지 테이블 */
+             INNER JOIN (                                                   /* 조인 내 이미지 하나만 가져오기 위한 서브쿼리 */
+                            SELECT post_num					
+                                 , MIN(post_img_num) AS min_img_num         /* 이미지 테이블 고유번호의 최솟값 하나만 */
+                              FROM post_img 		
+                          GROUP BY post_num 
+                        ) subquery 																											
+                     ON pi.post_num = subquery.post_num 
+                    AND pi.post_img_num = subquery.min_img_num 						
+             ) pi
+        ON p.post_num = pi.post_num                                          /* 각 게시물 별 가장먼저 등록한 이미지 서브쿼리 조인 */
+<if test="feedState=='USERFEED'">                                            /* 피드타입이 유저피드 */
+   <if test="type=='TAGGED'">                                                /* 타입이 태그당한 게시물조건 */
 RIGHT JOIN (	
-			SELECT 	post_num
-			FROM 	MEMBER_TAG
-		    WHERE 	id_num = (
-							SELECT  id_num
-							FROM	MEMBER
-							WHERE   nickname=#{nickname}	
-					) 
-  		   ) mtSubQuery																	/*매개변수로 받은 닉네임이 태그테이블에 존재하는 게시물 번호만 RIGHT JOIN*/
-ON 		   p.post_num=mtSubQuery.post_num
-WHERE 	   p.onlyME !='ONLYME'															/*나만 보기 게시물 제외*/
+            SELECT post_num
+              FROM MEMBER_TAG
+             WHERE id_num = (
+                              SELECT id_num
+                                FROM MEMBER
+                               WHERE nickname = #{nickname}	
+                            ) 
+           ) mtSubQuery                                                      /* 매개변수로 받은 닉네임이 태그테이블에 존재하는 게시물 번호만 RIGHT JOIN */
+        ON p.post_num = mtSubQuery.post_num
+     WHERE p.only_me != 'ONLYME'                                             /* 나만 보기 게시물 제외 */
    </if>
 </if>
 
-<if test="feedState=='SEARCHFEED'">							 	/*피드타입이 검색피드*/
+<if test="feedState=='SEARCHFEED'">	                                         /* 피드타입이 검색피드 */
 INNER JOIN (  		 
-			 SELECT post_num
-			 FROM 	HOBBY
-			 WHERE 	hobby LIKE  CONCAT('%',#{keyword},'%')
-		   ) searchSubQuery										/*검색키워드가 관심사 테이블에 포함되는 게시물 번호만 조인*/
-ON 		   p.post_num= searchSubQuery.post_num
+             SELECT post_num
+               FROM HOBBY
+              WHERE hobby LIKE CONCAT('%',#{keyword},'%')
+           ) searchSubQuery	                                                /* 검색키워드가 관심사 테이블에 포함되는 게시물 번호만 조인 */ 
+        ON p.post_num= searchSubQuery.post_num
 </if> 
 /*조건 절 시작*/
 <choose>
-    <when test="feedState=='MAINFEED'">							/*피드타입이 메인피드이면*/						
-WHERE     p.id_num IN(
-	    			SELECT following_id
-	    			FROM   FOLLOW
-	    			WHERE  id_num=#{idNum}
-	    			AND	   approve='FOLLOWOK'  			
-    	  )														/*팔로우 테이블에서 내가 팔로우한 유저이고 상태가 팔로우 승인완료인 상태인 게시물 번호만 필터링*/
-AND		  onlyMe='NOTONLYME'     								/*나만보기 게시물 제외*/
-ORDER BY  create_date DESC
+    <when test="feedState=='MAINFEED'">                                     /* 피드타입이 메인피드이면 */						
+WHERE p.id_num IN (
+                    SELECT following_id
+                      FROM FOLLOW
+                     WHERE id_num  = #{idNum}
+                       AND approve = 'FOLLOWOK'  			
+                  )                                                        /* 팔로우 테이블에서 내가 팔로우한 유저이고 상태가 팔로우 승인완료인 상태인 게시물 번호만 필터링 */
+  AND only_me = 'NOTONLYME'                                                 /* 나만보기 게시물 제외 */
+ORDER BY create_date DESC
     </when>
     		
-    <when test="feedState=='GLOBALFEED'||feedState=='SEARCHFEED'">	/*피드 타입이 글로벌 피드이거나 검색피드일 경우*/
-WHERE 
-    	  p.id_num IN(   			
-					SELECT 	id_num
-					FROM 	MEMBER
-    				WHERE 	locked='PUBLICID'    				 
-    				AND		NOT (id_num=#{idNum}) 				/*공개아이디 게시물, 내 게시물이 아닌 조건*/
-    				 				 	
-    				UNION										/* + */
-    				
-    				SELECT 	following_id as id_num				/*팔로우 상태인 게시물(비공개 계정포함)*/
-    				FROM 	FOLLOW
-	    			WHERE 	id_num=#{idNum}
-	    			AND		approve='FOLLOWOK'    		    				  			
-    	  )
-AND		  onlyMe='NOTONLYME'    								/*나만보기 게시물 제외*/
+    <when test="feedState=='GLOBALFEED'||feedState=='SEARCHFEED'">         /* 피드 타입이 글로벌 피드이거나 검색피드일 경우 */
+WHERE p.id_num IN(   			
+                  SELECT id_num
+                    FROM MEMBER
+                   WHERE locked = 'PUBLICID'    				 
+                     AND NOT (id_num = #{idNum})                          /* 공개아이디 게시물, 내 게시물이 아닌 조건 */	 				 	
+    			   UNION                                                  
+                  SELECT following_id as id_num	                          /* 팔로우 상태인 게시물(비공개 계정포함) */
+                    FROM FOLLOW
+                   WHERE id_num  = #{idNum}
+                     AND approve = 'FOLLOWOK'    		    				  			
+                )
+  AND only_me = 'NOTONLYME'                                       /* 나만보기 게시물 제외 */
 ORDER BY  create_date DESC
     </when>
     		   		    		
-    <when test="feedState=='USERFEED'">							/*피드 타입이 유저피드인 경우*/
+    <when test="feedState=='USERFEED'">                         /* 피드 타입이 유저피드인 경우 */
     		
-    	<if test="type=='NORMAL'">								/*타입이 태그게시물이 아닌 작성게시물일 경우*/
-WHERE 
-    	  p.id_num=( 
-			    SELECT	 id_num
-			    FROM 	 MEMBER 
-			    WHERE 	 nickname=#{nickname} 					/*매개 변수로 받은 닉네임의 게시물*/
-		  )								
+    	<if test="type=='NORMAL'">                              /* 타입이 태그게시물이 아닌 작성게시물일 경우 */
+WHERE p.id_num = ( 
+                  SELECT id_num
+                    FROM MEMBER 
+                   WHERE nickname=#{nickname}                   /* 매개 변수로 받은 닉네임의 게시물 */
+                 )								
+        </if>
+	    <if test="!itsMe">                                     /* 현 유저피드가 내 피드가 아닌경우 */
+  AND only_me = 'NOTONLYME'                                     /* 나만보기 게시물 제외 */
 		</if>
-		<if test="!itsMe">										/*현 유저피드가 내 피드가 아닌경우*/
-AND		  onlyMe='NOTONLYME' 	    		    				/*나만보기 게시물 제외*/
-		</if>
-ORDER BY  create_date DESC  
-			   
+ORDER BY create_date DESC  			   
     </when>
     		
 </choose>   
-LIMIT 	  #{rowSize} OFFSET #{startRow}  
+   LIMIT #{rowSize} OFFSET #{startRow}  
 </select>
  
  <!--게시물 삽입과 동시에 pk를 반환받는다 .RequestDTO post_num 세팅-->
 <insert id="postInsert" parameterType="WritePostDTO" useGeneratedKeys="true" keyProperty="postNum">
 /*게시물 삽입(게시물테이블 관련)*/
-INSERT INTO POST (id_num,content,onlyME)				
- 	   VALUES(#{idNum},#{content},#{onlyMeState})				/*회원 고유번호, 게시물 내용, 나만보기 여부*/
+INSERT INTO POST_DATA (id_num,content,only_me)				
+ 	   VALUES(
+             #{idNum}
+            ,#{content}
+            ,#{onlyMeState}
+            )               /* 회원 고유번호, 게시물 내용, 나만보기 여부 */
 </insert>
  <!--게시물 삽입과 동시에 게시물에 입력된 관심사들도 관심사 테이블에 인서트 -->
 <insert id="hobbyInsert" parameterType="WritePostDTO">
@@ -127,9 +126,9 @@ INSERT INTO POST (id_num,content,onlyME)
         VALUES
         <foreach collection="hobbyList" item="hobby" separator=",">
             (
-				#{idNum},						/*회원고유번호*/
-				#{postNum},						/*게시물 번호*/
-				#{hobby}						/*관심사 이름*/
+            #{idNum}                        /* 회원고유번호 */
+           ,#{postNum}                      /* 게시물 번호 */
+           ,#{hobby}                        /* 관심사 이름 */
 			)
         </foreach>
 </if>
@@ -139,12 +138,12 @@ INSERT INTO POST (id_num,content,onlyME)
 /*게시물 삽입(회원 태그테이블 관련)*/
 <if test="followTagList != null and followTagList.size() > 0">
  INSERT INTO member_tag (post_num, id_num)
-        SELECT  #{postNum},			/*게시물 번호*/			
-        		id_num				/*회원 고유번호*/
-        FROM 	member		
-        WHERE   nickname IN 		   
+        SELECT #{postNum}            /* 게시물 번호 */			
+             , id_num               /* 회원 고유번호 */
+          FROM member		
+         WHERE nickname IN 		   
 <foreach collection="followTagList" item="follow" open="(" separator="," close=")">
-					      	 #{follow}		/*태그하는 사람의 닉네임*/
+               #{follow}           /* 태그하는 사람의 닉네임 */
 </foreach>        
 </if>
 </insert>	
@@ -154,117 +153,114 @@ INSERT INTO POST (id_num,content,onlyME)
 /*게시물 삽입(이미지 테이블 관련)*/
 <if test="imgUrlList != null and imgUrlList.size() > 0">
  INSERT INTO POST_IMG (post_num,post_img_url)
-    	VALUES
+        VALUES
 <foreach collection="imgUrlList" item="imgUrl" separator=",">
-	            (
-					#{postNum},		/*게시물 번호*/
-					#{imgUrl}		/*이미지 URL*/
-				)
+              (
+               #{postNum}       /* 게시물 번호 */
+              ,#{imgUrl}        /* 이미지 URL */
+              )
 </foreach>
 </if>
 </insert>
  <!-- 게시물 상세보기 정보-->
  <select id="postDetail" parameterType="GetPostDetailDTO" resultType="PostDetailDTO">
  /*게시물 상세보기*/
- SELECT 	 p.post_num,   							/*게시물 번호*/			
-    		 p.id_num,								/*회원 고유번호*/
-    		 p.content,								/*게시물 상세 내용*/
-    		 p.create_date ,						/*생성일*/
-   		     p.edit_date ,							/*수정일*/
-    		 p.onlyMe ,								/*나만보기 여부*/
-    		 m.nickname,							/*닉네임*/
-    		 m.profile,								/*프로필 사진 이미지URL*/
-    		 pl.likeCheck,							/*현재 클릭한 유저의 좋아요 존재(눌림) 여부*/
-   			 GROUP_CONCAT(DISTINCT pi.post_img_url ORDER BY pi.post_img_num) AS strImgList,						/*해당 게시물의 이미지 리스트를 , 형태로 나눈 스트링 형태*/
-    		 GROUP_CONCAT(DISTINCT hb.hobby ORDER BY hb.hb_num) AS strHobbyList,								/*해당 게시물의 관심사 리스트를 , 형태로 나눈 스트링 형태*/
-    		 GROUP_CONCAT(DISTINCT member_tag.nickname ORDER BY mt.id_num) AS strTagList,						/*해당 게시물의 태그멤버 리스트를 , 형태로 나눈 스트링 형태*/
-   			 GROUP_CONCAT( COALESCE(member_tag.profile,'NOPROFILE')  ORDER BY mt.id_num) AS strTagProfiles, 	/*해당 게시물의 태그멤버의 프로필 리스트를 , 형태로 나눈 스트링 형태*/
-    		 (
-				SELECT 	COUNT(*)
-				FROM 	POST_LIKE
-				WHERE 	post_num=p.post_num
-			 ) as likeCount																						/*좋아요 개수*/
- FROM 		 post p																								/*FROM 게시물 테이블*/
- LEFT JOIN 	 MEMBER m																							/*회원테이블 조인*/
- ON 		 p.id_num = m.id_num																
- LEFT JOIN 	 POST_IMG pi																						/*게시물 이미지 테이블 조인*/
- ON 		 p.post_num = pi.post_num	
- LEFT JOIN   HOBBY hb																							/*관심사 테이블 조인*/
- ON 		 p.post_num = hb.post_num
- LEFT JOIN   MEMBER_TAG mt																						/*회원 태그 테이블 조인*/
- ON 		 p.post_num = mt.post_num
- LEFT JOIN   MEMBER member_tag																					/*회원테이블 + 회원태그 테이블 조인 */
- ON 		 mt.id_num = member_tag.id_num
- LEFT JOIN 	 (
-				SELECT post_num,																				/*게시물 번호*/
-					   id_num as likeCheck																		/*좋아요 테이블에 회원고유번호를 체크*/
-				FROM   POST_LIKE	
-				WHERE  id_num=#{idNum}
-		  	 ) pl																								/*좋아요 존재(눌림) 여부를 확인하기 위한 인라인 뷰조인*/
- ON 		 p.post_num=pl.post_num
- WHERE		 p.post_num = #{postNum}
- GROUP BY 	 p.post_num																							/*게시물 번호 별 그루핑*/
+      SELECT p.post_num                      /* 게시물 번호 */			
+           , p.id_num                        /* 회원 고유번호 */
+           , p.content                       /* 게시물 상세 내용 */
+           , p.create_date                   /* 생성일 */
+           , p.edit_date                     /* 수정일 */
+           , p.only_me                       /* 나만보기 여부 */
+           , m.nickname                      /* 닉네임 */
+           , m.profile                       /* 프로필 사진 이미지URL */
+           , pl.likeCheck                    /* 현재 클릭한 유저의 좋아요 존재(눌림) 여부 */
+           , GROUP_CONCAT(DISTINCT pi.post_img_url ORDER BY pi.post_img_num) AS strImgList                 /* 해당 게시물의 이미지 리스트를 , 형태로 나눈 스트링 형태 */
+           , GROUP_CONCAT(DISTINCT hb.hobby ORDER BY hb.hb_num) AS strHobbyList                            /* 해당 게시물의 관심사 리스트를 , 형태로 나눈 스트링 형태 */
+           , GROUP_CONCAT(DISTINCT member_tag.nickname ORDER BY mt.id_num) AS strTagList                   /* 해당 게시물의 태그멤버 리스트를 , 형태로 나눈 스트링 형태 */
+           , GROUP_CONCAT( COALESCE(member_tag.profile,'NOPROFILE')  ORDER BY mt.id_num) AS strTagProfiles /* 해당 게시물의 태그멤버의 프로필 리스트를 , 형태로 나눈 스트링 형태 */
+           , (
+              SELECT COUNT(*)
+                FROM POST_LIKE
+               WHERE post_num = p.post_num
+             ) as likeCount                   /* 좋아요 개수 */
+        FROM POST_DATA p                           /* FROM 게시물 테이블 */
+   LEFT JOIN MEMBER m                         /* 회원테이블 조인 */
+          ON p.id_num   = m.id_num																
+   LEFT JOIN POST_IMG pi                      /* 게시물 이미지 테이블 조인 */
+          ON p.post_num = pi.post_num	
+   LEFT JOIN HOBBY hb                         /* 관심사 테이블 조인 */
+          ON p.post_num = hb.post_num
+   LEFT JOIN MEMBER_TAG mt                    /* 회원 태그 테이블 조인 */
+          ON p.post_num = mt.post_num
+   LEFT JOIN  MEMBER member_tag               /* 회원테이블 + 회원태그 테이블 조인 */
+          ON mt.id_num  = member_tag.id_num
+   LEFT JOIN (
+               SELECT post_num                /* 게시물 번호 */
+                    , id_num as likeCheck     /* 좋아요 테이블에 회원고유번호를 체크 */
+                 FROM POST_LIKE	
+                WHERE id_num = #{idNum}
+             ) pl                             /* 좋아요 존재(눌림) 여부를 확인하기 위한 인라인 뷰조인 */
+          ON p.post_num = pl.post_num
+       WHERE p.post_num = #{postNum}
+    GROUP BY p.post_num                       /* 게시물 번호 별 그루핑 */
 </select>
 
 <!-- 이미지리스트 s3이미지 삭제-->
 
 <select id="postImgListByPostNum" parameterType="int" resultType="String">
 /*게시물 별 이미지 리스트*/
-SELECT 	post_img_url 
-FROM 	POST_IMG 
-WHERE 	post_num=#{postNum}		/*게시물 번호*/
+SELECT post_img_url 
+  FROM POST_IMG 
+ WHERE post_num=#{postNum}              /* 게시물 번호 */
 </select>
-
 
 <!--게시물 삭제 -->
 <delete id="postDelete" parameterType="postDelDTO">
 /*게시물 삭제*/
 DELETE 
-FROM 	POST 
-WHERE 	post_num=#{postNum}			/*게시물 번호*/
-AND		id_num=#{idNum}				/*회원 번호*/
+  FROM POST_DATA 
+ WHERE post_num = #{postNum}            /* 게시물 번호 */
+   AND id_num   = #{idNum}              /* 회원 번호 */
 </delete>
-
 <!-- 게시물 수정관련 시작 -->
 
 <!--게시물 내용, 나만보기기능 , 수정일 업데이트 -->
 <update id="postInformUpdate" parameterType="WritePostDTO">
 /*게시물 수정(게시물 테이블)*/
-UPDATE  POST SET
-	    content=#{content},				/*게시물 상세내용*/
-	    onlyME=#{onlyMeState},			/*나만보기 여부*/
-	    edit_date=CURRENT_TIMESTAMP		/*수정일*/
-WHERE   post_num=#{postNum}				/*게시물 번호*/
-AND     id_num=#{idNum}					/*회원번호*/
+UPDATE POST_DATA SET
+       content   = #{content},              /* 게시물 상세내용 */
+       only_me   = #{onlyMeState},          /* 나만보기 여부 */
+       edit_date = CURRENT_TIMESTAMP        /* 수정일 */
+ WHERE post_num  = #{postNum}               /* 게시물 번호 */
+   AND id_num    = #{idNum}                 /* 회원번호 */
 </update>
 
 <!--기존 이미지 삭제 -->
 <delete id="deleteOriginalImg" parameterType="WritePostDTO">
 /*이미지 삭제*/
 DELETE 
-FROM 	POST_IMG
-WHERE 	post_num=#{postNum}
-AND		post_img_url IN   (
+  FROM POST_IMG
+ WHERE post_num = #{postNum}
+   AND post_img_url IN (
 <foreach collection="removeImgList" item="imgUrl" separator=",">
-			#{imgUrl}		/*매개변수로 받은 이미지URL*/
+                       #{imgUrl}       /* 매개변수로 받은 이미지URL */
  </foreach>
- 	    )
+                       )
 </delete>
 
 <!--기존 관심사 삭제 -->
 <delete id="deleteOriginalHobby" parameterType="WritePostDTO">
 /*관심사 삭제*/
 DELETE 
-FROM 	HOBBY
-WHERE   post_num=#{postNum}			/*게시물 번호*/
+  FROM HOBBY
+ WHERE post_num = #{postNum}          /* 게시물 번호 */
 </delete>
-
 <!--기존 맴버태그 삭제-->
 <delete id="deleteOriginalMemTag" parameterType="WritePostDTO">
 /*회원 태그 삭제*/
 DELETE 
-FROM 	MEMBER_TAG	
-WHERE 	post_num=#{postNum}			/*게시물 번호*/
+  FROM MEMBER_TAG	
+ WHERE post_num = #{postNum}			/* 게시물 번호 */
 </delete>
 
 <!--게시물 수정관련 종료 -->
@@ -273,24 +269,23 @@ WHERE 	post_num=#{postNum}			/*게시물 번호*/
 <insert id="postLikeInsert" parameterType="DoPostLikeDTO">
 /*좋아요 삽입*/
 INSERT INTO POST_LIKE (id_num,post_num)
-	   VALUES(#{idNum},#{postNum})				/*회원 번호, 게시물 번호*/
+	   VALUES(#{idNum},#{postNum})      /* 회원 번호, 게시물 번호 */
 </insert> 
 <!--좋아요 삭제-->
 <delete id="postLikeDelete" parameterType="DoPostLikeDTO">
 /*좋아요 삭제*/
 DELETE 
-FROM 	POST_LIKE
-WHERE 	post_num=#{postNum}			/*게시물 번호*/		
-AND 	id_num=#{idNum}				/*회원 번호*/
+  FROM POST_LIKE
+ WHERE post_num = #{postNum}            /* 게시물 번호 */		
+   AND id_num   = #{idNum}              /* 회원 번호 */
 </delete>
 
 <!--좋아요 작업 후 변경된 좋아요 수 -->
 <select id="afterDoPostLike" parameterType="int" resultType="int">
 /*좋아요 작업 후 변경된 좋아요 수*/
-select 	count(*) as likeCount		/*좋아요 수*/
-FROM 	POST_LIKE
-WHERE 	post_num=#{postNum}			/*게시물 번호*/
+select count(*) as likeCount		/* 좋아요 수 */
+  FROM POST_LIKE
+ WHERE post_num=#{postNum}			/* 게시물 번호 */
 </select>
 </mapper>
- 
  
