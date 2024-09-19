@@ -56,7 +56,7 @@
                                        ) 	 
                    AND approve='FOLLOWNO'                              /*승인상태가 팔로우 요청 대기중인 상태 */
                ) as followNOCount                                      /*현재 접속한 회원과 현 피드회훤 간의 팔로우 상관관계 파악을 위한 컬럼*/	
-			 , (
+             , (
                  SELECT COALESCE(COUNT(*),0)
                    FROM FOLLOW                                          /*팔로우 테이블에서 카운트 값을*/
                   WHERE id_num       = #{sessionIdNum}                  /*팔로우 테이블의 팔로우하는 아이디 고유번호가*/			 	  	
