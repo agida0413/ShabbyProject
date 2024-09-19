@@ -18,11 +18,11 @@
  LEFT JOIN (  
                SELECT post_num
                     , COUNT(*) AS likeCount
-                    FROM post_like       
+                 FROM post_like       
              GROUP BY post_num                                  /*각 게시물 별 좋아요 수 집계 서브쿼리 , 조인*/
- 			) pl
-        ON  p.post_num=pl.post_num 
- LEFT JOIN  (
+           ) pl
+          ON  p.post_num=pl.post_num 
+ LEFT JOIN (
                  SELECT pi.post_num
                       , pi.post_img_url                                     /* 하나의 이미지 */
                    FROM post_img pi                                         /* 게시물 이미지 테이블 */
@@ -41,10 +41,10 @@
 RIGHT JOIN (	
             SELECT post_num
               FROM MEMBER_TAG
-		     WHERE id_num = (
+             WHERE id_num = (
                             SELECT id_num
                               FROM MEMBER
-							 WHERE nickname = #{nickname}	
+                             WHERE nickname = #{nickname}	
                             ) 
            ) mtSubQuery                                                      /* 매개변수로 받은 닉네임이 태그테이블에 존재하는 게시물 번호만 RIGHT JOIN */
         ON p.post_num = mtSubQuery.post_num
@@ -67,7 +67,7 @@ WHERE p.id_num IN (
                     SELECT following_id
                       FROM FOLLOW
                      WHERE id_num  = #{idNum}
-	    			   AND approve = 'FOLLOWOK'  			
+                       AND approve = 'FOLLOWOK'  			
                   )                                                        /*팔로우 테이블에서 내가 팔로우한 유저이고 상태가 팔로우 승인완료인 상태인 게시물 번호만 필터링*/
   AND onlyMe = 'NOTONLYME'                                                 /*나만보기 게시물 제외*/
 ORDER BY create_date DESC
@@ -76,8 +76,8 @@ ORDER BY create_date DESC
     <when test="feedState=='GLOBALFEED'||feedState=='SEARCHFEED'">         /*피드 타입이 글로벌 피드이거나 검색피드일 경우*/
 WHERE p.id_num IN(   			
                   SELECT id_num
-					FROM MEMBER
-    			   WHERE locked = 'PUBLICID'    				 
+                    FROM MEMBER
+                   WHERE locked = 'PUBLICID'    				 
                      AND NOT (id_num = #{idNum})                          /*공개아이디 게시물, 내 게시물이 아닌 조건*/	 				 	
     			   UNION                                                  /* + */	
                   SELECT following_id as id_num	                          /*팔로우 상태인 게시물(비공개 계정포함)*/
@@ -94,12 +94,12 @@ ORDER BY  create_date DESC
     	<if test="type=='NORMAL'">                              /*타입이 태그게시물이 아닌 작성게시물일 경우*/
 WHERE p.id_num = ( 
                   SELECT id_num
-			        FROM MEMBER 
+                    FROM MEMBER 
                    WHERE nickname=#{nickname}                   /*매개 변수로 받은 닉네임의 게시물*/
                  )								
         </if>
 	    <if test="!itsMe">                                     /*현 유저피드가 내 피드가 아닌경우*/
-  AND onlyMe='NOTONLYME'                                       /*나만보기 게시물 제외*/
+  AND onlyMe = 'NOTONLYME'                                       /*나만보기 게시물 제외*/
 		</if>
 ORDER BY create_date DESC  			   
     </when>
