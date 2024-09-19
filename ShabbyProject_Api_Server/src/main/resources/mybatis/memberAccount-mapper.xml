@@ -77,7 +77,7 @@ SELECT locked       /* 공개,비공개 여부 */
 </select>
 
 <!--핸드폰 번호 중복검증-->
-<select id="findByUserPhone" parameterType="String" resultType="MemberDTO">\
+<select id="findByUserPhone" parameterType="String" resultType="MemberDTO">
 /* 핸드폰 번호를 통한 회원정보 */
 SELECT id_num       /* 회원 고유번호 */
      , email        /* 이메일 */
@@ -122,18 +122,12 @@ INSERT INTO EMAIL_AUTH (email,code,expiration,isauth)
 	
 <!--이메일 인증시 코드검증 셀렉트 여러 정보가 있을 수 있으니 가장최신것을 가져옴 -->
 <select id="emailAuthGetValidation" parameterType="String" resultType="EmailAuthDTO">
-/*이메일 인증시 코드검증 조회*/
-SELECT id_num       /* 회원 고유번호 */
-     , email        /* 이메일 */
-     , password     /* 비밀번호 */
-     , nickname     /* 닉네임 */
-     , name         /* 성명 */
-     , phone        /* 휴대폰 번호 */
-     , profile      /* 프로필 사진 */
-     , introduce    /* 자기소개 */
-     , create_date  /* 생성일 */
-     , edit_date    /* 수정일 */
-     , locked       /*비공개,공개 여부*/ 
+/* 이메일 인증시 코드검증 조회 */
+SELECT emailauth_num       /* 회원 고유번호 */
+     , email               /* 이메일 */
+     , code                /* 인증코드 */
+     , expiration          /* 유효기간 */
+     , isauth              /* 인증여부 */
   FROM EMAIL_AUTH
  WHERE EMAIL         = #{email}
    AND EMAILAUTH_NUM = (
@@ -179,6 +173,4 @@ UPDATE MEMBER SET
   WHERE email = #{email}
 </update>
 	
-	
-
  </mapper>

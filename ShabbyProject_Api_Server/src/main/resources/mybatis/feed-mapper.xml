@@ -10,7 +10,7 @@
 <select id="userFeedInfoFromMember" parameterType="GetUserFeedInformDTO" resultType="UserFeedInformDTO">
        /* 피드 디테일 정보(게시물 리스트 제외) */
        SELECT profile            /* 프로필 이미지 */
-            , nickname,          /* 닉네임 */
+            , nickname           /* 닉네임 */
             , introduce	         /* 자기소개 정보 */
             , locked             /* 공개,비공개 여부 */
             , (
