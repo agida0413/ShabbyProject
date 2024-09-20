@@ -156,12 +156,12 @@ DELETE
  LEFT JOIN MEMBER m                     /* 회원 테이블 조인(받는 이) */
         ON a.receiver = m.id_num
  LEFT JOIN MEMBER sm
-        ON a.sender = sm.id_num	        /* 회원 테이블 조인(보내는 이) */
+        ON a.sender   = sm.id_num	        /* 회원 테이블 조인(보내는 이) */
  LEFT JOIN FOLLOW fw
-        ON m.id_num = fw.id_num
-       AND sm.id_num = fw.following_id  /* 팔로우 테이블 조인 */
+        ON m.id_num   = fw.id_num
+       AND sm.id_num  = fw.following_id  /* 팔로우 테이블 조인 */
  LEFT JOIN POST_DATA p
-        ON a.post_num = p._num          /* 게시물 테이블 조인 */
+        ON a.post_num = p.id_num          /* 게시물 테이블 조인 */
      WHERE (    
                  m.id_num      = #{idNum}	        /* 태그 알림의 경우 나만보기로 변경 혹은 , 비공개 계정으로 전환 후  팔로우를 끊었을때 알람을 통해 게시물을 열람할 수 있는 현상가능성 */				
              AND a.alarm_type != 'TAG'              /* 알람 타입이 태그가아닌경우는 일반 조건 */

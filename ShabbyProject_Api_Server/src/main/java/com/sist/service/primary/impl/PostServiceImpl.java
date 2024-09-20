@@ -87,7 +87,7 @@ public class PostServiceImpl implements PostService {
         catch (Exception e) {
         	
             removeImage(imgUrList); // 데이터베이스 오류 발생 시 이미지 삭제 및 롤백
-            throw new InternerException("서버 내부오류입니다. 잠시 뒤 이용해 주세요.", "게시물 삽입중 에러발생");
+            throw new InternerException("서버 내부 오류입니다. 잠시 뒤 이용해 주세요.", "게시물 삽입중 에러발생");
         }
 
         // 성공적으로 처리된 경우 HTTP 200 OK 응답 반환
@@ -238,7 +238,7 @@ public class PostServiceImpl implements PostService {
 		List<String> imgUrlList=postRepository.postImgListByPostNum(postNum);
 		//게시물 등록시 필히 사진을 1장이상 등록하기 때문에 만약 사진리스트가 비어있으면 예외처리
 		if(imgUrlList.size()==0) {
-			throw new InternerException("서버내부오류로 게시물삭제에 실패하였습니다.", "게시물 삭제중 이미지 리스트가 비어있음");
+			throw new InternerException("서버 내부 오류입니다. 잠시 뒤 이용해 주세요.", "게시물 삭제중 이미지 리스트가 비어있음");
 		}
 		
 		//단순히 게시물 번호를 받아 레코드를 삭제할 수 있지만 , 혹시모를 위험에 대비하여 where절에 id넘버를 줘서 조건을 주면
@@ -297,7 +297,7 @@ public class PostServiceImpl implements PostService {
 			// TODO: handle exception
 			//데이터베이스 저장중 예외 발생시 s3 다시 삭제 
 			removeImage(imgUrList);
-			 throw new InternerException("서버 내부오류입니다. 잠시 뒤 이용해 주세요.", "게시물 삭제도중 이미지 재 삭제중 에러발생");
+			 throw new InternerException("서버 내부 오류입니다. 잠시 뒤 이용해 주세요.", "게시물 삭제도중 이미지 재 삭제중 에러발생");
 		}
 	}
 	//기존 회원 태그 리스트를 갖고옴 
@@ -482,7 +482,7 @@ public class PostServiceImpl implements PostService {
 		}
     	 catch (Exception e) {
  			// TODO: handle exception
- 			throw new InternerException("서버 내부 오류입니다.", "이미지 업로드 예외발생으로 인한 사진 롤백삭제중 예외발생");
+ 			throw new InternerException("서버 내부 오류입니다. 잠시 뒤 이용해 주세요.", "이미지 업로드 예외발생으로 인한 사진 롤백삭제중 예외발생");
  		}
            
       
@@ -521,7 +521,7 @@ public class PostServiceImpl implements PostService {
          	        // 업로드된 이미지가 있을 경우, 필요한 추가 처리 (예: 이미지 삭제)
          	        removeImage(imgUrList);
          	    }
-         	 throw new InternerException("예기치 않은 오류 발생","이미지 삭제중오류 ");
+         	 throw new InternerException("서버 내부 오류입니다. 잠시 뒤 이용해 주세요.","이미지 삭제중오류 ");
          	
  		}
         

@@ -74,16 +74,16 @@ public class S3ImageService implements ImageService{
         catch (SdkException e) {
             // S3 관련 SDK 예외 처리
         	  
-            throw new InternerException(" 서버 내부 오류입니다.","S3에 파일 업로드 중 오류 발생");
+            throw new InternerException("서버 내부 오류입니다. 잠시 뒤 이용해 주세요.","S3에 파일 업로드 중 오류 발생");
         } catch (IOException e) {
             // 파일 읽기 중 IO 예외 처리
         	
-        	   throw new InternerException("서버 내부오류입니다.","파일 읽기 중 IO 오류 발생");
+        	   throw new InternerException("서버 내부 오류입니다. 잠시 뒤 이용해 주세요.","파일 읽기 중 IO 오류 발생");
    
         } catch (Exception e) {
             // 기타 예외 처리
         	
-            throw new InternerException("서버 내부 오류입니다.","이미지 업로드 중 오류 발생");
+            throw new InternerException("서버 내부 오류입니다. 잠시 뒤 이용해 주세요.","이미지 업로드 중 오류 발생");
         }
     }
     //파일 확장자 검증 
@@ -137,10 +137,10 @@ public class S3ImageService implements ImageService{
             s3Client.putObject(putObjectRequest, RequestBody.fromBytes(bytes));
         } catch (S3Exception e) {
             
-            throw new InternerException("서버 내부 오류입니다.","S3에 파일 업로드 실패" );
+            throw new InternerException("서버 내부 오류입니다. 잠시 뒤 이용해 주세요.","S3에 파일 업로드 실패" );
         } catch (SdkException e) {
           
-            throw new InternerException("서버 내부 오류입니다." ,"SDK 오류 발생");
+            throw new InternerException("서버 내부 오류입니다. 잠시 뒤 이용해 주세요." ,"SDK 오류 발생");
         }
 
         return s3Client.utilities().getUrl(builder -> builder.bucket(bucket).key(s3FileName)).toExternalForm();
@@ -157,10 +157,10 @@ public class S3ImageService implements ImageService{
             s3Client.deleteObject(deleteObjectRequest);
         } catch (S3Exception e) {
             
-            throw new InternerException("서버 내부오류입니다.","S3에서 이미지 삭제 중 오류 발생");
+            throw new InternerException("서버 내부 오류입니다. 잠시 뒤 이용해 주세요.","S3에서 이미지 삭제 중 오류 발생");
         } catch (Exception e) {
             
-            throw new InternerException("서버 내부오류입니다.","이미지 삭제 중 오류 발생");
+            throw new InternerException("서버 내부 오류입니다. 잠시 뒤 이용해 주세요.","이미지 삭제 중 오류 발생");
         }
     }
     //파일 삭제시 키값 가져오기
@@ -171,14 +171,14 @@ public class S3ImageService implements ImageService{
             return decodedPath.startsWith("/") ? decodedPath.substring(1) : decodedPath;
         } catch (MalformedURLException e) {
             
-            throw new InternerException("서버 내부 오류입니다." ,"잘못된 이미지 주소 형식입니다");
+            throw new InternerException("서버 내부 오류입니다. 잠시 뒤 이용해 주세요." ,"잘못된 이미지 주소 형식입니다");
         } catch (UnsupportedEncodingException e) {
 
-            throw new InternerException("서버 내부 오류입니다." ,"URL 디코딩 중 오류 발생");
+            throw new InternerException("서버 내부 오류입니다. 잠시 뒤 이용해 주세요." ,"URL 디코딩 중 오류 발생");
         }
           catch (Exception e) {
             
-            throw new InternerException("서버 내부오류입니다.","삭제 시 키를 가져오는 과정에서 오류 발생");
+            throw new InternerException("서버 내부 오류입니다. 잠시 뒤 이용해 주세요.","삭제 시 키를 가져오는 과정에서 오류 발생");
         }
     }
 }

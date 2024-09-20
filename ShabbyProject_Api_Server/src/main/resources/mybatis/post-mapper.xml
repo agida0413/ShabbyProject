@@ -52,9 +52,9 @@ RIGHT JOIN (
    </if>
 </if>
 
-<if test="feedState=='SEARCHFEED'">	                                         /* 피드타입이 검색피드 */
+<if test="feedState=='SEARCHFEED'">                                         /* 피드타입이 검색피드 */
 INNER JOIN (
-             SELECT post_num
+             SELECT DISTINCT post_num                                       /* hobby 테이블에서 게시물번호가 여러개 동일 나올 수 있음 */
                FROM HOBBY
               WHERE hobby LIKE CONCAT('%',#{keyword},'%')
            ) searchSubQuery	                                                /* 검색키워드가 관심사 테이블에 포함되는 게시물 번호만 조인 */ 
@@ -177,7 +177,7 @@ INSERT INTO POST_DATA (id_num,content,only_me)
            , GROUP_CONCAT(DISTINCT pi.post_img_url ORDER BY pi.post_img_num) AS strImgList                 /* 해당 게시물의 이미지 리스트를 , 형태로 나눈 스트링 형태 */
            , GROUP_CONCAT(DISTINCT hb.hobby ORDER BY hb.hb_num) AS strHobbyList                            /* 해당 게시물의 관심사 리스트를 , 형태로 나눈 스트링 형태 */
            , GROUP_CONCAT(DISTINCT member_tag.nickname ORDER BY mt.id_num) AS strTagList                   /* 해당 게시물의 태그멤버 리스트를 , 형태로 나눈 스트링 형태 */
-           , GROUP_CONCAT( COALESCE(member_tag.profile,'NOPROFILE')  ORDER BY mt.id_num) AS strTagProfiles /* 해당 게시물의 태그멤버의 프로필 리스트를 , 형태로 나눈 스트링 형태 */
+           , GROUP_CONCAT(COALESCE(member_tag.profile,'NOPROFILE') ORDER BY mt.id_num) AS strTagProfiles /* 해당 게시물의 태그멤버의 프로필 리스트를 , 형태로 나눈 스트링 형태 */
            , (
               SELECT COUNT(*)
                 FROM POST_LIKE
