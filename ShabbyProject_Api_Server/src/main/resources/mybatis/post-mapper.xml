@@ -21,7 +21,7 @@
                  FROM POST_LIKE       
              GROUP BY post_num                                  /* 각 게시물 별 좋아요 수 집계 서브쿼리 , 조인 */
            ) pl
-          ON  p.post_num=pl.post_num 
+       ON  p.post_num=pl.post_num 
  LEFT JOIN (
                  SELECT pi.post_num
                       , pi.post_img_url                                     /* 하나의 이미지 */
@@ -34,7 +34,7 @@
                         ) subquery 
                      ON pi.post_num = subquery.post_num 
                     AND pi.post_img_num = subquery.min_img_num 
-             ) pi
+           ) pi
         ON p.post_num = pi.post_num                                          /* 각 게시물 별 가장먼저 등록한 이미지 서브쿼리 조인 */
 <if test="feedState=='USERFEED'">                                            /* 피드타입이 유저피드 */
    <if test="type=='TAGGED'">                                                /* 타입이 태그당한 게시물조건 */
