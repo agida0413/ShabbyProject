@@ -186,10 +186,20 @@ public class PostServiceImpl implements PostService {
 				for (int i=0; i<handleTagList.length;i++) {
 					handleTagProfileList[i]=null;
 				}
-			}//프로필 이미지가 하나라도 존재하면 "예시이미지,NOPROFILE,NOPROFILE" 형태 
+			}//프로필 이미지가 하나라도 존재하면 "예시이미지,NOPROFILE" 형태 ( 중복을 제거하기 때문에 두개의 값만 존재) 
 			else {
 				//,로 잘라서 배열로 변환 
-				handleTagProfileList= dto.getStrTagProfiles().split(",");;
+				String [] convertArray=dto.getStrTagProfiles().split(","); 
+					//자른 값을 tagNicknamelist랑 같은 인덱스에 값 저장
+					for(int k=0; k<convertArray.length;k++) {
+						handleTagProfileList[k] = convertArray[k];
+					}
+					// 인덱스 가 부족한 경우에는 NOPROFILE 값이 제거 됬다는 의미이므로 배열이 끝난시점~ 태그닉네임 리스트 까지 해당인덱스에
+					//NOPROFILE 값을 설정
+					for(int j=convertArray.length; j<handleTagProfileList.length;j++) {
+						handleTagProfileList[j]="NOPROFILE";
+					}			
+				
 			}
 					
 			

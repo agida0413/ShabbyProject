@@ -17,6 +17,7 @@
        ON m.id_num  =   f.following_id
     WHERE f.id_num  =   #{idNum}
       AND nickname LIKE CONCAT('%',#{keyword},'%') 
+      AND approve   = 'FOLLOWOK'
     LIMIT #{rowSize} OFFSET #{startRow}  
 </select>
  	
