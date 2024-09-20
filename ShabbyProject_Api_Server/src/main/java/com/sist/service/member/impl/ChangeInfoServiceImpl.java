@@ -250,7 +250,7 @@ public class ChangeInfoServiceImpl implements ChangeInfoService{
 		}
 		else {//나머지는 정의된 값이 없으므로 예외 
 			
-			throw new InternerException("서버 내부오류입니다. 잠시 뒤 이용해주세요.","비공개/공개여부 변경 작업중 오류발생"); // 서버 내부오류 500 발생 
+			throw new InternerException("서버 내부 오류입니다. 잠시 뒤 이용해 주세요.","비공개/공개여부 변경 작업중 오류발생"); // 서버 내부오류 500 발생 
 			
 		}
 		

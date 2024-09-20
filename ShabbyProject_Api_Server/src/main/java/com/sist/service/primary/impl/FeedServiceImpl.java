@@ -319,10 +319,10 @@ public class FeedServiceImpl implements FeedService{
 				// TODO: handle exception
 				//에러시 예외 서버내부오류 던짐 
 			
-				throw new InternerException("서버내부 오류입니다. 잠시 뒤 이용해주세요.", "프로필 사진변경중 오류발생하여 롤백 후 기본이미지 변경중 오류발생");
+				throw new InternerException("서버 내부 오류입니다. 잠시 뒤 이용해 주세요.", "프로필 사진변경중 오류발생하여 롤백 후 기본이미지 변경중 오류발생");
 			}
 			//롤백후 기본이미지로 변경 성공
-			throw new InternerException("서버내부 오류입니다. 우선 기본 이미지로 변경되었습니다.", "프로필 사진변경중 오류발생/ 기본이미지로 업데이트 ");
+			throw new InternerException("서버 내부 오류입니다. 잠시 뒤 이용해 주세요.", "프로필 사진변경중 오류발생/ 기본이미지로 업데이트 ");
 		}
 		
 		
