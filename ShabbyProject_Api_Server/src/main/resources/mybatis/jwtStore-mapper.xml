@@ -10,7 +10,7 @@
 <select id="findRefresh" parameterType="String" resultType="int">
 /* 리프레시 토큰 검증 */
   SELECT COUNT(*)
-    FROM token_store
+    FROM TOKEN_STORE
    WHERE refresh = #{refresh}
 </select>
 	
@@ -20,14 +20,14 @@
 <delete id="deleteRefresh" parameterType="String">
 /* 로그아웃, 리프레시 토큰 데이터베이스 삭제 */
 DELETE 
-  FROM token_store
+  FROM TOKEN_STORE
  WHERE refresh = #{refresh}
 </delete>
 
 <!--리프레시 토큰을 데이터베이스에 저장함 ( 리프레시 토큰 발급시 (로그인성공, 재발급 )) -->
 <insert id="save" parameterType="TokenStoreDTO">
   /* 리프레시 토큰 발급,재발급 */
-INSERT into token_store (id_num,refresh,expiration,browser)
+INSERT INTO TOKEN_STORE (id_num,refresh,expiration,browser)
        VALUES (
                #{idNum}
               ,#{refresh}

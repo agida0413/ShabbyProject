@@ -12,8 +12,8 @@
 /* 키워드 기반 팔로잉 목록 */
    SELECT nickname             /* 닉네임 */
         , profile              /* 프로필 이미지 */
-     FROM MEMBER m		
-     JOIN FOLLOW f 		
+     FROM MEMBER m
+     JOIN FOLLOW f 
        ON m.id_num  =   f.following_id
     WHERE f.id_num  =   #{idNum}
       AND nickname LIKE CONCAT('%',#{keyword},'%') 
@@ -29,11 +29,11 @@
                  SELECT approve 
                    FROM FOLLOW
                   WHERE id_num       = #{idNum}
-                    AND following_id = ( 					 
+                    AND following_id = (  
                                           SELECT id_num
-                                            FROM MEMBER							 
+                                            FROM MEMBER 
                                            WHERE nickname = m.nickname
-                                       )	
+                                       )
               ) as myApprove            /* 현 회원과 매개변수의 회원의 팔로우 관계정보 서브쿼리 */
          FROM FOLLOW f
     LEFT JOIN MEMBER m                  /* 회원 테이블 조인 */
@@ -42,11 +42,11 @@
         WHERE f.id_num = (
                           SELECT id_num
                             FROM MEMBER
-                           WHERE nickname = #{nickname}	
+                           WHERE nickname = #{nickname}
                          )                          /* 팔로우 테이블 주체자가 매개변수로 받은 회원의 회원번호 */
-          AND approve  =  'FOLLOWOK'	            /* 팔로우 상태가 OK */
+          AND approve  =  'FOLLOWOK'                /* 팔로우 상태가 OK */
   </if>	
-  <if test="flwType=='FOLLOWER'">	                /* 팔로우 하는 사람 */
+  <if test="flwType=='FOLLOWER'">                   /* 팔로우 하는 사람 */
            ON f.id_num = m.id_num
         WHERE f.following_id = (
                                 SELECT id_num
@@ -73,10 +73,10 @@
          )
         ,                 /* 팔로잉 받는 사람 회원 고유번호 */
         <choose>
-          <when test="locked == 'LOCKED'">	/* 비공개 계정일 시 팔로우 상태 */
-          'FOLLOWNO'						
+          <when test="locked == 'LOCKED'">     /* 비공개 계정일 시 팔로우 상태 */
+          'FOLLOWNO'
           </when>
-          <when test="locked == 'PUBLICID'">	/* 공개 계정일 시 팔로우 상태 */
+          <when test="locked == 'PUBLICID'">   /* 공개 계정일 시 팔로우 상태 */
           'FOLLOWOK'
           </when>
         </choose>
@@ -100,12 +100,12 @@ DELETE
 <update id="acceptFollow" parameterType="HandleFollowReqDTO">
 /*비공개 계정에 대한 팔로우 요청 수락*/
 UPDATE FOLLOW SET
-       approve = 'FOLLOWOK'		/* 팔로우 수락으로 상태 변경 */
- WHERE following_id=#{idNum}	/* 팔로우 받는 아이디 */
-   AND id_num = (				/* 팔로우 하는 아이디 */
+       approve = 'FOLLOWOK'      /* 팔로우 수락으로 상태 변경 */
+ WHERE following_id=#{idNum}     /* 팔로우 받는 아이디 */
+   AND id_num = (                /* 팔로우 하는 아이디 */
                   SELECT id_num
                     FROM MEMBER 
-                   WHERE nickname = #{nickname}	
+                   WHERE nickname = #{nickname}
                 )
 </update>
 <!--팔로우 요청 거절 -->
@@ -116,15 +116,15 @@ DELETE
  WHERE following_id = #{idNum}      /* 팔로우 받는 아이디 회원 고유번호 */
    AND id_num = (                   /* 팔로우 하는 아이디 회원 고유번호 */
                  SELECT id_num
-                   FROM MEMBER 			
-                  WHERE nickname = #{nickname}	
+                   FROM MEMBER 
+                  WHERE nickname = #{nickname}
                 )
 </delete>
 
 <!-- 공개 계정 전환시 팔로우 테이블 팔로우 요청을 팔로우 함 으로 변경 -->
 <update id="changeFollowStatus" parameterType="int">
 /* 공개계정 전환시 팔로우 테이블의 FOLLOWSTATE - > OK */
-UPDATE follow SET			
+UPDATE follow SET
        approve = 'FOLLOWOK'         /* 팔로우 상태 -> 승인상태 */
  WHERE following_id = #{idNum}      /* 팔로우하는 아이디 고유번호 */
    AND approve      = 'FOLLOWNO'    /* 팔로우 상태가 대기중 상태 */

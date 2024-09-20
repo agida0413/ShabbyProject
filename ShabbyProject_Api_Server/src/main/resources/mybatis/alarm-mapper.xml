@@ -83,7 +83,7 @@ DELETE
                            FROM MEMBER
                           WHERE nickname = #{receiver} 
                       ) 
-					 </foreach>
+                     </foreach>
                     )
  </if>  
 <if test="alarmType=='LIKE'">
@@ -116,12 +116,12 @@ DELETE
            , a.alarm_type                       /* 알람 유형 */
            , a.create_date                      /* 생성일 */
            , a.alarm_num AS alarmNum            /* 알람 고유번호 */
-        FROM alarm a
-   LEFT JOIN member m
+        FROM ALARM a
+   LEFT JOIN MEMBER m
           ON a.receiver = m.id_num               /* 받는이- 회원테이블 조인 */
-   LEFT JOIN member sm
+   LEFT JOIN MEMBER sm
           ON a.sender   = sm.id_num              /* 보내는이 회원테이블 조인 */
-   LEFT JOIN follow fw
+   LEFT JOIN FOLLOW fw
           ON m.id_num   = fw.id_num              /* 팔로우 테이블 조인 */
          AND sm.id_num  = fw.following_id		
    LEFT JOIN POST_DATA p                         /* 게시물 테이블 조인 */
@@ -153,18 +153,18 @@ DELETE
  /* 알람 리스트 총 페이지 */
     SELECT CEIL(COUNT(*) / #{rowSize})  /* 총 페이지 */
       FROM ALARM a
- LEFT JOIN member m                     /* 회원 테이블 조인(받는 이) */
+ LEFT JOIN MEMBER m                     /* 회원 테이블 조인(받는 이) */
         ON a.receiver = m.id_num
- LEFT JOIN member sm
+ LEFT JOIN MEMBER sm
         ON a.sender = sm.id_num	        /* 회원 테이블 조인(보내는 이) */
- LEFT JOIN follow fw
+ LEFT JOIN FOLLOW fw
         ON m.id_num = fw.id_num
        AND sm.id_num = fw.following_id  /* 팔로우 테이블 조인 */
  LEFT JOIN POST_DATA p
         ON a.post_num = p._num          /* 게시물 테이블 조인 */
      WHERE (    
                  m.id_num      = #{idNum}	        /* 태그 알림의 경우 나만보기로 변경 혹은 , 비공개 계정으로 전환 후  팔로우를 끊었을때 알람을 통해 게시물을 열람할 수 있는 현상가능성 */				
-             AND a.alarm_type != 'TAG'  			/* 알람 타입이 태그가아닌경우는 일반 조건 */
+             AND a.alarm_type != 'TAG'              /* 알람 타입이 태그가아닌경우는 일반 조건 */
            )
         OR (
                  m.id_num     = #{idNum}
@@ -176,8 +176,8 @@ DELETE
                           )                         /* ( 보내는 사람의 계정이 비공개 계정 + 서로 팔로우 관계가 아닌경우의 반대 )+(나만보기 게시물이 아닌 경우) */
                      AND p.only_me != 'ONLYME'
                    )
-				 )
-			)
+                 )
+            )
 </select>
  
 <!--알람 조회시 읽음 상태 업데이트-->
@@ -198,8 +198,8 @@ UPDATE ALARM SET
  <!--or 팔로우 요청 수락시 변경 \-->
 <update id="changeAlarmStatus" parameterType="AlarmChangeDTO">
   /* 공개계정 전환시 알람 테이블의 FOLLOWSTATE - > OK */
-  UPDATE ALARM SET		
-         alarm_type = 'FOLLOW'	    /* 팔로우 상태 -> 승인상태 */
+  UPDATE ALARM SET 
+         alarm_type = 'FOLLOW'      /* 팔로우 상태 -> 승인상태 */
    WHERE receiver   = #{idNum}      /* 받는이 */
      AND alarm_type = 'FOLLOWREQ'   /* 팔로우 상태가 대기중 상태 */
 <if test="type=='ACCEPT'">
@@ -216,12 +216,12 @@ UPDATE ALARM SET
 /* 알람 리스트에서 팔로우 요청 거절 후 알람 STATUS 업데이트 */
 DELETE 
   FROM ALARM
- WHERE receiver = #{idNum}		/* 받는이 */
-   AND     sender = (
-                 SELECT id_num 
-                   FROM MEMBER
-                  WHERE nickname = #{senderNickname}
-           )                    /* 보내는 이 조건 */
+ WHERE receiver = #{idNum}       /* 받는이 */
+   AND sender   = (
+             SELECT id_num 
+               FROM MEMBER
+              WHERE nickname = #{senderNickname}
+        )                    /* 보내는 이 조건 */
    AND alarm_type = 'FOLLOWREQ' /* 알람 타입이 요청 수락 대기중인 조건 */
 </delete>
  

@@ -21,7 +21,7 @@ SELECT id_num      /* 회원 고유번호 */
      , create_date /* 생성일 */
      , edit_date   /* 수정일 */
      , locked      /* 비공개,공개 여부 */
-  FROM member	
+  FROM MEMBER
  WHERE email = #{email}
 </select>
 	
@@ -39,7 +39,7 @@ SELECT id_num       /* 회원 고유번호 */
      , create_date  /* 생성일 */
      , edit_date    /* 수정일 */
      , locked       /* 비공개,공개 여부 */
-  FROM member
+  FROM MEMBER
  WHERE id_num = #{idNum}
 </select>
 	
@@ -47,8 +47,8 @@ SELECT id_num       /* 회원 고유번호 */
 <select id="introduceByUserIdNum" parameterType="int" resultType="MemberDTO">	
 /* 회원 고유번호를 통한 회원 자기소개 정보 */ 
 SELECT introduce
-FROM   member
-WHERE  id_num = #{idNum}
+  FROM MEMBER
+ WHERE id_num = #{idNum}
 </select>
 
 <!--닉네임을 통한 회원검증(중복 닉네임)-->
@@ -65,7 +65,7 @@ SELECT id_num       /* 회원 고유번호 */
      , create_date  /* 생성일 */
      , edit_date    /* 수정일 */
      , locked       /* 비공개,공개 여부 */
-  FROM member 
+  FROM MEMBER 
  WHERE nickname = #{nickname}
 </select>
 
@@ -90,7 +90,7 @@ SELECT id_num       /* 회원 고유번호 */
      , create_date  /* 생성일 */
      , edit_date    /* 수정일 */
      , locked       /* 비공개,공개 여부 */ 
-  FROM member
+  FROM MEMBER
  WHERE phone = #{phone}
 </select>
 	
@@ -129,18 +129,18 @@ SELECT emailauth_num       /* 회원 고유번호 */
      , expiration          /* 유효기간 */
      , isauth              /* 인증여부 */
   FROM EMAIL_AUTH
- WHERE EMAIL         = #{email}
-   AND EMAILAUTH_NUM = (
-                         SELECT MAX(EMAILAUTH_NUM)
+ WHERE email         = #{email}
+   AND emailauth_num = (
+                         SELECT MAX(emailauth_num)
                            FROM EMAIL_AUTH
-                          WHERE EMAIL = #{email}
+                          WHERE email = #{email}
                        )
 </select>
 
 <!--이메일 인증 성공시 해당 로우 인증완료로 상태 업데이트-->
 <update id="emailAuthClear" parameterType="int">
 /*이메일 인증 성공시 해당 로우 인증완료로 상태 업데이트*/
-UPDATE email_auth set
+UPDATE EMAIL_AUTH set
        isauth = 'Y'                     /* 인증성공 */ 
  WHERE emailauth_num = #{emailauthNum}	/* 인증코드 테이블 고유번호 */
 		

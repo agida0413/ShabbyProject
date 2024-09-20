@@ -10,9 +10,9 @@
 <!--특정 매개변수에 의한 관심사 조회-->
 	
 <select id="findHobby" parameterType="SearchHobbyDTO" resultType="HobbyDTO">
-     /* 검색어를 통한 중복제거된 관심사 조회 */	
-     SELECT distinct hobby                          /* 중복 제거된 관심사 */
-       FROM hobby		
+     /* 검색어를 통한 중복제거된 관심사 조회 */
+     SELECT DISTINCT hobby                          /* 중복 제거된 관심사 */
+       FROM HOBBY
       WHERE hobby LIKE CONCAT('%',#{keyword},'%')   /* 관심사 검색조건(키워드) */
       LIMIT #{rowSize} OFFSET #{startRow}           /* 페이징 */
 </select>
@@ -20,9 +20,9 @@
 <!--닉네임에 의한 관심사 리스트 -->
 <select id="findHobbyByNickname" parameterType="String" resultType="HobbyDTO">
 /* 닉네임을 통한 중복제거된 관심사 조회 */
-   SELECT distinct hobby /*중복 제거된 관심사*/
-     FROM hobby 
-    WHERE id_num = (		
+   SELECT DISTINCT hobby /*중복 제거된 관심사*/
+     FROM HOBBY 
+    WHERE id_num = (
                      SELECT id_num
                        FROM MEMBER
                       WHERE nickname = #{nickname}    /* 닉네임 */

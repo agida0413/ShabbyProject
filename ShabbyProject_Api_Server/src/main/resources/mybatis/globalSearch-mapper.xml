@@ -15,7 +15,7 @@
            FROM MEMBER                                       /* 멤버 테이블 */
           WHERE (
                      nickname LIKE CONCAT('%',#{keyword},'%') 
-                  OR phone     =   #{keyword}                 /* 검색어 */						
+                  OR phone     =   #{keyword}                 /* 검색어 */
                 )
             AND NOT id_num = #{idNum}                         /* 나 제외 */
             
@@ -44,13 +44,13 @@
                      SELECT COUNT(*)
                        FROM FOLLOW 
                       WHERE following_id = m.id_num
-                        AND approve      = 'FOLLOWOK'				
+                        AND approve      = 'FOLLOWOK'
                    ) as followerAmount         /* 팔로워 수 */
                  , (
                      SELECT COUNT(*) 
                        FROM FOLLOW  
                       WHERE id_num  = m.id_num
-                        AND approve = 'FOLLOWOK'				
+                        AND approve = 'FOLLOWOK'
                    ) as followingAmount       /* 팔로잉 수 */
                  , (
                      SELECT hobby 

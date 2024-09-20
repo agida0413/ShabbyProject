@@ -11,7 +11,7 @@
 /*닉네임 변경*/
 UPDATE MEMBER SET 
        nickname  = #{nickname}		    /* 새 닉네임 */
-     , edit_date = current_TIMESTAMP	/*수정일*/
+     , edit_date = current_TIMESTAMP	/* 수정일 */
  WHERE id_num    = #{idNum}
 </update>
 	
@@ -30,14 +30,14 @@ UPDATE MEMBER SET
 UPDATE MEMBER SET 
        phone     = #{phone}              /* 새 휴대폰 번호 */
      , edit_date = current_TIMESTAMP     /* 수정일 */
- WHERE id_num=#{idNum}	
+ WHERE id_num = #{idNum}	
 </update>
 		
 <!-- 공개 혹은 비공개 모드 전환 -->
 <update id="updateLockedState" parameterType="MemberDTO">
 /* 공개,비공개 전환 */
 UPDATE MEMBER SET
-       LOCKED = #{locked}   /* 공개 혹은 비공개 상태정보 */
+       locked = #{locked}   /* 공개 혹은 비공개 상태정보 */
  WHERE id_num = #{idNum}
 </update>
 	
