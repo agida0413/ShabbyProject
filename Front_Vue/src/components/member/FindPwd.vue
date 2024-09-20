@@ -109,6 +109,7 @@
               <v-btn
                 text="Close"
                 variant="plain"
+                :disabled="loading"
                 @click=closeDialog()
               ></v-btn>
 
@@ -117,6 +118,7 @@
                 text="Submit"
                 variant="tonal"
                 @click=submitFindPwd
+                :disabled="loading"
               ></v-btn>
         </v-card-actions>
       </v-card>
