@@ -95,8 +95,8 @@
                     ></v-btn>
           
                     <v-btn
-                      color="primary"
-                      text="Save"
+                      color="red"
+                      text="Delete Account"
                       variant="tonal"
                       @click="memberDelete()"
                       :disabled="isLoading"
