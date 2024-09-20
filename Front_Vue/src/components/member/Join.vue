@@ -18,7 +18,7 @@
          ></v-progress-linear>
      
     <!--뒤로가기-->
-   <router-link to="/login"> <v-btn icon="mdi-arrow-left" size="32"  class="btn-back"></v-btn></router-link>
+   <router-link to="/login"> <v-btn icon="mdi-arrow-left" size="32"  class="btn-back" :disabled="loading"></v-btn></router-link>
 
         <!--이메일-->
             <div class="text-subtitle-1 text-medium-emphasis">Email</div>

@@ -53,7 +53,9 @@ api.interceptors.response.use(response => {
   const originalRequest = error.config;
 
   // 특정 URL에서 아무 것도 수행하지 않도록 설정
-  if(error?.response?.status===500 ){
+  if(error?.response?.data?.message==='서버 내부 오류입니다. 잠시 뒤 이용해 주세요.' 
+    ||error?.response?.data?.message==='서버 내부 오류입니다.'
+  ){
     router.push('/error'); // this 대신 router 사용
   }
   
