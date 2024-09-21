@@ -107,7 +107,7 @@ public class SecurityConfig {
 		                .requestMatchers("/api/login", "/api/join","/api/reissue",
 		                		"/api/members/**"
 		                		,"/"
-		                		,"/index.html","/css/**","/js/**","/images/**","/favicon.ico","/fonts/**").permitAll() //로그인 ,회원가입 , 토큰 재발급,이메일인증 api는 권한 필요없음 
+		                		,"/index.html","/css/**","/js/**","/images/**","/favicon.ico","/fonts/**","/img/**").permitAll() //로그인 ,회원가입 , 토큰 재발급,이메일인증 api는 권한 필요없음 
 		       
 		                .anyRequest().authenticated());//나머지는 인증이 필요함 
 						

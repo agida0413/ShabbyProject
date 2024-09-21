@@ -60,7 +60,9 @@ public class CustomUserDetails implements UserDetails {
     public String getNickname() {
     	return dto.getNickname();
     }
-
+    public String getLocked() {
+    	return dto.getLocked();
+    }
     @Override
     public boolean isAccountNonExpired() {
 
