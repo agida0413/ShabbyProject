@@ -49,6 +49,26 @@ public final class SimpleCodeGet {
 	    		return nickname;
 	}
 	
+	
+	public static String getLocked() {
+		  Authentication authentication = SecurityContextHolder.getContext().getAuthentication();//securitycontext에서 authentication 가져옴 
+		  
+		   CustomUserDetails userDetails= (CustomUserDetails)authentication.getPrincipal();//authentication에서 userdetails 가져옴 
+	    	String locked =userDetails.getLocked(); // userdetails (loadByUser 로부터 읽어온 getIdNum)
+
+	    		return locked;
+	}
+	
+	// 로그인 필터에서는 성공시 리프레시 토큰 저장받을 때 idnum이 필요한데 , 그 시점에서는 로그인 필터 내부에 있는 
+	// authenrication 객체를 사용해야함 . 
+	//따라서 오버로딩 = > 회원고유번호를 authentication에서 꺼내옴 
+	public static String getLocked(Authentication authentication) {
+		 
+		   CustomUserDetails userDetails= (CustomUserDetails)authentication.getPrincipal();
+	    	String locked =userDetails.getLocked();
+	    		return locked;
+	}
+	
 	 public static void setNickname(String nickname) {
 	        SecurityContext context = SecurityContextHolder.getContext();
 	        Authentication currentAuth = context.getAuthentication();

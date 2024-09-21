@@ -100,7 +100,25 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     	//다중토큰발급 시작
     	String email = authentication.getName();
     	
-
+    	//정지회원 처리 
+    	String locked=SimpleCodeGet.getLocked(authentication);
+    	if(locked.equals("FORBIDDEN")) {
+    		
+    		ResponseDTO<Void> responseApi = new ResponseDTO<Void>(
+	       			 HttpStatus.FORBIDDEN.value(),
+	                    "정지된 계정입니다. 관리자에게 문의하세요."
+	                );
+    		
+    		try {
+				responseApi.set403Response(response, responseApi, objectMapper);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	        	return;
+    	}
+    	
+    	
     	// 권한 값 읽어오기
 //        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities(); 
 //        Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
