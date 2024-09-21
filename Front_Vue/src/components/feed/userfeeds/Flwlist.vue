@@ -212,7 +212,9 @@ export default {
          
         })
         .catch((err) => {
-          alert(err?.response?.data?.message);
+          if(err?.response?.data?.message){
+        alert(err?.response?.data?.message)  
+        }
           this.closeDialog();
         })
         .finally(() => {
@@ -232,7 +234,9 @@ export default {
          this.updateFollowData(nickname,res?.data?.reqData) // 닉네임 , 서버로부터 받은 바뀐  상태 값 
         })
         .catch((err) => {
-          alert(err?.response?.data?.message);
+          if(err?.response?.data?.message){
+        alert(err?.response?.data?.message)  
+        }
         })
         .finally(()=>{
           this.isLoading=false
@@ -255,7 +259,9 @@ export default {
         this.updateFollowData(nickname,null)
       })
       .catch((err)=>{
-        alert(err?.response?.data?.message);
+        if(err?.response?.data?.message){
+        alert(err?.response?.data?.message)  
+        }
         this.isLoading=false
       })
       .finally(()=>{

@@ -132,7 +132,9 @@ export default{
         console.log(this.noreadAlarmCount)
       })
       .catch((err)=>{
-        alert(err?.data?.message)
+             if(err?.response?.data?.message){
+              alert(err?.response?.data?.message)  
+            }
       })
       .finally(()=>{
         this.isLoading=false
@@ -169,8 +171,9 @@ export default{
           
         })
         .catch((err)=>{
-        
-          alert(err?.response?.data?.message);
+          if(err?.response?.data?.message){
+            alert(err?.response?.data?.message)  
+            }
           this.$router.push({name:'error'})
         })
         .finally(()=>{
@@ -219,7 +222,9 @@ export default{
         })
         .catch((err)=>{
           //실패시 에러메시지 출력 
-          alert(err?.response?.data?.message);
+          if(err?.response?.data?.message){
+            alert(err?.response?.data?.message)  
+          }
           
           localStorage.removeItem('access')//엑세스 토큰 지움 
           this.$router.push('/login');//에러 발생시 로그인 페이지로이동

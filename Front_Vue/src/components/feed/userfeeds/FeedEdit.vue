@@ -132,7 +132,9 @@ mounted() {
 
     })
     .catch((err)=>{
-      alert(err?.response?.data?.message)
+      if(err?.response?.data?.message){
+        alert(err?.response?.data?.message)  
+        }
       this.closeDialog()
     })
     .finally(()=>{
@@ -162,7 +164,9 @@ mounted() {
         alert('성공적으로 변경되었습니다.') 
       })
       .catch((err)=>{
-        alert(err?.response?.data?.message)
+        if(err?.response?.data?.message){
+        alert(err?.response?.data?.message)  
+        }
       })
       .finally(()=>{
         this.isLoading=false

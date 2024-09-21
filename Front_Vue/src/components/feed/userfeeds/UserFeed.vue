@@ -264,7 +264,9 @@ export default {
         })
         .catch((err) => {
           //실패시 에러 alert
-          alert(err?.response?.data?.message);
+          if(err?.response?.data?.message){
+          alert(err?.response?.data?.message)  
+          }
         })
         .finally(() => {
           //현재 로딩 정보를 false로 하여 스켈레톤 로딩 스피너가 동작을 멈추도록 
@@ -286,7 +288,9 @@ export default {
           this.getInfoData()
         })
         .catch((err)=>{
-          alert(err?.response?.data?.message)
+          if(err?.response?.data?.message){
+        alert(err?.response?.data?.message)  
+        }
         })
         .finally(()=>{
           //데이터 통신 종료
@@ -311,7 +315,9 @@ export default {
         this.getInfoData()
       })
       .catch((err)=>{
-        alert(err?.response?.data?.message);
+        if(err?.response?.data?.message){
+        alert(err?.response?.data?.message)  
+        }
         
       })
       .finally(()=>{

@@ -222,7 +222,9 @@ export default {
           })
           .catch((err)=>{
             //에러시 서버에서 내린 data에 있는 message 동적으로 출력 
-            alert(err?.response?.data?.message);
+            if(err?.response?.data?.message){
+              alert(err?.response?.data?.message)  
+              }
           })
         }
 

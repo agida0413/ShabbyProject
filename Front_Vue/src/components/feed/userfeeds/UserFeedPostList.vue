@@ -173,7 +173,9 @@ export default{
         })
         .catch((err) => {
           //실패시 에러 alert
-          alert(err?.response?.data?.message);
+          if(err?.response?.data?.message){
+        alert(err?.response?.data?.message)  
+        }
         })
         .finally(() => {
           //api호출상태 false

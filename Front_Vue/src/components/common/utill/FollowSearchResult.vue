@@ -142,7 +142,9 @@ export default {
     
     })
     .catch((err) => {
-      alert(err?.response?.data?.message)
+      if(err?.response?.data?.message){
+        alert(err?.response?.data?.message)  
+        }
     })
     .finally(() => {
       this.isFetching = false; // 데이터 가져오기 종료

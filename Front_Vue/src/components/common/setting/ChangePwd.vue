@@ -198,7 +198,9 @@ export default {
                                     })
                                   .catch((err)=>{
                                       //에러 발생시 서버로 부터 받은 에러 출력 
-                                      alert(err?.response?.data?.message);
+                                      if(err?.response?.data?.message){
+                                          alert(err?.response?.data?.message)  
+                                      }
                                     
                                   })
                                   .finally(()=>{
@@ -208,7 +210,9 @@ export default {
                           })
                           .catch((err)=>{
                             //비밀번호 변경 실패시 서버로부터 받은 에러 메시지 출력 
-                            alert(err?.response?.data?.message);
+                            if(err?.response?.data?.message){
+                                alert(err?.response?.data?.message)  
+                            }
                             
                           })
                           .finally(()=>{

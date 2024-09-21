@@ -141,7 +141,9 @@ import api from '@/api';
            this.closeDialog()
        })
        .catch((err)=>{
-        alert(err?.response?.data?.message)
+        if(err?.response?.data?.message){
+        alert(err?.response?.data?.message)  
+        }
        })
        .finally(()=>{
         this.isLoading=false

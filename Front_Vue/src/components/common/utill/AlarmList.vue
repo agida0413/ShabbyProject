@@ -207,7 +207,9 @@ export default {
         this.totalPage=res?.data?.reqData?.totalPage
       })
       .catch((err)=>{
-        alert(err?.response?.data?.message)
+        if(err?.response?.data?.message){
+        alert(err?.response?.data?.message)  
+        }
         this.closeDialog()
       })
       .finally(()=>{
@@ -226,7 +228,9 @@ export default {
         this.alarmGet()
       })
       .catch((err)=>{
-        alert(err?.data?.message)
+        if(err?.response?.data?.message){
+        alert(err?.response?.data?.message)  
+        }
       })
     }
   }

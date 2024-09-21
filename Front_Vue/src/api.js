@@ -48,7 +48,10 @@ api.interceptors.response.use(response => {
     return response;
 }, error => {
   //만약 응답오류가 있다면 
-  console.log(error)
+  if(error?.response?.status===403){
+    alert('접근 불가합니다.')
+    return Promise.reject(error);
+  }
   const token = localStorage.getItem("access"); // 토큰이 있다면 
   const originalRequest = error.config;
 
@@ -57,10 +60,9 @@ api.interceptors.response.use(response => {
     ||error?.response?.data?.message==='서버 내부 오류입니다.'
   ){
     router.push('/error'); // this 대신 router 사용
-  }
-  
-    // 410 상태 코드 오류가 발생하고, 엑세스 토큰이 있고 ,재발급 시도하지 않았으면
-    if (error.response && error.response.status === 410 && !originalRequest._retry &&token ) {
+    return;
+  }   // 410 상태 코드 오류가 발생하고, 엑세스 토큰이 있고 ,재발급 시도하지 않았으면
+  if (error.response && error.response.status === 410 && !originalRequest._retry &&token ) {
         //만약 재발급 진행중이라면 
      
         if (isRefreshing) {
@@ -83,8 +85,6 @@ api.interceptors.response.use(response => {
 
         return new Promise((resolve, reject) => {
        
-
-
             api.post('/reissue')
                 .then(({ headers }) => {
                   // 새 액세스 토큰 저장
@@ -102,9 +102,7 @@ api.interceptors.response.use(response => {
                   isRefreshing = false; // 재발급 완료 상태로 변경
                   reject(err); // 오류 반환
                 });
-        })
-
-        
+        })       
         .then(token => {
                // 재발급 완료 후 원래 요청에 새 토큰을 추가하고 재시도
             originalRequest.headers.access = token;

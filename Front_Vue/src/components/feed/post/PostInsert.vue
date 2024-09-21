@@ -633,7 +633,9 @@ checkIsHashTag(){
       eventBus.emit('resetPostList');
     })
     .catch((err)=>{
-      alert(err?.response?.data?.message);
+      if(err?.response?.data?.message){
+        alert(err?.response?.data?.message)  
+        }
     })
     .finally(()=>{
       //서버 전송끝

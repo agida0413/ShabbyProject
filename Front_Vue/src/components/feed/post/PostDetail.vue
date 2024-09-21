@@ -259,7 +259,9 @@ export default {
       
       })
       .catch((err)=>{
-        alert(err?.response?.data?.message)
+        if(err?.response?.data?.message){
+        alert(err?.response?.data?.message)  
+        }
         this.closeDialog()
       })
       .finally(()=>{
@@ -290,7 +292,9 @@ export default {
 
       })
       .catch((err)=>{
-        alert(err?.response?.data?.message)
+        if(err?.response?.data?.message){
+        alert(err?.response?.data?.message)  
+        }
         })
         .finally(()=>{
           this.isLikeLoading=false
@@ -339,7 +343,9 @@ export default {
             eventBus.emit('resetPostList');
           })
           .catch((err)=>{
-            alert(err?.response?.data?.message)
+            if(err?.response?.data?.message){
+            alert(err?.response?.data?.message)  
+            }
           })
           .finally(()=>{
             this.isLoading=false

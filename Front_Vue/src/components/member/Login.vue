@@ -226,7 +226,9 @@ export default {
         .catch((err)=>{
         //실패시 서버에서 전송한 에러메시지 출력
        
-        alert(err?.response?.data?.message)
+        if(err?.response?.data?.message){
+        alert(err?.response?.data?.message)  
+        }
        
         })
         .finally(()=>{

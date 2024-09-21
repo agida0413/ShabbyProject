@@ -294,7 +294,9 @@ watch:{
       
       })
       .catch((err)=>{
-        alert(err?.response?.data?.message)
+        if(err?.response?.data?.message){
+        alert(err?.response?.data?.message)  
+        }
         //에러발생시 수정창닫음 
         this.closeDialog()
       })
@@ -631,7 +633,9 @@ removeImage(index) {//해당 인덱스를 받음
       eventBus.emit('resetPostList');
     })
     .catch((err)=>{
-      alert(err?.response?.data?.message);
+      if(err?.response?.data?.message){
+        alert(err?.response?.data?.message)  
+        }
     })
     .finally(()=>{
       //서버 전송끝

@@ -252,7 +252,9 @@
                 })
                 .catch((err)=>{
                 //서버로 부터 받은 메시지 출력 
-                alert(err?.response?.data?.message)
+                if(err?.response?.data?.message){
+                alert(err?.response?.data?.message)  
+                }
                 
                 })
                 .finally(()=>{

@@ -197,7 +197,9 @@ export default {
                    })
                   .catch((err)=>{
                     //실패시 서버로부터 받은 에러 출력 
-                    alert(err?.response?.data?.message);
+                    if(err?.response?.data?.message){
+                        alert(err?.response?.data?.message)  
+                    }
                   
                    })
                  .finally(()=>{
@@ -260,9 +262,10 @@ export default {
           this.closeDialog()
         })
         .catch((err)=>{
-          //실패시 서버로부터 받은 에러메시지 출력 
-          alert(err?.response?.data?.message);
-          
+          //실패시 서버로부터 받은 에러메시지 출력
+            if(err?.response?.data?.message){
+              alert(err?.response?.data?.message)  
+            }        
         })
         .finally(()=>{
                   //현재 로딩상태정보를 false로 

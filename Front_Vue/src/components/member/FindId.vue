@@ -266,7 +266,9 @@ data(){
               })
               .catch((err)=>{
                 //실패시 서버로부터 받은 메시지 출력 
-                alert(err?.response?.data?.message) 
+                if(err?.response?.data?.message){
+                  alert(err?.response?.data?.message)  
+                  }
                     
               })
               .finally(()=>{
