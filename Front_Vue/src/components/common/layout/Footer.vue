@@ -16,23 +16,30 @@
   
             <br>
             <br>
-  
-            <div>
-              <span v-for="(follow,index) in recommnedData " :key="index">
-              <v-col cols="2"  style="cursor:pointer" >
+            <v-row style="margin-bottom: 10px;  ">
+              <span style="font-size: 25px; font-weight: bold;" class="justify-center align-center">회원님을 위한 추천 팔로우</span>
+            </v-row>
+            <v-divider></v-divider>
+             <v-row style="margin-top: 10px;">
+              <v-col cols="4" v-for="(follow,index) in recommnedData " :key="index">
+              
+                 <span  style="cursor:pointer; margin-right:10px;"  @click="goOtherFeed(follow.nickname)">
                     <v-avatar :image="follow.profile" size="35" class="avatar"
                     v-if="follow.profile !== null" ></v-avatar>
                     <v-avatar :image="require('@/assets/ikmyung.png')"  
                      size="35" class="avatar" v-if="follow.profile === null" ></v-avatar>
-                  </v-col>
+                 </span>
 
-                  <v-col cols="6" style="cursor:pointer" >
+                  <span style="cursor:pointer; margin-right:3px;" @click="goOtherFeed(follow.nickname)">
                      
                       <span class="large-font" >{{ follow.nickname }}</span>
                    
-                  </v-col>
-                </span>
-            </div>
+                  </span>
+                  <span @click="goOtherFeed(follow.nickname)"> 
+                    <span style="opacity: 0.7; font-size: 12px; cursor:pointer;" >(연관 관심사{{ follow.relateCount }}개)</span>
+                  </span>
+                </v-col>
+              </v-row>
           </v-card-text>
         </v-card>
       </v-bottom-sheet>
@@ -70,7 +77,14 @@
           alert(err?.response?.data?.message)
         }
       })
-    }
+    },
+    goOtherFeed(nickname) {//닉네임 매개변수 
+
+
+    this.$nextTick(() => {
+      this.$router.push({ name: 'userfeed', params: { nickname: nickname } }); // 페이지 이동 ( 닉네임 param)
+    });
+}
   }
     }
   </script>
