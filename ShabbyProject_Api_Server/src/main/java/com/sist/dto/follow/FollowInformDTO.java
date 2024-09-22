@@ -10,4 +10,5 @@ private String approve; // 해당 유저피드에서 바라본 팔로우 상태 
 private String myApprove;//해당 유저피드에서 바라보지않고 , 나 기준(로그인한 회원기준) 팔로우 연관상태 
 private String locked; //비공개 계정인지, 공개 계정인지 
 private boolean itsMe; //이 항목이 내 계정인지 = > 팔로우,팔로워 버튼 숨김
+private int relateCount;//연관 관심사 개수
 }
