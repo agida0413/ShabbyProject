@@ -76,4 +76,10 @@ public class MyBatisFollowRepository implements FollowRepository{
 		followMapper.changeFollowStatus(idNum);
 	}
 
+	@Override
+	public List<FollowInformDTO> followRecommend(int idNum) {
+		// TODO Auto-generated method stub
+		return followMapper.followRecommend(idNum);
+	}
+
 }

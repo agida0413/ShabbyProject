@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 
 import com.sist.dto.api.ResponseDTO;
 import com.sist.dto.follow.DoFollowDTO;
+import com.sist.dto.follow.FollowInformDTO;
 import com.sist.dto.follow.FollowListDTO;
 import com.sist.dto.follow.FollowSearchResultDTO;
 import com.sist.dto.follow.HandleFollowReqDTO;
@@ -22,5 +23,7 @@ public interface FollowService {
 	public ResponseEntity<ResponseDTO<FollowListDTO>> getFollowInFeed(String nickname,String flwType,int page);
 	//팔로우 요청 수락 or 거절 
 	public ResponseEntity<ResponseDTO<Void>> handleFollowRequest(HandleFollowReqDTO dto);
+	//팔로우 추천 
+	public ResponseEntity<ResponseDTO<List<FollowInformDTO>>> followRecommend();
 	
 }

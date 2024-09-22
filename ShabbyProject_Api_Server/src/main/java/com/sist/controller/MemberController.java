@@ -1,6 +1,7 @@
 package com.sist.controller;
 
 import java.net.http.HttpRequest;
+import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -16,6 +17,7 @@ import com.sist.common.exception.BadRequestException;
 import com.sist.common.exception.InternerException;
 import com.sist.common.util.PathVariableValidation;
 import com.sist.dto.api.ResponseDTO;
+import com.sist.dto.follow.FollowInformDTO;
 import com.sist.dto.follow.FollowSearchResultDTO;
 import com.sist.dto.follow.HandleFollowReqDTO;
 import com.sist.dto.member.EmailAuthDTO;
@@ -118,6 +120,12 @@ private final FollowService followService;
 	@PostMapping("/following")
 	public ResponseEntity<ResponseDTO<Void>> handleFollowRequest(@RequestBody HandleFollowReqDTO dto){
 		return followService.handleFollowRequest(dto);
+	}
+	
+	//팔로우 추천
+	@GetMapping("/recommend")
+	public ResponseEntity<ResponseDTO<List<FollowInformDTO>>> followRecommend(){
+		return followService.followRecommend();
 	}
 	
 	

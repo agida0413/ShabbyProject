@@ -139,4 +139,27 @@ UPDATE follow SET
   WHERE follow_num = #{followNum} /* 팔로우 테이블 고유번호 */
 </select>
 
+<select id="followRecommend" parameterType="int" resultType="FollowInformDTO">
+   /* 팔로우 추천 */
+    SELECT nickname                     /* 닉네임 */
+         , profile                      /* 프로필 사진 */
+         , COUNT(*) as nickCount        /* 나와 일치하는 관심사 개수 */
+      FROM MEMBER m     
+INNER JOIN HOBBY hb               
+        ON m.id_num  = hb.id_num        /* 회원고유번호 조건*/          
+       AND hb.hobby IN (                /* 나와 동일한 관심사를 가진 회원 검색조건*/
+		                 SELECT hobby 
+		                   FROM HOBBY 
+		                  WHERE id_num = #{idNum}    
+	                   )
+	   AND NOT m.id_num = #{idNum}      /* 본인은 제외 조건*/
+	   AND NOT m.id_num IN (            /* 이미 팔로우요청을 보냈거나 팔로우 상태인 회원은 제외 조건 */
+		                    SELECT following_id 
+		                      FROM FOLLOW 
+		                     WHERE id_num = #{idNum} 
+	                        )                               
+  GROUP BY nickname                     /* 닉네임으로 그루핑 */
+  ORDER BY nickCount DESC               /* 가장 관련이 많은 회원순으로 정렬조건 */
+     LIMIT 3                            /* 3개만 추출 */
+</select>
 </mapper>
