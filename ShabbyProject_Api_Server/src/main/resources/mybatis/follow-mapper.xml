@@ -151,15 +151,15 @@ INNER JOIN HOBBY hb
 		                 SELECT hobby 
 		                   FROM HOBBY 
 		                  WHERE id_num = #{idNum}    
-	                   )
-	   AND NOT m.id_num = #{idNum}      /* 본인은 제외 조건*/
-	   AND NOT m.id_num IN (            /* 이미 팔로우요청을 보냈거나 팔로우 상태인 회원은 제외 조건 */
+		               )
+       AND NOT m.id_num = #{idNum}      /* 본인은 제외 조건*/
+       AND NOT m.id_num IN (            /* 이미 팔로우요청을 보냈거나 팔로우 상태인 회원은 제외 조건 */
 		                    SELECT following_id 
 		                      FROM FOLLOW 
 		                     WHERE id_num = #{idNum} 
-	                        )                               
-  GROUP BY nickname                     /* 닉네임으로 그루핑 */
+	                        )
+  GROUP BY nickname                       /* 닉네임으로 그루핑 */
   ORDER BY relateCount DESC               /* 가장 관련이 많은 회원순으로 정렬조건 */
-     LIMIT 3                            /* 3개만 추출 */
+     LIMIT 3                              /* 3개만 추출 */
 </select>
 </mapper>
