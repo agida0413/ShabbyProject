@@ -243,6 +243,18 @@ public class FollowServiceImpl implements FollowService {
 		return new ResponseEntity<ResponseDTO<Void>>
 		(new ResponseDTO<Void>(),HttpStatus.OK); //성공 
 	}
+
+	@Override
+	public ResponseEntity<ResponseDTO<List<FollowInformDTO>>> followRecommend() {
+		// TODO Auto-generated method stub
+		
+		int idNum=SimpleCodeGet.getIdNum();
+		List<FollowInformDTO> list = followRepository.followRecommend(idNum);
+		
+		
+		return new ResponseEntity<ResponseDTO<List<FollowInformDTO>>>
+		(new ResponseDTO<List<FollowInformDTO>>(list),HttpStatus.OK); //성공 
+	}
 	
 
 }

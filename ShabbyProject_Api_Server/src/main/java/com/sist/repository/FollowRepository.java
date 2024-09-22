@@ -29,4 +29,6 @@ public interface FollowRepository {
 		public void refuseFollow(HandleFollowReqDTO dto);
 		//공개 계정 전환시 팔로우 대기- > 수락 변경
 		public void changeFollowStatus(int idNum);
+		//팔로우 추천
+		public List<FollowInformDTO> followRecommend(int idNum);
 }
