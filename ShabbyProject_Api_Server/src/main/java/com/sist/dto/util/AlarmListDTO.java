@@ -12,5 +12,6 @@ private String senderProfile;
 private int postNum;
 private String alarmType;
 private String createDate;
+private int isread;
 
 }
