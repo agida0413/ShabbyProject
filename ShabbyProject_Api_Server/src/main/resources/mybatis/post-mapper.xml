@@ -36,6 +36,9 @@
                     AND pi.post_img_num = subquery.min_img_num 
            ) pi
         ON p.post_num = pi.post_num                                          /* 각 게시물 별 가장먼저 등록한 이미지 서브쿼리 조인 */
+ RIGHT JOIN MEMBER m
+       ON m.id_num = p.id_num
+       AND m.locked !='FORBIDDEN'       
 <if test="feedState=='USERFEED'">                                            /* 피드타입이 유저피드 */
    <if test="type=='TAGGED'">                                                /* 타입이 태그당한 게시물조건 */
 RIGHT JOIN (
@@ -72,7 +75,7 @@ WHERE 1=1
                        AND approve = 'FOLLOWOK'  
                   )                                                        /* 팔로우 테이블에서 내가 팔로우한 유저이고 상태가 팔로우 승인완료인 상태인 게시물 번호만 필터링 */
   AND only_me = 'NOTONLYME'                                                 /* 나만보기 게시물 제외 */
-ORDER BY create_date DESC
+ORDER BY p.create_date DESC
     </when>
     		
     <when test="feedState=='GLOBALFEED'||feedState=='SEARCHFEED'">         /* 피드 타입이 글로벌 피드이거나 검색피드일 경우 */
@@ -91,7 +94,7 @@ WHERE 1=1
                      AND approve = 'FOLLOWOK'    
                 )
   AND only_me = 'NOTONLYME'                                       /* 나만보기 게시물 제외 */
-ORDER BY  create_date DESC
+ORDER BY  p.create_date DESC
     </when>
   
     <when test="feedState=='USERFEED'">                         /* 피드 타입이 유저피드인 경우 */
@@ -107,7 +110,7 @@ WHERE 1=1
         <if test="!itsMe">                                     /* 현 유저피드가 내 피드가 아닌경우 */
   AND only_me = 'NOTONLYME'                                     /* 나만보기 게시물 제외 */
         </if>
-ORDER BY create_date DESC     
+ORDER BY p.create_date DESC     
     </when>
     
 </choose>   

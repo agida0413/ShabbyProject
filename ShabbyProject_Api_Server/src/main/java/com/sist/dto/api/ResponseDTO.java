@@ -115,7 +115,16 @@ public class ResponseDTO<T> {
         
    }
     
-   
+    public void set417Response(HttpServletResponse response,ResponseDTO<Void> responseApi,ObjectMapper objectMapper) throws JsonProcessingException, IOException {
+    	  
+    	
+    	   response.setStatus(HttpServletResponse.SC_EXPECTATION_FAILED);//410 응답코드 ==> 리프레시 토큰 재발행시에만 사용예정
+           response.setContentType("application/json");
+    
+ 			response.getWriter().write(objectMapper.writeValueAsString(responseApi));
+ 		
+         
+    }
     public void setOkResponse(HttpServletResponse response,ResponseDTO<Void> responseApi,ObjectMapper objectMapper) throws JsonProcessingException, IOException {
     	  
     	

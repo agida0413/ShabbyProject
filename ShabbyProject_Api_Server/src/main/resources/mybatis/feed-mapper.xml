@@ -24,17 +24,23 @@
               ) as postAmount                     /* 게시물 개수 서브쿼리 */
             , (
                  SELECT COUNT(*)
-                   FROM FOLLOW 
+                   FROM FOLLOW f
+              LEFT JOIN MEMBER sm
+                     ON f.id_num=sm.id_num 
                   WHERE 1=1 
-                    AND following_id = m.id_num	       /* 팔로우 id에 현 회원 존재 */
-                    AND approve      = 'FOLLOWOK'      /* 팔로우 상태 OK */		
+                    AND f.following_id = m.id_num	       /* 팔로우 id에 현 회원 존재 */
+                    AND f.approve      = 'FOLLOWOK'      /* 팔로우 상태 OK */	
+                    AND sm.locked     !='FORBIDDEN'
               ) as followerAmount                      /* 팔로워 수 서브 쿼리 */
             , (
                  SELECT COUNT(*)
-                   FROM FOLLOW  
+                   FROM FOLLOW f
+              LEFT JOIN MEMBER smr 
+                     ON f.following_id = smr.id_num    
                   WHERE 1=1 
-                    AND id_num  = m.id_num             /* 팔로우하는 사람 id =현 회원 */
-                    AND approve = 'FOLLOWOK'           /* 팔로우 상태 OK */	
+                    AND f.id_num  = m.id_num             /* 팔로우하는 사람 id =현 회원 */
+                    AND f.approve = 'FOLLOWOK'           /* 팔로우 상태 OK */	
+                    AND smr.locked !='FORBIDDEN'
               ) as followingAmount                     /* 팔로잉 수 서브쿼리 */
               <if test="!itsMe">	                   /* 현재 조회할 피드가 현재 세션 유저가 아니라면 , (내 피드가 아닌 다른 유저피드라면) 셀렉트할 컬럼 추가 */
            , (

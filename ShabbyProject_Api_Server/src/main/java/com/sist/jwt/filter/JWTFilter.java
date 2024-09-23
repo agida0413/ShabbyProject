@@ -12,6 +12,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sist.dto.api.ResponseDTO;
 import com.sist.dto.member.MemberDTO;
 import com.sist.jwt.JWTUtil;
+import com.sist.repository.MemberAccountRepository;
 import com.sist.service.member.impl.CustomUserDetails;
 
 import io.jsonwebtoken.ExpiredJwtException;
@@ -26,6 +27,7 @@ public class JWTFilter extends OncePerRequestFilter{
 
     private final JWTUtil jwtUtil;
     private final ObjectMapper objectMapper;
+    private final MemberAccountRepository memberAccountRepository;
    
 
 
@@ -42,7 +44,7 @@ public class JWTFilter extends OncePerRequestFilter{
 	@Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, java.io.IOException {
 			
-		System.out.println(request.getHeader("User-Agent"));
+		
 	    	// 헤더에서 access키에 담긴 토큰을 꺼냄
 	    	String accessToken = request.getHeader("access");
 	
@@ -89,6 +91,17 @@ public class JWTFilter extends OncePerRequestFilter{
 	    	int idNum = jwtUtil.getIdNum(accessToken);//고유번호
 	    	String nickname=jwtUtil.getNickname(accessToken);//닉네임
 	    	
+	    	
+	    	// 정지 계정 여부 확인 
+	    	String locked = memberAccountRepository.getLock(nickname);
+	    	if(locked.equals("FORBIDDEN")) {
+	    		ResponseDTO<Void> responseApi = new ResponseDTO<Void>(
+	         			 HttpStatus.EXPECTATION_FAILED.value()
+	                      ,null
+	                  );
+	          	responseApi.set417Response(response, responseApi, objectMapper);
+	          	return;
+	    	}
 	    	//맴버dto 생성후 담기 
 	    	MemberDTO dto = new MemberDTO();
 	    	
