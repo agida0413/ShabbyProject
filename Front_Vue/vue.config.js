@@ -11,8 +11,8 @@ module.exports = defineConfig({
   //   //   }, 
   //   // },
   // },
-   outputDir:'C:/Users/TA9/git/termPj/ShabbyProject_Api_Server/src/main/resources/static',
-  //outputDir:'C:/Users/user/git/ShabbyProject/ShabbyProject_Api_Server/src/main/resources/static',
+   //outputDir:'C:/Users/TA9/git/termPj/ShabbyProject_Api_Server/src/main/resources/static',
+  outputDir:'C:/Users/user/git/ShabbyProject/ShabbyProject_Api_Server/src/main/resources/static',
   
   transpileDependencies: true,
   pluginOptions: {

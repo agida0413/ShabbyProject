@@ -31,7 +31,7 @@
            
               <v-list-item-content >
                
-                <v-row v-for="(alarm, index) in alarmData" :key="index">
+                <v-row v-for="(alarm, index) in alarmData" :key="index" >
                   <v-col cols="1" >
                     <v-avatar :image="alarm.senderProfile" size="35" class="avatar"
                     v-if="alarm.senderProfile !== null" ></v-avatar>
@@ -40,11 +40,15 @@
                   </v-col>
                   <!--팔로우 요청 알람 -->
                   <v-col cols="8"  v-if="alarm.alarmType==='FOLLOWREQ'">                    
-                      <span class="large-font" >
+                      <span class="large-font" :class="alarm.isread?'read':''">
                         <span style="color: bisque; margin-right: 5px;">{{ alarm.sender }}</span>
                         님이 팔로우 요청을 보냈습니다.
                       </span>     
-                      <span style="font-size: 12px; opacity: 0.7; margin-left: 10px;">{{alarm.createDate  }}</span>                 
+                      <span style="font-size: 12px;  opacity: 0.7; margin-left: 10px;" :class="alarm.isread?'read':''">
+                        {{alarm.createDate  }}
+                      <span style="margin-left: 1px;" v-if="alarm.isread">읽음</span>
+                      <span class="new-badge" v-if="!alarm.isread">NEW</span>  
+                      </span>                 
                   </v-col>
                 
                   <v-col cols="3" v-if="alarm.alarmType==='FOLLOWREQ'">
@@ -59,9 +63,13 @@
                   <v-col cols="11"  v-if="alarm.alarmType==='FOLLOW'">                    
                       <span class="large-font" >
                         <span style="color: bisque; margin-right: 5px;">{{ alarm.sender }}</span>
-                        님이 나를 팔로우 합니다.
+                        <span :class="alarm.isread?'read':''">님이 나를 팔로우 합니다.</span>
                       </span>     
-                      <span style="font-size: 12px; opacity: 0.7; margin-left: 10px;">{{alarm.createDate  }}</span>                    
+                      <span style="font-size: 12px; opacity: 0.7; margin-left: 10px;" :class="alarm.isread?'read':''">
+                        {{alarm.createDate  }}
+                        <span style="margin-left: 1px;" v-if="alarm.isread">읽음</span>
+                        <span class="new-badge" v-if="!alarm.isread">NEW</span>  
+                      </span>                    
                   </v-col>
               
                     <!--단순 팔로우  알람 종료 -->
@@ -70,9 +78,13 @@
                   <v-col cols="8"  v-if="alarm.alarmType==='LIKE'">                    
                       <span class="large-font" >
                         <span style="color: bisque; margin-right: 5px;">{{ alarm.sender }}</span>
-                        님이 내 게시물을 좋아합니다.
+                        <span :class="alarm.isread?'read':''">님이 내 게시물을 좋아합니다.</span>
                       </span>         
-                      <span style="font-size: 12px; opacity: 0.7; margin-left: 10px;">{{alarm.createDate  }}</span>         
+                      <span style="font-size: 12px; opacity: 0.7; margin-left: 10px;" :class="alarm.isread?'read':''">
+                        {{alarm.createDate  }}
+                        <span style="margin-left: 1px;" v-if="alarm.isread">읽음</span>
+                        <span class="new-badge" v-if="!alarm.isread">NEW</span>  
+                      </span>         
                   </v-col>
                 
                   <v-col cols="3"  v-if="alarm.alarmType==='LIKE'" >
@@ -86,9 +98,13 @@
                   <v-col cols="8"  v-if="alarm.alarmType==='TAG'">                    
                       <span class="large-font" >
                         <span style="color: bisque; margin-right: 5px;">{{ alarm.sender }}</span>
-                        님이 게시물에 나를 태그합니다.
+                        <span :class="alarm.isread?'read':''">님이 게시물에 나를 태그합니다.</span>
                       </span>
-                      <span style="font-size: 12px; opacity: 0.7; margin-left: 10px;">{{alarm.createDate  }}</span>                         
+                      <span style="font-size: 12px; opacity: 0.7; margin-left: 10px;" :class="alarm.isread?'read':''">
+                        {{alarm.createDate  }}
+                        <span style="margin-left: 1px;" v-if="alarm.isread">읽음</span>
+                        <span class="new-badge" v-if="!alarm.isread">NEW</span>  
+                      </span>                         
                   </v-col>
                   <v-col cols="3"  v-if="alarm.alarmType==='TAG'" >
                     <v-btn  color="green" style="float: right;" @click="openPostDetailDialog(alarm.postNum)"> 게시물 이동</v-btn>
@@ -244,7 +260,10 @@ export default {
     background-color: white; /* 배경 색상 설정 */
 }
 
-
+.read{
+  color:gray;
+  opacity: 0.7;
+}
 
 .dialog-content {
     display: flex;
@@ -261,5 +280,15 @@ export default {
     right: 0;
     text-align: center;
     padding: 0 10px; /* Optional: Add padding for spacing */
+}
+.new-badge {
+  color: #ff4d4d; /* 좀 더 세련된 붉은 색 */
+  background-color: rgba(255, 77, 77, 0.1); /* 붉은색 투명 배경 */
+  border-radius: 4px; /* 둥근 모서리 */
+  padding: 2px 6px; /* 텍스트 주변 여백 */
+  font-weight: bold; /* 두꺼운 글씨 */
+  font-size: 0.85em; /* 크기를 살짝 조정 */
+  opacity: 0.9; /* 약간의 투명도 */
+  margin-left: 1px;
 }
 </style>
