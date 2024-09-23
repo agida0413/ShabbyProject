@@ -150,6 +150,10 @@ export default {
   background-color: #2C2C2C;
   color: aliceblue;
 }
+.to-blackMode2{
+  background-color: #4B4B4B ;
+  color: aliceblue;
+}
 .button-container {
     display: flex;
     justify-content: center;
