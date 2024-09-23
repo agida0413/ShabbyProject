@@ -129,7 +129,8 @@ SELECT emailauth_num       /* 회원 고유번호 */
      , expiration          /* 유효기간 */
      , isauth              /* 인증여부 */
   FROM EMAIL_AUTH
- WHERE email         = #{email}
+ WHERE 1=1 
+   AND email         = #{email}
    AND emailauth_num = (
                          SELECT MAX(emailauth_num)
                            FROM EMAIL_AUTH
@@ -161,7 +162,8 @@ SELECT id_num       /*회원 고유번호*/
      , edit_date    /*수정일*/
      , locked       /*비공개,공개 여부*/
   FROM MEMBER 
- WHERE nickname = #{nickname}
+ WHERE 1=1 
+   AND nickname = #{nickname}
    AND name     = #{name}
 </select>
 	

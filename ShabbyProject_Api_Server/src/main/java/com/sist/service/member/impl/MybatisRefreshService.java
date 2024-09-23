@@ -43,8 +43,7 @@ public class MybatisRefreshService implements RefreshService{
 		    Date date = new Date(System.currentTimeMillis() + expiredMs); //현재시간 + 매개변수로 받은 유효기간 
 		   
 		    TokenStoreDTO dto= new TokenStoreDTO();
-		    //클라이언트 ip
-		    String ip=request.getRemoteAddr();
+		  
 		    //클라이언트 브라우저 정보
 		    String browser=request.getHeader("User-Agent");
 		    
@@ -52,7 +51,7 @@ public class MybatisRefreshService implements RefreshService{
 		    dto.setBrowser(browser);//클라이언트 브라우저 정보
 		    dto.setIdNum(idNum); //매개변수로 받은 아이디고유번호
 		    dto.setRefresh(refresh); // 매개변수로 받은 토큰 
-		    dto.setExpiration(date.toString()); // 유효기간
+		    dto.setExpiration(date); // 유효기간
 	
 		    repository.save(dto);//데이터에 저장
 	}

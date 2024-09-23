@@ -16,28 +16,32 @@
             , (
                  SELECT COUNT(*)
                    FROM POST_DATA     
-                  WHERE id_num   = m.id_num
-                  <if test="!itsMe">	
+                  WHERE 1=1 
+                    AND id_num   = m.id_num
+                  <if test="!itsMe">
                     AND only_me != 'ONLYME'       /* 자신 게시물 제외 */	
                   </if>
               ) as postAmount                     /* 게시물 개수 서브쿼리 */
             , (
                  SELECT COUNT(*)
                    FROM FOLLOW 
-                  WHERE following_id = m.id_num	       /* 팔로우 id에 현 회원 존재 */
+                  WHERE 1=1 
+                    AND following_id = m.id_num	       /* 팔로우 id에 현 회원 존재 */
                     AND approve      = 'FOLLOWOK'      /* 팔로우 상태 OK */		
               ) as followerAmount                      /* 팔로워 수 서브 쿼리 */
             , (
                  SELECT COUNT(*)
                    FROM FOLLOW  
-                  WHERE id_num  = m.id_num             /* 팔로우하는 사람 id =현 회원 */
+                  WHERE 1=1 
+                    AND id_num  = m.id_num             /* 팔로우하는 사람 id =현 회원 */
                     AND approve = 'FOLLOWOK'           /* 팔로우 상태 OK */	
               ) as followingAmount                     /* 팔로잉 수 서브쿼리 */
               <if test="!itsMe">	                   /* 현재 조회할 피드가 현재 세션 유저가 아니라면 , (내 피드가 아닌 다른 유저피드라면) 셀렉트할 컬럼 추가 */
            , (
                  SELECT COALESCE(COUNT(*),0)	
                    FROM FOLLOW                            /* 팔로우 테이블에서 카운트 값을 */
-                  WHERE id_num = #{sessionIdNum}          /* 회원 고유번호가 매개변수로 받은 현재 세션 회원번호 */
+                  WHERE 1=1 
+                    AND id_num = #{sessionIdNum}          /* 회원 고유번호가 매개변수로 받은 현재 세션 회원번호 */
                     AND following_id = (                  /* 팔로우 테이블의 팔로우하는 아이디 고유번호가 */
                                          SELECT id_num
                                            FROM MEMBER 
@@ -48,7 +52,8 @@
              , (
                  SELECT COALESCE(COUNT(*),0)
                    FROM FOLLOW 
-                  WHERE id_num       = #{sessionIdNum}                 /* 회원 고유번호가 매개변수로 받은 현재 세션 회원번호 */
+                  WHERE 1=1 
+                    AND id_num       = #{sessionIdNum}                 /* 회원 고유번호가 매개변수로 받은 현재 세션 회원번호 */
                     AND following_id = (                               /* 팔로우 테이블의 팔로우하는 아이디 고유번호가 */
                                          SELECT id_num
                                            FROM MEMBER 
@@ -59,15 +64,15 @@
              , (
                  SELECT COALESCE(COUNT(*),0)
                    FROM FOLLOW                                          /* 팔로우 테이블에서 카운트 값을 */
-                  WHERE id_num       = #{sessionIdNum}                  /* 팔로우 테이블의 팔로우하는 아이디 고유번호가 */
+                  WHERE 1=1 
+                    AND id_num       = #{sessionIdNum}                  /* 팔로우 테이블의 팔로우하는 아이디 고유번호가 */
                     AND following_id = (                                /* 회원 고유번호가 매개변수로 받은 현재 세션 회원번호 */
                                          SELECT id_num
                                            FROM MEMBER 
                                           WHERE nickname = #{nickname}  /* 닉네임 컬럼 = 매개변수로 받은  닉네임 */
                                         ) 	  
                 ) as followAllCount                                     /* 현재 접속한 회원과 현 피드회훤 간의 팔로우 상관관계 파악을 위한 컬럼 */
-			</if>
-			
+             </if>
            FROM MEMBER m 
           WHERE nickname = #{nickname}  
 </select>

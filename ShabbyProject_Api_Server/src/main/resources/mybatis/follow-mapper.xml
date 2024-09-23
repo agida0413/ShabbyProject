@@ -15,7 +15,8 @@
      FROM MEMBER m
      JOIN FOLLOW f 
        ON m.id_num  =   f.following_id
-    WHERE f.id_num  =   #{idNum}
+    WHERE 1=1 
+      AND f.id_num  =   #{idNum}
       AND nickname LIKE CONCAT('%',#{keyword},'%') 
       AND approve   = 'FOLLOWOK'
     LIMIT #{rowSize} OFFSET #{startRow}  
@@ -29,7 +30,8 @@
             , (
                  SELECT approve 
                    FROM FOLLOW
-                  WHERE id_num       = #{idNum}
+                  WHERE 1=1 
+                    AND id_num       = #{idNum}
                     AND following_id = (  
                                           SELECT id_num
                                             FROM MEMBER 
@@ -40,7 +42,8 @@
     LEFT JOIN MEMBER m                  /* 회원 테이블 조인 */
    <if test="flwType=='FOLLOWING'">     /* 팔로잉하는 사람들 */
            ON f.following_id = m.id_num
-        WHERE f.id_num = (
+        WHERE 1=1 
+          AND f.id_num = (
                           SELECT id_num
                             FROM MEMBER
                            WHERE nickname = #{nickname}
@@ -49,7 +52,8 @@
   </if>	
   <if test="flwType=='FOLLOWER'">                   /* 팔로우 하는 사람 */
            ON f.id_num = m.id_num
-        WHERE f.following_id = (
+        WHERE 1=1 
+          AND f.following_id = (
                                 SELECT id_num
                                   FROM MEMBER
                                  WHERE nickname = #{nickname}	
@@ -89,7 +93,8 @@
 /* 딜리트 팔로우(언팔로우) */
 DELETE 
   FROM FOLLOW
- WHERE id_num = #{idNum}                             /* 팔로잉 주체자 */
+ WHERE 1=1 
+   AND id_num       = #{idNum}                             /* 팔로잉 주체자 */
    AND following_id = (                              /* 팔로잉 받은 회원고유번호 */
                         SELECT id_num
                           FROM MEMBER 
@@ -102,7 +107,8 @@ DELETE
 /*비공개 계정에 대한 팔로우 요청 수락*/
 UPDATE FOLLOW SET
        approve = 'FOLLOWOK'      /* 팔로우 수락으로 상태 변경 */
- WHERE following_id=#{idNum}     /* 팔로우 받는 아이디 */
+ WHERE 1=1 
+   AND following_id=#{idNum}     /* 팔로우 받는 아이디 */
    AND id_num = (                /* 팔로우 하는 아이디 */
                   SELECT id_num
                     FROM MEMBER 
@@ -114,7 +120,8 @@ UPDATE FOLLOW SET
 /* 팔로우 요청 거절 */
 DELETE 
   FROM FOLLOW
- WHERE following_id = #{idNum}      /* 팔로우 받는 아이디 회원 고유번호 */
+ WHERE 1=1 
+   AND following_id = #{idNum}      /* 팔로우 받는 아이디 회원 고유번호 */
    AND id_num = (                   /* 팔로우 하는 아이디 회원 고유번호 */
                  SELECT id_num
                    FROM MEMBER 
@@ -127,7 +134,8 @@ DELETE
 /* 공개계정 전환시 팔로우 테이블의 FOLLOWSTATE - > OK */
 UPDATE follow SET
        approve = 'FOLLOWOK'         /* 팔로우 상태 -> 승인상태 */
- WHERE following_id = #{idNum}      /* 팔로우하는 아이디 고유번호 */
+ WHERE 1=1 
+   AND following_id = #{idNum}      /* 팔로우하는 아이디 고유번호 */
    AND approve      = 'FOLLOWNO'    /* 팔로우 상태가 대기중 상태 */
 </update>
 
@@ -148,16 +156,16 @@ UPDATE follow SET
 INNER JOIN HOBBY hb               
         ON m.id_num  = hb.id_num        /* 회원고유번호 조건*/          
        AND hb.hobby IN (                /* 나와 동일한 관심사를 가진 회원 검색조건*/
-		                 SELECT hobby 
-		                   FROM HOBBY 
-		                  WHERE id_num = #{idNum}    
-		               )
+                         SELECT hobby 
+                           FROM HOBBY 
+                         WHERE id_num = #{idNum}    
+                       )
        AND NOT m.id_num = #{idNum}      /* 본인은 제외 조건*/
        AND NOT m.id_num IN (            /* 이미 팔로우요청을 보냈거나 팔로우 상태인 회원은 제외 조건 */
-		                    SELECT following_id 
-		                      FROM FOLLOW 
-		                     WHERE id_num = #{idNum} 
-	                        )
+                            SELECT following_id 
+                              FROM FOLLOW 
+                             WHERE id_num = #{idNum} 
+                           )
   GROUP BY nickname                       /* 닉네임으로 그루핑 */
   ORDER BY relateCount DESC               /* 가장 관련이 많은 회원순으로 정렬조건 */
      LIMIT 3                              /* 3개만 추출 */
