@@ -3,24 +3,44 @@
      
       <v-bottom-sheet v-model="sheet">
         <v-card
-          class="text-center "
-          height="200"
+          class="text-center to-blackMode2"
+          height="250"
         >
-          <v-card-text>
-            <v-btn
-              variant="text"
-              @click="sheet = !sheet"
-            >
-              close
-            </v-btn>
-  
-            <br>
-            <br>
-            <v-row style="margin-bottom: 10px;  ">
-              <span style="font-size: 25px; font-weight: bold;" class="justify-center align-center">회원님을 위한 추천 팔로우</span>
+            <v-card-text>
+            
+   
+    
+            <v-row style="margin-bottom: 3px;">
+           
+     
+              <v-col
+  style="font-size: 18px; font-weight: bold; display: flex;"
+  class="align-center"
+>
+  <span style="margin-left: 780px;">추천 팔로우</span>
+  <span style="margin-left: 480px;  margin-top: 25px;">
+    <v-checkbox label="오늘 하루 보지않기" v-model="todayNosee" style="font-size: 10px;"/>
+  </span>
+  <span>
+    <v-btn
+      variant="text"
+      @click="close"
+      style="font-size: 18px;"
+      color="red"
+    >
+      닫기
+    </v-btn>
+  </span>
+</v-col>
             </v-row>
             <v-divider></v-divider>
-             <v-row style="margin-top: 10px;">
+            <v-row style="margin-top: 8px;" v-if="!recommnedData.length">
+              <v-col >
+                추천할 만한 데이터가 부족합니다. 관심사를 등록 해 보세요.
+              </v-col>
+            </v-row>
+             <v-row style="margin-top: 8px;" v-if="recommnedData.length">
+             
               <v-col cols="4" v-for="(follow,index) in recommnedData " :key="index">
               
                  <span  style="cursor:pointer; margin-right:10px;"  @click="goOtherFeed(follow.nickname)">
@@ -47,23 +67,35 @@
   </template>
   <script>
   import api from '@/api';
+  import Cookies from "js-cookie";
     export default {
      data(){
       return{
         sheet: false,
-        recommnedData:[]
+        recommnedData:[],
+        todayNosee:false,
+        noSeeCookie:''
       }
      },
      
   watch: {
     '$route.path'(newPath) {
-      
+      const check=Cookies.get('todatNoSee')
+      if(check==='YES'){
+        return
+      }
+    
       this.sheet = newPath === '/';
       this.getRecommend()
     }
   },
 
   created() {
+    const check=Cookies.get('todatNoSee')
+      if(check==='YES'){
+        return
+      }
+   
     this.sheet = this.$route.path === '/';
   },
   methods:{
@@ -84,7 +116,14 @@
     this.$nextTick(() => {
       this.$router.push({ name: 'userfeed', params: { nickname: nickname } }); // 페이지 이동 ( 닉네임 param)
     });
-}
+   },
+   close(){
+    if(this.todayNosee){
+      Cookies.set('todatNoSee','YES',{expires:1})
+    }
+    this.todayNosee=false;
+    this.sheet=false
+   }
   }
     }
   </script>
