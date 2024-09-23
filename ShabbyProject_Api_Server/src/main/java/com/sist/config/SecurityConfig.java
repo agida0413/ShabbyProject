@@ -45,7 +45,7 @@ public class SecurityConfig {
 		private final JWTUtil jwtUtil;
 		//액세스 토큰 재발급 서비스 
 		private final RefreshService refreshService;
-	
+		private final MemberAccountRepository memberAccountRepository;
 		//jackson objectmapper
 		private final ObjectMapper objectMapper;
 		
@@ -118,7 +118,7 @@ public class SecurityConfig {
 				
 		//JWTFilter 등록 = > 로그인 필터 전에 수행 		
 		http
-	    .addFilterBefore(new JWTFilter(jwtUtil,objectMapper), LoginFilter.class);
+	    .addFilterBefore(new JWTFilter(jwtUtil,objectMapper,memberAccountRepository), LoginFilter.class);
 		
 		
 		// 로그인필터를  UsernamePasswordAuthenticationFilter 위치에 

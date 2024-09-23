@@ -19,6 +19,7 @@
                   OR phone     =   #{keyword}                 /* 검색어 */
                 )
             AND NOT id_num = #{idNum}                         /* 나 제외 */
+            AND locked !='FORBIDDEN'                          /* 정지계정 제외 */
             
       UNION ALL
       
@@ -67,6 +68,7 @@
              WHERE 1=1 
                AND m.nickname LIKE CONCAT('%',#{keyword},'%')       /* 키워드 - > 닉네임 기반 검색 */
                AND m.id_num    !=  #{idNum}                         /* 회원고유번호가 내 고유번호가 아님 */
+               AND locked      !=  'FORBIDDEN'                      /* 정지 계정 제외*/
              LIMIT #{rowSize} OFFSET #{startRow}                    /* 페이징 */
 </select>
 
@@ -77,7 +79,8 @@
         FROM MEMBER	                                            /* 회원 테이블 */
        WHERE 1=1 
          AND nickname LIKE CONCAT('%', #{keyword}, '%')         /* 닉네임 기반 검색 */
-         AND id_num    !=  #{idNum};                            /* 회원고유번호가 내 고유번호가 아님 */
+         AND id_num      !=  #{idNum}                            /* 회원고유번호가 내 고유번호가 아님 */
+         AND locked      !=  'FORBIDDEN'                      /* 정지 계정 제외*/ 
 </select>
 
 </mapper>

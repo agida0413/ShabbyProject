@@ -52,7 +52,11 @@ public class FeedServiceImpl implements FeedService{
 	@Override
 	public ResponseEntity<ResponseDTO<UserFeedInformDTO>> loadUserFeedInfo(String nickname) {
 		// TODO Auto-generated method stub
-		
+		//정지 사용자 피드
+		String forbiddenCheck= memberAccountRepository.getLock(nickname);
+		if(forbiddenCheck.equals("FORBIDDEN")) {
+			throw new BadRequestException("정지된 사용자입니다.");
+		}
 		
 		//데이터베이스 매핑 객체 생성 
 		GetUserFeedInformDTO reqDTO = new GetUserFeedInformDTO();

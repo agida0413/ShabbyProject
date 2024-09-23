@@ -116,6 +116,10 @@ public class PostServiceImpl implements PostService {
 		if(dto==null) {
 			throw new InternerException("존재하지 않는 게시물 입니다.","존재하지 않는 게시물 접근");
 		}
+		//혹여나 나만보기 게시글인데 , 본인이 아닐때 접근할 경우
+		if(dto.getOnlyMe().equals("ONLYME")&&(dto.getIdNum()!=idNum)){
+			throw new BadRequestException("나만보기 게시물입니다. 접근 불가합니다.");
+		}
 		//현재 로그인한 회원 기반 , 현재 조회하려는 게시물의 좋아요 상태 체크 
 		if(dto.getLikeCheck()!=0) {
 			//조인한 컬럼(게시물 좋아요테이블) 의 카운트가 0이아니면 like === true

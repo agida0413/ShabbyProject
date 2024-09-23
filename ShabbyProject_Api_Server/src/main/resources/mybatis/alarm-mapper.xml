@@ -119,8 +119,9 @@ DELETE
         FROM ALARM a
    LEFT JOIN MEMBER m
           ON a.receiver = m.id_num               /* 받는이- 회원테이블 조인 */
-   LEFT JOIN MEMBER sm
+  RIGHT JOIN MEMBER sm
           ON a.sender   = sm.id_num              /* 보내는이 회원테이블 조인 */
+         AND sm.locked !='FORBIDDEN'             /*센더가 정지계정인 경우 제외*/
    LEFT JOIN FOLLOW fw
           ON m.id_num   = fw.id_num              /* 팔로우 테이블 조인 */
          AND sm.id_num  = fw.following_id
@@ -147,45 +148,49 @@ DELETE
                      )                           /* 보내는 사람의 계정이 비공개 계정 + 서로 팔로우 관계가 아닌경우의 반대 +(나만보기 게시물이 아닌 경우) */
                     )
             )
+    
    ORDER BY create_date DESC
       LIMIT #{rowSize} OFFSET #{startRow}
 </select>
  
  <!--알람조회-->
 <select id="getAlarmTotalPage" parameterType="AlarmDTO" resultType="int">
- /* 알람 리스트 총 페이지 */
-    SELECT CEIL(COUNT(*) / #{rowSize})  /* 총 페이지 */
-      FROM ALARM a
- LEFT JOIN MEMBER m                     /* 회원 테이블 조인(받는 이) */
-        ON a.receiver = m.id_num
- LEFT JOIN MEMBER sm
-        ON a.sender   = sm.id_num	        /* 회원 테이블 조인(보내는 이) */
- LEFT JOIN FOLLOW fw
-        ON m.id_num   = fw.id_num
-       AND sm.id_num  = fw.following_id  /* 팔로우 테이블 조인 */
- LEFT JOIN POST_DATA p
-        ON a.post_num = p.id_num          /* 게시물 테이블 조인 */
-     WHERE (    
-             1=1 
-             AND m.id_num      = #{idNum}	        /* 태그 알림의 경우 나만보기로 변경 혹은 , 비공개 계정으로 전환 후  팔로우를 끊었을때 알람을 통해 게시물을 열람할 수 있는 현상가능성 */				
-             AND a.alarm_type != 'TAG'              /* 알람 타입이 태그가아닌경우는 일반 조건 */
-           )
-        OR (
-             1=1 
-             AND m.id_num     = #{idNum}
-             AND a.alarm_type = 'TAG'   /* 알람 타입이 태그인 경우는 */
-             AND (
-                   (
-                     NOT ( 1=1 
-                           AND sm.locked   = 'LOCKED'
-                           AND fw.approve != 'FOLLOWOK'
-                          )                         /* ( 보내는 사람의 계정이 비공개 계정 + 서로 팔로우 관계가 아닌경우의 반대 )+(나만보기 게시물이 아닌 경우) */
-                     AND p.only_me != 'ONLYME'
-                   )
-                 )
+  /* 알람 총페이지*/
+      SELECT CEIL(COUNT(*)/#{rowSize})
+        FROM ALARM a
+   LEFT JOIN MEMBER m
+          ON a.receiver = m.id_num               /* 받는이- 회원테이블 조인 */
+  RIGHT JOIN MEMBER sm
+          ON a.sender   = sm.id_num              /* 보내는이 회원테이블 조인 */
+         AND sm.locked !='FORBIDDEN'             /*센더가 정지계정인 경우 제외*/
+   LEFT JOIN FOLLOW fw
+          ON m.id_num   = fw.id_num              /* 팔로우 테이블 조인 */
+         AND sm.id_num  = fw.following_id
+   LEFT JOIN POST_DATA p                         /* 게시물 테이블 조인 */
+          ON a.post_num = p.post_num 
+   WHERE
+            (    
+               1=1
+               AND m.id_num      = #{idNum}      /* 태그 알림의 경우 나만보기로 변경 혹은 , 비공개 계정으로 전환 후  팔로우를 끊었을때 알람을 통해 게시물을 열람할 수 있는 현상가능성 */	
+               AND a.alarm_type != 'TAG'         /* 알람 타입이 태그가아닌경우는 일반 조건 */
             )
-</select>
+      OR 
+            (
+               1=1 
+               AND m.id_num     = #{idNum}
+               AND a.alarm_type = 'TAG'          /* 알람 타입이 태그인 경우는 */
+               AND (
+                     ( 
+                       NOT ( 1=1 
+                             AND sm.locked   = 'LOCKED' 
+                             AND fw.approve != 'FOLLOWOK'
+                            )  
+                       AND p.only_me !='ONLYME'
+                     )                           /* 보내는 사람의 계정이 비공개 계정 + 서로 팔로우 관계가 아닌경우의 반대 +(나만보기 게시물이 아닌 경우) */
+                    )
+            )
  
+ </select>
 <!--알람 조회시 읽음 상태 업데이트-->
 <update id="updateIsread" parameterType="List">
 /* 읽음으로 알람 업데이트 */
@@ -236,11 +241,43 @@ DELETE
  <!--안읽은 알람 개수 가져오기--> 
 <select id="alarmCount" parameterType="int" resultType="int">
 /* 안 읽은 알람 수 */
-SELECT COUNT(*)              /* 개수 */ 
-  FROM ALARM 		
- WHERE 1=1 
-   AND receiver = #{idNum}   /* 받는이 회원 고유번호 */
-   AND isread=0;             /* 읽지않음 조건 */
+
+      SELECT COUNT(*)
+        FROM ALARM a
+   LEFT JOIN MEMBER m
+          ON a.receiver = m.id_num               /* 받는이- 회원테이블 조인 */
+  RIGHT JOIN MEMBER sm
+          ON a.sender   = sm.id_num              /* 보내는이 회원테이블 조인 */
+         AND sm.locked !='FORBIDDEN'             /*센더가 정지계정인 경우 제외*/
+   LEFT JOIN FOLLOW fw
+          ON m.id_num   = fw.id_num              /* 팔로우 테이블 조인 */
+         AND sm.id_num  = fw.following_id
+   LEFT JOIN POST_DATA p                         /* 게시물 테이블 조인 */
+          ON a.post_num = p.post_num 
+   WHERE
+            (    
+               1=1
+               AND m.id_num      = #{idNum}      /* 태그 알림의 경우 나만보기로 변경 혹은 , 비공개 계정으로 전환 후  팔로우를 끊었을때 알람을 통해 게시물을 열람할 수 있는 현상가능성 */	
+               AND a.alarm_type != 'TAG'         /* 알람 타입이 태그가아닌경우는 일반 조건 */
+               AND isread=0
+            )
+      OR 
+            (
+               1=1 
+               AND m.id_num     = #{idNum}
+               AND a.alarm_type = 'TAG'          /* 알람 타입이 태그인 경우는 */
+               AND (
+                     ( 
+                       NOT ( 1=1 
+                             AND sm.locked   = 'LOCKED' 
+                             AND fw.approve != 'FOLLOWOK'
+                            )  
+                       AND p.only_me !='ONLYME'
+                       AND isread=0
+                     )                           /* 보내는 사람의 계정이 비공개 계정 + 서로 팔로우 관계가 아닌경우의 반대 +(나만보기 게시물이 아닌 경우) */
+                    )
+            )
+      
 </select>
 
 </mapper>

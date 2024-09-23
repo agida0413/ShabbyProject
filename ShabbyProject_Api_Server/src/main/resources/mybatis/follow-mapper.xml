@@ -19,6 +19,7 @@
       AND f.id_num  =   #{idNum}
       AND nickname LIKE CONCAT('%',#{keyword},'%') 
       AND approve   = 'FOLLOWOK'
+      AND m.locked !='FORBIDDEN'
     LIMIT #{rowSize} OFFSET #{startRow}  
 </select>
  	
@@ -49,6 +50,7 @@
                            WHERE nickname = #{nickname}
                          )                          /* 팔로우 테이블 주체자가 매개변수로 받은 회원의 회원번호 */
           AND approve  =  'FOLLOWOK'                /* 팔로우 상태가 OK */
+          AND m.locked !='FORBIDDEN'
   </if>	
   <if test="flwType=='FOLLOWER'">                   /* 팔로우 하는 사람 */
            ON f.id_num = m.id_num
@@ -59,6 +61,7 @@
                                  WHERE nickname = #{nickname}	
                                )                      /* 팔로우 테이블 팔로우요청을받는 아이디가 매개변수로 받은 회원의 회원번호 */
           AND approve        = 'FOLLOWOK'             /* 팔로우 상태가 OK */
+          AND m.locked !='FORBIDDEN'
   </if>
      ORDER BY follow_Date DESC
         LIMIT #{rowSize} OFFSET #{startRow}
@@ -166,6 +169,7 @@ INNER JOIN HOBBY hb
                               FROM FOLLOW 
                              WHERE id_num = #{idNum} 
                            )
+     WHERE m.locked !='FORBIDDEN'                     
   GROUP BY nickname                       /* 닉네임으로 그루핑 */
   ORDER BY relateCount DESC               /* 가장 관련이 많은 회원순으로 정렬조건 */
      LIMIT 3                              /* 3개만 추출 */
