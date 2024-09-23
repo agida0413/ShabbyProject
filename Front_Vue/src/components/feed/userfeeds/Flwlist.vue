@@ -116,7 +116,8 @@ export default {
       page: 1, //페이지
       myNickname: '', //현재 로그인한 유저의 닉네임 == > 서버로 부터 받음  
       observer: null,  //intersection Observer 객체 - > 무한스크롤
-      isNomoreData:false //무한 스크롤 할 시 불필요한 통신을 방지하기 위해 
+      isNomoreData:false, //무한 스크롤 할 시 불필요한 통신을 방지하기 위해 
+      executePage:0 // 처리중인 페이지 중복호출방지
     };
   },
 //변화 감지 
@@ -160,7 +161,7 @@ export default {
               if (entry.isIntersecting) {
                 // sentinel 을 감지 할때마다 
                 this.callFollowList(); // Sentinel이 뷰포트에 들어올 때 데이터 로드
-                this.page++;//페이지 증가 
+               
               }
             });
           }, {
@@ -193,6 +194,7 @@ export default {
       if (this.isLoading || this.isNomoreData) {
         return;
       }
+    
       //로딩정보 true
       this.isLoading = true;
       //닉네임/ 팔로우인지 팔로잉인지 타입 / 페이지 ==> pathvariable
@@ -201,6 +203,7 @@ export default {
           //성공시 만약 데이터가 없으면 noMoreDate 를 true로 설정해 더이상 axios를 호출 못하게함 
           if(res?.data?.reqData?.followList?.length===0){
             this.isNomoreData=true;
+            this.page--;
           }
           //아니라면 
           else{ 
@@ -208,6 +211,7 @@ export default {
             this.FollowData = [...this.FollowData, ...res?.data?.reqData?.followList];
             //내 닉네임 ( 현재 로그인 한 회원의 닉네임 )
             this.myNickname = res?.data?.reqData?.myNickname;
+            this.page++;//페이지 증가 
           }
          
         })

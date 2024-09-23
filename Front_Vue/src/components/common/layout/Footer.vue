@@ -10,18 +10,18 @@
             
    
     
-            <v-row style="margin-bottom: 3px;">
+            <v-row style="margin-bottom: 3px;" class="align-center">
            
      
               <v-col
   style="font-size: 18px; font-weight: bold; display: flex;"
-  class="align-center"
+  
 >
-  <span style="margin-left: 780px;">추천 팔로우</span>
-  <span style="margin-left: 480px;  margin-top: 25px;">
+  <v-col style="margin-left: 200px;">회원님을 위한 추천 팔로우</v-col>
+  <span>
     <v-checkbox label="오늘 하루 보지않기" v-model="todayNosee" style="font-size: 10px;"/>
   </span>
-  <span>
+  <span style="margin-top: 7px;">
     <v-btn
       variant="text"
       @click="close"

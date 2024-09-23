@@ -58,10 +58,19 @@ api.interceptors.response.use(response => {
   // 특정 URL에서 아무 것도 수행하지 않도록 설정
   if(error?.response?.data?.message==='서버 내부 오류입니다. 잠시 뒤 이용해 주세요.' 
     ||error?.response?.data?.message==='서버 내부 오류입니다.'
+    ||error?.response?.data?.message==='정지된 사용자입니다.'
+    ||error?.response?.data?.message==='회원님의 계정이 정지처리 되었습니다. 관리자에게 문의하세요.'
   ){
     router.push('/error'); // this 대신 router 사용
     return;
-  }   // 410 상태 코드 오류가 발생하고, 엑세스 토큰이 있고 ,재발급 시도하지 않았으면
+  } 
+  if(error?.response?.status===417){
+    alert('회원님의 계정이 정지처리 되었습니다. 관리자에게 문의하세요.')
+    localStorage.removeItem('access')
+    router.push('/login')
+  }  
+  
+  // 410 상태 코드 오류가 발생하고, 엑세스 토큰이 있고 ,재발급 시도하지 않았으면
   if (error.response && error.response.status === 410 && !originalRequest._retry &&token ) {
         //만약 재발급 진행중이라면 
      
