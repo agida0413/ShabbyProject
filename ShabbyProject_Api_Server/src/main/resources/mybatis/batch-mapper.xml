@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- 피드관련--> 
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+<mapper namespace="com.sist.mapper.BatchMapper">
+
+<delete id="batchEmailAuth">
+   /* 현시간보다 인증만료시간이 적은 인증코드 레코드 삭제 */
+   DELETE 
+     FROM EMAIL_AUTH
+    WHERE expiration &lt; NOW()
+</delete>
+
+<delete id="batchTokenExpir">
+   /* 현시간보다 만료시간이 적은 리프레시 토큰 삭제 */
+   DELETE 
+     FROM TOKEN_STORE
+    WHERE expiration &lt; NOW()
+</delete>
+
+<delete id="batchTokenDupl">
+   /* 비정상 종료로 발생한 동일한 아이디에서 생성된 리프레시토큰을 삭제 */
+    DELETE 
+      FROM TOKEN_STORE
+     WHERE id_num IN (
+                       SELECT id_num
+                         FROM (
+                                  SELECT id_num
+                                    FROM TOKEN_STORE
+                                GROUP BY id_num
+                                  HAVING COUNT(*) > 1
+                               ) AS temp
+                     );
+</delete>
+
+</mapper>

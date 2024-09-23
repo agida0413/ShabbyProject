@@ -59,7 +59,7 @@ INTO ALARM (sender, post_num, receiver, alarm_type)
 <delete id="alarmDelete" parameterType="AlarmDTO">
 DELETE 
   FROM ALARM 
- WHERE 
+ WHERE 1=1
 <if test="postNum==0">                    /* 게시물 번호가 존재하지 않으면 */
        sender = #{sender}                 /* 보내는 이 */
    AND receiver IN (                      /*받는 이 */
@@ -96,7 +96,7 @@ DELETE
   AND alarm_type IN (
                      'FOLLOWREQ'
                     ,'FOLLOW'
-                    )		  
+                    )
 </if>
 <!-- alarmType이 'FOLLOWREQ' 또는 'FOLLOW'이 아닌 경우 -->
 <if test="alarmType != 'FOLLOWREQ' and alarmType != 'FOLLOW'">
@@ -123,14 +123,14 @@ DELETE
           ON a.sender   = sm.id_num              /* 보내는이 회원테이블 조인 */
    LEFT JOIN FOLLOW fw
           ON m.id_num   = fw.id_num              /* 팔로우 테이블 조인 */
-         AND sm.id_num  = fw.following_id		
+         AND sm.id_num  = fw.following_id
    LEFT JOIN POST_DATA p                         /* 게시물 테이블 조인 */
           ON a.post_num = p.post_num 
    WHERE
             (    
                    m.id_num      = #{idNum}      /* 태그 알림의 경우 나만보기로 변경 혹은 , 비공개 계정으로 전환 후  팔로우를 끊었을때 알람을 통해 게시물을 열람할 수 있는 현상가능성 */	
                AND a.alarm_type != 'TAG'         /* 알람 타입이 태그가아닌경우는 일반 조건 */
-			)
+            )
       OR 
             (
                    m.id_num     = #{idNum}
@@ -143,7 +143,7 @@ DELETE
                        AND p.only_me !='ONLYME'
                      )                           /* 보내는 사람의 계정이 비공개 계정 + 서로 팔로우 관계가 아닌경우의 반대 +(나만보기 게시물이 아닌 경우) */
                     )
-		 	)			
+            )
    ORDER BY create_date DESC
       LIMIT #{rowSize} OFFSET #{startRow}
 </select>
@@ -200,7 +200,8 @@ UPDATE ALARM SET
   /* 공개계정 전환시 알람 테이블의 FOLLOWSTATE - > OK */
   UPDATE ALARM SET 
          alarm_type = 'FOLLOW'      /* 팔로우 상태 -> 승인상태 */
-   WHERE receiver   = #{idNum}      /* 받는이 */
+   WHERE 1=1 
+     AND receiver   = #{idNum}      /* 받는이 */
      AND alarm_type = 'FOLLOWREQ'   /* 팔로우 상태가 대기중 상태 */
 <if test="type=='ACCEPT'">
                                    /*타입이 알람리스트에서 수락버튼을 클릭한 것이라면 */
@@ -216,7 +217,8 @@ UPDATE ALARM SET
 /* 알람 리스트에서 팔로우 요청 거절 후 알람 STATUS 업데이트 */
 DELETE 
   FROM ALARM
- WHERE receiver = #{idNum}       /* 받는이 */
+ WHERE 1=1 
+   AND receiver = #{idNum}       /* 받는이 */
    AND sender   = (
              SELECT id_num 
                FROM MEMBER
@@ -230,7 +232,8 @@ DELETE
 /* 안 읽은 알람 수 */
 SELECT COUNT(*)              /* 개수 */ 
   FROM ALARM 		
- WHERE receiver = #{idNum}   /* 받는이 회원 고유번호 */
+ WHERE 1=1 
+   AND receiver = #{idNum}   /* 받는이 회원 고유번호 */
    AND isread=0;             /* 읽지않음 조건 */
 </select>
 
