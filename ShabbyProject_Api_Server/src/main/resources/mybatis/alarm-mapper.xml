@@ -61,8 +61,8 @@ DELETE
   FROM ALARM 
  WHERE 1=1
 <if test="postNum==0">                    /* 게시물 번호가 존재하지 않으면 */
-       sender = #{sender}                 /* 보내는 이 */
-   AND receiver IN (                      /*받는 이 */
+   AND sender = #{sender}                 /* 보내는 이 */
+   AND receiver IN (                      /* 받는 이 */
                      <foreach collection="receivers" item="receiver" separator=",">         
                      (
                          SELECT id_num
@@ -73,7 +73,7 @@ DELETE
                     )
 </if>
 <if test="postNum!=0">                     /* 게시물 번호가 존재하면 */
-       post_num = #{postNum}               /* 게시물 번호 */
+   AND post_num = #{postNum}               /* 게시물 번호 */
 </if> 
 <if test="isUpdate">                       /* 게시물 관련 알람 */
    AND receiver IN ( 
@@ -128,17 +128,20 @@ DELETE
           ON a.post_num = p.post_num 
    WHERE
             (    
-                   m.id_num      = #{idNum}      /* 태그 알림의 경우 나만보기로 변경 혹은 , 비공개 계정으로 전환 후  팔로우를 끊었을때 알람을 통해 게시물을 열람할 수 있는 현상가능성 */	
+               1=1
+               AND m.id_num      = #{idNum}      /* 태그 알림의 경우 나만보기로 변경 혹은 , 비공개 계정으로 전환 후  팔로우를 끊었을때 알람을 통해 게시물을 열람할 수 있는 현상가능성 */	
                AND a.alarm_type != 'TAG'         /* 알람 타입이 태그가아닌경우는 일반 조건 */
             )
       OR 
             (
-                   m.id_num     = #{idNum}
+               1=1 
+               AND m.id_num     = #{idNum}
                AND a.alarm_type = 'TAG'          /* 알람 타입이 태그인 경우는 */
                AND (
-                     (
-                       NOT (    sm.locked   = 'LOCKED' 
-                            AND fw.approve != 'FOLLOWOK'
+                     ( 
+                       NOT ( 1=1 
+                             AND sm.locked   = 'LOCKED' 
+                             AND fw.approve != 'FOLLOWOK'
                             )  
                        AND p.only_me !='ONLYME'
                      )                           /* 보내는 사람의 계정이 비공개 계정 + 서로 팔로우 관계가 아닌경우의 반대 +(나만보기 게시물이 아닌 경우) */
@@ -163,15 +166,18 @@ DELETE
  LEFT JOIN POST_DATA p
         ON a.post_num = p.id_num          /* 게시물 테이블 조인 */
      WHERE (    
-                 m.id_num      = #{idNum}	        /* 태그 알림의 경우 나만보기로 변경 혹은 , 비공개 계정으로 전환 후  팔로우를 끊었을때 알람을 통해 게시물을 열람할 수 있는 현상가능성 */				
+             1=1 
+             AND m.id_num      = #{idNum}	        /* 태그 알림의 경우 나만보기로 변경 혹은 , 비공개 계정으로 전환 후  팔로우를 끊었을때 알람을 통해 게시물을 열람할 수 있는 현상가능성 */				
              AND a.alarm_type != 'TAG'              /* 알람 타입이 태그가아닌경우는 일반 조건 */
            )
         OR (
-                 m.id_num     = #{idNum}
+             1=1 
+             AND m.id_num     = #{idNum}
              AND a.alarm_type = 'TAG'   /* 알람 타입이 태그인 경우는 */
              AND (
                    (
-                     NOT (     sm.locked   = 'LOCKED'
+                     NOT ( 1=1 
+                           AND sm.locked   = 'LOCKED'
                            AND fw.approve != 'FOLLOWOK'
                           )                         /* ( 보내는 사람의 계정이 비공개 계정 + 서로 팔로우 관계가 아닌경우의 반대 )+(나만보기 게시물이 아닌 경우) */
                      AND p.only_me != 'ONLYME'
