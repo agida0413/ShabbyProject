@@ -17,7 +17,7 @@ public class WebConfig {
             @Override
             public void addInterceptors(InterceptorRegistry registry) {
                 registry.addInterceptor(duplicateRequestInterceptor)
-                        .addPathPatterns("/**");
+                        .addPathPatterns("/api/**");
             }
         };
     }
