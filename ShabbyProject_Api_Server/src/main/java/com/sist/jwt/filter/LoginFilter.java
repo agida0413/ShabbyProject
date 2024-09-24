@@ -142,6 +142,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         
         //응답 설정
         response.setHeader("access", access);//엑세스 토큰은 헤더에 
+        response.setHeader("nickname", nickname);//닉네임 전송 -- > 로컬스토리지
         response.addCookie(CookieUtil.createCookie("refresh", refresh));//리프레시 토큰은 쿠키에
         
         //성공시 응답
