@@ -1,18 +1,14 @@
 package com.sist.service.member.impl;
 
-import org.springframework.beans.factory.annotation.Value;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import com.sist.common.exception.BadRequestException;
 import com.sist.common.exception.NotFoundException;
-import com.sist.common.util.PathVariableValidation;
 import com.sist.dto.api.ResponseDTO;
 import com.sist.dto.member.MemberDTO;
 import com.sist.repository.MemberAccountRepository;
-import com.sist.repository.impl.mybatis.MybatisMemberAccountRepository;
 import com.sist.service.member.MemberFindService;
 import com.sist.service.util.MailService;
 

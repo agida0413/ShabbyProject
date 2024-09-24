@@ -1,12 +1,9 @@
 package com.sist.service.member.impl;
 
-import java.util.ArrayList;
-import java.util.Collection;
 
+import java.util.Collection;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
-import com.sist.common.util.SimpleCodeGet;
 import com.sist.dto.member.MemberDTO;
 
 
@@ -18,24 +15,6 @@ public class CustomUserDetails implements UserDetails {
 
         this.dto = dto;
     }
-
-//    //회원 권한 정보 읽어오기
-//    @Override
-//    public Collection<? extends GrantedAuthority> getAuthorities() {
-//
-//        Collection<GrantedAuthority> collection = new ArrayList<>(); 
-//
-//        collection.add(new GrantedAuthority() {
-//
-//            @Override
-//            public String getAuthority() {
-//
-//                return dto.getRole();
-//            }
-//        });
-//
-//        return collection;
-//    }
 
     //패스워드 
     @Override

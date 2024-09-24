@@ -1,9 +1,5 @@
 package com.sist.service.member.impl;
 
-
-
-import java.net.http.HttpResponse;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -12,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.sist.common.exception.BadRequestException;
 import com.sist.common.exception.InternerException;
 import com.sist.common.util.CookieUtil;
-import com.sist.common.util.PathVariableValidation;
 import com.sist.common.util.SimpleCodeGet;
 import com.sist.dto.api.ResponseDTO;
 import com.sist.dto.member.MemberDTO;

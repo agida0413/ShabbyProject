@@ -1,11 +1,9 @@
 package com.sist.service.util.impl;
 
-import java.security.SecureRandom;
-import java.time.LocalDateTime;
 
+import java.time.LocalDateTime;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -17,12 +15,10 @@ import com.sist.common.exception.InternerException;
 import com.sist.common.exception.NotFoundException;
 import com.sist.common.util.MailUtil;
 import com.sist.common.util.RandomGenerator;
-import com.sist.common.util.SimpleCodeGet;
 import com.sist.dto.api.ResponseDTO;
 import com.sist.dto.member.EmailAuthDTO;
 import com.sist.dto.member.MemberDTO;
 import com.sist.repository.MemberAccountRepository;
-import com.sist.repository.impl.mybatis.MybatisMemberAccountRepository;
 import com.sist.service.util.MailService;
 
 import jakarta.mail.MessagingException;

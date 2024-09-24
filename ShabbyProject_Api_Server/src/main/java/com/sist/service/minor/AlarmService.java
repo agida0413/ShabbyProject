@@ -1,11 +1,7 @@
 package com.sist.service.minor;
 
-import java.util.List;
-
 import org.springframework.http.ResponseEntity;
-
 import com.sist.dto.api.ResponseDTO;
-import com.sist.dto.util.AlarmListDTO;
 import com.sist.dto.util.AlarmResultDTO;
 
 public interface AlarmService {
