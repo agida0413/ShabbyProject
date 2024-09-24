@@ -15,7 +15,7 @@ public final class MailUtil {
 			//메일로보낼 html 결합 
 			certificationMessage+="<h1 style='text-align:center;'>[ Shabby 회원가입] 인증메일 </h1>";
 			certificationMessage+="<h3 style='text-align:center;'>인증코드:<strong style='font-size:32px; letter-spacing:8px;'> "+certificationNumber
-					+certificationMessage+"</strong></h3>";
+					            +"</strong></h3>";
 			return certificationMessage;
 		}
 		
@@ -26,7 +26,7 @@ public final class MailUtil {
 			String certificationMessage="";
 			certificationMessage+="<h1 style='text-align:center;'>[ Shabby 임시비밀번호 발급 ] 메일 </h1>";
 			certificationMessage+="<h3 style='text-align:center;'>새비밀번호:<strong style='font-size:32px; letter-spacing:8px;'> "+newPassword
-					+certificationMessage+"</strong></h3>";
+					            +"</strong></h3>";
 			
 			return certificationMessage;
 		}

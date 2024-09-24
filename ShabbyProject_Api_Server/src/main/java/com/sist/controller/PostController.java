@@ -40,7 +40,7 @@ public class PostController {
 			throw new BadRequestException("태그에 포함되면 안되는 문자가 포함되어있습니다.('#','@',',')");
 		}
 		
-		if(dto.getImgUrlList().size()<1) {
+		if(dto.getImgList().size()<1) {
 			throw new BadRequestException("사진은 한장 이상 첨부해야 합니다.");
 		}
 		return postService.postInsertTransaction(dto);

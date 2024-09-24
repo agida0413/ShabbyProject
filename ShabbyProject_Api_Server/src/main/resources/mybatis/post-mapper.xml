@@ -94,7 +94,7 @@ WHERE 1=1
                      AND approve = 'FOLLOWOK'    
                 )
   AND only_me = 'NOTONLYME'                                       /* 나만보기 게시물 제외 */
-ORDER BY  p.create_date DESC
+ORDER BY <if test="feedState=='GLOBALFEED'">likeCount DESC,</if> p.create_date DESC     /*글로벌 피드의 경우 좋아요 수가 많은 순*/
     </when>
   
     <when test="feedState=='USERFEED'">                         /* 피드 타입이 유저피드인 경우 */

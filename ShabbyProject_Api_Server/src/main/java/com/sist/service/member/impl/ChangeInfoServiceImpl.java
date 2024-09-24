@@ -134,7 +134,7 @@ public class ChangeInfoServiceImpl implements ChangeInfoService{
 			refreshService.addRefreshEntity(idNum, newRefresh, 86400000L,request);//새 토큰 데이터에 저장
 	        
 	        response.setHeader("access", newAccess); //새로운 토큰을 헤더에 추가 
-	        
+	        response.setHeader("nickname", dto.getNickname());
 	        response.addCookie(CookieUtil.createCookie("refresh", newRefresh)); // 쿠키생성 메서드
 
 		
