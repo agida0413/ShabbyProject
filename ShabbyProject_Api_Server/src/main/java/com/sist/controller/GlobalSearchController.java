@@ -30,9 +30,7 @@ public class GlobalSearchController {
 	//자동완성 검색어 결과 
 	@GetMapping("/{page}")
 	public ResponseEntity<ResponseDTO<List<GlobalSearchResultDTO>>> globalSearchReult(@RequestParam String keyword,@PathVariable int page){
-		//_ 키워드 데이터베이스 변환 필요
-		
-		
+
 		//키워드 , 페이지에 대한 검증 
 		if (!PathVariableValidation.pageValidation(page) || !PathVariableValidation.keyWordValService(keyword)) {
 			throw new InternerException("유효하지 않은 입력입니다.","validation 실패");

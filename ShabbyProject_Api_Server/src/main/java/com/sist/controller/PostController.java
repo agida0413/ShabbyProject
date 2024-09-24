@@ -39,6 +39,10 @@ public class PostController {
 			
 			throw new BadRequestException("태그에 포함되면 안되는 문자가 포함되어있습니다.('#','@',',')");
 		}
+		
+		if(dto.getImgUrlList().size()<1) {
+			throw new BadRequestException("사진은 한장 이상 첨부해야 합니다.");
+		}
 		return postService.postInsertTransaction(dto);
 	}
 	//게시물 상세보기 api
@@ -58,7 +62,7 @@ public class PostController {
 	//게시물 수정 api
 	@PutMapping
 	public ResponseEntity<ResponseDTO<Void>> postUpdate(@Valid WritePostDTO dto){
-		//수정할려는 작업에 사진이 없는경우 validation	
+		//수정할려는 작업에 사진이 없는경우 validation (새롭게 추가된 사진이 0이라는 의미 x 수정작업 시 사진을 전부 비우려는 경우에 해당)
 		if(dto.getCheckimgNull()==null || dto.getCheckimgNull().size()==0) {
 			throw new BadRequestException("사진은 한장이상 첨부해야합니다.");
 		}
