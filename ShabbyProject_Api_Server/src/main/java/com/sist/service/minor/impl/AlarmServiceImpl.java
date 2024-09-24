@@ -60,11 +60,13 @@ public class AlarmServiceImpl implements AlarmService{
 		(new ResponseDTO<AlarmResultDTO>(resultDTO),HttpStatus.OK); //성공 
 	}
 	
-	
+	//안읽은 알람 개수 
 	@Override
 	public ResponseEntity<ResponseDTO<Integer>> alarmCount() {
 		// TODO Auto-generated method stub
+		//회원 고유번호 
 		int idNum=SimpleCodeGet.getIdNum();
+		//알람 개수
 		int alarmCount=alarmRepository.alarmCount(idNum);
 		return new ResponseEntity<ResponseDTO<Integer>>
 		(new ResponseDTO<Integer>(alarmCount),HttpStatus.OK); //성공 
