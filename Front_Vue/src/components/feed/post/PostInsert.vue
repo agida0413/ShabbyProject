@@ -578,7 +578,7 @@ checkIsHashTag(){
   if (!exists) {
     this.followList.push({follow:follow,profile:profile})
     this.followRequest.push(follow); // 인덱스 없이 배열에 추가
-    console.log(this.followList)
+   
   }
       this.searchFollow = '';//초기값 설정 
       this.isAt = false;//검색창 닫음

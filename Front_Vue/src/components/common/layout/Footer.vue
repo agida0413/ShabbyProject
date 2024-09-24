@@ -97,6 +97,7 @@
       }
    
     this.sheet = this.$route.path === '/';
+    this.getRecommend()
   },
   methods:{
     getRecommend(){

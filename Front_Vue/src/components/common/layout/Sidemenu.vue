@@ -18,21 +18,21 @@
           
           </v-list-item>
 
-          
+          <v-list-item v-if="nickname" style="text-align: center;"><span style="font-size: 14px; color: #FFCCCC;">{{ nickname }}</span><span style="font-size: 14px; color: aliceblue;">&nbsp;님 로그인 중</span></v-list-item>
           </template>
 
         <v-divider></v-divider>
           <!--사이드 메뉴 항목들-->
         <v-list density="compact" nav        
         >
-        
+       
           <v-list-item 
           prepend-icon="mdi-pencil" 
           title="새 게시물" 
           value="1" 
           @click="postInsertDialogOpen"
-         
           ></v-list-item>
+             
               <router-link to="/globalfeed" class="router-link"> 
                 <v-list-item prepend-icon="mdi-account-group-outline"  value="2" title="글로벌 피드" ></v-list-item></router-link>
               <router-link to="/" class="router-link"> <v-list-item prepend-icon="mdi-home-city"  title="메인 피드" value="3"></v-list-item></router-link>
@@ -90,6 +90,8 @@ export default{
       AlarmDialog:false,//알람 리스트 모달 열고닫음 
       selectedValue:null,
       noreadAlarmCount:0,
+      nickname:''
+    
 
     }
   },
@@ -99,14 +101,18 @@ export default{
     PostInsert,//게시물 작성 컴포넌트
     AlarmList
   },
+  
  mounted(){
   
   this.getInitInfo()
+ this.nickname= localStorage.getItem('nickname')
   eventBus.on('getAlarmData',this.alarmCountGet);
+  eventBus.on('changeNickname',this.updateLocalStorage)
  },
  unmounted(){
   eventBus.off('getAlarmData',this.alarmCountGet);
- },
+  eventBus.off('changeNickname',this.updateLocalStorage)
+},
  //변경추적
     watch:{
       //현재 컴포넌트에서 데이터 교환이 완료됫음을 app.vue에전달(스켈레톤 요소제어)
@@ -122,6 +128,10 @@ export default{
      
     },
   methods:{
+
+    updateLocalStorage(){
+      this.nickname= localStorage.getItem('nickname')
+    },
    alarmCountGet(){
     if(this.isLoading)return
 
@@ -129,7 +139,6 @@ export default{
       api.get('/alarm')
       .then((res)=>{
         this.noreadAlarmCount=res?.data?.reqData
-        console.log(this.noreadAlarmCount)
       })
       .catch((err)=>{
              if(err?.response?.data?.message){
@@ -167,8 +176,6 @@ export default{
         .then((res)=>{
           //성공시 
           this.memberData=res?.data?.reqData//공개여부 정보 저장 
-          
-          
         })
         .catch((err)=>{
           if(err?.response?.data?.message){
@@ -216,6 +223,7 @@ export default{
         //성공시  로컬스토리지 제거 , 로그인 페이지로 푸시 
         localStorage.removeItem('requestUrl');   
         localStorage.removeItem('access');
+        localStorage.removeItem('nickname');
         this.$router.push('/login');
 
           

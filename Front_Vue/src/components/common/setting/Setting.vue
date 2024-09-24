@@ -43,7 +43,7 @@
                   ></v-list-item>
         
                   <v-list-item
-                    subtitle="change phone number"
+                    subtitle="change phone"
                     title="휴대폰 번호 변경"
                     link
                     @click="openPhoneChange"
@@ -64,7 +64,7 @@
 
                   <v-list-item
                   v-if="memberData.locked==='LOCKED'"
-                    subtitle="transfer "
+                    subtitle="tranfer mode"
                     title="공개모드로 전환"
                     link
                     @click="openAlert(
@@ -74,7 +74,7 @@
                   ></v-list-item>
         
                   <v-list-item
-                    subtitle="change password"
+                    subtitle="delete account"
                     title="회원탈퇴"
                     class="red-text"
                     link

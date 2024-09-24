@@ -209,7 +209,8 @@ export default {
                 const accessToken = res?.headers['access'];
                 //로컬스토리지에 access토큰 저장 
                 localStorage.setItem('access', accessToken); 
-
+                 const nickname= res?.headers['nickname'];
+                 localStorage.setItem('nickname',nickname)
                 //로컬스토리지에 있는 이전요청 url 가져옴 ==> why? 만약 회원이 url로 다른 자원에 접근했을때 라우터가드나 시큐리티인증에 실패하여
                 //login 라우터로 리다이렉트 되었을때 로그인 라우터에서 로그인을 진행 후 이전요청으로 라우터 푸시하기 위함  
                 const reqUrl = localStorage.getItem('requestUrl');

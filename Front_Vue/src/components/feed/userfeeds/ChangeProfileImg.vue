@@ -34,6 +34,7 @@
                       accept="image/*"
                       @change="handleFileEvent"
                       :disabled="isLoading"
+                      @click:clear="imageToNull"
                     ></v-file-input> 
     
                    
@@ -100,6 +101,9 @@ import api from '@/api';
       ,
       methods: {
         // 해당 컴포넌트를 닫는 메소드 
+        imageToNull(){
+          this.profileImgFile=null
+        },
         closeDialog() {
           this.profileImgFile=null,
           this.isLoading=false

@@ -23,7 +23,7 @@
       
       >
         <v-img 
-          :lazy-src="`https://picsum.photos/10/6?image=${n * 5 + 10}`"
+         
           :src="post.postImgUrl"
           aspect-ratio="1"
           class="image-container"
@@ -77,8 +77,7 @@ export default {
       postData:[], //서버로부터 받을 게시물 데이터 
       isLoading:false, // 로딩상태를 저장할  변수 
       observer:null, //intersection observer 객체
-      noMoreNeedData:false, //더이상 로드할 데이터가 없다면 불필요한 api 호출을 방지하기 위한 변수 
-      firstCall:false ,//마운트시 첫번쨰 로드시 페이지 증가 x 위한 변수 
+      noMoreNeedData:false, //더이상 로드할 데이터가 없다면 불필요한 api 호출을 방지하기 위한 변수  
       sendPostNum:0// 상세보기 모달에 전달할 
     };
     
@@ -120,12 +119,7 @@ export default {
       if(this.isLoading || this.noMoreNeedData)return
       //데이터 불러오기 시작 
       this.isLoading=true
-      //만약 첫번째 콜이라면 페이지 증가x 그외엔 증가 
-      if(this.firstCall){
-        this.page++;//페이지 증가
-      }
-      //처음 콜 이후엔 페이지 증가 위해 상태 변경 
-      this.firstCall=true
+     
       //게시물 정보 불러오기 api
      api.get(`/feed/mainfeed/${this.page}`) 
      .then((res)=>{
@@ -135,6 +129,7 @@ export default {
         if(resData.length){
           //기존 데이터에 추가 
           this.postData=[...this.postData,...resData]
+          this.page++
         }
         else{
           //데이터가 없다면 이제 더이상 데이터를 안불러와도 된다는 변수 및 페이지 원복 
