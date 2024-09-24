@@ -260,7 +260,7 @@ DELETE
                1=1
                AND m.id_num      = #{idNum}      /* 태그 알림의 경우 나만보기로 변경 혹은 , 비공개 계정으로 전환 후  팔로우를 끊었을때 알람을 통해 게시물을 열람할 수 있는 현상가능성 */	
                AND a.alarm_type != 'TAG'         /* 알람 타입이 태그가아닌경우는 일반 조건 */
-               AND isread=0
+               AND isread = 0
             )
       OR 
             (
@@ -274,7 +274,7 @@ DELETE
                              AND fw.approve != 'FOLLOWOK'
                             )  
                        AND p.only_me !='ONLYME'
-                       AND isread=0
+                       AND isread = 0
                      )                           /* 보내는 사람의 계정이 비공개 계정 + 서로 팔로우 관계가 아닌경우의 반대 +(나만보기 게시물이 아닌 경우) */
                     )
             )

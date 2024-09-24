@@ -68,7 +68,7 @@ private final FollowService followService;
 	//서비스에서 검증 
 	@PostMapping("/emailValidate")
 	public ResponseEntity<ResponseDTO<Void>> emailValidation(@RequestBody EmailAuthDTO dto){
-		if(!PathVariableValidation.authCodeValidation(dto.getCode())) {
+		if(!PathVariableValidation.authCodeValidation(dto.getCode()) || !PathVariableValidation.emailValService(dto.getEmail())) {
 			throw new InternerException("유효하지 않은 입력입니다.","validation 실패");
 		}
 		return joinService.emailValidation(dto);
@@ -119,6 +119,10 @@ private final FollowService followService;
 	//팔로우 수락, 거절
 	@PostMapping("/following")
 	public ResponseEntity<ResponseDTO<Void>> handleFollowRequest(@RequestBody HandleFollowReqDTO dto){
+		
+		if(!PathVariableValidation.nickNameValService(dto.getNickname())|| (!"ACCEPT".equals(dto.getType()) && !"REFUSE".equals(dto.getType())) ) {
+			throw new InternerException("유효하지 않은 입력입니다.","validation 실패");
+		}
 		return followService.handleFollowRequest(dto);
 	}
 	
