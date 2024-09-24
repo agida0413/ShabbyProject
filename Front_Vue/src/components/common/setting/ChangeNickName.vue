@@ -111,6 +111,7 @@
 
   <script>
   import api from '@/api';
+  import eventBus from "@/eventBus"
 export default {
     name: 'ChangeNickname',
   
@@ -144,8 +145,8 @@ export default {
        passwordErrors:[],//패스워드에러를 저장 
        isNickNameClear:false,//닉네임 중복검증 여부를 저장
        isNickNameReadonly:false,//닉네임 중복검증이 완료되면 readonly상태로 변경 
-       isLoading:false // 로딩상태정보를 저장 = > 버튼 여러번 클릭 방지 
-                    
+       isLoading:false, // 로딩상태정보를 저장 = > 버튼 여러번 클릭 방지 
+       visible:false             
     }
  },
  computed:{
@@ -240,7 +241,7 @@ export default {
         this.passwordErrors = this.validateField(this.password, this.passwordRules); 
 
         if (this.passwordErrors.length > 0 ) { //만약 패스워드 검증에러가 있을 시   return
-            
+            this.isLoading=false
             return;//불필요한 axios 요청 방지  
         }
 
@@ -255,8 +256,11 @@ export default {
         //성공시 새로운 엑세스 토큰 저장 
         //why? 현재 프로젝트에서 jwt 토큰에 닉네임값도 들어가 있는데 닉네임을 변경할 시 토큰 재발급을 받지않으면 , 이전 닉네임 정보를 
         //파싱해서 사용한다. 즉 이전 닉네임을 통한 데이터 교환이 일어난다.
-        const newToken =res.headers['access'];
+        const newToken =res?.headers['access'];
+        const nickname = res?.headers['nickname']
         localStorage.setItem('access', newToken);
+        localStorage.setItem('nickname',nickname)
+        eventBus.emit('changeNickname');
           alert('성공적으로 변경되었습니다.')
           //컴포넌트 닫음 
           this.closeDialog()

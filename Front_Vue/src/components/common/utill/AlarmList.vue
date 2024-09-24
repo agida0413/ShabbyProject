@@ -8,7 +8,7 @@
                 <v-icon style="margin-right: 5px;">
                   mdi-heart-outline
                   </v-icon>
-                활동</v-toolbar-title>
+                알람</v-toolbar-title>
                 <v-btn
                   icon="mdi-close"
                   @click="closeDialog()"

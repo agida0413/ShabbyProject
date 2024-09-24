@@ -44,6 +44,11 @@
               <v-progress-circular color="grey-lighten-5" indeterminate></v-progress-circular>
             </v-row>
           </template>
+          <div v-if="post.onlyMe==='ONLYME'" class="overlayOnlyMe">
+            <span class="overlayOnlyMeText"><span> 
+              <v-icon>mdi-lock</v-icon></span>
+              &nbsp;<span>나만 보기</span></span>
+          </div>
           <div class="overlay" >
           <span >  <v-icon class="overlay-icon" >mdi-heart</v-icon>
             {{ post.likeCount }}
@@ -84,7 +89,7 @@ export default{
       noMoreNeedData:false, //더이상 로드할 데이터가 없다면 불필요한 api 호출을 방지하기 위한 변수 
       sendPostNum:0, //게시물 고유번ㅇ호 
       type:'NORMAL', //내가 작성한 게시물인지 , 내가 태그를 당한 게시물인지 
-      isFirstLoad:true //첫번째 로드인지 
+      
     }
   },
   // intersection observer 참조할 태그 ref
@@ -153,22 +158,18 @@ export default{
         if(this.noMoreNeedData ||this.isLoading)return 
         //api 호출중 상태 
         this.isLoading=true
-        //noMoreNeedData가 true 이면 리턴 ( 더이상 불러올 데이터가 없는경우)
-        if(!this.isFirstLoad){
-          this.page++;//페이지 증가
-
-        }
-        //첫 페이지 로드가 끝남 
-        this.isFirstLoad=false
 
         api.get(`/feed/userfeed/post/${this.type}/${this.nickname}/${this.page}`)
         .then((res) => {
-          //무한스크롤 기존 배열에 데이터 추가 
-         this.postData=[...this.postData,...res.data.reqData]
+         
           //만약 더이상 추가할 데이터가 없다면 제어변수 true 로 변경하여 더이상 api 호출하지 않도록 
           if(res?.data?.reqData?.length===0){
             this.noMoreNeedData=true;
             this.page--;
+          }else{
+             //무한스크롤 기존 배열에 데이터 추가 
+         this.postData=[...this.postData,...res.data.reqData]
+         this.page++;
           }
         })
         .catch((err) => {
@@ -226,3 +227,23 @@ export default{
     }
 }
 </script>
+<style>
+.overlayOnlyMe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.5); /* 반투명 배경 */
+}
+
+.overlayOnlyMeText {
+  color: white; /* 글씨 색상 */
+  font-size: 1.5rem; /* 글씨 크기 */
+  text-align: center; /* 글씨 정렬 */
+  opacity: 0.7;
+}
+</style>

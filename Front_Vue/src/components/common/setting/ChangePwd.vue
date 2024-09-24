@@ -193,7 +193,9 @@ export default {
                                   api.post('/logout')
                                   .then(()=>{
 
-                                      localStorage.removeItem('access')//엑세스 토큰 지움 
+                                    localStorage.removeItem('requestUrl');   
+                                    localStorage.removeItem('access');
+                                    localStorage.removeItem('nickname');
                                       this.$router.push('/login');//로그인 페이지로 이동
                                     })
                                   .catch((err)=>{

@@ -176,7 +176,7 @@ export default {
 
         //초기화 
         this.password='',//비밀번호
-        this.firstPhoneNum='',//첫번째 휴대폰 번호
+        this.firstPhoneNum='010',//첫번째 휴대폰 번호
         this.middlePhoneNum='',//중간휴대폰번호
         this.lastPhoneNum='',//마지막휴대폰번호 
         this.passwordErrors=[]//패스워드 에러 
