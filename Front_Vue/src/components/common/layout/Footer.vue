@@ -84,9 +84,11 @@
       if(check==='YES'){
         return
       }
-    
-      this.sheet = newPath === '/';
+      const token =localStorage.getItem('access')
+      this.sheet = newPath === '/' && token;
+      if(token){
       this.getRecommend()
+    }
     }
   },
 
@@ -95,9 +97,13 @@
       if(check==='YES'){
         return
       }
-   
-    this.sheet = this.$route.path === '/';
-    this.getRecommend()
+      const token =localStorage.getItem('access')
+
+    this.sheet = this.$route.path === '/' && token;
+    if(token){
+      this.getRecommend()
+    }
+    
   },
   methods:{
     getRecommend(){
