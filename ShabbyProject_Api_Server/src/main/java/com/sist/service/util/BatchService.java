@@ -3,6 +3,7 @@ package com.sist.service.util;
 public interface BatchService {
 
 	
-	//전체 배치
-	public void batch();
+	//하루 한번  배치
+	public void oneForDaybatch();
+	
 }

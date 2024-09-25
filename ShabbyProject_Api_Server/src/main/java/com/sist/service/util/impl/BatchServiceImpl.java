@@ -14,21 +14,26 @@ import lombok.RequiredArgsConstructor;
 public class BatchServiceImpl implements BatchService{
 	private final BatchRepository batchRepository;
 	
-	//애플리케이션 전체 배치
-	@Transactional
-	@Scheduled(cron = "0 0 4 * * ?") // 매일 자정 4시 실행
-	public void batch() {
-		//이메일 인증 배치
-		emailAuthBatch();
-		//리프레시 토큰 배치
-		tokenBatch();
-	}
+		//애플리케이션 하루 한번 4시 배치처리
+		@Transactional
+		@Scheduled(cron = "0 0 4 * * ?") // 매일 자정 4시 실행
+		public void oneForDaybatch() {
+			//이메일 인증 배치
+			emailAuthBatch();
+			//리프레시 토큰 배치
+			tokenBatch();
+		
+		}
+	
+
 	
 	//이메일 인증 관련 배치
 	private void emailAuthBatch() {
 		// TODO Auto-generated method stub
 		//유효기간 만료 레코드 삭제
 		batchRepository.batchEmailAuth();
+		//이메일 인증코드 이력은 있지만 회원가입 하지않은 레코드 삭제
+		batchRepository.batchEmailAuthNoMem();
 		
 	}
 	//토큰 관련 배치
@@ -39,5 +44,5 @@ public class BatchServiceImpl implements BatchService{
 		//유효기간 만료 리프레시토큰 삭제
 		batchRepository.batchTokenExpir();
 	}
-
+	
 }

@@ -77,6 +77,11 @@ private final MemberAccountMapper mapper;
 		// TODO Auto-generated method stub
 		return mapper.getLock(nickname);
 	}
+	@Override
+	public EmailAuthDTO emailAuthBeforeJoin(String email) {
+		// TODO Auto-generated method stub
+		return mapper.emailAuthBeforeJoin(email);
+	}
 	
 
 

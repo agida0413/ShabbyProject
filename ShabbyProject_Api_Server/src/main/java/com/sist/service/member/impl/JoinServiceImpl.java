@@ -35,11 +35,17 @@ private final BCryptPasswordEncoder bCryptPasswordEncoder;
 		String phone=dto.getPhone();
 		
 		//데이터베이스에서 인증관련 엔티티를 가져온다(이메일기반 가장 최신)
-		EmailAuthDTO emailDto=memberAccountRepository.emailAuthGetValidation(dto.getEmail());
+		EmailAuthDTO emailDto=memberAccountRepository.emailAuthBeforeJoin(dto.getEmail());
 		
 		//이메일 인증 validation ==> 이메일 인증코드 엔티티에서 인증완료여부를 갖고와 검증한다.
-		if(!emailDto.getIsAuth().contains("Y") ){
-			throw new BadRequestException("비정상적인 접근입니다.");
+		//가장 최신의 이메일기반 인증된 기록이 있는지
+		if(emailDto==null) {
+			throw new BadRequestException("이메일 인증이력이 존재하지 않습니다. 다시 회원가입을 진행해 주세요.");
+		}
+		//그 기록의 코드와 현 입력 코드가 일치한지 	
+		if(!bCryptPasswordEncoder.matches(dto.getCode(),emailDto.getCode())){
+			
+			throw new BadRequestException("비정상적인 인증코드입니다. 다시 회원가입을 진행해 주세요.");
 		}
 		// 닉네임 중복, 핸드폰번호 중복 검증은 1차적으로 클라이언트에서 막고 데이터베이스 유니크 키가 막는다.
 		

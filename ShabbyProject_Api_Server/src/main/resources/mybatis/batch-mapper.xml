@@ -14,6 +14,16 @@
     WHERE expiration &lt; NOW()
 </delete>
 
+<delete id="batchEmailAuthNoMem">
+   /* 인증 레코드는 있지만, 회원테이블에 저장(회원가입) 하지않은 레코드 삭제 */
+   DELETE 
+     FROM EMAIL_AUTH
+    WHERE NOT EXISTS (
+                       SELECT 1 
+                         FROM MEMBER 
+                        WHERE MEMBER.email = EMAIL_AUTH.email
+                     )
+</delete>
 <delete id="batchTokenExpir">
    /* 현시간보다 만료시간이 적은 리프레시 토큰 삭제 */
    DELETE 

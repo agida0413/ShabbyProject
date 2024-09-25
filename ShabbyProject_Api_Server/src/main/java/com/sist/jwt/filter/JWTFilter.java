@@ -79,7 +79,7 @@ public class JWTFilter extends OncePerRequestFilter{
 	    		//액세스토큰이 아닐시 
 	    		ResponseDTO<Void> responseApi = new ResponseDTO<Void>(
 	         			 HttpStatus.INTERNAL_SERVER_ERROR.value(),
-	                      "비정상적인 접근입니다"
+	                      "세션이 만료되었습니다. 다시 로그인 해주세요."
 	                  );
 	          	responseApi.set500Response(response, responseApi, objectMapper);
 	          	return;
@@ -106,7 +106,6 @@ public class JWTFilter extends OncePerRequestFilter{
 	    	MemberDTO dto = new MemberDTO();
 	    	
 	    	dto.setEmail(username);
-//	    	dto.setRole(role);
 	    	dto.setIdNum(idNum);
 	    	dto.setNickname(nickname);
 	    	

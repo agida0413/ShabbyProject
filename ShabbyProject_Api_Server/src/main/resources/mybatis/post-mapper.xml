@@ -18,8 +18,13 @@
  LEFT JOIN (  
                SELECT post_num
                     , COUNT(*) AS likeCount
-                 FROM POST_LIKE       
-             GROUP BY post_num                                  /* 각 게시물 별 좋아요 수 집계 서브쿼리 , 조인 */
+                 FROM POST_LIKE pl
+                WHERE NOT EXISTS (   SELECT 1 
+                                       FROM MEMBER m 
+                                      WHERE m.id_num = pl.id_num
+                                        AND m.locked = 'FORBIDDEN'
+                                  )                                /* 정지 계정 제외*/    
+                GROUP BY post_num                                  /* 각 게시물 별 좋아요 수 집계 서브쿼리 , 조인 */
            ) pl
        ON  p.post_num=pl.post_num 
  LEFT JOIN (
@@ -177,8 +182,8 @@ INSERT INTO POST_DATA (id_num,content,only_me)
       SELECT p.post_num                      /* 게시물 번호 */
            , p.id_num                        /* 회원 고유번호 */
            , p.content                       /* 게시물 상세 내용 */
-           , p.create_date                   /* 생성일 */
-           , p.edit_date                     /* 수정일 */
+           , DATE_FORMAT(p.create_date, '%Y-%m-%d %H:%i') as create_date                   /* 생성일 */
+           , DATE_FORMAT(p.edit_date, '%Y-%m-%d %H:%i') as edit_date                       /* 수정일 */
            , p.only_me                       /* 나만보기 여부 */
            , m.nickname                      /* 닉네임 */
            , m.profile                       /* 프로필 사진 이미지URL */
@@ -189,8 +194,14 @@ INSERT INTO POST_DATA (id_num,content,only_me)
            , GROUP_CONCAT(DISTINCT COALESCE(member_tag.profile,'NOPROFILE') ORDER BY mt.id_num) AS strTagProfiles /* 해당 게시물의 태그멤버의 프로필 리스트를 , 형태로 나눈 스트링 형태 */
            , (
               SELECT COUNT(*)
-                FROM POST_LIKE
-               WHERE post_num = p.post_num
+                FROM POST_LIKE pl
+               WHERE pl.post_num = p.post_num
+                 AND NOT EXISTS (   
+					                  SELECT 1 
+                                        FROM MEMBER m 
+                                       WHERE m.id_num = pl.id_num
+                                         AND m.locked = 'FORBIDDEN'
+                                )                   /* 정지 계정 제외*/    
              ) as likeCount                         /* 좋아요 개수 */
         FROM POST_DATA p                            /* FROM 게시물 테이블 */
    LEFT JOIN MEMBER m                               /* 회원테이블 조인 */
@@ -296,9 +307,15 @@ DELETE
 <!--좋아요 작업 후 변경된 좋아요 수 -->
 <select id="afterDoPostLike" parameterType="int" resultType="int">
 /*좋아요 작업 후 변경된 좋아요 수*/
-select count(*) as likeCount         /* 좋아요 수 */
-  FROM POST_LIKE
- WHERE post_num=#{postNum}           /* 게시물 번호 */
+SELECT COUNT(*) as likeCount         /* 좋아요 수 */
+  FROM POST_LIKE pl
+ WHERE pl.post_num = #{postNum}      /* 게시물 번호 */
+   AND NOT EXISTS (  
+	                           SELECT 1 
+                                 FROM MEMBER m 
+                                WHERE m.id_num = pl.id_num
+                                  AND m.locked = 'FORBIDDEN'
+                   )                  /* 정지 계정 제외*/    
 </select>
 </mapper>
  

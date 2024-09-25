@@ -77,7 +77,7 @@ public class MybatisRefreshService implements RefreshService{
 
 		} catch (Exception e) {
 			// TODO: handle exception
-			 throw new BadRequestException("비정상적인 접근입니다.");//사용자 정의 익셉션 발생
+			 throw new BadRequestException("세션이 만료되었습니다. 다시 로그인 해주세요.");//사용자 정의 익셉션 발생
 			 
 			 
 		}
@@ -85,7 +85,7 @@ public class MybatisRefreshService implements RefreshService{
 	        if (refresh == null) {//만약 refresh가 없다면 
 
 	           
-	         throw new BadRequestException("비정상적인 접근입니다.");//사용자 정의 익셉션 발생
+	         throw new BadRequestException("세션이 만료되었습니다. 다시 로그인 해주세요.");//사용자 정의 익셉션 발생
 	        }
 
 	       
@@ -94,7 +94,7 @@ public class MybatisRefreshService implements RefreshService{
 	        } catch (ExpiredJwtException e) {
 	        	
 	        	response.addCookie(CookieUtil.deleteRefreshCookie());//refresh 쿠키제거메서드
-	        	  throw new BadRequestException("비정상적인 접근입니다.");//사용자 정의 익셉션 발생
+	        	  throw new BadRequestException("세션이 만료되었습니다. 다시 로그인 해주세요.");//사용자 정의 익셉션 발생
 	        }
 
 	      
@@ -103,7 +103,7 @@ public class MybatisRefreshService implements RefreshService{
 	        if (!category.equals("refresh")) {//refresh 토큰이 아니면 
 
 	         
-	        	  throw new BadRequestException("비정상적인 접근입니다.");//사용자 정의 익셉션 발생
+	        	  throw new BadRequestException("세션이 만료되었습니다. 다시 로그인 해주세요.");//사용자 정의 익셉션 발생
 	        }
 	        
 	       
@@ -111,7 +111,7 @@ public class MybatisRefreshService implements RefreshService{
 			if (!isExist) {//없다면 
 			
 				  response.addCookie(CookieUtil.deleteRefreshCookie());//refresh 쿠키제거메서드
-				  throw new BadRequestException("비정상적인 접근입니다.");//사용자 정의 익셉션 발생
+				  throw new BadRequestException("세션이 만료되었습니다. 다시 로그인 해주세요.");//사용자 정의 익셉션 발생
 			}
 	        
 
