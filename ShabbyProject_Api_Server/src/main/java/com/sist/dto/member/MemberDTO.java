@@ -50,6 +50,7 @@ public class MemberDTO {
     private Date editDate;
     private String locked;
     private String vueCreateDate;
+    private String code;
 
     public String getFormatVueCreateDate() { // 생성일 문자형
         return formatDate(createDate);

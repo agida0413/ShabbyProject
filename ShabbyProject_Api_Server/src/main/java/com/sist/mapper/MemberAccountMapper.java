@@ -32,4 +32,6 @@ public interface MemberAccountMapper {
 	public void tempPasswordUpdate(MemberDTO dto);
 	//공개.비공개 상태획득
 	public String getLock(String nickname);
+	//회원가입전 최종 validate
+	public EmailAuthDTO emailAuthBeforeJoin(String email);
 }

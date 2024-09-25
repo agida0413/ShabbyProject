@@ -119,12 +119,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     	}
     	
     	
-    	// 권한 값 읽어오기
-//        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities(); 
-//        Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
-//        GrantedAuthority auth = iterator.next();
-//        String role = auth.getAuthority();
-        //authentication 객체에서 아이디 고유번호값 읽어오기 
+ 
         int idNum=SimpleCodeGet.getIdNum(authentication);
         //문자열로 변환 
         String strIdNuM=String.valueOf(idNum);

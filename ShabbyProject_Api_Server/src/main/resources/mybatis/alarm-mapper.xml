@@ -114,7 +114,7 @@ DELETE
            , sm.profile  AS senderProfile       /* 보내는이 프로필 사진 */
            , a.post_num                         /* 게시물 번호 */
            , a.alarm_type                       /* 알람 유형 */
-           , a.create_date                      /* 생성일 */
+           , DATE_FORMAT(a.create_date, '%Y-%m-%d %H:%i') as create_date       /* 생성일 */
            , a.alarm_num AS alarmNum            /* 알람 고유번호 */
            , a.isread                        /* 알람 읽음 여부 */
         FROM ALARM a

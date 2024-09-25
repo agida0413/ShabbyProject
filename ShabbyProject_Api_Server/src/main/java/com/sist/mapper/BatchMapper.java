@@ -10,4 +10,6 @@ public interface BatchMapper {
 	public void batchTokenExpir();
 	// /* 비정상 종료로 발생한(로그아웃을 통해 발생 x) 동일한 아이디에서 생성된 리프레시토큰을 삭제*/
 	public void batchTokenDupl();
+	// /* 인증 레코드는 있지만, 회원테이블에 저장(회원가입) 하지않은 레코드 삭제 */
+	public void batchEmailAuthNoMem();
 }

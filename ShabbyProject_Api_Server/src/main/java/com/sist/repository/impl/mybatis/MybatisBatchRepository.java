@@ -30,4 +30,10 @@ public class MybatisBatchRepository implements BatchRepository{
 		batchMapper.batchTokenDupl();	
 	}
 
+	@Override
+	public void batchEmailAuthNoMem() {
+		// TODO Auto-generated method stub
+		batchMapper.batchEmailAuthNoMem();
+	}
+
 }
