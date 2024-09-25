@@ -67,7 +67,7 @@
                         :text="isSubscriber ? 'Cancel' : '인증코드 다시 보내기'"
                         :variant="isSubscriber ? 'plain' : 'tonal'"
                         class="me-2 text-none"
-                        :disabled="loading"
+                        :disabled="loading || isEmailAuthClear"
                         flat
                       @click="emailAuth()"
                       ></v-btn>
@@ -616,7 +616,7 @@
                 formdata.append('name',this.name)//이름
                 formdata.append('phone',fullPhone)//휴대폰번호
                 formdata.append('introduce',this.introduce)//자기소개(널값 허용)
-
+                formdata.append('code',this.code)//인증코드
                 //회원가입진행중 상태업데이트
                 this.isLoading=true
 
@@ -633,7 +633,14 @@
                 })
                 .catch((err)=>{
                   //실패시
-                  if(err?.response?.data?.message){
+                  if(err?.response?.data?.message==='이메일 인증이력이 존재하지 않습니다. 다시 회원가입을 진행해 주세요.'
+                    || err?.response?.data?.message==='비정상적인 인증코드입니다. 다시 회원가입을 진행해 주세요.'
+
+                  ){
+                    alert(err?.response?.data?.message)
+                    this.$router.push('/login');
+                  }
+                  else if(err?.response?.data?.message){
                   alert(err?.response?.data?.message)  
                   }
                   
