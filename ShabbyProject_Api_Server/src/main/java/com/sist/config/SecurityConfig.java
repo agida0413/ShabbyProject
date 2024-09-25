@@ -96,24 +96,18 @@ public class SecurityConfig {
 
 
 		http
-		        .formLogin((auth) -> auth.disable()); //jwt사용으로 인한 기본로그인폼  x
+	    .formLogin((auth) -> auth.disable()); //jwt사용으로 인한 기본로그인폼  x
 		
 		http
-		        .httpBasic((auth) -> auth.disable());
+	    .httpBasic((auth) -> auth.disable());
 		
 		http
-		
-		        .authorizeHttpRequests((auth) -> auth
-		                .requestMatchers("/api/login", "/api/join","/api/reissue","/error",
-		                		"/api/members/**"
-		                		,"/"
-		                		,"/index.html","/css/**","/js/**","/images/**","/favicon.ico","/fonts/**","/img/**").permitAll() //로그인 ,회원가입 , 토큰 재발급,이메일인증 api는 권한 필요없음 
-		       
-		                .anyRequest().authenticated());//나머지는 인증이 필요함 
-						
-						
-						
-						
+		.authorizeHttpRequests((auth) -> auth
+	    .requestMatchers("/api/login", "/api/join","/api/reissue","/error",
+		                 "/api/members/**"
+		                ,"/"
+		                ,"/index.html","/css/**","/js/**","/images/**","/favicon.ico","/fonts/**","/img/**").permitAll() //로그인 ,회원가입 , 토큰 재발급,이메일인증 api는 권한 필요없음 
+		                .anyRequest().authenticated());//나머지는 인증이 필요함 			
 				
 		//JWTFilter 등록 = > 로그인 필터 전에 수행 		
 		http

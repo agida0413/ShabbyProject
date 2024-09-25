@@ -83,7 +83,7 @@ public class CustomLogoutFilter extends GenericFilterBean {
 	        	
 	        	ResponseDTO<Void> responseApi = new ResponseDTO<Void>(
 	       			 HttpStatus.INTERNAL_SERVER_ERROR.value(),
-	                    "비정상적인 접근입니다."
+	                    "세션이 만료되었습니다. 다시 로그인 해주세요."
 	                );
 	        	responseApi.set500Response(response, responseApi, objectMapper);
 	        	return;
@@ -100,7 +100,7 @@ public class CustomLogoutFilter extends GenericFilterBean {
 	            //만료됬을 경우 
 	        	ResponseDTO<Void> responseApi = new ResponseDTO<Void>(
 	          			 HttpStatus.INTERNAL_SERVER_ERROR.value(),
-	                       "만료된 인증입니다."
+	                       "세션이 만료되었습니다. 다시 로그인 해주세요."
 	                   );
 	           	responseApi.set500Response(response, responseApi, objectMapper);
 	        	return;
@@ -128,7 +128,7 @@ public class CustomLogoutFilter extends GenericFilterBean {
 	        	response.addCookie(CookieUtil.deleteRefreshCookie());
 	        	ResponseDTO<Void> responseApi = new ResponseDTO<Void>(
 	          			 HttpStatus.INTERNAL_SERVER_ERROR.value(),
-	                       "비정상적인 접근입니다"
+	                       "세션이 만료되었습니다. 다시 로그인 해주세요."
 	                   );
 	           	responseApi.set500Response(response, responseApi, objectMapper);
 	           	return;

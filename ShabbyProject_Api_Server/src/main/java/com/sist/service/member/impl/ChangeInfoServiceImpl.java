@@ -57,7 +57,7 @@ public class ChangeInfoServiceImpl implements ChangeInfoService{
 		throw new InternerException("비정상적인 접근입니다.","비정상적인 접근입니다.");//사용자 정의400에러 발생
 		
 		}
-		//비공개/공개 상태여부를 가져옴 
+		
 
 		//전송객체 생성	
 		MemberDTO sendDto=new MemberDTO();
@@ -232,7 +232,15 @@ public class ChangeInfoServiceImpl implements ChangeInfoService{
 		String currentState=dto.getLocked();//현재 상태값 
 		String changeState=""; //변경할 공개/비공개 모드 상태값 초기화
 		
+		//입력값 과 데이터베이스 값 일치한지 검증
+		MemberDTO dataBaseInfo=memberAccountRepository.findByIdNum(idNum);
+		if(!dataBaseInfo.getLocked().equals(currentState)) {
+			throw new BadRequestException("잘못된 접근입니다. 잠시 뒤 이용해주세요");
+			
+		}
+		
 		if(currentState.equals("PUBLICID")) {// 만약 현재 상태값이 공개모드이면 
+			
 			changeState="LOCKED"; //공개모드 상태에서의 요청이라면 비공개모드로 
 		}
 		else if(currentState.equals("LOCKED")) {//만약 현재 상태값이 비공개모드이면

@@ -234,7 +234,7 @@ public class FeedServiceImpl implements FeedService{
 		(new ResponseDTO<List<PostListDTO>>(list),HttpStatus.OK); //성공 
 	}
 	
-	//글로벌 피드 게시물 리스트 
+	//검색 피드 게시물 리스트 
 		@Override
 		public ResponseEntity<ResponseDTO<List<PostListDTO>>> loadSearchFeedPostList(String keyword,int page) {
 		// TODO Auto-generated method stub

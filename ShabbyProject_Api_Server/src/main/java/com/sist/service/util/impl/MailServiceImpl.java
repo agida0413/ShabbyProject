@@ -160,7 +160,7 @@ public class MailServiceImpl implements MailService{
 			javaMailSender.send(message);//전송 
 			
 			String securedPassword= bCryptPasswordEncoder.encode(password);//데이터베이스에 암호화 해서 저장할 패스워드 
-			dto.setPassword(securedPassword);//vo에 새로운 임시비밀번호 저장 
+			dto.setPassword(securedPassword);//dto에 새로운 임시비밀번호 저장 
 			memberAccountRepository.tempPasswordUpdate(dto);
 			
 		} catch (Exception e) {

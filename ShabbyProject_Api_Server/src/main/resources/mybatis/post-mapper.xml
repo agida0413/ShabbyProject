@@ -222,6 +222,12 @@ INSERT INTO POST_DATA (id_num,content,only_me)
              ) pl                             /* 좋아요 존재(눌림) 여부를 확인하기 위한 인라인 뷰조인 */
           ON p.post_num = pl.post_num
        WHERE p.post_num = #{postNum}
+         AND NOT EXISTS (
+                           SELECT subM.id_num 
+                             FROM MEMBER subM 
+                            WHERE subM.id_num = m.id_num
+                              AND subM.locked ='FORBIDDEN' 
+                        )
     GROUP BY p.post_num                       /* 게시물 번호 별 그루핑 */
 </select>
 

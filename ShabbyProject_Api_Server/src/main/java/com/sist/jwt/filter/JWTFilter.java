@@ -87,7 +87,6 @@ public class JWTFilter extends OncePerRequestFilter{
 	
 	    	// username, role,idNum 값을 획득
 	    	String username = jwtUtil.getUsername(accessToken);//이메일
-//	    	String role = jwtUtil.getRole(accessToken);//권한
 	    	int idNum = jwtUtil.getIdNum(accessToken);//고유번호
 	    	String nickname=jwtUtil.getNickname(accessToken);//닉네임
 	    	

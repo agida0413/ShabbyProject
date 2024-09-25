@@ -19,7 +19,7 @@
                   WHERE 1=1 
                     AND id_num   = m.id_num
                   <if test="!itsMe">
-                    AND only_me != 'ONLYME'       /* 자신 게시물 제외 */	
+                    AND only_me != 'ONLYME'       /* 나만보기 게시물 제외 */	
                   </if>
               ) as postAmount                     /* 게시물 개수 서브쿼리 */
             , (
