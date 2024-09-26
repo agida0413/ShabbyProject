@@ -1,7 +1,7 @@
 package com.sist.service.member.impl;
 
 import java.sql.Date;
-
+import java.text.SimpleDateFormat;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,7 +41,9 @@ public class MybatisRefreshService implements RefreshService{
 	public void addRefreshEntity(int idNum, String refresh, Long expiredMs,HttpServletRequest request) {// 리프레시토큰을 데이터베이스에 저장
 				
 		    Date date = new Date(System.currentTimeMillis() + expiredMs); //현재시간 + 매개변수로 받은 유효기간 
-		   
+		    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		    String formattedDate = sdf.format(date);
+
 		    TokenStoreDTO dto= new TokenStoreDTO();
 		  
 		    //클라이언트 브라우저 정보
@@ -51,7 +53,7 @@ public class MybatisRefreshService implements RefreshService{
 		    dto.setBrowser(browser);//클라이언트 브라우저 정보
 		    dto.setIdNum(idNum); //매개변수로 받은 아이디고유번호
 		    dto.setRefresh(refresh); // 매개변수로 받은 토큰 
-		    dto.setExpiration(date); // 유효기간
+		    dto.setExpiration(formattedDate); // 유효기간
 	
 		    repository.save(dto);//데이터에 저장
 	}

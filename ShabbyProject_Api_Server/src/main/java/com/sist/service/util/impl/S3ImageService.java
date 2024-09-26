@@ -38,7 +38,7 @@ public class S3ImageService implements ImageService{
 	
 	
 	 // 최대 파일 크기 5MB 변수
-    private static final long MAX_FILE_SIZE = 5* 1024 * 1024; 
+    private static final long MAX_FILE_SIZE = 2* 1024 * 1024 ; 
     private final S3Client s3Client;
 
     @Value("${s3.bucket}")
