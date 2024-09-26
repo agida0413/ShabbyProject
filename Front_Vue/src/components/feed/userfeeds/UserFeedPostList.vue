@@ -50,7 +50,7 @@
               &nbsp;<span>나만 보기</span></span>
           </div>
           <div class="overlay" >
-          <span >  <v-icon class="overlay-icon" >mdi-heart</v-icon>
+          <span >  <v-icon class="overlay-icon">mdi-heart</v-icon>
             {{ post.likeCount }}
           </span>
           </div>

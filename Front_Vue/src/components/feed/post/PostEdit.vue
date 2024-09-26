@@ -382,14 +382,10 @@ methods: {
     if (file.length === 0) return; // 파일이 선택되지 않았으면 리턴
 
     // 파일 크기 제한 
-    const MAX_SIZE_MB = 5;
+    const MAX_SIZE_MB = 2;
     const MAX_SIZE_BYTES = MAX_SIZE_MB * 1024 * 1024; // 최대 파일 크기 (바이트)
 
-    //만약 파일크기가 5mb를 초과하면 메서드 종료 
-    if (file.size > MAX_SIZE_BYTES) {
-      alert(`파일 '${file.name}'의 크기가 ${MAX_SIZE_MB}MB를 초과합니다.`);
-      return;
-    }
+    
 
   const reader = new FileReader(); // 파일 읽기 객체 생성
 
@@ -399,24 +395,32 @@ methods: {
 
     img.onload = () => {
       const canvas = document.createElement('canvas'); // 캔버스 생성
-      const ctx = canvas.getContext('2d'); // 2D 컨텍스트 가져옴
-      const width = 550; // 캔버스 너비 설정
-      const height = 500; // 캔버스 높이 설정
-
-      canvas.width = width; // 캔버스 너비 설정
-      canvas.height = height; // 캔버스 높이 설정
-      ctx.drawImage(img, 0, 0, width, height); // 이미지 그리기
+                  const ctx = canvas.getContext('2d'); // 2D 컨텍스트 가져옴
+                  const originalWidth = img.width;
+                  const originalHeight = img.height;
+                  const targetWidth = 550; // 리사이즈할 너비
+                  const targetHeight = Math.round((originalHeight / originalWidth) * targetWidth); // 비율 유지v
+                  canvas.width = targetWidth; 
+                  canvas.height = targetHeight;
+                  ctx.imageSmoothingEnabled = true; // 이미지 스무딩 활성화
+                  ctx.imageSmoothingQuality = 'high'; // 높은 품질로 설정
+                  ctx.drawImage(img, 0, 0, targetWidth, targetHeight); // 이미지 그리기
 
       canvas.toBlob((blob) => { // 캔버스를 Blob으로 변환
         if (blob) {
-          const resizedFile = new File([blob], file.name, { type: 'image/jpeg' }); // 새 파일 생성
+          const resizedFile = new File([blob], file.name, { type: 'image/jpg' }); // 새 파일 생성
+          //만약 파일크기가 5mb를 초과하면 메서드 종료 
+          if (resizedFile.size > MAX_SIZE_BYTES) {
+            alert(`파일 '${file.name}'의 크기가 ${MAX_SIZE_MB}MB를 초과합니다.`);
+            return;
+          }
           this.images.push(URL.createObjectURL(resizedFile)); // 새 이미지 URL 배열에 추가
           this.sendImg.push(resizedFile); // 새 이미지 파일 배열에 추가
           this.currentPage = this.images.length - 1; // 마지막으로 추가된 이미지로 페이지 이동
         } else {
           console.error('Blob 생성 실패');
         }
-      }, 'image/jpeg'); // Blob 형식 설정
+      }, 'image/jpg'); // Blob 형식 설정
     };
 
     img.onerror = () => {
