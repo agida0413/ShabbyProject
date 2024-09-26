@@ -28,15 +28,20 @@
     
                   <v-card-text>
                     <v-file-input
+                      
                       label="프로필 사진 변경"
                       prepend-icon="mdi-camera"
                       variant="filled"
                       accept="image/*"
                       @change="handleFileEvent"
-                      :disabled="isLoading"
+                      :disabled="isLoading || resizeLoading"
                       @click:clear="imageToNull"
                     ></v-file-input> 
-    
+                    <v-progress-linear
+                  color="cyan"
+                  indeterminate
+                  v-if="resizeLoading"
+                ></v-progress-linear>
                    
                         <div class="info-text">
                             ⚠️ 아무 사진도 선택하지 않고 수정을 하면 기본 이미지로 변경됩니다.
@@ -53,7 +58,7 @@
                       rounded="xl"
                       text="Cancel"
                       @click="closeDialog()"
-                       :disabled="isLoading"
+                       :disabled="isLoading ||resizeLoading"
                     ></v-btn>
     
                     <v-btn
@@ -63,7 +68,7 @@
                       text="Send"
                       variant="flat"
                       @click="changeProfile()"
-                      :disabled="isLoading"
+                      :disabled="isLoading || resizeLoading"
                     ></v-btn>
                   </v-card-actions>
                 </v-card>
@@ -88,7 +93,9 @@ import api from '@/api';
     },data(){
       return{
         profileImgFile:null, //파일 객체 
-        isLoading:false     
+        isLoading:false ,
+        fileSize:0,
+        resizeLoading:false    
       }
     }
     ,computed:{
@@ -103,32 +110,96 @@ import api from '@/api';
         // 해당 컴포넌트를 닫는 메소드 
         imageToNull(){
           this.profileImgFile=null
+          this.fileSize=0
         },
         closeDialog() {
-          this.profileImgFile=null,
+          this.profileImgFile=null
+          this.fileSize=0
           this.isLoading=false
+          this.resizeLoading=false
           this.$emit('changeProfileImgClose');
         },
-        //사진 업로드 핸들러 
+         //사진 업로드 핸들러 
          handleFileEvent(event){
+          this.resizeLoading=true;
           const file= event.target.files[0]
-          if(!file)return;
-          // 파일 크기 제한 
-          const MAX_SIZE_MB = 5;
-          const MAX_SIZE_BYTES = MAX_SIZE_MB * 1024 * 1024; // 최대 파일 크기 (바이트)
-    
-          //만약 파일크기가 5mb를 초과하면 메서드 종료 
-          if (file.size > MAX_SIZE_BYTES) {
-            alert(`파일 '${file.name}'의 크기가 ${MAX_SIZE_MB}MB를 초과합니다.`);
+          if(!file){
+            this.profileImgFile = null;
+            this.fileSize=0
+            this.resizeLoading=false
             return;
-          }
+          } 
+          // 파일 크기 제한 
+         
     
-           // 파일을 data 속성에 저장
-           this.profileImgFile = file;
-    
-       },
+                const reader = new FileReader(); // 파일 읽기 객체 생성
+
+              reader.onload = (e) => {
+                
+                const img = new Image(); // 이미지 객체 생성
+                img.src = e.target.result; // 파일 데이터를 이미지 소스로 설정
+
+                img.onload = () => {
+                  const canvas = document.createElement('canvas'); // 캔버스 생성
+                  const ctx = canvas.getContext('2d'); // 2D 컨텍스트 가져옴
+                  const originalWidth = img.width;
+                  const originalHeight = img.height;
+                  const targetWidth = 550; // 리사이즈할 너비
+                  const targetHeight = Math.round((originalHeight / originalWidth) * targetWidth); // 비율 유지v
+                  canvas.width = targetWidth; 
+                  canvas.height = targetHeight;
+                  ctx.imageSmoothingEnabled = true; // 이미지 스무딩 활성화
+                  ctx.imageSmoothingQuality = 'high'; // 높은 품질로 설정
+                  ctx.drawImage(img, 0, 0, targetWidth, targetHeight); // 이미지 그리기
+                
+
+                  canvas.toBlob((blob) => { // 캔버스를 Blob으로 변환
+                    if (blob) {
+                      const resizedFile = new File([blob], file.name, { type: 'image/jpg' }); // 새 파일 생성
+                    
+                      this.profileImgFile = resizedFile;
+                      this.fileSize=resizedFile.size
+                      this.resizeLoading=false
+                      
+                    } else {
+                      console.error('Blob 생성 실패');
+                      this.resizeLoading=false
+                    }
+                  }, 'image/jpg'); // Blob 형식 설정
+                };
+
+                img.onerror = () => {
+                  this.resizeLoading=false
+                  console.error('이미지 로드 실패');
+                };
+              };
+
+              reader.onerror = () => {
+                this.resizeLoading=false
+                console.error('파일 읽기 실패');
+              };
+
+              reader.readAsDataURL(file); // 파일 읽기 시작
+                        // 파일을 data 속성에 저장
+                      
+                  
+     },
+      
        //사진 변경 API 
        changeProfile(){
+
+        const MAX_SIZE_MB = 2;
+        const MAX_SIZE_BYTES = MAX_SIZE_MB * 1024 * 1024; // 최대 파일 크기 (바이트)
+          if(this.resizeLoading){
+            alert('이미지 재조정 중입니다.')
+            return
+          }
+          //만약 파일크기가 5mb를 초과하면 메서드 종료 
+          if (this.fileSize > MAX_SIZE_BYTES) {
+           
+            alert(`변경할 프로필 사진이 ${MAX_SIZE_MB}MB를 초과합니다. 다른사진을 선택해 주세요.`);
+            return;
+          }
         //통신 중이면 리턴
         if(this.isLoading){
         return

@@ -331,16 +331,13 @@ methods: {
    handleSingleFileChange(event) {
     const file = event.target.files[0]; // 선택한 첫 번째 파일 가져오기
     if (file.length === 0) return; // 파일이 선택되지 않았으면 리턴
-
+   
     // 파일 크기 제한 
-    const MAX_SIZE_MB = 5;
+    const MAX_SIZE_MB = 2;
     const MAX_SIZE_BYTES = MAX_SIZE_MB * 1024 * 1024; // 최대 파일 크기 (바이트)
-
+   
     //만약 파일크기가 5mb를 초과하면 메서드 종료 
-    if (file.size > MAX_SIZE_BYTES) {
-      alert(`파일 '${file.name}'의 크기가 ${MAX_SIZE_MB}MB를 초과합니다.`);
-      return;
-    }
+    
 
   const reader = new FileReader(); // 파일 읽기 객체 생성
 
@@ -350,17 +347,25 @@ methods: {
 
     img.onload = () => {
       const canvas = document.createElement('canvas'); // 캔버스 생성
-      const ctx = canvas.getContext('2d'); // 2D 컨텍스트 가져옴
-      const width = 550; // 캔버스 너비 설정
-      const height = 500; // 캔버스 높이 설정
-
-      canvas.width = width; // 캔버스 너비 설정
-      canvas.height = height; // 캔버스 높이 설정
-      ctx.drawImage(img, 0, 0, width, height); // 이미지 그리기
+                  const ctx = canvas.getContext('2d'); // 2D 컨텍스트 가져옴
+                  const originalWidth = img.width;
+                  const originalHeight = img.height;
+                  const targetWidth = 550; // 리사이즈할 너비
+                  const targetHeight = Math.round((originalHeight / originalWidth) * targetWidth); // 비율 유지v
+                  canvas.width = targetWidth; 
+                  canvas.height = targetHeight;
+                  ctx.imageSmoothingEnabled = true; // 이미지 스무딩 활성화
+                  ctx.imageSmoothingQuality = 'high'; // 높은 품질로 설정
+                  ctx.drawImage(img, 0, 0, targetWidth, targetHeight); // 이미지 그리기
 
       canvas.toBlob((blob) => { // 캔버스를 Blob으로 변환
         if (blob) {
           const resizedFile = new File([blob], file.name, { type: 'image/jpeg' }); // 새 파일 생성
+         
+          if (resizedFile.size > MAX_SIZE_BYTES) {
+            alert(`파일 '${file.name}'의 크기가 ${MAX_SIZE_MB}MB를 초과합니다.`);
+            return;
+          }
           this.images.push(URL.createObjectURL(resizedFile)); // 새 이미지 URL 배열에 추가
           this.sendImg.push(resizedFile); // 새 이미지 파일 배열에 추가
           this.currentPage = this.images.length - 1; // 마지막으로 추가된 이미지로 페이지 이동
@@ -386,17 +391,14 @@ methods: {
     const files = event.target.files; // 파일 목록 가져옴
     const newImages = []; // 새 이미지 URL 저장 배열
     const newSendImgs = []; // 새 이미지 파일객체 저장 배열
-    const MAX_SIZE_MB = 5; // 최대 파일 크기 설정 (MB)
+    const MAX_SIZE_MB = 2; // 최대 파일 크기 설정 (MB)
     const MAX_SIZE_BYTES = MAX_SIZE_MB * 1024 * 1024; // 최대 파일 크기 (바이트)
 
     if (files.length === 0) return; // 파일 없으면 리턴
 
    Array.from(files).forEach(file => { // 파일 리스트를 배열로 변환 후 반복 처리
-
-      if (file.size > MAX_SIZE_BYTES) { // 파일 크기 검사
-        alert(`파일 '${file.name}'의 크기가 ${MAX_SIZE_MB}MB를 초과합니다.`); // 크기 초과 시 경고
-        return; // 파일 크기 초과 시 처리 중지
-      }
+      
+    
 
        const reader = new FileReader(); // 파일 읽기 객체 생성
 
@@ -405,18 +407,25 @@ methods: {
       img.src = e.target.result; // 파일 데이터를 이미지 소스로 설정
 
       img.onload = () => { // 이미지 로드 완료 시 실행되는 콜백
-          const canvas = document.createElement('canvas'); // 캔버스 생성
-          const ctx = canvas.getContext('2d'); // 2D 컨텍스트 가져옴
-          const width = 1024; // 캔버스 너비 설정
-          const height = 1024; // 캔버스 높이 설정
-
-          canvas.width = width; // 캔버스 너비 설정
-          canvas.height = height; // 캔버스 높이 설정
-          ctx.drawImage(img, 0, 0, width, height); // 이미지 그리기
+        const canvas = document.createElement('canvas'); // 캔버스 생성
+                  const ctx = canvas.getContext('2d'); // 2D 컨텍스트 가져옴
+                  const originalWidth = img.width;
+                  const originalHeight = img.height;
+                  const targetWidth = 550; // 리사이즈할 너비
+                  const targetHeight = Math.round((originalHeight / originalWidth) * targetWidth); // 비율 유지v
+                  canvas.width = targetWidth; 
+                  canvas.height = targetHeight;
+                  ctx.imageSmoothingEnabled = true; // 이미지 스무딩 활성화
+                  ctx.imageSmoothingQuality = 'high'; // 높은 품질로 설정
+                  ctx.drawImage(img, 0, 0, targetWidth, targetHeight); // 이미지 그리기
 
           canvas.toBlob((blob) => { // 캔버스를 Blob으로 변환
             if (blob) { // Blob 생성 성공 시
-              const resizedFile = new File([blob], file.name, { type: 'image/jpeg' }); // 새 파일 생성
+              const resizedFile = new File([blob], file.name, { type: 'image/jpg' }); // 새 파일 생성
+              if (resizedFile.size > MAX_SIZE_BYTES) {
+              alert(`파일 '${file.name}'의 크기가 ${MAX_SIZE_MB}MB를 초과합니다.`);
+              return;
+            }
               newImages.push(URL.createObjectURL(resizedFile)); // 새 이미지 URL 배열에 추가
               newSendImgs.push(resizedFile); // 새 이미지 파일 배열에 추가
 
@@ -428,7 +437,7 @@ methods: {
             } else {
               console.error('Blob 생성 실패'); // Blob 생성 실패 시 에러 출력
             }
-          }, 'image/jpeg'); // Blob 형식 설정
+          }, 'image/jpg'); // Blob 형식 설정
       };
 
       img.onerror = () => {
@@ -631,6 +640,7 @@ checkIsHashTag(){
       alert('게시물 등록이 완료되었습니다.')
       //이벤트 버스를 통한 데이터베이스 리로드
       eventBus.emit('resetPostList');
+      this.closeDialog()
     })
     .catch((err)=>{
       if(err?.response?.data?.message){
@@ -640,7 +650,7 @@ checkIsHashTag(){
     .finally(()=>{
       //서버 전송끝
       this.isLoading=false
-      this.closeDialog()
+     
     })
 
   },
