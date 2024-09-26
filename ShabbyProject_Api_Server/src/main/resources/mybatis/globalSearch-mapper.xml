@@ -44,18 +44,24 @@
                         AND only_me !='ONLYME'	
                    ) as postCount              /* 게시물 개수 */
                  , (
-                     SELECT COUNT(*)
-                       FROM FOLLOW 
-                      WHERE 1=1 
-                        AND following_id = m.id_num
-                        AND approve      = 'FOLLOWOK'
+                      SELECT COUNT(*)
+                        FROM FOLLOW f
+                   LEFT JOIN MEMBER sm
+                          ON f.id_num=sm.id_num 
+                       WHERE 1=1 
+                         AND f.following_id = m.id_num	       /* 팔로우 id에 현 회원 존재 */
+                         AND f.approve      = 'FOLLOWOK'      /* 팔로우 상태 OK */	
+                         AND sm.locked     !='FORBIDDEN'
                    ) as followerAmount         /* 팔로워 수 */
                  , (
-                     SELECT COUNT(*) 
-                       FROM FOLLOW  
-                      WHERE 1=1 
-                        AND id_num  = m.id_num
-                        AND approve = 'FOLLOWOK'
+                      SELECT COUNT(*)
+                        FROM FOLLOW f
+                   LEFT JOIN MEMBER smr 
+                          ON f.following_id = smr.id_num    
+                       WHERE 1=1 
+                         AND f.id_num  = m.id_num             /* 팔로우하는 사람 id =현 회원 */
+                         AND f.approve = 'FOLLOWOK'           /* 팔로우 상태 OK */	
+                         AND smr.locked !='FORBIDDEN'
                    ) as followingAmount       /* 팔로잉 수 */
                  , (
                      SELECT hobby 
