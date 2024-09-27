@@ -1,10 +1,5 @@
 # 관심사 기반의 SNS 프로젝트
 
-
-
-
-
-
 > [!IMPORTANT]
 >
 > - **개요 :** *인스타그램을 벤치마킹 하고 , 그 위에 관심사 기반으로 동작하는 웹 에플리케이션* 
@@ -39,8 +34,21 @@
 
 > [!TIP]
 >
-> - **핵심 화면 요약**
-> - ![핵심화면 요약 ](https://github.com/user-attachments/assets/5642d190-ae05-4548-9510-52fc79bbdf08)
+> - 핵심 화면 요약 
+>![핵심화면 요약 ](https://github.com/user-attachments/assets/5642d190-ae05-4548-9510-52fc79bbdf08)
+>   
+
+
+
+> [!TIP]
+>
+> - 아키텍쳐 
+
+
+
+> [!TIP]
+>
+> - ERD
 >
 >   
 
