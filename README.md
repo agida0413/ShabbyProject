@@ -32,9 +32,12 @@
 
 
 
+
+
+
 > [!TIP]
 >
-> - 핵심 화면 요약 
+> - **핵심 화면 요약** 
 >
 > 
 >![핵심화면 요약 ](https://github.com/user-attachments/assets/5642d190-ae05-4548-9510-52fc79bbdf08)
@@ -42,9 +45,12 @@
 
 
 
+
+
+
 > [!TIP]
 >
-> - 기술 스택 
+> - **기술 스택** 
 >
 > 
 >![STACK](https://github.com/user-attachments/assets/56b5d601-2a2e-437e-abdf-56e1c285a328)
@@ -52,15 +58,21 @@
 
 
 
-> [!TIP]
->
-> - 아키텍쳐 
 
 
 
 > [!TIP]
 >
-> - ERD
+> - **아키텍쳐** 
+
+
+
+
+
+
+> [!TIP]
+>
+> - **ERD**
 >
 > 
 >![ERD](https://github.com/user-attachments/assets/8191d2ab-1412-49a1-a07d-33acf142b9aa)   
