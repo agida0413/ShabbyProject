@@ -1,4 +1,4 @@
-# 관심사 기반의 SNS 프로젝트
+![1234](https://github.com/user-attachments/assets/ea0b7165-b573-40ac-98e0-75a1df989330)# 관심사 기반의 SNS 프로젝트
 
 > [!IMPORTANT]
 >
@@ -63,7 +63,12 @@
 
 > [!TIP]
 >
-> - **아키텍쳐** 
+> - **아키텍쳐**
+>
+> ![1234](https://github.com/user-attachments/assets/000a329d-99c4-4ce0-b229-f94e713ff53a)
+> ![12345](https://github.com/user-attachments/assets/db429a06-eab4-413f-9721-fcedea5ac8e7)
+
+
 
 
 
