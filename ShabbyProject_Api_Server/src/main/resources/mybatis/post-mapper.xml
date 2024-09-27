@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- 로그인 후 세팅 (닉네임 변경 , 비밀번호 변경 , 휴대폰 번호 변경 , 공개/비공개 모드 전환 , 탈퇴 등 )-->
+
 <!DOCTYPE mapper
  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
@@ -13,13 +13,14 @@
     SELECT p.post_num                                           /* 게시물 번호 */
          , post_img_url                                         /* 게시물 이미지 */
          , only_me                                              /* 나만보기 여부 */
-         , COALESCE(pl.likeCount,0) AS likeCount                /* 좋아요 수 */
-      FROM POST_DATA p                                               /* 게시물 테이블 */
+         , pl.likeCount AS likeCount                            /* 좋아요 수 */
+      FROM POST_DATA p                                          /* 게시물 테이블 */
  LEFT JOIN (  
                SELECT post_num
                     , COUNT(*) AS likeCount
                  FROM POST_LIKE pl
-                WHERE NOT EXISTS (   SELECT 1 
+                WHERE NOT EXISTS (  
+                                     SELECT 1 
                                        FROM MEMBER m 
                                       WHERE m.id_num = pl.id_num
                                         AND m.locked = 'FORBIDDEN'
@@ -41,8 +42,8 @@
                     AND pi.post_img_num = subquery.min_img_num 
            ) pi
         ON p.post_num = pi.post_num                                          /* 각 게시물 별 가장먼저 등록한 이미지 서브쿼리 조인 */
- RIGHT JOIN MEMBER m
-       ON m.id_num = p.id_num
+RIGHT JOIN MEMBER m
+        ON m.id_num = p.id_num
        AND m.locked !='FORBIDDEN'       
 <if test="feedState=='USERFEED'">                                            /* 피드타입이 유저피드 */
    <if test="type=='TAGGED'">                                                /* 타입이 태그당한 게시물조건 */
@@ -68,7 +69,7 @@ INNER JOIN (
            ) searchSubQuery	                                                /* 검색키워드가 관심사 테이블에 포함되는 게시물 번호만 조인 */ 
         ON p.post_num= searchSubQuery.post_num
 </if> 
-/*조건 절 시작*/
+/* 조건 절 시작 */
 <choose>
     <when test="feedState=='MAINFEED'">                                     /* 피드타입이 메인피드이면 */
 WHERE 1=1 
@@ -82,7 +83,7 @@ WHERE 1=1
   AND only_me = 'NOTONLYME'                                                 /* 나만보기 게시물 제외 */
 ORDER BY p.create_date DESC
     </when>
-    		
+    
     <when test="feedState=='GLOBALFEED'||feedState=='SEARCHFEED'">         /* 피드 타입이 글로벌 피드이거나 검색피드일 경우 */
 WHERE 1=1 
   AND p.id_num IN(   
@@ -134,7 +135,7 @@ INSERT INTO POST_DATA (id_num,content,only_me)
 </insert>
  <!--게시물 삽입과 동시에 게시물에 입력된 관심사들도 관심사 테이블에 인서트 -->
 <insert id="hobbyInsert" parameterType="WritePostDTO">
-/*게시물 삽입(관심사 테이블 관련)*/ 
+/* 게시물 삽입(관심사 테이블 관련) */ 
 <if test="hobbyList != null and hobbyList.size() > 0">
  INSERT INTO hobby (id_num, post_num, hobby) 
         VALUES
@@ -197,7 +198,7 @@ INSERT INTO POST_DATA (id_num,content,only_me)
                 FROM POST_LIKE pl
                WHERE pl.post_num = p.post_num
                  AND NOT EXISTS (   
-					                  SELECT 1 
+                                      SELECT 1 
                                         FROM MEMBER m 
                                        WHERE m.id_num = pl.id_num
                                          AND m.locked = 'FORBIDDEN'
@@ -321,7 +322,7 @@ SELECT COUNT(*) as likeCount         /* 좋아요 수 */
                                  FROM MEMBER m 
                                 WHERE m.id_num = pl.id_num
                                   AND m.locked = 'FORBIDDEN'
-                   )                  /* 정지 계정 제외*/    
+                   )                  /* 정지 계정 제외 */    
 </select>
 </mapper>
  

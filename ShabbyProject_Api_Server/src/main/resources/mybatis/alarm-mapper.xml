@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- 피드관련--> 
+
 <!DOCTYPE mapper
  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
@@ -116,7 +116,7 @@ DELETE
            , a.alarm_type                       /* 알람 유형 */
            , DATE_FORMAT(a.create_date, '%Y-%m-%d %H:%i') as create_date       /* 생성일 */
            , a.alarm_num AS alarmNum            /* 알람 고유번호 */
-           , a.isread                        /* 알람 읽음 여부 */
+           , a.isread                           /* 알람 읽음 여부 */
         FROM ALARM a
    LEFT JOIN MEMBER m
           ON a.receiver = m.id_num               /* 받는이- 회원테이블 조인 */

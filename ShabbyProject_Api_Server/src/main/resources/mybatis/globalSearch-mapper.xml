@@ -28,6 +28,7 @@
               , null as profile                              /* 프로필 사진 */
            FROM HOBBY                                        /* 관심사 테이블 */
           WHERE hobby LIKE CONCAT('%',#{keyword},'%')        /* 검색어 */
+       ORDER BY result 
           LIMIT #{rowSize} OFFSET #{startRow}                /* 페이징 */
 </select>
  
