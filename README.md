@@ -35,7 +35,9 @@
 
 > [!TIP]
 >
-> - **핵심 화면 요약** 
+> - **핵심 화면 요약**
+>
+> 
 >![핵심화면 요약 ](https://github.com/user-attachments/assets/5642d190-ae05-4548-9510-52fc79bbdf08)
 >   
 
@@ -57,5 +59,6 @@
 >
 > - **ERD**
 >
->   
+> 
+> ![ERD](https://github.com/user-attachments/assets/8191d2ab-1412-49a1-a07d-33acf142b9aa)  
 
