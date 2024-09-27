@@ -39,7 +39,8 @@
 
 > [!TIP]
 >
-> - **핵심 화면 요약** 
+> - **핵심 화면 요약**
+> - ![핵심화면 요약 ](https://github.com/user-attachments/assets/5642d190-ae05-4548-9510-52fc79bbdf08)
 >
 >   
 
