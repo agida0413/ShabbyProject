@@ -51,7 +51,7 @@
 > [!TIP]
 >
 > - **Skills**
->    - BACK-END
+> ✔️ Back-end
 >
 >   
 >      <div>
@@ -59,14 +59,14 @@
 >       <span><img src="https://img.shields.io/badge/JWT-black?style=for-the-badge&logo=JSON%20web%20tokens"></span> &nbsp
 >       <span> <img src="https://img.shields.io/badge/Spring Security-6DB33F?style=for-the-badge&logo=Spring Security&logoColor=white"></span>&nbsp
 >      </div>
->    - FRONT-END
+>   
 >
->  
->    - DB
+> ✔️ Front-end
+>    
 >      
 >      
->    - CLOUD   
->![STACK](https://github.com/user-attachments/assets/56b5d601-2a2e-437e-abdf-56e1c285a328)
+> ✔️ DB / CLOUD
+>
    
 
 
