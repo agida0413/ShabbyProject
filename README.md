@@ -54,7 +54,9 @@
 >
 >
 >
-> ✔️ Back-end
+>
+>
+>    ✔️ Back-end
 > 
 >   
 > <div>
@@ -64,11 +66,17 @@
 >      </div>
 >   
 >
-> ✔️ Front-end
+>    ✔️ Front-end
 >    
 >      
 >      
-> ✔️ DB / CLOUD
+>    ✔️ DB / CLOUD
+>
+>
+>
+> <div><span><img src="https://img.shields.io/badge/Amazon%20S3-569A31?style=for-the-badge&logo=Amazon%20S3&logoColor=white"></span>&nbsp
+>   <span><img src="https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=MySQL&logoColor=white"></span> 
+></div>
 >
    
 
