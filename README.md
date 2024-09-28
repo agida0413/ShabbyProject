@@ -39,7 +39,7 @@
 
 > [!TIP]
 >
-> - **핵심 화면 요약** 
+>  # 📝 핵심 화면 요약 
 >
 > 
 >![핵심화면 요약 ](https://github.com/user-attachments/assets/5642d190-ae05-4548-9510-52fc79bbdf08)
@@ -52,7 +52,7 @@
 
 > [!TIP]
 >
->  # 🧑‍💻 Skills
+>  # 🔧 Skills
 >
 >
 >
@@ -97,7 +97,7 @@
 
 > [!TIP]
 >
-> - **아키텍쳐**
+> #  📊 아키텍쳐
 >
 > ![33333](https://github.com/user-attachments/assets/d45cc423-243d-4bd7-8896-9e58a5a36faf)
 > ![12345](https://github.com/user-attachments/assets/db429a06-eab4-413f-9721-fcedea5ac8e7)
@@ -111,7 +111,7 @@
 
 > [!TIP]
 >
-> - **ERD**
+> # 🖥️ ERD
 >
 > 
 >![ERD](https://github.com/user-attachments/assets/8191d2ab-1412-49a1-a07d-33acf142b9aa)   
