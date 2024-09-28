@@ -52,7 +52,7 @@
 >
 > - **Skills**
 >    - BACK-END
->    
+>    <img src="https://img.shields.io/badge/표시할이름-색상?style=for-the-badge&logo=기술스택아이콘&logoColor=white">
 >     
 >    - FRONT-END
 >
@@ -64,13 +64,6 @@
 >![STACK](https://github.com/user-attachments/assets/56b5d601-2a2e-437e-abdf-56e1c285a328)
    
 
-
-
-- Skills
-  - BACK-END
-  - FRONT-END
-  - DB
-  - CLOUD
 
 
 
