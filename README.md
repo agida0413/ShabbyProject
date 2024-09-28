@@ -52,7 +52,7 @@
 >
 > - **Skills**
 >    - BACK-END
->      <div>
+>      <div style="margin-top:20px;">
 >       <span><img src="https://img.shields.io/badge/springboot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white"></span>
 >     </div>
 >    - FRONT-END
