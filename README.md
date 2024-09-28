@@ -50,13 +50,27 @@
 
 > [!TIP]
 >
-> - **기술 스택** 
+> - **Skills**
+>    - BACK-END
+>    
+>     
+>    - FRONT-END
 >
-> 
+>  
+>    - DB
+>      
+>      
+>    - CLOUD   
 >![STACK](https://github.com/user-attachments/assets/56b5d601-2a2e-437e-abdf-56e1c285a328)
    
 
 
+
+- Skills
+  - BACK-END
+  - FRONT-END
+  - DB
+  - CLOUD
 
 
 
