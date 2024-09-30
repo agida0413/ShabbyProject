@@ -220,6 +220,7 @@ public class FeedServiceImpl implements FeedService{
 		//offset(시작위치)
 		int offSet=SimpleCodeGet.getOffset(rowSize, page);
 		//데이터베이스 전송 객체 생성
+		rowSize = 12;
 		GetUserFeedInformDTO dto= new GetUserFeedInformDTO();
 		//글로벌 피드 동적쿼리 위해 전달
 		dto.setFeedState("GLOBALFEED");

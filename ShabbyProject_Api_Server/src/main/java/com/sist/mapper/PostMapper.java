@@ -50,4 +50,6 @@ public interface PostMapper {
 
 	//좋아요 작업 후 좋아요 카운트
 	public int afterDoPostLike(int postNum);
+	//금칙어 검증 
+	public int badwordValidation(WritePostDTO dto);
 }
