@@ -116,6 +116,7 @@ export default {
     },
     //메인피드의 게시물 리스트 불러오기 메서드 
     callMainPostList(){
+      
       //만약 로딩중이거나 , 더이상 불러올 데이터가 없으면 리턴 
       if(this.isLoading || this.noMoreNeedData)return
       //데이터 불러오기 시작 
@@ -129,12 +130,12 @@ export default {
         if(resData.length){
           //기존 데이터에 추가 
           this.postData=[...this.postData,...resData]
-          this.page++;
+          this.page+=2;
         }
         else{
           //데이터가 없다면 이제 더이상 데이터를 안불러와도 된다는 변수 및 페이지 원복 
           this.noMoreNeedData=true;
-          this.page--;
+          this.page-=2;
         }
 
      })

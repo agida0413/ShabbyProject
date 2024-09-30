@@ -113,15 +113,14 @@ export default {
   margin-top: 60px; /* 헤더 높이만큼 여백 추가 */
 }
 
-.main-container {
-  display: flex;
-  height: 100vh;
-}
+
 
 .main-content {
   display: flex;
   flex: 1;
   flex-direction: column;
+  
+  height: calc(100vh - 60px); /* 헤더 높이를 뺀 나머지 높이 */
   
 }
 
