@@ -215,7 +215,7 @@ data(){
         }
 
         this.nameErrors = this.validateField(this.name, this.nameRules); //이름검증
-        this.nickNameErrorsnameErrors = this.validateField(this.nickname, this.nickNameRules); //닉네임검증
+        this.nickNameErrors = this.validateField(this.nickname, this.nickNameRules); //닉네임검증
 
         if (this.nameErrors.length > 0 || this.nickNameErrors.length>0  ) { //이중 하나라도 충족하지않으면 리턴 
         
