@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import com.sist.dto.hobby.HobbySaveDTO;
+
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 @Data
@@ -19,7 +21,7 @@ private boolean onlyMe; //나만보기 기능
 public String onlyMeState;  //나만보기 상태 
 private int idNum; //회원고유번호 
 private int postNum; //게시물 고유번호
-
+private List<HobbySaveDTO> hobbySaveList;
 
 //삭제작업시 삭제이미지 배열 
 private List<String> removeImgList;

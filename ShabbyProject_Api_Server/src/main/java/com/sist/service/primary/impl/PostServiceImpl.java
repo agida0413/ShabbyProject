@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.ibatis.javassist.expr.NewArray;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -14,10 +16,12 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.sist.common.exception.BadRequestException;
 import com.sist.common.exception.InternerException;
+import com.sist.common.util.KoreanBunriUtil;
 import com.sist.common.util.PathVariableValidation;
 import com.sist.common.util.SimpleCodeGet;
 import com.sist.dto.api.ResponseDTO;
 import com.sist.dto.follow.UnFollowDTO;
+import com.sist.dto.hobby.HobbySaveDTO;
 import com.sist.dto.post.DoPostLikeDTO;
 import com.sist.dto.post.GetPostDetailDTO;
 import com.sist.dto.post.PostDelDTO;
@@ -30,6 +34,7 @@ import com.sist.repository.AlarmRepository;
 import com.sist.repository.PostRepository;
 import com.sist.service.primary.PostService;
 import com.sist.service.util.ImageService;
+import com.sist.service.util.impl.CacheService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -41,16 +46,24 @@ public class PostServiceImpl implements PostService {
     //이미지업로드 서비스
     private final ImageService imageService;
     private final AlarmRepository alarmRepository;
+    
 
     //게시물 업로드 서비스 
     @Override
     @Transactional
+    @Caching(evict = {
+    	    @CacheEvict(value = "globalSearch", allEntries = true),
+    	    @CacheEvict(value = "hobbySearch", allEntries = true)
+    	})
     public ResponseEntity<ResponseDTO<Void>> postInsertTransaction(WritePostDTO dto)  {
-    	    	
+    	 if(postRepository.badwordValidation(dto)>0) {
+    		 throw new BadRequestException("금칙어가 포함되어 있습니다.");
+    	 }
     	List<MultipartFile> imgList = dto.getImgList(); // 업로드할 이미지 리스트
        
     	List<String> imgUrList = uploadImage(imgList); // 업로드된 이미지의 URL을 저장할 리스트
-     
+    	List<HobbySaveDTO> bunriList = KoreanBunriUtil.getKeyword(dto.getHobbyList());
+    	dto.setHobbySaveList(bunriList);
     	 
         // 데이터베이스 저장
         try {
@@ -62,6 +75,7 @@ public class PostServiceImpl implements PostService {
 
             // 게시물 테이블에 데이터 저장
             postRepository.postInsert(dto);
+           
             
             // 관심사 및 인물 태그 인서트 //postnum+hobby  유니크키 
            insertHobbies(dto);
@@ -241,6 +255,10 @@ public class PostServiceImpl implements PostService {
 	//게시물 삭제 
 	@Override
 	@Transactional
+	 @Caching(evict = {
+	    	    @CacheEvict(value = "globalSearch", allEntries = true),
+	    	    @CacheEvict(value = "hobbySearch", allEntries = true)
+	    	})
 	public ResponseEntity<ResponseDTO<Void>> postDelete(PostDelDTO dto) {
 		// TODO Auto-generated method stub
 		//현재 로그인 회원 고유번호 
@@ -278,6 +296,10 @@ public class PostServiceImpl implements PostService {
 	//게시물 수정 서비스 
 	@Override
 	@Transactional
+	 @Caching(evict = {
+	    	    @CacheEvict(value = "globalSearch", allEntries = true),
+	    	    @CacheEvict(value = "hobbySearch", allEntries = true)
+	    	})
 	public ResponseEntity<ResponseDTO<Void>> postUpdate(WritePostDTO dto) {
 		// TODO Auto-generated method stub
 		
@@ -367,6 +389,8 @@ public class PostServiceImpl implements PostService {
 	//만약 클라이언트로부터 새롭게 받은 관심사리스트가 비어있지않다면
 	//새로운 관심사 인서트 
 	if(dto.getHobbyList().size()!=0) {
+		List<HobbySaveDTO> list = KoreanBunriUtil.getKeyword(dto.getHobbyList());
+		dto.setHobbySaveList(list);
 		postRepository.hobbyInsert(dto);
 	}
 	//만약 클라이언트로부터 새롭게 받은 맴버태그 리스트가 비어있지않다면
@@ -469,7 +493,7 @@ public class PostServiceImpl implements PostService {
    
     //게시물과 연관된 관심사테이블에 데이터  삽입 
     private void insertHobbies(WritePostDTO dto) {
-    	  if (dto.getHobbyList() != null && !dto.getHobbyList().isEmpty()) {
+    	  if (dto.getHobbySaveList() != null && !dto.getHobbySaveList().isEmpty()) {
               postRepository.hobbyInsert(dto); // 관심사 테이블에 인서트
           }
     }

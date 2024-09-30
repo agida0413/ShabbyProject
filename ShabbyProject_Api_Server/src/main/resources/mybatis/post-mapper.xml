@@ -136,14 +136,15 @@ INSERT INTO POST_DATA (id_num,content,only_me)
  <!--게시물 삽입과 동시에 게시물에 입력된 관심사들도 관심사 테이블에 인서트 -->
 <insert id="hobbyInsert" parameterType="WritePostDTO">
 /* 게시물 삽입(관심사 테이블 관련) */ 
-<if test="hobbyList != null and hobbyList.size() > 0">
- INSERT INTO hobby (id_num, post_num, hobby) 
+<if test="hobbySaveList != null and hobbySaveList.size() > 0">
+ INSERT INTO hobby (id_num, post_num, hobby, hobby_hangul) 
         VALUES
-        <foreach collection="hobbyList" item="hobby" separator=",">
+        <foreach collection="hobbySaveList" item="hobby" separator=",">
             (
             #{idNum}                        /* 회원고유번호 */
            ,#{postNum}                      /* 게시물 번호 */
-           ,#{hobby}                        /* 관심사 이름 */
+           ,#{hobby.hobby}                        /* 관심사 이름 */
+           ,#{hobby.hobbyKoreanBunri}
             )
         </foreach>
 </if>
@@ -324,5 +325,16 @@ SELECT COUNT(*) as likeCount         /* 좋아요 수 */
                                   AND m.locked = 'FORBIDDEN'
                    )                  /* 정지 계정 제외 */    
 </select>
+
+<select id="badwordValidation" parameterType="WritePostDTO">
+     SELECT COUNT(*)
+       FROM BAD_WORDS_DATA bd 
+     WHERE bad_word IN (
+                         <foreach collection="hobbyList" item="hobby" separator=","> 
+                         #{hobby}
+                         </foreach>
+                       )  
+</select>
+
 </mapper>
  

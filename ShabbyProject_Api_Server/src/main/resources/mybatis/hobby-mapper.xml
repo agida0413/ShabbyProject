@@ -13,7 +13,7 @@
      /* 검색어를 통한 중복제거된 관심사 조회 */
      SELECT DISTINCT hobby                          /* 중복 제거된 관심사 */
        FROM HOBBY
-      WHERE hobby LIKE CONCAT('%',#{keyword},'%')   /* 관심사 검색조건(키워드) */
+      WHERE hobby_hangul LIKE CONCAT('%',#{bunriKeyword},'%')   /* 관심사 검색조건(키워드) */
       LIMIT #{rowSize} OFFSET #{startRow}           /* 페이징 */
 </select>
 

@@ -2,11 +2,13 @@ package com.sist.service.minor.impl;
 
 import java.util.List;
 
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.sist.common.exception.BadRequestException;
+import com.sist.common.util.KoreanBunriUtil;
 import com.sist.common.util.PathVariableValidation;
 import com.sist.common.util.SimpleCodeGet;
 import com.sist.dto.api.ResponseDTO;
@@ -16,6 +18,7 @@ import com.sist.dto.util.SearchResultMemberDTO;
 import com.sist.dto.util.SearchResultMemberListDTO;
 import com.sist.repository.GlobalSearchRepository;
 import com.sist.service.minor.GlobalSearchService;
+import com.sist.service.util.impl.CacheService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -24,13 +27,14 @@ import lombok.RequiredArgsConstructor;
 public class GlobalSearchServiceImpl implements GlobalSearchService{
 
 	private final GlobalSearchRepository globalSearchRepository;
-	
+	private final CacheService cacheService;
 	//글로벌 서치 자동완성 검색결과 
 	@Override
+	@Cacheable(value = "globalSearch", key = "#page + '_' + #keyword")
 	public ResponseEntity<ResponseDTO<List<GlobalSearchResultDTO>>> globalSearchResult(String keyword,int page) {
 		// TODO Auto-generated method stub
 		
-		
+		cacheService.printCacheStatus();
 		//데이터베이스 전송 객체 생성 
 		GlobalSearchDTO reqDto= new GlobalSearchDTO();
 		
@@ -40,7 +44,11 @@ public class GlobalSearchServiceImpl implements GlobalSearchService{
 		int rowSize=15;
 		//OFFSET
 		int offSet=SimpleCodeGet.getOffset(rowSize, page);
+		String bunriKeyword=KoreanBunriUtil.getKeyword(keyword);
+		bunriKeyword=bunriKeyword.trim();
+		System.out.println(bunriKeyword);
 		//전송객체에 값 세팅 
+		reqDto.setBunriKeyword(bunriKeyword);
 		reqDto.setKeyword(keyword);
 		reqDto.setRowSize(rowSize);
 		reqDto.setStartRow(offSet);

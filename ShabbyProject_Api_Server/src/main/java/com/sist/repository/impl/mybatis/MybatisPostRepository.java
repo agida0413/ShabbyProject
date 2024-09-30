@@ -116,5 +116,10 @@ public class MybatisPostRepository implements PostRepository {
 		// TODO Auto-generated method stub
 		postMapper.deleteOriginalMemTag(dto);
 	}
+	@Override
+	public int badwordValidation(WritePostDTO dto) {
+		// TODO Auto-generated method stub
+		return postMapper.badwordValidation(dto);
+	}
 
 }

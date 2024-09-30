@@ -2,12 +2,13 @@ package com.sist.service.primary.impl;
 
 import java.util.List;
 
-
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.sist.common.exception.BadRequestException;
+import com.sist.common.util.KoreanBunriUtil;
 import com.sist.common.util.PathVariableValidation;
 import com.sist.common.util.SimpleCodeGet;
 import com.sist.dto.api.ResponseDTO;
@@ -29,16 +30,17 @@ public class HobbyServiceImpl implements HobbyService {
 
 	//키워드,페이지 기반 관심사 태그 조회 
 	@Override
+	@Cacheable(value = "hobbySearch", key = "#page + '_' + #keyword")
 	public ResponseEntity<ResponseDTO<SearchHobbyListDTO>> findHobby(String keyword,int page) {
 		// TODO Auto-generated method stub
 		//데이터베이스에 보낼 객체 생성
-		
-		
+		String bunriKeyword= KoreanBunriUtil.getKeyword(keyword);
+		bunriKeyword= bunriKeyword.trim();
 		SearchHobbyDTO dto = new SearchHobbyDTO();
 		//offset 설정 - > 계산로직은 항상 동일하여 공통함수에서 계산
 		int offSet=SimpleCodeGet.getOffset(rowSize,page);
 		
-	
+		dto.setBunriKeyword(bunriKeyword);
 		dto.setKeyword(keyword);//키워드 세팅
 		dto.setRowSize(rowSize);//행개수 세팅
 		dto.setStartRow(offSet);//offset 세팅 
