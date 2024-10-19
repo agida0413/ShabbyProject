@@ -121,8 +121,9 @@
 >
 > #  📊 아키텍쳐
 >
-> ![33333](https://github.com/user-attachments/assets/d45cc423-243d-4bd7-8896-9e58a5a36faf)
-> ![12345](https://github.com/user-attachments/assets/db429a06-eab4-413f-9721-fcedea5ac8e7)
+> 
+> ![arshab drawio](https://github.com/user-attachments/assets/6614b392-cbff-4ad1-8c00-a42ecde47cad)
+
 
 
 
