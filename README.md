@@ -201,7 +201,7 @@
 
 - *Filter는  Servlet 앞단에 위치하여 ControllerAdvice에 접근 불가* 
 
-  - ***<u>ResponseApi 클래스에 필요한 예외처리 항목에 대하여 response를 직접 보내주는 메소드를 작성하여 filter 내부에서 예외처리</u> ***
+  - <u>***ResponseApi 클래스에 필요한 예외처리 항목에 대하여 response를 직접 보내주는 메소드를 작성하여 filter 내부에서 예외처리***</u>
 ---
 
 ### <u>**검색어 추천 기능 중 한글 초,중,종성으로 검색 불가 문제**</u> 
