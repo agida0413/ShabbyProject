@@ -145,15 +145,10 @@
 
 # PROBLEM & SOLVE
 
-> [!TIP]
->
-> - **<u>${\textsf{\color{red}red}}$Security Filter 내 예외 발생 시 공통 예외 처리 불가한 문제</u>** 
->
->   - ${\textsf{\color{green}green}}$Filter는  Servlet 앞단에 위치하여 ControllerAdvice에 접근 불가 
->
->     - ${\textsf{\color{blue}blue}}$ResponseApi 클래스에 필요한 예외처리 항목에 대하여 response를 직접 보내주는 메소드를 작성하여 filter 내부에서 예외처리 
->
->       
->
->        
+### <u>**Security Filter 내 예외 발생 시 공통 예외 처리 불가한 문제**</u> 
 
+- *Filter는  Servlet 앞단에 위치하여 ControllerAdvice에 접근 불가* 
+
+  - <u>***ResponseApi 클래스에 필요한 예외처리 항목에 대하여 response를 직접 보내주는 메소드를 작성하여 filter 내부에서 예외처리***</u> 
+
+    
