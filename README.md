@@ -142,7 +142,7 @@
 
 
 
-#  📊 아키텍쳐
+#  📊 소프트웨어 구조
 
  ![arshab drawio](https://github.com/user-attachments/assets/6614b392-cbff-4ad1-8c00-a42ecde47cad)
 
