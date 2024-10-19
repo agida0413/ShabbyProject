@@ -117,12 +117,11 @@
 
 
 
-> [!TIP]
->
-> #  📊 아키텍쳐
->
-> 
-> ![arshab drawio](https://github.com/user-attachments/assets/6614b392-cbff-4ad1-8c00-a42ecde47cad)
+
+
+#  📊 아키텍쳐
+
+ ![arshab drawio](https://github.com/user-attachments/assets/6614b392-cbff-4ad1-8c00-a42ecde47cad)
 
 
 
@@ -132,11 +131,9 @@
 
 ---
 
-> [!TIP]
->
-> # 🖥️ ERD
->
-> 
+ # 🖥️ ERD
+
+
 >![ERD](https://github.com/user-attachments/assets/8191d2ab-1412-49a1-a07d-33acf142b9aa)
 
 
