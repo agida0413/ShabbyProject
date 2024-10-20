@@ -144,7 +144,8 @@
 
 #  📊 소프트웨어 구조
 
- ![arshab drawio](https://github.com/user-attachments/assets/6614b392-cbff-4ad1-8c00-a42ecde47cad)
+![3 drawio](https://github.com/user-attachments/assets/d1f83e04-9fa6-4cf7-a94a-b4059f4e32c1)
+
 
 
 
